@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,7 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -36,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -56,6 +60,7 @@ import laser.ddg.query.ResultsQuery;
 import laser.ddg.visualizer.DDGPanel;
 import laser.ddg.visualizer.ErrorLog;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
+import laser.ddg.visualizer.DDGSearchGUI;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored in
@@ -699,6 +704,9 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		// Add content to the window.
 		final DDGExplorer explorer = new DDGExplorer();
 
+		//Add search bar to top of DDG Explorer
+		frame.add(new SetupSearch(explorer), BorderLayout.NORTH);
+
 		//add tabbed pane
 //		UIManager.put("TabbedPane.selected",Color.YELLOW);
 //		UIManager.put("TabbedPane.tabAreaBackground",
@@ -833,6 +841,108 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		return tabbed;
 	}
 
+	
+
+	 static class SetupSearch extends JPanel{
+			private JTextField searchField;
+			private JComboBox<String> optionsBox, databaseOptionsBox, ddgOptionsBox;
+			private String ddgOption;
+			
+			public SetupSearch(DDGExplorer mainFrame){
+				searchUI(mainFrame);
+			}
+
+			private void searchUI(DDGExplorer mainFrame){
+				searchField = new JTextField("Search");
+				JButton advancedSearchButton = new JButton("Advanced Search");
+				
+				String[] options = {"Current DDG", "R Script", "Database"};
+				String[] databaseOptions = {"DDGs", "R Scripts"};
+				String[] ddgOptions = {"Error", "Data", "File", "URL", "Function", "All Options"};
+				
+				optionsBox = new JComboBox<>(options);
+				databaseOptionsBox = new JComboBox<>(databaseOptions);
+				ddgOptionsBox = new JComboBox<>(ddgOptions);
+
+				
+				ddgOption = ddgOptions[0];
+				
+				JLabel optionsDisplay = new JLabel(options[0]);
+				JLabel databaseOptionsDisplay = new JLabel(databaseOptions[0]);
+				JLabel ddgOptionsDisplay = new JLabel(ddgOptions[0]);
+
+				setLayout(new GridBagLayout());
+
+				GridBagConstraints preferences = new GridBagConstraints();
+				preferences.fill = GridBagConstraints.BOTH;
+
+				preferences.weightx = 0.0;
+				preferences.weighty = 0.0;
+				preferences.gridx = 0;
+				preferences.gridy = 0;
+				add(optionsBox, preferences);
+
+				preferences.weightx = 0.0;
+				preferences.weighty = 0.0;
+				preferences.gridx = 1;
+				preferences.gridy = 0;
+				add(ddgOptionsBox, preferences);
+				
+				preferences.weightx = 0.5;
+				preferences.gridx = 2;
+				preferences.gridy = 0;
+				add(searchField, preferences);
+
+				preferences.weightx = 0.0;
+				preferences.gridx = 3;
+				preferences.gridy = 0;
+				add(advancedSearchButton, preferences);
+			
+				//Changes text in search feild in response to the selected ddgOptions box 
+				ddgOptionsBox.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent select){
+						searchField.setText("Search for " + ddgOptionsBox.getSelectedItem().toString());
+						ddgOption = ddgOptionsBox.getSelectedItem().toString();
+					}
+				});				
+				
+				advancedSearchButton.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						DDGSearchGUI searchList;
+						DDGPanel panel = (DDGPanel)mainFrame.tabbed.getSelectedComponent();
+						PrefuseGraphBuilder build = panel.getBuilder();
+						
+						boolean isText; 
+						String searchFieldText = searchField.getText().toLowerCase();
+
+						//checks if information was entered into the search field
+						if(searchFieldText.isEmpty())	
+							isText = false;
+						else if(searchFieldText.length() < 6)
+							isText = true;
+						else if(searchFieldText.substring(0, 6).equals("search"))
+							isText = false;
+						else
+							isText = true;	
+						
+						if(ddgOption.equals("Error"))
+							mainFrame.getCurrentDDGPanel().SearchList(build.getErrorList(), isText, searchFieldText);
+						else if(ddgOption.equals("Data"))
+							mainFrame.getCurrentDDGPanel().SearchList(build.getDataList(), isText, searchFieldText);
+						else if(ddgOption.equals("File"))
+							mainFrame.getCurrentDDGPanel().SearchList(build.getFileList(), isText, searchFieldText);
+						else if(ddgOption.equals("URL"))
+							mainFrame.getCurrentDDGPanel().SearchList(build.getURLList(), isText, searchFieldText);
+						else if(ddgOption.equals("Function"))
+							mainFrame.getCurrentDDGPanel().SearchList(build.getOperationList(), isText, searchFieldText);
+						else
+							mainFrame.getCurrentDDGPanel().SearchList(build.getAllList(), isText, searchFieldText);
+					}
+				});
+				
+			}
+	 }
 
 	 static class setupMenu implements ChangeListener{
 		 private JMenuBar menuBar;
@@ -874,6 +984,14 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					"Unable to start DDG Explorer: " + e.getMessage(),
 					"Error starting DDG Explorer", JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+
+
+
+	protected DDGPanel getCurrentDDGPanel() {
+		// TODO Auto-generated method stub
+		return (DDGPanel)tabbed.getSelectedComponent();
 	}
 
 

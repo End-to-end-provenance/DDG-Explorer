@@ -1,5 +1,6 @@
 package laser.ddg.visualizer;
 
+import laser.ddg.visualizer.DDGSearchGUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,6 +27,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -44,6 +46,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
+import laser.ddg.visualizer.PrefuseGraphBuilder.tupleElement;
 import prefuse.Display;
 
 /**
@@ -60,6 +63,7 @@ public class DDGPanel extends JPanel {
 	private static final int LEGEND_ENTRY_HEIGHT = 25;
 	private static final Font LEGEND_FONT = new Font ("Helvetica", Font.PLAIN, 10);
 
+	
 	// Describes the main attributes of the ddg
 	private JLabel descriptionArea;
 	
@@ -86,6 +90,45 @@ public class DDGPanel extends JPanel {
 
 	// Command that allows the user to decide whether to see the legend or not
 	private JCheckBoxMenuItem showLegendMenuItem;
+
+	//create a PrefuseGraphBuilder to assist with creating the search results list
+	private PrefuseGraphBuilder builder;
+	
+	//Search results object that enables user to find nodes in the graph
+	private DDGSearchGUI searchList; 
+
+	//Returns PrefuseGraphBuilder Object to retrieve list of nodes
+	public PrefuseGraphBuilder getBuilder() {
+		return builder;
+	}
+	
+	//Constructs and updates list of search results 
+	public void SearchList(ArrayList <tupleElement> nodesList, boolean isText, String searchText){
+		ArrayList <tupleElement> newList = new ArrayList<tupleElement>();
+		
+		//if user entered information into the search bar
+		if(isText){
+			for(tupleElement entry : nodesList)
+				if(entry.getName().toLowerCase().contains(searchText))
+					newList.add(entry);
+			if(searchList == null){
+				searchList = new DDGSearchGUI(newList, this);
+			}
+			else{
+				searchList.updateSearchList(newList);
+			}
+		}
+
+		//if text in search is empty then give all associated information
+		else{
+			if(searchList == null){
+				searchList = new DDGSearchGUI(nodesList, this);
+			}
+			else{
+				searchList.updateSearchList(nodesList);
+			}
+		}
+	}
 
 	//preferences on Arrow Direction and the Legend
 	private static Hashtable<String,String> preferences = new Hashtable<String, String>();
@@ -115,9 +158,10 @@ public class DDGPanel extends JPanel {
 	 * @param ddgOverview
 	 * @param provData the ddg data being displayed
 	 */
-	public void displayDDG(DDGVisualization vis, final Display ddgDisplay, final Display ddgOverview, ProvenanceData provData) {
+	public void displayDDG(DDGVisualization vis, final Display ddgDisplay, final Display ddgOverview, ProvenanceData provData, PrefuseGraphBuilder builder) {
 		this.vis = vis;
 		this.provData = provData;
+		this.builder = builder;
 		//this.overview = ddgDisplay;	
 
 		//Set up toolbarPanel and inside, ddgPanel:
@@ -159,7 +203,7 @@ public class DDGPanel extends JPanel {
 	private void updateDescription() {
 		descriptionArea.setText(provData.getQuery());
 	}
-
+	
 	/**
 	 * Sets the direction that arrows are drawn based on the setting of the
 	 * corresponding menu item.
