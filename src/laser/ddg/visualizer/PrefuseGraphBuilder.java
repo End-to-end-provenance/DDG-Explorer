@@ -189,8 +189,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	    	case "Exception": this.color = new Color(209, 114, 110); 
 	    					  break;
 	    	
-	    	case "Data": this.color = new Color(175, 184, 233); 
-						 break;
+	    	case "Data":
+	    	case "Snapshot": this.color = new Color(175, 184, 233); 
+						 	 break;
 
 	    	case "URL":	 this.color = new Color(255, 204, 229); 
 						 break;
@@ -204,12 +205,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	    	case "Binding": this.color = new Color(255, 254, 231); 
 			  				break;
 
-	    	case "Start": this.color = new Color(175, 217, 123); 
-	    				  break;
-							  
+	    	case "Start": 
 	    	case "Finish": this.color = new Color(175, 217, 123); 
 	    				   break;
 	    				  
+	    	case "Step": this.color = new Color(176, 226, 255);
+	    				 break;
+	    				 
 			default: this.color = Color.WHITE;
 					 break;
 	    }
