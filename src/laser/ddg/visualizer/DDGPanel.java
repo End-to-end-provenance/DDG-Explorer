@@ -1,6 +1,7 @@
 package laser.ddg.visualizer;
 
 import laser.ddg.visualizer.DDGSearchGUI;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -35,6 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
@@ -93,7 +95,10 @@ public class DDGPanel extends JPanel {
 
 	//create a PrefuseGraphBuilder to assist with creating the search results list
 	private PrefuseGraphBuilder builder;
-	
+
+	//enables the the search list to be horizontally resize by the user
+	JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+
 	//Search results object that enables user to find nodes in the graph
 	private DDGSearchGUI searchList; 
 
@@ -112,7 +117,7 @@ public class DDGPanel extends JPanel {
 				if(entry.getName().toLowerCase().contains(searchText))
 					newList.add(entry);
 			if(searchList == null){
-				searchList = new DDGSearchGUI(newList, this);
+				searchList = new DDGSearchGUI(newList, splitPane, this);
 			}
 			else{
 				searchList.updateSearchList(newList);
@@ -122,7 +127,7 @@ public class DDGPanel extends JPanel {
 		//if text in search is empty then give all associated information
 		else{
 			if(searchList == null){
-				searchList = new DDGSearchGUI(nodesList, this);
+				searchList = new DDGSearchGUI(nodesList, splitPane, this);
 			}
 			else{
 				searchList.updateSearchList(nodesList);
@@ -187,13 +192,17 @@ public class DDGPanel extends JPanel {
 			//toolbarPanel to hold ddgMain, surrounded by space for the toolbar
 			JPanel toolbarPanel = new JPanel(new BorderLayout());
 				toolbar = new Toolbar((DDGDisplay)ddgDisplay);
-				toolbarPanel.add(toolbar, BorderLayout.NORTH);
 				toolbarPanel.add(ddgMain, BorderLayout.CENTER);
 		
 		//hold toolbarPanel and everything inside
 		setBackground(Color.WHITE);
-		add(toolbarPanel, BorderLayout.CENTER);
-		
+		add(toolbar, BorderLayout.NORTH);
+	   
+		//set the DDG on the right of JSplitPane and later the DDG Search Results on the Left
+	    splitPane.setRightComponent(toolbarPanel);		
+	    
+	    
+	    add(splitPane, BorderLayout.CENTER);
 		loadPreferences();
 	}
 

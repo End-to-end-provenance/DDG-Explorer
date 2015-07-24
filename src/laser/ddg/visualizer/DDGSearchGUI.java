@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -23,11 +24,11 @@ public class DDGSearchGUI extends JPanel{
   DefaultListModel model; 
 
   
-  public DDGSearchGUI(ArrayList <tupleElement> nodesList, JPanel ddgPanel){
-	  generateSearchList(nodesList, ddgPanel);
+  public DDGSearchGUI(ArrayList <tupleElement> nodesList, JSplitPane splitPane, JPanel ddgPanel){
+	  generateSearchList(nodesList, splitPane, ddgPanel);
   }
 
-  public void generateSearchList(ArrayList <tupleElement> nodesList, JPanel ddgPanel){  
+  public void generateSearchList(ArrayList <tupleElement> nodesList, JSplitPane splitPane, JPanel ddgPanel){  
 	//Checks if search results were already created so that multiple JPanels will not be created
     if(searchList == null){
     	JPanel panel = new JPanel();
@@ -42,6 +43,7 @@ public class DDGSearchGUI extends JPanel{
         searchList.setCellRenderer(new NodeCellRenderer());
         searchList.setVisibleRowCount(-1);
 
+        //update the focus in the DDG to focus on selected node from search results
         searchList.addListSelectionListener(new ListSelectionListener(){
         	public void valueChanged(ListSelectionEvent listener){
         		tupleElement entry = (tupleElement) searchList.getSelectedValue();
@@ -50,12 +52,13 @@ public class DDGSearchGUI extends JPanel{
         	}
         });
         
+        
         JScrollPane pane = new JScrollPane(searchList);
         pane.setPreferredSize(new Dimension(150, 200));
+        panel.add(pane);        
 
-        panel.add(pane);
-        
-        ddgPanel.add(panel, BorderLayout.WEST);
+        //set it on the left of splitPane (the DDG is set to be on the right)
+        splitPane.setLeftComponent(panel);
         ddgPanel.validate();
     }
   }
