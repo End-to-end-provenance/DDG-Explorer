@@ -63,7 +63,12 @@ public class FileViewer {
 	 *    the timestamp is not used.  
 	 */
 	public FileViewer(String path, String time) {
-		this.path = path;
+		if (path.startsWith("\"") && path.endsWith("\"")) {
+			this.path = path.substring(1, path.length()-1);
+		}
+		else {
+			this.path = path;
+		}
 		
 		if (time == null) {
 			DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
