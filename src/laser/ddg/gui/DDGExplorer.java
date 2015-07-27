@@ -851,6 +851,40 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			public SetupSearch(DDGExplorer mainFrame){
 				searchUI(mainFrame);
 			}
+			
+			//Do a search
+			public void DoSearch(DDGExplorer mainFrame){
+				DDGSearchGUI searchList;
+				DDGPanel panel = (DDGPanel)mainFrame.tabbed.getSelectedComponent();
+				PrefuseGraphBuilder build = panel.getBuilder();
+				
+				boolean isText; 
+				String searchFieldText = searchField.getText().toLowerCase();
+
+				//checks if information was entered into the search field
+				if(searchFieldText.isEmpty())	
+					isText = false;
+				else if(searchFieldText.length() < 6)
+					isText = true;
+				else if(searchFieldText.substring(0, 6).equals("search"))
+					isText = false;
+				else
+					isText = true;	
+				
+				//Gets which option was selected in the drop down
+				if(ddgOption.equals("Error"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getErrorList(), isText, searchFieldText);
+				else if(ddgOption.equals("Data"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getDataList(), isText, searchFieldText);
+				else if(ddgOption.equals("File"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getFileList(), isText, searchFieldText);
+				else if(ddgOption.equals("URL"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getURLList(), isText, searchFieldText);
+				else if(ddgOption.equals("Function"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getOperationList(), isText, searchFieldText);
+				else
+					mainFrame.getCurrentDDGPanel().SearchList(build.getAllList(), isText, searchFieldText);
+			}
 
 			private void searchUI(DDGExplorer mainFrame){
 				searchField = new JTextField("Search");
@@ -876,29 +910,31 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				GridBagConstraints preferences = new GridBagConstraints();
 				preferences.fill = GridBagConstraints.BOTH;
 
+				//Add options box
 				preferences.weightx = 0.0;
 				preferences.weighty = 0.0;
 				preferences.gridx = 0;
 				preferences.gridy = 0;
 				add(optionsBox, preferences);
 
-				preferences.weightx = 0.0;
-				preferences.weighty = 0.0;
+				//Add ddg search options box
 				preferences.gridx = 1;
 				preferences.gridy = 0;
 				add(ddgOptionsBox, preferences);
 				
+				//Add Search field box (adjusts in response to change in window size)
 				preferences.weightx = 0.5;
 				preferences.gridx = 2;
 				preferences.gridy = 0;
 				add(searchField, preferences);
 
+				//Add Advanced Search Button
 				preferences.weightx = 0.0;
 				preferences.gridx = 3;
 				preferences.gridy = 0;
 				add(advancedSearchButton, preferences);
-			
-				//Changes text in search feild in response to the selected ddgOptions box 
+				
+				//Changes text in search field in response to the selected ddgOptions box 
 				ddgOptionsBox.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent select){
 						searchField.setText("Search for " + ddgOptionsBox.getSelectedItem().toString());
@@ -906,38 +942,18 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					}
 				});				
 				
+				//Submit Search if the enter button is pressed in the search field
+				searchField.addActionListener(new ActionListener(){
+				    public void actionPerformed(ActionEvent e) {
+				    	DoSearch(mainFrame);
+				    }	
+				});
+				
+				//Submit Search if the advanced search button is pressed
 				advancedSearchButton.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						DDGSearchGUI searchList;
-						DDGPanel panel = (DDGPanel)mainFrame.tabbed.getSelectedComponent();
-						PrefuseGraphBuilder build = panel.getBuilder();
-						
-						boolean isText; 
-						String searchFieldText = searchField.getText().toLowerCase();
-
-						//checks if information was entered into the search field
-						if(searchFieldText.isEmpty())	
-							isText = false;
-						else if(searchFieldText.length() < 6)
-							isText = true;
-						else if(searchFieldText.substring(0, 6).equals("search"))
-							isText = false;
-						else
-							isText = true;	
-						
-						if(ddgOption.equals("Error"))
-							mainFrame.getCurrentDDGPanel().SearchList(build.getErrorList(), isText, searchFieldText);
-						else if(ddgOption.equals("Data"))
-							mainFrame.getCurrentDDGPanel().SearchList(build.getDataList(), isText, searchFieldText);
-						else if(ddgOption.equals("File"))
-							mainFrame.getCurrentDDGPanel().SearchList(build.getFileList(), isText, searchFieldText);
-						else if(ddgOption.equals("URL"))
-							mainFrame.getCurrentDDGPanel().SearchList(build.getURLList(), isText, searchFieldText);
-						else if(ddgOption.equals("Function"))
-							mainFrame.getCurrentDDGPanel().SearchList(build.getOperationList(), isText, searchFieldText);
-						else
-							mainFrame.getCurrentDDGPanel().SearchList(build.getAllList(), isText, searchFieldText);
+						DoSearch(mainFrame);
 					}
 				});
 				
