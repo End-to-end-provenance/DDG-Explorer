@@ -16,6 +16,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import prefuse.util.ColorLib;
 import laser.ddg.visualizer.PrefuseGraphBuilder.tupleElement;
 
 public class DDGSearchGUI extends JPanel{
@@ -75,7 +76,7 @@ public class DDGSearchGUI extends JPanel{
 
   //Customizes the JList to be colorized and display information about the Nodes
   class NodeCellRenderer extends JLabel implements ListCellRenderer {
-    Color HIGHLIGHT_COLOR = new Color(0, 0, 128);
+    Color HIGHLIGHT_COLOR = new Color(193,253,51); // 255,206,26 <- Nice shade of bright orange
 
     public NodeCellRenderer() {
       setOpaque(true);
@@ -89,7 +90,7 @@ public class DDGSearchGUI extends JPanel{
       
       if (isSelected) {
         setBackground(HIGHLIGHT_COLOR);
-        setForeground(Color.white);
+        setForeground(Color.BLACK);
       } else {
         setBackground(entry.getColor());
         //Sets text to be black for contrast

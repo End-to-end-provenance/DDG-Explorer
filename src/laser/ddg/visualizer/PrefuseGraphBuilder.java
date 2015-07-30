@@ -167,6 +167,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private int numPins;
 
+	//Keep track of selected nodes from search results
+	private int prevNodeID; 
+	private boolean prevNodeHighlighted = false;
+	
 	//2D Array to hold information on each type of node for search within Current DDG
 	private ArrayList <tupleElement> errorList = new ArrayList<tupleElement>();
 	private ArrayList <tupleElement> dataList = new ArrayList<tupleElement>();
@@ -174,48 +178,52 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private ArrayList <tupleElement> urlList = new ArrayList<tupleElement>();
 	private ArrayList <tupleElement> operationList = new ArrayList<tupleElement>();
 	private ArrayList <tupleElement> allList = new ArrayList<tupleElement>();
-	
-	//An element holding the name, type, row and color of node
+
+	/**
+	 * An element holding the name, type, row and color of node
+	 */
 	class tupleElement{
 	  private final String name, type;
+	  private final int id;
 	  private final Color color;
 
-	  public tupleElement(String name, String type){
-	    this.name = name;
+	  public tupleElement(String type, String name, int id){
 	    this.type = type;
-	    
+	    this.name = name;
+		this.id = id;
+
 	    //sets the color of the search item
 	    switch(type){
-	    	case "Exception": this.color = new Color(209, 114, 110); 
+	    	case "Exception": this.color = new Color(209, 114, 110);
 	    					  break;
-	    	
+
 	    	case "Data":
-	    	case "Snapshot": this.color = new Color(175, 184, 233); 
+	    	case "Snapshot": this.color = new Color(175, 184, 233);
 						 	 break;
 
-	    	case "URL":	 this.color = new Color(255, 204, 229); 
-						 break;
-					
-	    	case "File": this.color = new Color(255, 204, 153); 
+	    	case "URL":	 this.color = new Color(255, 204, 229);
 						 break;
 
-	    	case "Operation": this.color = new Color(255, 255, 98); 
+	    	case "File": this.color = new Color(255, 204, 153);
+						 break;
+
+	    	case "Operation": this.color = new Color(255, 255, 98);
 							  break;
 
-	    	case "Binding": this.color = new Color(255, 254, 231); 
+	    	case "Binding": this.color = new Color(255, 254, 231);
 			  				break;
 
-	    	case "Start": 
-	    	case "Finish": this.color = new Color(175, 217, 123); 
+	    	case "Start":
+	    	case "Finish": this.color = new Color(175, 217, 123);
 	    				   break;
-	    				  
+
 	    	case "Step": this.color = new Color(176, 226, 255);
 	    				 break;
-	    				 
+
 			default: this.color = Color.WHITE;
 					 break;
 	    }
-	    
+
 	  }
 	  
 	  String getName(){
@@ -225,19 +233,33 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return type;
 	  }
 	  Color getColor(){
-	      return color;
+	    return color;
 	  }
-	  
+
 	  //updates the focus on the DDGExplorer's graph
 	  void updateNodeFocus(){
 		  try{
-			  focusOn(name);
+			//if a search result was previously selected, then remove highlighting from node
+			if(prevNodeHighlighted)
+				getNode(prevNodeID).setHighlighted(false);
+			
+			//get selected search result's node and highlight it
+			NodeItem item = getNode(id);
+			item.setHighlighted(true);
+			
+			//bring node of graph into focus
+			focusOn(name);
+			
+			//keep track of highlighted node to remove highlighting in the future
+			prevNodeID = id;
+			prevNodeHighlighted = true;
 		  }
-		  //Some nodes do not appear on the graph, this message comes up when that node is in the list 
+		  
+		  //Some nodes do not appear on the graph, this message comes up when that node is in the list
 		  catch(Exception e){
 			  JOptionPane.showMessageDialog(ddgPanel, "Can't display node: " + name, "Error", JOptionPane.ERROR_MESSAGE);
 		  }
-	  }	  
+	  }
 	}
 
 	//returns associated error nodes in the search list
@@ -252,7 +274,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public ArrayList <tupleElement> getURLList(){
 		return urlList;
 	}
-	//returns associated file nodes in the search list	
+	//returns associated file nodes in the search list
 	public ArrayList <tupleElement> getFileList(){
 		return fileList;
 	}
@@ -263,7 +285,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	//returns all nodes in the search list
 	public ArrayList <tupleElement> getAllList(){
 		return allList;
-	}	
+	}
 
 	/**
 	 * Creates an object that builds a visual graph.  Creates a window in which
@@ -436,6 +458,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			layout(expandedRoot);
 		}
 		updateFocus(focusNode);
+		//System.out.println("Node name: " + nodeName + "\n" + "XStart: " + focusNode.getStartX() + " XEnd: " + focusNode.getEndX() + "\n" + "YStart: " + focusNode.getStartY() + " YEnd: " + focusNode.getEndY() + "\n");
 		repaint();
 	}
 
@@ -570,8 +593,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
 
-				tupleElement element = new tupleElement(name, type);
+				// hold individual node information
+				tupleElement element = new tupleElement(type, name, id);
 
+				// store each node with associated type
 				if(type.equals("Exception"))
 					errorList.add(element);
 				else if(type.equals("Data"))
@@ -582,7 +607,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					urlList.add(element);
 				else if(type.equals("Operation"))
 					operationList.add(element);
-				
+
+				// keep track of all nodes in DDG
 				allList.add(element);
 				return rowNum;
 			}
@@ -734,6 +760,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		//d.addControlListener(pinClickControl);
 		display.addPaintListener(new updateOverview(displayOverview));
 
+
 		//set up the display's overview
 		//(no drag, pan, or zoom control needed)
 		displayOverview.setVisualization(vis);
@@ -769,6 +796,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// map data values to colors using our provided palette
 		ColorAction fill = new ColorAction(GRAPH_NODES,
 				VisualItem.FILLCOLOR);
+		
+		// highlight node if selected from search results
+		fill.add("_highlight", ColorLib.rgb(193,253,51));
+		
 		fill.add(ExpressionParser.predicate("Type = 'Binding'"),
 				INTERPRETER_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Start'"),
@@ -798,10 +829,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
+		
 		// use black for node text
 		ColorAction text = new ColorAction(GRAPH_NODES,
 				VisualItem.TEXTCOLOR, ColorLib.gray(0));
-
+		// set text of highlighted node to black (or other color if you change your mind) 
+		text.add("_highlight", ColorLib.rgb(0,0,0));
+		
 		ColorAction edgeColors = new ColorAction(GRAPH_EDGES,
 				VisualItem.STROKECOLOR, ColorLib.gray(0));
 		edgeColors.add(ExpressionParser.predicate("Type = 'CF'"),
@@ -1883,8 +1917,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return new Rectangle(x,  y,  width,  height);
 	}
 
-
-
 	/**
 	 * Keeps track of bounds of DDG so that Overview will accommodate changes
 	 * @author Nicole
@@ -1968,6 +2000,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			g.fillRoundRect(x, y, width, height, 10, 10);
 		}
 	}
+
 
 	/**
 	 * Listen for clicks or drags in the overview, move
