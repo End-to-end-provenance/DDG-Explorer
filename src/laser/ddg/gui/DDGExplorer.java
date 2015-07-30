@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +26,7 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -36,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
@@ -56,46 +60,47 @@ import laser.ddg.query.ResultsQuery;
 import laser.ddg.visualizer.DDGPanel;
 import laser.ddg.visualizer.ErrorLog;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
+import laser.ddg.visualizer.DDGSearchGUI;
 
 /**
- * Class with a main program that allows the user to view DDGs previously stored in 
+ * Class with a main program that allows the user to view DDGs previously stored in
  * a Jena database.  The user selects which execution of which process to see a DDG of.
- * 
+ *
  * @author Barbara Lerner
  * @version Jul 25, 2012
  *
  */
 public class DDGExplorer extends JPanel implements QueryListener {
 	private static final Color MENU_COLOR = new Color(171,171,171);
-	
+
 	// An area where messages could be displayed.
 	private ErrorLog log = ErrorLog.getInstance();
-	
+
 	// The process that the user selected.
 	private String selectedProcessName;
-	
+
 	// The timestamp for the DDG that the user selected.
 	private String selectedTimestamp;
-	
+
 	// The object that writes DDGs to the Jena database
 	private static DBWriter jenaWriter = JenaWriter.getInstance();
 
 	// The object that loads the DDG from a Jena database
 	private static JenaLoader jenaLoader = JenaLoader.getInstance();
-	
+
 	private static JFrame frame;
-	
+
 	private static JTabbedPane tabbed;
-	
+
 	private DBBrowser dbBrowser;
-	
+
 	//preferences on window size
 	private static Hashtable<String,String> preferences = new Hashtable<String, String>();
 	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY + "prefs.txt");
 
 	// Color of a tab label when the tab is selected.
 	private static final Color SELECTED_TAB_COLOR = Color.GREEN;
-	
+
 	public static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
 
 	/**
@@ -106,20 +111,20 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		try {
 			loadPreferences();
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(DDGExplorer.this, 
-					"Unable to load preferences: " + e1.getMessage(), 
+			JOptionPane.showMessageDialog(DDGExplorer.this,
+					"Unable to load preferences: " + e1.getMessage(),
 					"Error loading preferences", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		LanguageConfigurator.addLanguageBuilder("R", "laser.ddg.r.RDDGBuilder");
 		LanguageConfigurator.addParser("R", "laser.ddg.r.RParser");
 		LanguageConfigurator.addLanguageBuilder("Little-JIL", "laser.juliette.ddgbuilder.DDGTextBuilder");
-		
+
 		// DON'T DELETE THIS:  Sample of how to load a query using reflection
 //        try {
 //			ClassLoader classLoader = getClass().getClassLoader();
 //			Class queryClass = classLoader.loadClass("laser.juliette.ddg.gui.QDerivationQuery");
-//			queryObj = 
+//			queryObj =
 //			        (Query) queryClass.newInstance();
 //		} catch (InstantiationException e1) {
 //			// TODO Auto-generated catch block
@@ -141,8 +146,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					loadFile();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the file: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the file: " + e.getMessage(),
 							"Error loading file", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -158,8 +163,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					loadFromDB();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the DDG: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the DDG: " + e.getMessage(),
 							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -175,8 +180,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					compareRScripts();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to compare R scripts: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to compare R scripts: " + e.getMessage(),
 							"Error comparing R scripts", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -195,13 +200,13 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					query.setFrameReferences(frame, tabbed);
 					query.performQuery(jenaLoader, null, null, DDGExplorer.this);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to find data files: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to find data files: " + e.getMessage(),
 							"Error finding data files", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		// Create a button to allow the user to manage the database
 				JButton manageButton = new JButton("Manage Database");
 				manageButton.addActionListener(new ActionListener() {
@@ -211,8 +216,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 						try {
 							manageDB();
 						} catch (Exception e) {
-							JOptionPane.showMessageDialog(DDGExplorer.this, 
-									"Unable to manage the database: " + e.getMessage(), 
+							JOptionPane.showMessageDialog(DDGExplorer.this,
+									"Unable to manage the database: " + e.getMessage(),
 									"Error managing the database", JOptionPane.ERROR_MESSAGE);
 						}
 					}
@@ -231,14 +236,14 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		JScrollPane logScrollPane = new JScrollPane(log);
 		add(logScrollPane, BorderLayout.CENTER);
 	}
-	
-	
-	
-	
+
+
+
+
 	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setBackground(MENU_COLOR);
-		
+
 		//allow the user to load a DDG from a text file
 		JMenuItem openFile = new JMenuItem("Open from File");
 		openFile.addActionListener(new ActionListener(){
@@ -247,8 +252,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					loadFile();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the file: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the file: " + e.getMessage(),
 							"Error loading file", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -261,17 +266,17 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					loadFromDB();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the DDG: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the DDG: " + e.getMessage(),
 							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		//option to save to DB- for DDG tabs only
 		JMenuItem saveDB = new JMenuItem("Save to Database");
 		saveDB.setEnabled(false);
-		
+
 		//allow the user to compare two R scripts
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new ActionListener() {
@@ -280,8 +285,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					compareRScripts();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to compare R scripts: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to compare R scripts: " + e.getMessage(),
 							"Error comparing R scripts", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -297,8 +302,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					query.setFrameReferences(frame, tabbed);
 					query.performQuery(jenaLoader, null, null, DDGExplorer.this);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to find data files: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to find data files: " + e.getMessage(),
 							"Error finding data files", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -311,13 +316,13 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					manageDB();
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to manage the database: " + e.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to manage the database: " + e.getMessage(),
 							"Error managing the database", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
 		fileMenu.add(saveDB);
@@ -327,7 +332,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		fileMenu.add(manageDB);
 		return fileMenu;
 	}
-	
+
 	/**
 	 * Creates the window that allows the user to compare R scripts used
 	 * to create 2 different DDGs.
@@ -336,13 +341,13 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		JPanel diffPanel = new DiffTab(frame, jenaLoader);
 		/*diffFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		diffFrame.setSize(800,600);
-		DialogUtilities.centerWindow(diffFrame, frame);	*/	
+		DialogUtilities.centerWindow(diffFrame, frame);	*/
 		//new tab!
 		tabbed.addTab("Comparing Scripts", diffPanel);
 		int tabNum = tabbed.getTabCount()-1;
 		tabbed.setTabComponentAt(tabNum, new TabComp(tabbed, diffPanel));
 		tabbed.setSelectedIndex(tabNum);
-		
+
 	}
 
 	/**
@@ -352,7 +357,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	private void loadFromDB() {
 		final JDialog loadFromDBFrame = new JDialog(frame, "Open from Database", true);
 		loadFromDBFrame.setLocationRelativeTo(frame);
-		
+
 		// Create the buttons used to pick an action
 		final JButton openButton = new JButton("Open");
 		openButton.addActionListener(new ActionListener() {
@@ -366,8 +371,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					loadFromDBFrame.dispose();
 					loadDDGFromDB();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the DDG: " + e1.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the DDG: " + e1.getMessage(),
 							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -382,7 +387,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				loadFromDBFrame.dispose();
 			}
 		});
-		
+
 		// Build the GUI layout
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		Border padding = BorderFactory.createEmptyBorder(0, 8, 8, 8);
@@ -397,20 +402,20 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			public void scriptSelected(String script) {
 				selectedProcessName = script;
 			}
-			
+
 			@Override
 			public void timestampSelected(String timestamp) {
 				selectedTimestamp = timestamp;
 				openButton.setEnabled(true);
 			}
 		});
-		
+
 		loadFromDBFrame.add(dbBrowser, BorderLayout.CENTER);
 		loadFromDBFrame.add(buttonPanel, BorderLayout.SOUTH);
 		loadFromDBFrame.pack();
 		loadFromDBFrame.setVisible(true);
 	}
-	
+
 	/**
 	 * Displays a window that allows the user load and removed DDGs, and
 	 * show Values. On return, the window has been disposed.
@@ -418,7 +423,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	private void manageDB() {
 		final JDialog loadFromDBFrame = new JDialog(frame, "Manage Database", true);
 		loadFromDBFrame.setLocationRelativeTo(frame);
-		
+
 		// Create the buttons used to pick an action
 		final JButton deleteAllButton = new JButton("Delete all");
 		final JButton deleteOneButton = new JButton("Delete DDG");
@@ -437,7 +442,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			public void actionPerformed(ActionEvent e) {
 				loadFromDBFrame.dispose();
 			}
-			
+
 		});
 
 		openButton.addActionListener(new ActionListener() {
@@ -452,14 +457,14 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					loadFromDBFrame.dispose();
 					loadDDGFromDB();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to load the DDG: " + e1.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to load the DDG: " + e1.getMessage(),
 							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 
 		});
-		
+
 		derivationQueryButton.addActionListener(new ActionListener() {
 			/**
 			 * Loads the portion of a DDG that shows how a data value has been computed
@@ -472,13 +477,13 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					derivationQuery.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, DDGExplorer.this);
 					derivationQuery.addQueryListener(DDGExplorer.this);
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to perform the query: " + e1.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to perform the query: " + e1.getMessage(),
 							"Error performing query", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		computedFromQueryButton.addActionListener(new ActionListener() {
 			/**
 			 * Loads the portion of a DDG that shows what has been computed from a data value.
@@ -491,24 +496,24 @@ public class DDGExplorer extends JPanel implements QueryListener {
 					computedFromQuery.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, DDGExplorer.this);
 					computedFromQuery.addQueryListener(DDGExplorer.this);
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(DDGExplorer.this, 
-							"Unable to perform the query: " + e1.getMessage(), 
+					JOptionPane.showMessageDialog(DDGExplorer.this,
+							"Unable to perform the query: " + e1.getMessage(),
 							"Error performing query", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		
+
 		deleteOneButton.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(loadFromDBFrame, 
+				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
 						"Are you sure that you want to delete this DDG permanently from the database?") == JOptionPane.YES_OPTION) {
 					try {
 						deleteDDG(selectedProcessName, selectedTimestamp);
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(DDGExplorer.this, 
-								"Unable to delete the DDG: " + e1.getMessage(), 
+						JOptionPane.showMessageDialog(DDGExplorer.this,
+								"Unable to delete the DDG: " + e1.getMessage(),
 								"Error deleting DDG", JOptionPane.ERROR_MESSAGE);
 					}
 					// loadFromDBFrame.dispose();
@@ -522,18 +527,18 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			}
 
 		});
-		
+
 		deleteAllButton.addActionListener (new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(loadFromDBFrame, 
+				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
 						"Are you sure that you want to delete *ALL* DDGs with this name permanently from the database?") == JOptionPane.YES_OPTION) {
 					try {
 						deleteAll(dbBrowser.getDisplayedTimestamps());
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(DDGExplorer.this, 
-								"Unable to delete all DDGs: " + e1.getMessage(), 
+						JOptionPane.showMessageDialog(DDGExplorer.this,
+								"Unable to delete all DDGs: " + e1.getMessage(),
 								"Error deleting DDGs", JOptionPane.ERROR_MESSAGE);
 					}
 					// loadFromDBFrame.dispose();
@@ -542,7 +547,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				}
 			}
 		});
-		
+
 		// Build the GUI layout
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
@@ -565,7 +570,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				selectedProcessName = script;
 				deleteAllButton.setEnabled(true);
 			}
-			
+
 			@Override
 			public void timestampSelected(String timestamp) {
 				selectedTimestamp = timestamp;
@@ -576,12 +581,12 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				computedFromQueryButton.setEnabled(true);
 			}
 		});
-		
+
 		JPanel selectionPanel = new JPanel();
 		selectionPanel.setLayout(new BoxLayout (selectionPanel, BoxLayout.X_AXIS));
 		selectionPanel.add(dbBrowser);
 		selectionPanel.add(buttonPanel);
-		
+
 		loadFromDBFrame.add(selectionPanel);
 		loadFromDBFrame.setMinimumSize(new Dimension(800, 400));
 		loadFromDBFrame.setVisible(true);
@@ -593,7 +598,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	private void loadDDGFromDB() {
 		loadDDGFromDB(selectedProcessName, selectedTimestamp);
 	}
-	
+
 	/**
 	 * Loads a ddg from the database and creates the visual graph
 	 * @param processName the name of the process executed
@@ -601,7 +606,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	 * @return the object that builds the visual graph
 	 */
 	public static PrefuseGraphBuilder loadDDGFromDB (String processName, String timestamp) {
-		final ProvenanceData provData = new ProvenanceData(processName); 
+		final ProvenanceData provData = new ProvenanceData(processName);
 		final PrefuseGraphBuilder graphBuilder = new PrefuseGraphBuilder(false, jenaWriter);
 		graphBuilder.setProvData(provData);
 		graphBuilder.setTitle(processName, timestamp);
@@ -617,7 +622,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	public void queryFinished(String name, JComponent panel) {
 		addTab(name, panel);
 	}
-	
+
 	/**
 	 * Delete all the DDGs in the database for the selected process name.
 	 * @param listModel all of the timestamps associated with the selected process
@@ -627,11 +632,11 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			deleteDDG(selectedProcessName, timestamp);
 		}
 	}
-	
+
 	/**
 	 * Delete the selected DDG from the database.
-	 * @param timestamp 
-	 * @param processName 
+	 * @param timestamp
+	 * @param processName
 	 */
 	private void deleteDDG(String processName, String timestamp) {
 		try {
@@ -641,7 +646,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		}
 		jenaLoader.deleteDDG(processName, timestamp);
 	}
-	
+
 	/**
 	 * Loads a text file containing a ddg
 	 * @param fileChooser the file chooser object
@@ -655,9 +660,9 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			builder.processStarted(selectedFileName, null);
 			Parser parser = new Parser(selectedFile, builder);
 			parser.addNodesAndEdges();
-			
+
 			//new tab!
-			addTab(builder.getPanel().getName(), builder.getPanel());				
+			addTab(builder.getPanel().getName(), builder.getPanel());
 		}
 	}
 
@@ -670,12 +675,12 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		tabbed.setTabComponentAt(tabNum, new TabComp(tabbed, name));
 		tabbed.setSelectedIndex(tabNum);
 	}
-	
+
 	/**
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event dispatch thread.
 	 */
-	private static void createAndShowGUI() {		
+	private static void createAndShowGUI() {
 		String title;
 		Properties props = new Properties();
 
@@ -698,7 +703,10 @@ public class DDGExplorer extends JPanel implements QueryListener {
 
 		// Add content to the window.
 		final DDGExplorer explorer = new DDGExplorer();
-		
+
+		//Add search bar to top of DDG Explorer
+		frame.add(new SetupSearch(explorer), BorderLayout.NORTH);
+
 		//add tabbed pane
 //		UIManager.put("TabbedPane.selected",Color.YELLOW);
 //		UIManager.put("TabbedPane.tabAreaBackground",
@@ -712,13 +720,13 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				}
 				return super.getBackgroundAt(index);
 			}
-			
+
 		};
 		tabbed.setOpaque(true);
 		tabbed.addChangeListener(new setupMenu(explorer));
-		tabbed.addTab(" ", null, explorer, "Home Tab");	
+		tabbed.addTab(" ", null, explorer, "Home Tab");
 		frame.add(tabbed, BorderLayout.CENTER);
-		
+
 		//add log to bottom of frame
 		JLabel logLabel = new JLabel("Error Log");
 		JScrollPane logScrollPane = new JScrollPane(ErrorLog.getInstance());
@@ -734,8 +742,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		frame.add(logPanel, BorderLayout.SOUTH);
 		//.
 		//Nikki is the best programmer! ~ Ariel & Bruce
-		
-		
+
+
 		//edit preferences when frame is resized
 		frame.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -746,8 +754,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 				try {
 					savePreferences();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(explorer, 
-							"Unable to save preferences: " + e1.getMessage(), 
+					JOptionPane.showMessageDialog(explorer,
+							"Unable to save preferences: " + e1.getMessage(),
 							"Error saving preferences", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -765,16 +773,16 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
-	
+
 	/**
-	 * Loads user preferences from a file or sets to the default if 
+	 * Loads user preferences from a file or sets to the default if
 	 * there is no preference file.
 	 */
 	private static void loadPreferences() throws Exception {
 		// Set default values
 		preferences.put("WindowWidth", "950");
 		preferences.put("WindowHeight", "700");
-		
+
 		if (PREFERENCE_FILE.exists()) {
 			BufferedReader in = null;
 			try {
@@ -796,7 +804,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Saves the current settings to a preference file.
 	 */
@@ -814,7 +822,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the main frame for the DDG Explorer application.  This allows other windows
 	 * to display relative to the main window
@@ -823,7 +831,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	public static JFrame mainFrame() {
 		return frame;
 	}
-	
+
 	/**
 	 * Returns the tabbed frame for the DDG Explorer application.  This allows other windows
 	 * to display onto the main window
@@ -832,21 +840,139 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	public static JTabbedPane tabbedPane() {
 		return tabbed;
 	}
+
 	
-	
+
+	 static class SetupSearch extends JPanel{
+			private JTextField searchField;
+			private JComboBox<String> optionsBox, databaseOptionsBox, ddgOptionsBox;
+			private String ddgOption;
+			
+			public SetupSearch(DDGExplorer mainFrame){
+				searchUI(mainFrame);
+			}
+			
+			//Do a search
+			public void DoSearch(DDGExplorer mainFrame){
+				DDGSearchGUI searchList;
+				DDGPanel panel = (DDGPanel)mainFrame.tabbed.getSelectedComponent();
+				PrefuseGraphBuilder build = panel.getBuilder();
+				
+				boolean isText; 
+				String searchFieldText = searchField.getText().toLowerCase();
+
+				//checks if information was entered into the search field
+				if(searchFieldText.isEmpty())	
+					isText = false;
+				else if(searchFieldText.length() < 6)
+					isText = true;
+				else if(searchFieldText.substring(0, 6).equals("search"))
+					isText = false;
+				else
+					isText = true;	
+				
+				//Gets which option was selected in the drop down
+				if(ddgOption.equals("Error"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getErrorList(), isText, searchFieldText);
+				else if(ddgOption.equals("Data"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getDataList(), isText, searchFieldText);
+				else if(ddgOption.equals("File"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getFileList(), isText, searchFieldText);
+				else if(ddgOption.equals("URL"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getURLList(), isText, searchFieldText);
+				else if(ddgOption.equals("Function"))
+					mainFrame.getCurrentDDGPanel().SearchList(build.getOperationList(), isText, searchFieldText);
+				else
+					mainFrame.getCurrentDDGPanel().SearchList(build.getAllList(), isText, searchFieldText);
+			}
+
+			private void searchUI(DDGExplorer mainFrame){
+				searchField = new JTextField("Search");
+				JButton advancedSearchButton = new JButton("Advanced Search");
+				
+				String[] options = {"Current DDG", "R Script", "Database"};
+				String[] databaseOptions = {"DDGs", "R Scripts"};
+				String[] ddgOptions = {"Error", "Data", "File", "URL", "Function", "All Options"};
+				
+				optionsBox = new JComboBox<>(options);
+				databaseOptionsBox = new JComboBox<>(databaseOptions);
+				ddgOptionsBox = new JComboBox<>(ddgOptions);
+
+				
+				ddgOption = ddgOptions[0];
+				
+				JLabel optionsDisplay = new JLabel(options[0]);
+				JLabel databaseOptionsDisplay = new JLabel(databaseOptions[0]);
+				JLabel ddgOptionsDisplay = new JLabel(ddgOptions[0]);
+
+				setLayout(new GridBagLayout());
+
+				GridBagConstraints preferences = new GridBagConstraints();
+				preferences.fill = GridBagConstraints.BOTH;
+
+				//Add options box
+				preferences.weightx = 0.0;
+				preferences.weighty = 0.0;
+				preferences.gridx = 0;
+				preferences.gridy = 0;
+				add(optionsBox, preferences);
+
+				//Add ddg search options box
+				preferences.gridx = 1;
+				preferences.gridy = 0;
+				add(ddgOptionsBox, preferences);
+				
+				//Add Search field box (adjusts in response to change in window size)
+				preferences.weightx = 0.5;
+				preferences.gridx = 2;
+				preferences.gridy = 0;
+				add(searchField, preferences);
+
+				//Add Advanced Search Button
+				preferences.weightx = 0.0;
+				preferences.gridx = 3;
+				preferences.gridy = 0;
+				add(advancedSearchButton, preferences);
+				
+				//Changes text in search field in response to the selected ddgOptions box 
+				ddgOptionsBox.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent select){
+						searchField.setText("Search for " + ddgOptionsBox.getSelectedItem().toString());
+						ddgOption = ddgOptionsBox.getSelectedItem().toString();
+					}
+				});				
+				
+				//Submit Search if the enter button is pressed in the search field
+				searchField.addActionListener(new ActionListener(){
+				    public void actionPerformed(ActionEvent e) {
+				    	DoSearch(mainFrame);
+				    }	
+				});
+				
+				//Submit Search if the advanced search button is pressed
+				advancedSearchButton.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						DoSearch(mainFrame);
+					}
+				});
+				
+			}
+	 }
+
 	 static class setupMenu implements ChangeListener{
 		 private JMenuBar menuBar;
 		 private JMenu fileMenu;
 
-		public setupMenu(DDGExplorer explorer) {		
+		public setupMenu(DDGExplorer explorer) {
 			fileMenu = explorer.createFileMenu();
-			
+
 			menuBar = new JMenuBar();
 			menuBar.setBackground(MENU_COLOR);
 			menuBar.add(explorer.createFileMenu());
 			frame.setJMenuBar(menuBar);
 		}
-		
+
 		@Override
 		public void stateChanged(ChangeEvent e) {
 			Component openTab = tabbed.getSelectedComponent();
@@ -859,7 +985,7 @@ public class DDGExplorer extends JPanel implements QueryListener {
 	        	frame.setJMenuBar(menuBar);
 	        }
 		}
-		
+
 	 }
 
 	/**
@@ -870,8 +996,8 @@ public class DDGExplorer extends JPanel implements QueryListener {
 		try {
 			createAndShowGUI();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, 
-					"Unable to start DDG Explorer: " + e.getMessage(), 
+			JOptionPane.showMessageDialog(null,
+					"Unable to start DDG Explorer: " + e.getMessage(),
 					"Error starting DDG Explorer", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -879,5 +1005,12 @@ public class DDGExplorer extends JPanel implements QueryListener {
 
 
 
-}
+	protected DDGPanel getCurrentDDGPanel() {
+		// TODO Auto-generated method stub
+		return (DDGPanel)tabbed.getSelectedComponent();
+	}
 
+
+
+
+}
