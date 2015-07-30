@@ -1,8 +1,6 @@
 package laser.ddg.visualizer;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Point;
@@ -22,17 +20,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.MouseInputListener;
-
-import com.sun.xml.internal.ws.api.Component;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
@@ -48,7 +37,6 @@ import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.Parser;
 import laser.ddg.visualizer.DDGDisplay.AutoPanAction;
 import laser.ddg.visualizer.DDGDisplay.PopupMenu;
-import laser.ddg.visualizer.DDGSearchGUI;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;

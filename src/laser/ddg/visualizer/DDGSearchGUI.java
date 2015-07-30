@@ -16,13 +16,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import prefuse.util.ColorLib;
 import laser.ddg.visualizer.PrefuseGraphBuilder.tupleElement;
 
 public class DDGSearchGUI extends JPanel{
 
-  JList searchList;
-  DefaultListModel model; 
+  JList <tupleElement> searchList;
+  DefaultListModel <tupleElement> model; 
 
   
   public DDGSearchGUI(ArrayList <tupleElement> nodesList, JSplitPane splitPane, JPanel ddgPanel){
@@ -35,11 +34,11 @@ public class DDGSearchGUI extends JPanel{
     	JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
     	
-    	model = new DefaultListModel();
+    	model = new DefaultListModel<tupleElement>();
     	for(tupleElement entry : nodesList)
     		model.addElement(entry);
     	
-    	searchList = new JList(model);
+    	searchList = new JList<tupleElement>(model);
         searchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         searchList.setCellRenderer(new NodeCellRenderer());
         searchList.setVisibleRowCount(-1);
