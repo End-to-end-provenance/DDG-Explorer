@@ -190,17 +190,15 @@ public class DDGPanel extends JPanel {
 						ddgOverview.setBounds(prevBounds.x, prevBounds.y, prevBounds.width, panelHeight-16);					
 					}
 				});	
-			//toolbarPanel to hold ddgMain, surrounded by space for the toolbar
-			JPanel toolbarPanel = new JPanel(new BorderLayout());
+
 				toolbar = new Toolbar((DDGDisplay)ddgDisplay);
-				toolbarPanel.add(ddgMain, BorderLayout.CENTER);
 		
 		//hold toolbarPanel and everything inside
 		setBackground(Color.WHITE);
 		add(toolbar, BorderLayout.NORTH);
 	   
 		//set the DDG on the right of JSplitPane and later the DDG Search Results on the Left
-	    splitPane.setRightComponent(toolbarPanel);		
+	    splitPane.setRightComponent(ddgMain);		
 	    
 	    
 	    add(splitPane, BorderLayout.CENTER);
