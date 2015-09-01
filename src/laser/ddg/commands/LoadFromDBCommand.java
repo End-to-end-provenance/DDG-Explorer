@@ -31,11 +31,6 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
 public class LoadFromDBCommand implements ActionListener {
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	
-	// The object that loads the DDG from a Jena database
-	private static final JenaLoader jenaLoader = JenaLoader.getInstance();
-	
-	private static final JenaWriter jenaWriter = JenaWriter.getInstance();
-
 	// The process that the user selected.
 	private String selectedProcessName;
 
@@ -87,6 +82,7 @@ public class LoadFromDBCommand implements ActionListener {
 		buttonPanel.add(openButton);
 		buttonPanel.add(cancelButton);
 
+		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGBrowser dbBrowser = new DDGBrowser(jenaLoader);
 		dbBrowser.addDBBrowserListener(new DBBrowserListener() {
 			@Override
@@ -115,11 +111,13 @@ public class LoadFromDBCommand implements ActionListener {
 	 */
 	public static PrefuseGraphBuilder loadDDGFromDB (String processName, String timestamp) {
 		final ProvenanceData provData = new ProvenanceData(processName);
+		final JenaWriter jenaWriter = JenaWriter.getInstance();
 		final PrefuseGraphBuilder graphBuilder = new PrefuseGraphBuilder(false, jenaWriter);
 		graphBuilder.setProvData(provData);
 		graphBuilder.setTitle(processName, timestamp);
 		provData.addProvenanceListener(graphBuilder);
 		provData.setQuery("Entire DDG");
+		JenaLoader jenaLoader = JenaLoader.getInstance();
 		jenaLoader.loadDDG(processName, timestamp, provData);
 		graphBuilder.createLegend(provData.getLanguage());
 		ddgExplorer.addTab(graphBuilder.getPanel().getName(), graphBuilder.getPanel());

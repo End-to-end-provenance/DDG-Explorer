@@ -21,14 +21,12 @@ import laser.ddg.persist.JenaLoader;
 public class CompareScriptsCommand implements ActionListener {
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	
-	// The object that loads the DDG from a Jena database
-	private static final JenaLoader jenaLoader = JenaLoader.getInstance();
-
 	/**
 	 * Creates the window that allows the user to compare R scripts used
 	 * to create 2 different DDGs.
 	 */
 	private static void execute() {
+		JenaLoader jenaLoader = JenaLoader.getInstance();
 		JPanel diffPanel = new DiffTab(ddgExplorer, jenaLoader);
 		/*diffFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		diffFrame.setSize(800,600);

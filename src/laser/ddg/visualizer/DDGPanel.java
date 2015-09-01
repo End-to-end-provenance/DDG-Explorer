@@ -145,6 +145,10 @@ public class DDGPanel extends JPanel {
 	 */
 	public DDGPanel() {
 		super(new BorderLayout());
+		
+		// TODO:  Need to check arrow preferences when creating a DDG Panel.
+		// 1.  Arrow direction
+		// 2.  Show legend or not.
 	}
 	
 	/**
@@ -270,120 +274,8 @@ public class DDGPanel extends JPanel {
 		}
 	}
 
-	/**
-	 * Saves the current settings to a preference file.
-	 */
-	private static void savePreferences() {
-		PrintWriter out = null;
-		try {
-			out = new PrintWriter(new FileWriter(PREFERENCE_FILE));
-			out.println("# DDG Explorer preferences");
-			for (String prefVar : preferences.keySet()) {
-				out.println(prefVar + " = " + preferences.get(prefVar));
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (out != null) {
-				out.close();
-			}
-		}
-	}
 	
-	/**
-	 * Create DDG Menu to be placed into the menuBar
-	 * @return JMenu DDG menu
-	 */
-	public JMenu createDDGMenu() {
-		final JMenu DDGMenu = new JMenu("DDG");
-		DDGMenu.setBackground(MENU_COLOR);
-		
-		JMenuItem attributesItem = new JMenuItem("Show attributes");
-		attributesItem.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (attributes == null) {
-					try {
-						attributes = provData.getAttributes();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(DDGMenu, 
-								"Unable to get the attributes: " + e1.getMessage(), 
-								"Error getting the attributes", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				createAttributeFrame(attributes);
-			}
-		});
-		DDGMenu.add(attributesItem);
-		
-		JMenuItem showScriptItem = new JMenuItem("Show R script");
-		showScriptItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String scriptFileName = provData.getScript();
-				FileViewer fileViewer = new FileViewer(scriptFileName, "");
-				fileViewer.displayFile();
-			}
-			
-		});
-		DDGMenu.add(showScriptItem);
-		
-		DDGMenu.add(createPreferencesMenu());	//preferences submenu
-		
-		return DDGMenu;
-	}
 	
-	/**
-	 * Creates the menu with user preferences
-	 * @return 
-	 */
-	public JMenu createPreferencesMenu() {
-		loadPreferences();
-		
-		JMenu prefMenu = new JMenu("Preferences");
-		prefMenu.setBackground(MENU_COLOR);
-		final JCheckBoxMenuItem inToOutMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
-				preferences.get("ArrowDirection").toLowerCase().equals("intoout"));
-		setArrowDirection(inToOutMenuItem);
-		inToOutMenuItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				setArrowDirection(inToOutMenuItem);
-				vis.repaint();
-				savePreferences();
-			}
-
-
-		});
-
-		prefMenu.add(inToOutMenuItem);
-		
-		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", preferences.get("ShowLegend").toLowerCase().equals("true"));
-		
-		showLegendMenuItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (showLegendMenuItem.isSelected()) {
-					ddgMain.add(legendBox, BorderLayout.WEST);
-					preferences.put("ShowLegend", "true");
-					savePreferences();
-					ddgMain.validate();
-				}
-				else {
-					removeLegend();
-				}
-			}
-
-			
-		});
-		prefMenu.add(showLegendMenuItem);
-		
-		return prefMenu;
-	}
 	
 	/**
 	 * save this DDG to the Database
@@ -408,123 +300,6 @@ public class DDGPanel extends JPanel {
 		}
 	}
 	
-	/**
-	 * Create a new MenuBar for this DDG
-	 * @param fileMenu the file menu used for all tabs
-	 * @return a full MenuBar with File, DDG, and Help.
-	 */
-	public JMenuBar createMenuBarDDG(JMenu fileMenu){
-		JMenuBar DDGbar = new JMenuBar();
-		DDGbar.setBackground(MENU_COLOR);
-		
-		//update Save to Database in file menu
-		JMenuItem save = new JMenuItem("Save to Database");
-		save.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				//ErrorLog.showErrMsg("Calling persistDDG\n");
-				//System.out.println("provData in DDGPanel = " + provData.toString());
-				dbWriter.persistDDG (provData);
-			}
-		});
-		save.setEnabled(!alreadyInDB());
-		fileMenu.remove(2); //replace disabled Save with working Save
-		fileMenu.insert(save, 2);
-		
-		//add all three menus to the menu bar
-		DDGbar.add(fileMenu);
-		DDGbar.add(createDDGMenu());
-		DDGbar.add(createHelpMenu());
-		return DDGbar;
-	}
-	
-	/**
-	 * Create help menu
-	 * @return 
-	 */
-	public JMenu createHelpMenu() {
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.setBackground(MENU_COLOR);
-		
-		JMenuItem commandOverviewItem = new JMenuItem("Command overview");
-		commandOverviewItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				createCommandOverviewFrame();
-			}
-
-		});
-		helpMenu.add(commandOverviewItem);
-		return helpMenu;
-	}
-	
-	/**
-	 * Create a pop-up window with command summary
-	 */
-	private void createCommandOverviewFrame() {
-		StringBuffer help = new StringBuffer();
-		
-		help.append("To collapse a section of the graph\n");
-		help.append("   Left click on a green start or finish node.\n\n");
-
-		help.append("To expand a collapsed node\n");
-		help.append("   Left click on a light blue node.\n\n");
-
-		help.append("To move a node\n");
-		help.append("   Drag the node\n\n");
-
-		help.append("To scroll to a different portion of the DDG\n");
-		help.append("   Drag the overview box OR\n");
-		help.append("   Drag on the background\n\n");
-
-		help.append("To re-center the DDG\n");
-		help.append("   Click the Refocus button\n\n");
-
-		help.append("To change the magnification\n");
-		help.append("   Use the slider at the top of the window\n\n");
-
-		JOptionPane.showMessageDialog(this, help.toString(), "Command Overview", JOptionPane.PLAIN_MESSAGE);
-	}
-
-	/**
-	 * Creates a window to display all the attributes of the ddg
-	 * @param attributes2 the list of attibutes
-	 */
-	private void createAttributeFrame(Attributes attributes2){
-		JFrame f = new JFrame("Attribute List");
-		f.setSize(new Dimension(200, 200));
-		JFrame.setDefaultLookAndFeelDecorated(true);
-
-		// make a new JTextArea appear will all the attribute values
-		JTextArea attrText = new JTextArea(15, 40);
-		attrText.setText(createAttributeText(provData.getLanguage(), attributes2));
-		attrText.setEditable(false);
-		attrText.setLineWrap(true);
-		
-		f.add(attrText);
-		f.pack();
-		f.setVisible(true);
-	}
-
-	/**
-	 * Creates the text to display to the user showing attribute names and values
-	 * @param language the language to add the legend for
-	 * @param attrs the attributes to turn into text
-	 * @return the text to display to the user or null there is an error creating the text
-	 */
-	public static String createAttributeText(String language, Attributes attrs) {
-		Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(language);
-		try {
-			String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attrs);
-			return text;
-		} catch (Exception e) {
-			System.out.println("Can't create attribute text");
-			e.printStackTrace();
-			return null;
-		}
-	}
-
 	/**
 	 * Creates the panel that holds the main attributes
 	 * @return the panel
@@ -733,11 +508,8 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Remove the legend from the display
 	 */
-	private void removeLegend() {
+	public void removeLegend() {
 		ddgMain.remove(legendBox);
-		showLegendMenuItem.setSelected(false);
-		preferences.put("ShowLegend", "false");
-		savePreferences();
 		ddgMain.validate();
 	}
 
@@ -747,6 +519,19 @@ public class DDGPanel extends JPanel {
 
 	public SearchIndex getSearchIndex() {
 		return searchIndex;
+	}
+
+	public ProvenanceData getProvData() {
+		return provData;
+	}
+
+	public void setArrowDirectionDown() {
+		vis.setRenderer(prefuse.Constants.EDGE_ARROW_REVERSE);
+	}
+
+	public void addLegend() {
+		ddgMain.add(legendBox, BorderLayout.WEST);  
+		ddgMain.validate();	
 	}
 
 

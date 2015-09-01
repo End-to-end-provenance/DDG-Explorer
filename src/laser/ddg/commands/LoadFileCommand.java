@@ -24,13 +24,13 @@ public class LoadFileCommand implements ActionListener {
 	
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-	private static final JenaWriter jenaWriter = JenaWriter.getInstance();
 
 	/**
 	 * Loads a text file containing a ddg
 	 * @throws Exception thrown if the file cannot be loaded
 	 */
 	public static void execute() throws Exception {
+		JenaWriter jenaWriter = JenaWriter.getInstance();
 		if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
 			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 			File selectedFile = FILE_CHOOSER.getSelectedFile();

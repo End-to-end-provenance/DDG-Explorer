@@ -31,9 +31,6 @@ import laser.ddg.query.ResultsQuery;
 public class ManageDatabaseCommand implements ActionListener {
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	
-	// The object that loads the DDG from a Jena database
-	private static final JenaLoader jenaLoader = JenaLoader.getInstance();
-
 	// The process that the user selected.
 	private String selectedProcessName;
 
@@ -47,6 +44,7 @@ public class ManageDatabaseCommand implements ActionListener {
 	private void execute() {
 		final JDialog loadFromDBFrame = new JDialog(ddgExplorer, "Manage Database", true);
 		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
+		final JenaLoader jenaLoader = JenaLoader.getInstance();
 		final DDGBrowser dbBrowser = new DDGBrowser(jenaLoader);
 
 		// Create the buttons used to pick an action
@@ -132,7 +130,7 @@ public class ManageDatabaseCommand implements ActionListener {
 				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
 						"Are you sure that you want to delete this DDG permanently from the database?") == JOptionPane.YES_OPTION) {
 					try {
-						deleteDDG(selectedProcessName, selectedTimestamp);
+						deleteDDG(jenaLoader, selectedProcessName, selectedTimestamp);
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(ddgExplorer,
 								"Unable to delete the DDG: " + e1.getMessage(),
@@ -157,7 +155,7 @@ public class ManageDatabaseCommand implements ActionListener {
 				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
 						"Are you sure that you want to delete *ALL* DDGs with this name permanently from the database?") == JOptionPane.YES_OPTION) {
 					try {
-						deleteAll(dbBrowser.getDisplayedTimestamps());
+						deleteAll(jenaLoader, dbBrowser.getDisplayedTimestamps());
 					} catch (Exception e1) {
 						JOptionPane.showMessageDialog(ddgExplorer,
 								"Unable to delete all DDGs: " + e1.getMessage(),
@@ -217,9 +215,9 @@ public class ManageDatabaseCommand implements ActionListener {
 	 * Delete all the DDGs in the database for the selected process name.
 	 * @param listModel all of the timestamps associated with the selected process
 	 */
-	private void deleteAll(List<String> timestamps) {
+	private void deleteAll(JenaLoader jenaLoader, List<String> timestamps) {
 		for (String timestamp : timestamps) {
-			deleteDDG(selectedProcessName, timestamp);
+			deleteDDG(jenaLoader, selectedProcessName, timestamp);
 		}
 	}
 
@@ -228,7 +226,7 @@ public class ManageDatabaseCommand implements ActionListener {
 	 * @param timestamp
 	 * @param processName
 	 */
-	private static void deleteDDG(String processName, String timestamp) {
+	private static void deleteDDG(JenaLoader jenaLoader, String processName, String timestamp) {
 		try {
 			FileUtil.deleteFiles (processName, timestamp);
 		} catch (IOException e) {

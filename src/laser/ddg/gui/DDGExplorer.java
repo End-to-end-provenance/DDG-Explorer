@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.BufferedReader;
@@ -18,6 +20,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -34,63 +37,58 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import laser.ddg.LanguageConfigurator;
+import laser.ddg.ProvenanceData;
+import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
-import laser.ddg.persist.DBWriter;
+import laser.ddg.commands.SaveToDBCommand;
+import laser.ddg.commands.SetArrowDirectionCommand;
+import laser.ddg.commands.ShowAttributesCommand;
+import laser.ddg.commands.ShowLegendMenuItem;
+import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.persist.FileUtil;
-import laser.ddg.persist.JenaLoader;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.query.QueryListener;
 import laser.ddg.visualizer.DDGPanel;
 import laser.ddg.visualizer.ErrorLog;
 
 /**
- * Class with a main program that allows the user to view DDGs previously stored in
- * a Jena database.  The user selects which execution of which process to see a DDG of.
- *
+ * Class with a main program that allows the user to view DDGs previously stored
+ * in a Jena database. The user selects which execution of which process to see
+ * a DDG of.
+ * 
  * @author Barbara Lerner
  * @version Jul 25, 2012
- *
+ * 
  */
 public class DDGExplorer extends JFrame implements QueryListener {
-	private static final Color MENU_COLOR = new Color(171,171,171);
+	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
-	// An area where messages could be displayed.
-	private ErrorLog log = ErrorLog.getInstance();
+	// The tabbed pane that holds the Home panel and the ddg panels.
+	private static JTabbedPane tabbed;
 
-	// The process that the user selected.
-	private String selectedProcessName;
-
-	// The timestamp for the DDG that the user selected.
-	private String selectedTimestamp;
-
-	// The object that writes DDGs to the Jena database
-	private static DBWriter jenaWriter = JenaWriter.getInstance();
-
-	// The object that loads the DDG from a Jena database
-	private static JenaLoader jenaLoader = JenaLoader.getInstance();
-
-	private static JFrame frame;
-
-	static JTabbedPane tabbed;
-
-	private DBBrowser dbBrowser;
-
-	//preferences on window size
-	private static Hashtable<String,String> preferences = new Hashtable<String, String>();
-	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY + "prefs.txt");
+	// preferences on window size
+	private static Hashtable<String, String> preferences = new Hashtable<String, String>();
+	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY
+			+ "prefs.txt");
 
 	// Color of a tab label when the tab is selected.
 	private static final Color SELECTED_TAB_COLOR = Color.GREEN;
 
 	// The singleton
 	private static DDGExplorer instance;
-	
+
+	private static JMenuItem saveDB;
+
+	private JMenuItem attributesItem;
+
+	private JMenuItem showScriptItem;
+
 	/**
-	 * Creates the contents of the main GUI window.
+	 * Initializes the DDG Explorer by loading the preference file and
+	 * loading information about known languages.
 	 */
 	private DDGExplorer() {
 		try {
@@ -103,27 +101,32 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		LanguageConfigurator.addLanguageBuilder("R", "laser.ddg.r.RDDGBuilder");
 		LanguageConfigurator.addParser("R", "laser.ddg.r.RParser");
-		LanguageConfigurator.addLanguageBuilder("Little-JIL", "laser.juliette.ddgbuilder.DDGTextBuilder");
+		LanguageConfigurator.addLanguageBuilder("Little-JIL",
+				"laser.juliette.ddgbuilder.DDGTextBuilder");
 
-		// DON'T DELETE THIS:  Sample of how to load a query using reflection
-//        try {
-//			ClassLoader classLoader = getClass().getClassLoader();
-//			Class queryClass = classLoader.loadClass("laser.juliette.ddg.gui.QDerivationQuery");
-//			queryObj =
-//			        (Query) queryClass.newInstance();
-//		} catch (InstantiationException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (IllegalAccessException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// DON'T DELETE THIS: Sample of how to load a query using reflection
+		// try {
+		// ClassLoader classLoader = getClass().getClassLoader();
+		// Class queryClass =
+		// classLoader.loadClass("laser.juliette.ddg.gui.QDerivationQuery");
+		// queryObj =
+		// (Query) queryClass.newInstance();
+		// } catch (InstantiationException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// } catch (IllegalAccessException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// } catch (ClassNotFoundException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 
 	}
 
+	/**
+	 * @return the singleton instance
+	 */
 	public static DDGExplorer getInstance() {
 		if (instance == null) {
 			instance = new DDGExplorer();
@@ -131,34 +134,31 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		return instance;
 	}
 
-
-
-
-	private JMenu createFileMenu() {
+	private static JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setBackground(MENU_COLOR);
 
-		//allow the user to load a DDG from a text file
+		// allow the user to load a DDG from a text file
 		JMenuItem openFile = new JMenuItem("Open from File");
 		openFile.addActionListener(new LoadFileCommand());
-		
-		//allow the user to load a DDG from the database
+
+		// allow the user to load a DDG from the database
 		JMenuItem openDB = new JMenuItem("Open from Database");
 		openDB.addActionListener(new LoadFromDBCommand());
 
-		//option to save to DB- for DDG tabs only
-		JMenuItem saveDB = new JMenuItem("Save to Database");
+		saveDB = new JMenuItem("Save to Database");
+		saveDB.addActionListener(new SaveToDBCommand());
 		saveDB.setEnabled(false);
 
-		//allow the user to compare two R scripts
+		// allow the user to compare two R scripts
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
-		
-		//allow the user to look for a particular data file
+
+		// allow the user to look for a particular data file
 		JMenuItem findFiles = new JMenuItem("Find Data Files");
 		findFiles.addActionListener(new FindFilesCommand());
-		
-		//allow the user to manage the database
+
+		// allow the user to manage the database
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
 
@@ -172,62 +172,102 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		return fileMenu;
 	}
 
+	/**
+	 * Create DDG Menu to be placed into the menuBar
+	 * @return JMenu DDG menu
+	 */
+	public JMenu createDDGMenu() {
+		final JMenu DDGMenu = new JMenu("DDG");
+		DDGMenu.setBackground(MENU_COLOR);
+		
+		attributesItem = new JMenuItem("Show attributes");
+		attributesItem.addActionListener(new ShowAttributesCommand());
+		DDGMenu.add(attributesItem);
+		
+		showScriptItem = new JMenuItem("Show R script");
+		showScriptItem.addActionListener(new ShowScriptCommand());
+		DDGMenu.add(showScriptItem);
+		
+		DDGMenu.add(createPreferencesMenu());	//preferences submenu
+		
+		return DDGMenu;
+	}
 
-
-
+	/**
+	 * Creates the menu with user preferences
+	 * @return 
+	 */
+	public JMenu createPreferencesMenu() {
+		JMenu prefMenu = new JMenu("Preferences");
+		prefMenu.setBackground(MENU_COLOR);
+		
+		final JCheckBoxMenuItem inToOutMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
+				preferences.get("ArrowDirection").toLowerCase().equals("intoout"));
+		inToOutMenuItem.addActionListener(new SetArrowDirectionCommand());
+		prefMenu.add(inToOutMenuItem);
+		
+		JCheckBoxMenuItem showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
+				preferences.get("ShowLegend").toLowerCase().equals("true"));
+		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
+		prefMenu.add(showLegendMenuItem);
+		
+		return prefMenu;
+	}
 
 	@Override
 	public void queryFinished(String name, JComponent panel) {
 		addTab(name, panel);
 	}
 
-
-
-
-
-
+	/**
+	 * Adds a tab to the display and makes that tab current.
+	 * @param name the title for the tab
+	 * @param panel the component to display in the tab
+	 */
 	public void addTab(String name, JComponent panel) {
 		tabbed.addTab(name, panel);
-		int tabNum = tabbed.getTabCount()-1;
+		int tabNum = tabbed.getTabCount() - 1;
 		tabbed.setTabComponentAt(tabNum, new TabComp(tabbed, name));
 		tabbed.setSelectedIndex(tabNum);
 	}
 
 	/**
-	 * Create the GUI and show it. For thread safety, this method should be
-	 * invoked from the event dispatch thread.
+	 * Create the GUI and show it. 
 	 */
-	private static void createAndShowGUI() {
+	private void createAndShowGUI() {
 		String title;
 		Properties props = new Properties();
-
+		InputStream propResource = null;
 		try {
-			InputStream propResource = DDGExplorer.class.getResourceAsStream("/.properties");
+			propResource = DDGExplorer.class
+					.getResourceAsStream("/.properties");
 			if (propResource == null) {
 				title = "DDG Explorer";
-			}
-			else {
+			} else {
 				props.load(propResource);
 				title = "DDG Explorer v." + props.getProperty("version");
 			}
 		} catch (IOException e1) {
 			title = "DDG Explorer";
+		} finally {
+			if (propResource != null) {
+				try {
+					propResource.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		}
 
-		frame = new JFrame(title);
-		frame.setLayout(new BorderLayout());
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle(title);
+		setLayout(new BorderLayout());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Add content to the window.
-		final DDGExplorer explorer = new DDGExplorer();
+		// Add search bar to top of DDG Explorer
+		add(new SearchPanel(), BorderLayout.NORTH);
 
-		//Add search bar to top of DDG Explorer
-		frame.add(new SearchPanel(), BorderLayout.NORTH);
-
-		//add tabbed pane
-//		UIManager.put("TabbedPane.selected",Color.YELLOW);
-//		UIManager.put("TabbedPane.tabAreaBackground",
-//				Color.pink);
+		// add tabbed pane
 		tabbed = new JTabbedPane() {
 
 			@Override
@@ -240,60 +280,109 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		};
 		tabbed.setOpaque(true);
-		tabbed.addChangeListener(new setupMenu(explorer));
-		tabbed.addTab(" ", null, new HomePanel(), "Home Tab");
-		frame.add(tabbed, BorderLayout.CENTER);
+		
+		// Add menu bar
+		JMenuBar menuBar = createMenus();
+		setJMenuBar(menuBar);
 
-		//add log to bottom of frame
+		tabbed.addChangeListener(new ChangeListener () {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Component openTab = getCurrentDDGPanel();
+				if (openTab instanceof laser.ddg.visualizer.DDGPanel) {
+					enableDDGCommands();
+				} else {
+					disableDDGCommands();
+				}
+			}
+
+		});
+
+		tabbed.addTab(" ", null, new HomePanel(), "Home Tab");
+		add(tabbed, BorderLayout.CENTER);
+
+		// add log to bottom of frame
 		JLabel logLabel = new JLabel("Error Log");
 		JScrollPane logScrollPane = new JScrollPane(ErrorLog.getInstance());
-			logScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-			logScrollPane.setViewportBorder(BorderFactory.createLoweredBevelBorder());
-			logScrollPane.setPreferredSize(new Dimension(logScrollPane.getPreferredSize().width, 80));
+		logScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		logScrollPane.setViewportBorder(BorderFactory
+				.createLoweredBevelBorder());
+		logScrollPane.setPreferredSize(new Dimension(logScrollPane
+				.getPreferredSize().width, 80));
 		JPanel logPanel = new JPanel(new BorderLayout());
-			Border raised = BorderFactory.createRaisedBevelBorder();
-			Border lowered = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-			logPanel.setBorder(BorderFactory.createCompoundBorder(raised, lowered));
-			logPanel.add(logLabel, BorderLayout.NORTH);
-			logPanel.add(logScrollPane, BorderLayout.CENTER);
-		frame.add(logPanel, BorderLayout.SOUTH);
-		//.
-		//Nikki is the best programmer! ~ Ariel & Bruce
+		Border raised = BorderFactory.createRaisedBevelBorder();
+		Border lowered = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		logPanel.setBorder(BorderFactory.createCompoundBorder(raised, lowered));
+		logPanel.add(logLabel, BorderLayout.NORTH);
+		logPanel.add(logScrollPane, BorderLayout.CENTER);
+		add(logPanel, BorderLayout.SOUTH);
+		// .
+		// Nikki is the best programmer! ~ Ariel & Bruce
 
-
-		//edit preferences when frame is resized
-		frame.addComponentListener(new ComponentAdapter() {
+		// edit preferences when frame is resized
+		addComponentListener(new ComponentAdapter() {
 			@Override
-			public void componentResized(ComponentEvent e){
+			public void componentResized(ComponentEvent e) {
 				Rectangle bounds = e.getComponent().getBounds();
 				preferences.put("WindowWidth", "" + (int) bounds.getWidth());
 				preferences.put("WindowHeight", "" + (int) bounds.getHeight());
 				try {
 					savePreferences();
 				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(explorer,
+					JOptionPane.showMessageDialog(DDGExplorer.this,
 							"Unable to save preferences: " + e1.getMessage(),
-							"Error saving preferences", JOptionPane.ERROR_MESSAGE);
+							"Error saving preferences",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
-		//open size based upon preferences, or default 950x700
-		if (preferences.containsKey("WindowWidth") && preferences.containsKey("WindowHeight")) {
-			int preferredWidth = Integer.parseInt(preferences.get("WindowWidth"));
-			int preferredHeight = Integer.parseInt(preferences.get("WindowHeight"));
-			frame.setSize(preferredWidth, preferredHeight);
-		}
-		else {
-			frame.setSize(950, 700);
+		// open size based upon preferences, or default 950x700
+		if (preferences.containsKey("WindowWidth")
+				&& preferences.containsKey("WindowHeight")) {
+			int preferredWidth = Integer.parseInt(preferences
+					.get("WindowWidth"));
+			int preferredHeight = Integer.parseInt(preferences
+					.get("WindowHeight"));
+			setSize(preferredWidth, preferredHeight);
+		} else {
+			setSize(950, 700);
 		}
 		// Display the window.
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		setLocationRelativeTo(null);
+		setVisible(true);
 	}
 
+	private JMenuBar createMenus() {
+		JMenuBar menuBar = new JMenuBar();
+		menuBar.setBackground(MENU_COLOR);
+
+		JMenu fileMenu = createFileMenu();
+		menuBar.add(fileMenu);
+		
+		JMenu ddgMenu = createDDGMenu();
+		menuBar.add(ddgMenu);
+		
+		JMenu helpMenu = createHelpMenu();
+		menuBar.add(helpMenu);
+		return menuBar;
+	}
+
+	private void enableDDGCommands() {
+		this.saveDB.setEnabled(!getCurrentDDGPanel().alreadyInDB());
+		attributesItem.setEnabled(true);
+		showScriptItem.setEnabled(true);
+	}
+
+	private void disableDDGCommands() {
+		this.saveDB.setEnabled(false);
+		attributesItem.setEnabled(false);
+		showScriptItem.setEnabled(false);
+	}
+
+	
 	/**
-	 * Loads user preferences from a file or sets to the default if
-	 * there is no preference file.
+	 * Loads user preferences from a file or sets to the default if there is no
+	 * preference file.
 	 */
 	private static void loadPreferences() throws Exception {
 		// Set default values
@@ -325,7 +414,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	/**
 	 * Saves the current settings to a preference file.
 	 */
-	private static void savePreferences() throws Exception {
+	private void savePreferences() {
 		PrintWriter out = null;
 		try {
 			out = new PrintWriter(new FileWriter(PREFERENCE_FILE));
@@ -333,6 +422,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			for (String prefVar : preferences.keySet()) {
 				out.println(prefVar + " = " + preferences.get(prefVar));
 			}
+		}
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(this,
+					"Unable to save the preferences: " + e.getMessage(),
+					"Error saving preferences", JOptionPane.WARNING_MESSAGE);
 		} finally {
 			if (out != null) {
 				out.close();
@@ -341,60 +435,48 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 	/**
-	 * Returns the main frame for the DDG Explorer application.  This allows other windows
-	 * to display relative to the main window
-	 * @return the main window
-	 */
-	public static JFrame mainFrame() {
-		return frame;
-	}
-
-	/**
-	 * Returns the tabbed frame for the DDG Explorer application.  This allows other windows
-	 * to display onto the main window
+	 * Returns the tabbed frame for the DDG Explorer application. This allows
+	 * other windows to display onto the main window
+	 * 
 	 * @return the tabbed frame window
 	 */
 	public static JTabbedPane tabbedPane() {
 		return tabbed;
 	}
 
+
+	/**
+	 * Create help menu
+	 * @return 
+	 */
+	public JMenu createHelpMenu() {
+		JMenu helpMenu = new JMenu("Help");
+		helpMenu.setBackground(MENU_COLOR);
+		
+		JMenuItem commandOverviewItem = new JMenuItem("Command overview");
+		commandOverviewItem.addActionListener(new CommandOverviewCommand());
+		helpMenu.add(commandOverviewItem);
+		return helpMenu;
+	}
 	
-
-	 static class setupMenu implements ChangeListener{
-		 private JMenuBar menuBar;
-		 private JMenu fileMenu;
-
-		public setupMenu(DDGExplorer explorer) {
-			fileMenu = explorer.createFileMenu();
-
-			menuBar = new JMenuBar();
-			menuBar.setBackground(MENU_COLOR);
-			menuBar.add(explorer.createFileMenu());
-			frame.setJMenuBar(menuBar);
+	protected static DDGPanel getCurrentDDGPanel() {
+		Component selectedTab = tabbed.getSelectedComponent();
+		if (!(selectedTab instanceof DDGPanel)) {
+			return null;
 		}
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			Component openTab = tabbed.getSelectedComponent();
-			if (openTab instanceof laser.ddg.visualizer.DDGPanel){
-				//System.out.println("DDG tab!");
-				frame.setJMenuBar(((DDGPanel)openTab).createMenuBarDDG(fileMenu));
-				((DDGPanel)openTab).validate();
-	        }else{
-	        	//System.out.println("not DDG" + menuBar.toString());
-	        	frame.setJMenuBar(menuBar);
-	        }
-		}
-
-	 }
+		return (DDGPanel) selectedTab;
+	}
 
 	/**
 	 * Test program to see that the GUI looks right.
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		try {
-			createAndShowGUI();
+			DDGExplorer explorer = new DDGExplorer();
+			explorer.createAndShowGUI();
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
@@ -402,18 +484,45 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 	}
 
-
-
-
-	protected static DDGPanel getCurrentDDGPanel() {
-		// TODO Auto-generated method stub
-		return (DDGPanel)tabbed.getSelectedComponent();
+	public ProvenanceData getCurrentDDG() {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		return curDDGPanel.getProvData();
 	}
 
+	public void setArrowDirectionDown() {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel != null) { 
+			getCurrentDDGPanel().setArrowDirectionDown();
+		}
+		preferences.put("ArrowDirection", "InToOut");
+		savePreferences();
+	}
 
+	public void setArrowDirectionUp() {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel != null) { 
+			getCurrentDDGPanel().setArrowDirectionDown();
+		}
+		preferences.put("ArrowDirection", "OutToIn");
+		savePreferences();
+	}
 
+	public void addLegend() {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel != null) { 
+			curDDGPanel.addLegend();  
+		}
+		preferences.put("ShowLegend", "true");
+		savePreferences();
+	}
 
-
-
+	public void removeLegend() {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel != null) { 
+			curDDGPanel.removeLegend();  
+		}
+		preferences.put("ShowLegend", "false");
+		savePreferences();
+	}
 
 }
