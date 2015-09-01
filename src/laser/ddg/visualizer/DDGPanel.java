@@ -16,7 +16,7 @@ import javax.swing.SwingConstants;
 
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
-import laser.ddg.gui.DDGSearchGUI;
+import laser.ddg.gui.SearchResultsGUI;
 import laser.ddg.gui.Legend;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
@@ -52,7 +52,7 @@ public class DDGPanel extends JPanel {
 	private DDGVisualization vis;
 
 	// The panel containing the complete legend
-	private static final Legend legendBox = new Legend();
+	private Legend legendBox = new Legend();
 
 	// The toolBar interacting with the main DDGDisplay
 	private Toolbar toolbar;
@@ -61,7 +61,7 @@ public class DDGPanel extends JPanel {
 	private JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
 	// Search results object that enables user to find nodes in the graph
-	private DDGSearchGUI searchList;
+	private SearchResultsGUI searchList;
 
 	// Contains information to make nodes easier to find when searching
 	private SearchIndex searchIndex;
@@ -82,33 +82,6 @@ public class DDGPanel extends JPanel {
 	public DDGPanel(DBWriter dbWriter) {
 		super(new BorderLayout());
 		this.dbWriter = dbWriter;
-	}
-
-	// Constructs and updates list of search results
-	public void searchList(ArrayList<SearchElement> nodesList, boolean isText,
-			String searchText) {
-		ArrayList<SearchElement> newList = new ArrayList<SearchElement>();
-
-		// if user entered information into the search bar
-		if (isText) {
-			for (SearchElement entry : nodesList)
-				if (entry.getName().toLowerCase().contains(searchText))
-					newList.add(entry);
-			if (searchList == null) {
-				searchList = new DDGSearchGUI(newList, splitPane, this);
-			} else {
-				searchList.updateSearchList(newList);
-			}
-		}
-
-		// if text in search is empty then give all associated information
-		else {
-			if (searchList == null) {
-				searchList = new DDGSearchGUI(nodesList, splitPane, this);
-			} else {
-				searchList.updateSearchList(nodesList);
-			}
-		}
 	}
 
 	/**
@@ -165,6 +138,21 @@ public class DDGPanel extends JPanel {
 	}
 
 	/**
+	 * Creates the panel that holds the main attributes
+	 * 
+	 * @return the panel
+	 */
+	private Component createDescriptionPanel() {
+		descriptionArea = new JLabel("", SwingConstants.CENTER);
+
+		if (provData != null) {
+			updateDescription();
+		}
+
+		return descriptionArea;
+	}
+
+	/**
 	 * Updates the basic attributes displayed.
 	 */
 	private void updateDescription() {
@@ -194,21 +182,6 @@ public class DDGPanel extends JPanel {
 			System.out.println("DDGPanel's alreadyInDB unsuccessful");
 			return false;
 		}
-	}
-
-	/**
-	 * Creates the panel that holds the main attributes
-	 * 
-	 * @return the panel
-	 */
-	private Component createDescriptionPanel() {
-		descriptionArea = new JLabel("", SwingConstants.CENTER);
-
-		if (provData != null) {
-			updateDescription();
-		}
-
-		return descriptionArea;
 	}
 
 	/**
@@ -303,22 +276,6 @@ public class DDGPanel extends JPanel {
 		}
 	}
 
-	/**
-	 * Remove the legend from the display
-	 */
-	public void removeLegend() {
-		ddgMain.remove(legendBox);
-		ddgMain.validate();
-	}
-
-	public void setSearchIndex(SearchIndex searchIndex) {
-		this.searchIndex = searchIndex;
-	}
-
-	public SearchIndex getSearchIndex() {
-		return searchIndex;
-	}
-
 	public ProvenanceData getProvData() {
 		return provData;
 	}
@@ -341,6 +298,30 @@ public class DDGPanel extends JPanel {
 	public void drawLegend(ArrayList<LegendEntry> nodeLegend,
 			ArrayList<LegendEntry> edgeLegend) {
 		legendBox.drawLegend (nodeLegend, edgeLegend);
+	}
+
+	/**
+	 * Remove the legend from the display
+	 */
+	public void removeLegend() {
+		ddgMain.remove(legendBox);
+		ddgMain.validate();
+	}
+
+	public void setSearchIndex(SearchIndex searchIndex) {
+		this.searchIndex = searchIndex;
+	}
+
+	public SearchIndex getSearchIndex() {
+		return searchIndex;
+	}
+
+	public void showSearchResults(ArrayList<SearchElement> resultList) {
+		if (searchList == null) {
+			searchList = new SearchResultsGUI(resultList, splitPane, this);
+		} else {
+			searchList.updateSearchList(resultList);
+		}
 	}
 
 }

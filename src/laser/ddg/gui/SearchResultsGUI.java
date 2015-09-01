@@ -21,13 +21,13 @@ import javax.swing.event.ListSelectionListener;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 
-public class DDGSearchGUI extends JPanel{
+public class SearchResultsGUI extends JPanel{
 
   private JList <SearchElement> searchList;
   private DefaultListModel <SearchElement> model; 
   private SearchIndex searchIndex;
   
-  public DDGSearchGUI(ArrayList <SearchElement> nodesList, JSplitPane splitPane, JPanel ddgPanel){
+  public SearchResultsGUI(ArrayList <SearchElement> nodesList, JSplitPane splitPane, JPanel ddgPanel){
 	JPanel panel = new JPanel();
     panel.setLayout(new BorderLayout());
 	
@@ -50,7 +50,7 @@ public class DDGSearchGUI extends JPanel{
     			try {
 					searchIndex.updateNodeFocus(entry);
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(DDGSearchGUI.this,
+					JOptionPane.showMessageDialog(SearchResultsGUI.this,
 							"Can't display node: " + entry.getName(), "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}

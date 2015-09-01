@@ -4,15 +4,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGPanel;
-import laser.ddg.visualizer.PrefuseGraphBuilder;
 
 class SearchPanel extends JPanel {
 	private JTextField searchField;
@@ -95,46 +97,65 @@ class SearchPanel extends JPanel {
 	
 	// Do a search
 	public void doSearch() {
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		DDGPanel panel = ddgExplorer.getCurrentDDGPanel();
+		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
 
-		boolean isText;
-		String searchFieldText = searchField.getText().toLowerCase();
-
-		// checks if information was entered into the search field
-		if (searchFieldText.isEmpty())
-			isText = false;
-		else if (searchFieldText.length() < 6)
-			isText = true;
-		else if (searchFieldText.substring(0, 6).equals("search"))
-			isText = false;
-		else
-			isText = true;
-		
 		SearchIndex searchIndex = panel.getSearchIndex();
 
 		// Gets which option was selected in the drop down
 		System.out.println("panel = " + panel);
 		System.out.println("searchIndex = " + searchIndex);
 		if (ddgOption.equals("Error"))
-			panel.searchList(searchIndex.getErrorList(),
-					isText, searchFieldText);
+			searchList(searchIndex.getErrorList());
 		else if (ddgOption.equals("Data"))
-			panel.searchList(searchIndex.getDataList(),
-					isText, searchFieldText);
+			searchList(searchIndex.getDataList());
 		else if (ddgOption.equals("File"))
-			panel.searchList(searchIndex.getFileList(),
-					isText, searchFieldText);
+			searchList(searchIndex.getFileList());
 		else if (ddgOption.equals("URL"))
-			panel.searchList(searchIndex.getURLList(),
-					isText, searchFieldText);
+			searchList(searchIndex.getURLList());
 		else if (ddgOption.equals("Function"))
-			panel.searchList(
-					searchIndex.getOperationList(), isText, searchFieldText);
+			searchList(
+					searchIndex.getOperationList());
 		else
-			panel.searchList(searchIndex.getAllList(),
-					isText, searchFieldText);
+			searchList(searchIndex.getAllList());
 	}
 
+	public void searchList(ArrayList<SearchElement> nodesList) {
+		DDGPanel ddgPanel = DDGExplorer.getCurrentDDGPanel();
+		if (ddgPanel == null) {
+			DDGExplorer explorer = DDGExplorer.getInstance();
+			JOptionPane.showMessageDialog(explorer,
+					"Need to load a DDG to search",
+					"No DDG to search",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		boolean isText;
+		String searchText = searchField.getText().toLowerCase();
+
+		// checks if information was entered into the search field
+		if (searchText.isEmpty())
+			isText = false;
+		else if (searchText.length() < 6)
+			isText = true;
+		else if (searchText.substring(0, 6).equals("search"))
+			isText = false;
+		else
+			isText = true;
+		
+		ArrayList<SearchElement> newList = new ArrayList<SearchElement>();
+		// if user entered information into the search bar
+		if (isText) {
+			for (SearchElement entry : nodesList)
+				if (entry.getName().toLowerCase().contains(searchText))
+					newList.add(entry);
+			ddgPanel.showSearchResults(newList);
+		}
+
+		// if text in search is empty then give all associated information
+		else {
+			ddgPanel.showSearchResults(nodesList);
+		}
+	}
 
 }
