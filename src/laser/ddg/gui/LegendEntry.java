@@ -1,4 +1,4 @@
-package laser.ddg.visualizer;
+package laser.ddg.gui;
 
 import java.awt.Color;
 

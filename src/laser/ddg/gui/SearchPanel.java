@@ -14,7 +14,6 @@ import javax.swing.JTextField;
 
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
-import laser.ddg.visualizer.DDGPanel;
 
 class SearchPanel extends JPanel {
 	private JTextField searchField;

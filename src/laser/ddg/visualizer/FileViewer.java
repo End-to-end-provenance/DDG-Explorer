@@ -26,6 +26,8 @@ import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.table.JTableHeader;
 
+import laser.ddg.gui.DDGExplorer;
+
 /**
  * Creates a window that allows the user to view a file.  For csv, text and jpeg
  * files, it creates its own Java components and window to display them in.  For
@@ -121,7 +123,7 @@ public class FileViewer {
 			
 		}catch (Exception ex){
 			// Catch block that will print out exception
-			ErrorLog.showErrMsg("Error with file. "+ ex.getMessage());
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error with file. "+ ex.getMessage());
 			ex.printStackTrace();
 		}		
 		
@@ -204,7 +206,7 @@ public class FileViewer {
 			
 		}catch (Exception ex){
 			// Catch block that will print out exception
-			ErrorLog.showErrMsg("Error with file. "+ ex.getMessage());
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error with file. "+ ex.getMessage());
 			ex.printStackTrace();
 		}		
 

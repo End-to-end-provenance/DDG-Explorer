@@ -16,8 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
-import laser.ddg.visualizer.LegendEntry;
-
 /**
  * Draws the legend explaining the node and edge colors.
  * 

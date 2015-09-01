@@ -10,7 +10,7 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
-import laser.ddg.visualizer.ErrorLog;
+import laser.ddg.gui.DDGExplorer;
 
 /**
  * An abstract class containing code to assist with storing DDGs in a database, but excluding
@@ -40,7 +40,7 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 		
 		if (alreadyInDB(processPathName, executionTimestamp, provData.getLanguage())) {
 			//Do not put anything into the database, remove the listener
-			ErrorLog.showErrMsg("Already in the database");
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Already in the database");
 			return;
 		}
 
@@ -76,7 +76,7 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 				//ErrorLog.showErrMsg("Copying");
 				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
 				if (!savedFile.exists()) {
-					ErrorLog.showErrMsg("Copy failed!!!\n\n");
+					DDGExplorer.getCurrentDDGPanel().showErrMsg("Copy failed!!!\n\n");
 				}
 				savedFile.setReadOnly();
 			}
@@ -87,10 +87,10 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 			
 			//System.out.println(fileContents.toString());
 		} catch (FileNotFoundException e) {
-			ErrorLog.showErrMsg("Cannot find file: " + filePath + "\n\n");
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Cannot find file: " + filePath + "\n\n");
 			return null;
 		} catch (IOException e) {
-			ErrorLog.showErrMsg("Exception copying" + filePath + "to database: " + e);
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Exception copying" + filePath + "to database: " + e);
 			return null;
 		}
 	}
@@ -194,17 +194,17 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 			//ErrorLog.showErrMsg("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
 			Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
 			if (!savedFile.exists()) {
-				ErrorLog.showErrMsg("Copy failed!!!\n\n");
+				DDGExplorer.getCurrentDDGPanel().showErrMsg("Copy failed!!!\n\n");
 			}
 			savedFile.setReadOnly();
 			return savedFile.getAbsolutePath();
 			
 			//System.out.println(fileContents.toString());
 		} catch (FileNotFoundException e) {
-			ErrorLog.showErrMsg("Cannot find script data file: " + filename + "\n\n");
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Cannot find script data file: " + filename + "\n\n");
 			return null;
 		} catch (IOException e) {
-			ErrorLog.showErrMsg("Exception copying script data file " + filename + " to database: " + e);
+			DDGExplorer.getCurrentDDGPanel().showErrMsg("Exception copying script data file " + filename + " to database: " + e);
 			return null;
 		}
 	}

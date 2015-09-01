@@ -1,8 +1,9 @@
-package laser.ddg.visualizer;
+package laser.ddg.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -11,18 +12,22 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
 
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
-import laser.ddg.gui.SearchResultsGUI;
-import laser.ddg.gui.Legend;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.visualizer.DDGDisplay;
+import laser.ddg.visualizer.DDGVisualization;
 import prefuse.Display;
 
 /**
@@ -41,6 +46,9 @@ public class DDGPanel extends JPanel {
 	// Panel holding ddgDisplays and everything else besides the toolbar.
 	// (needed for Legend's use)
 	private JPanel ddgMain;
+	
+	// Where error messages are displayed.
+	private JTextArea errorLog;
 
 	// The DDG data
 	private ProvenanceData provData;
@@ -99,11 +107,51 @@ public class DDGPanel extends JPanel {
 			final Display ddgOverview, ProvenanceData provData) {
 		this.vis = vis;
 		this.provData = provData;
-		// this.overview = ddgDisplay;
+		setBackground(Color.WHITE);
 
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
+		createMainPanel(ddgDisplay, ddgOverview);
+		
+		toolbar = new Toolbar((DDGDisplay) ddgDisplay);
+
+		// hold toolbarPanel and everything inside
+		add(toolbar, BorderLayout.NORTH);
+
+		// set the DDG on the right of JSplitPane and later the DDG Search
+		// Results on the Left
+		splitPane.setRightComponent(ddgMain);
+
+		add(splitPane, BorderLayout.CENTER);
+		
+		// add log to bottom of frame
+		JPanel logPanel = createLogPanel();
+		add(logPanel, BorderLayout.SOUTH);
+
+
+	}
+
+	private JPanel createLogPanel() {
+		JLabel logLabel = new JLabel("Error Log");
+		errorLog = new JTextArea();
+		errorLog.setEditable(false);
+		JScrollPane logScrollPane = new JScrollPane(errorLog);
+		logScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		logScrollPane.setViewportBorder(BorderFactory
+				.createLoweredBevelBorder());
+		logScrollPane.setPreferredSize(new Dimension(logScrollPane
+				.getPreferredSize().width, 80));
+		JPanel logPanel = new JPanel(new BorderLayout());
+		Border raised = BorderFactory.createRaisedBevelBorder();
+		Border lowered = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
+		logPanel.setBorder(BorderFactory.createCompoundBorder(raised, lowered));
+		logPanel.add(logLabel, BorderLayout.NORTH);
+		logPanel.add(logScrollPane, BorderLayout.CENTER);
+		return logPanel;
+	}
+
+	private void createMainPanel(Display ddgDisplay, final Display ddgOverview) {
 		ddgMain = new JPanel(new BorderLayout());
 		ddgMain.setBackground(Color.WHITE);
 		ddgMain.add(createDescriptionPanel(), BorderLayout.NORTH);
@@ -123,18 +171,6 @@ public class DDGPanel extends JPanel {
 						prevBounds.width, panelHeight - 16);
 			}
 		});
-
-		toolbar = new Toolbar((DDGDisplay) ddgDisplay);
-
-		// hold toolbarPanel and everything inside
-		setBackground(Color.WHITE);
-		add(toolbar, BorderLayout.NORTH);
-
-		// set the DDG on the right of JSplitPane and later the DDG Search
-		// Results on the Left
-		splitPane.setRightComponent(ddgMain);
-
-		add(splitPane, BorderLayout.CENTER);
 	}
 
 	/**
@@ -322,6 +358,10 @@ public class DDGPanel extends JPanel {
 		} else {
 			searchList.updateSearchList(resultList);
 		}
+	}
+
+	public void showErrMsg(String str) {
+		errorLog.append(str);
 	}
 
 }

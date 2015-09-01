@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -39,7 +40,6 @@ import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.gui.DDGBrowser;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.JenaLoader;
-import laser.ddg.visualizer.ErrorLog;
 import laser.ddg.visualizer.FileViewer;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -310,8 +310,8 @@ public class FileUseQuery extends AbstractQuery {
 					}
 					displayFilenames(dbLoader, selectedIO, selectedExtensions);
 				} catch (Exception e1) {
-					ErrorLog.showErrMsg("Unable to search for file uses.\n");
-					ErrorLog.showErrMsg(e1 + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to search for file uses.\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
 					//e1.printStackTrace();
 				}
 			}
@@ -546,8 +546,8 @@ public class FileUseQuery extends AbstractQuery {
 							graphBuilder.focusOn(data.getNodeNameAt(modelRow));
 						}
 					} catch (Exception e1) {
-						ErrorLog.showErrMsg("Unable to show where the file is used.\n");
-						ErrorLog.showErrMsg(e1 + "\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to show where the file is used.\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
 						//e1.printStackTrace();
 					}
 					
@@ -569,8 +569,8 @@ public class FileUseQuery extends AbstractQuery {
 
 			
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Unable to display file names.\n");
-			ErrorLog.showErrMsg(e + "\n");
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to display file names.\n");
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e + "\n");
 			//e.printStackTrace();
 		}
 	}

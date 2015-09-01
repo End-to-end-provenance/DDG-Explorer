@@ -42,8 +42,6 @@ import laser.ddg.commands.ShowAttributesCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.query.QueryListener;
-import laser.ddg.visualizer.DDGPanel;
-import laser.ddg.visualizer.ErrorLog;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -131,23 +129,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		tabbed.addTab(" ", null, new HomePanel(), "Home Tab");
 		add(tabbed, BorderLayout.CENTER);
 
-		// add log to bottom of frame
-		// TODO:  Move to each DDG panel so that each DDG has its own error log.
-		JLabel logLabel = new JLabel("Error Log");
-		JScrollPane logScrollPane = new JScrollPane(ErrorLog.getInstance());
-		logScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		logScrollPane.setViewportBorder(BorderFactory
-				.createLoweredBevelBorder());
-		logScrollPane.setPreferredSize(new Dimension(logScrollPane
-				.getPreferredSize().width, 80));
-		JPanel logPanel = new JPanel(new BorderLayout());
-		Border raised = BorderFactory.createRaisedBevelBorder();
-		Border lowered = BorderFactory.createEtchedBorder(EtchedBorder.LOWERED);
-		logPanel.setBorder(BorderFactory.createCompoundBorder(raised, lowered));
-		logPanel.add(logLabel, BorderLayout.NORTH);
-		logPanel.add(logScrollPane, BorderLayout.CENTER);
-		add(logPanel, BorderLayout.SOUTH);
-
 		// set size based upon preferences, or default 
 		setSize (preferences.getWindowSize());
 
@@ -183,7 +164,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				Component openTab = getCurrentDDGPanel();
-				if (openTab instanceof laser.ddg.visualizer.DDGPanel) {
+				if (openTab instanceof laser.ddg.gui.DDGPanel) {
 					DDGPanel openDDGPanel = (DDGPanel) openTab;
 					enableDDGCommands();
 					if (preferences.isArrowDirectionDown()) {
@@ -383,7 +364,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * @return the DDGPanel that the user is currently viewing.  Returns
 	 *   null if the user is viewing the home panel (i.e., no DDG).
 	 */
-	protected static DDGPanel getCurrentDDGPanel() {
+	public static DDGPanel getCurrentDDGPanel() {
 		Component selectedTab = tabbed.getSelectedComponent();
 		if (!(selectedTab instanceof DDGPanel)) {
 			return null;

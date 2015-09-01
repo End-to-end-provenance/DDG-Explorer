@@ -2,9 +2,9 @@ package laser.ddg;
 
 import java.util.ArrayList;
 
+import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;
-import laser.ddg.visualizer.LegendEntry;
 
 /**
  * The interface that language-specific DDG builders must satisfy
