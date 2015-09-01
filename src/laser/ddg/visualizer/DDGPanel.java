@@ -527,6 +527,12 @@ public class DDGPanel extends JPanel {
 
 	public void setArrowDirectionDown() {
 		vis.setRenderer(prefuse.Constants.EDGE_ARROW_REVERSE);
+		vis.repaint();
+	}
+
+	public void setArrowDirectionUp() {
+		vis.setRenderer(prefuse.Constants.EDGE_ARROW_FORWARD);
+		vis.repaint();
 	}
 
 	public void addLegend() {
