@@ -24,10 +24,9 @@ import laser.ddg.gui.DDGExplorer;
  */
 public class ShowAttributesCommand implements ActionListener {
 
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		Attributes attributes;
 		try {
 			ProvenanceData curDDG = ddgExplorer.getCurrentDDG();

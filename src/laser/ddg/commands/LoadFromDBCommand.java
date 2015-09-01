@@ -29,8 +29,6 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  *
  */
 public class LoadFromDBCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-	
 	// The process that the user selected.
 	private String selectedProcessName;
 
@@ -42,6 +40,8 @@ public class LoadFromDBCommand implements ActionListener {
 	 * from the database.  On return, the window has been disposed.
 	 */
 	void execute() {
+		final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		
 		final JDialog loadFromDBFrame = new JDialog(ddgExplorer, "Open from Database", true);
 		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 
@@ -120,6 +120,7 @@ public class LoadFromDBCommand implements ActionListener {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		jenaLoader.loadDDG(processName, timestamp, provData);
 		graphBuilder.createLegend(provData.getLanguage());
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab(graphBuilder.getPanel().getName(), graphBuilder.getPanel());
 		return graphBuilder;
 	}
@@ -130,6 +131,7 @@ public class LoadFromDBCommand implements ActionListener {
 		try {
 			execute();
 		} catch (Exception e) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to load the DDG: " + e.getMessage(),
 					"Error loading DDG", JOptionPane.ERROR_MESSAGE);

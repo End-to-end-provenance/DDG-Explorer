@@ -29,8 +29,6 @@ import laser.ddg.query.ResultsQuery;
  *
  */
 public class ManageDatabaseCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-	
 	// The process that the user selected.
 	private String selectedProcessName;
 
@@ -42,6 +40,7 @@ public class ManageDatabaseCommand implements ActionListener {
 	 * show Values. On return, the window has been disposed.
 	 */
 	private void execute() {
+		final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		final JDialog loadFromDBFrame = new JDialog(ddgExplorer, "Manage Database", true);
 		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 		final JenaLoader jenaLoader = JenaLoader.getInstance();
@@ -230,6 +229,7 @@ public class ManageDatabaseCommand implements ActionListener {
 		try {
 			FileUtil.deleteFiles (processName, timestamp);
 		} catch (IOException e) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer, "Could not delete saved files\n");
 		}
 		jenaLoader.deleteDDG(processName, timestamp);
@@ -240,6 +240,7 @@ public class ManageDatabaseCommand implements ActionListener {
 		try {
 			execute();
 		} catch (Exception e) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to manage the database: " + e.getMessage(),
 					"Error managing the database",

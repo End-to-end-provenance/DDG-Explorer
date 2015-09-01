@@ -23,7 +23,6 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
 public class LoadFileCommand implements ActionListener {
 	
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
 	/**
 	 * Loads a text file containing a ddg
@@ -31,6 +30,7 @@ public class LoadFileCommand implements ActionListener {
 	 */
 	public static void execute() throws Exception {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
 			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 			File selectedFile = FILE_CHOOSER.getSelectedFile();
@@ -49,6 +49,7 @@ public class LoadFileCommand implements ActionListener {
 		try {
 			execute();
 		} catch (Exception e) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);

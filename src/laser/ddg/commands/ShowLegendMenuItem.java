@@ -16,11 +16,11 @@ import laser.ddg.gui.DDGExplorer;
  */
 public class ShowLegendMenuItem implements ActionListener {
 
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		JCheckBoxMenuItem showLegendMenuItem = (JCheckBoxMenuItem) e.getSource();
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+
 		if (showLegendMenuItem.isSelected()) {
 			ddgExplorer.addLegend();
 		}

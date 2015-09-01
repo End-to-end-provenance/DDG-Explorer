@@ -15,8 +15,6 @@ import laser.ddg.gui.DDGExplorer;
  *
  */
 public class CommandOverviewCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-	
 	private String help;
 
 	@Override
@@ -32,6 +30,7 @@ public class CommandOverviewCommand implements ActionListener {
 			help = createHelpText();
 		}
 
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		JOptionPane.showMessageDialog(ddgExplorer, help, "Command Overview", JOptionPane.PLAIN_MESSAGE);
 	}
 

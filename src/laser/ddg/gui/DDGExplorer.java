@@ -73,13 +73,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenuItem attributesItem;  // Enabled on everything but the home panel
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
 
+	private JCheckBoxMenuItem showLegendMenuItem;
+
 	/**
 	 * Initializes the DDG Explorer by loading the preference file and
 	 * loading information about known languages.
 	 */
 	private DDGExplorer() {
-		preferences.load();
-
 		LanguageConfigurator.addLanguageBuilder("R", "laser.ddg.r.RDDGBuilder");
 		LanguageConfigurator.addParser("R", "laser.ddg.r.RParser");
 		LanguageConfigurator.addLanguageBuilder("Little-JIL",
@@ -105,7 +105,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	/**
 	 * @return the singleton instance
 	 */
-	public static DDGExplorer getInstance() {
+	public synchronized static DDGExplorer getInstance() {
 		if (instance == null) {
 			instance = new DDGExplorer();
 		}
@@ -254,7 +254,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		return menuBar;
 	}
 
-	private static JMenu createFileMenu() {
+	private JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setBackground(MENU_COLOR);
 
@@ -338,7 +338,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		inToOutMenuItem.addActionListener(new SetArrowDirectionCommand());
 		prefMenu.add(inToOutMenuItem);
 		
-		JCheckBoxMenuItem showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
+		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
 				preferences.isShowLegend());
 		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
 		prefMenu.add(showLegendMenuItem);
@@ -444,6 +444,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			curDDGPanel.removeLegend();  
 		}
 		preferences.setShowLegend (false);
+		if (showLegendMenuItem != null) {
+			showLegendMenuItem.setSelected(false);
+		}
 	}
 
 	/**
@@ -453,13 +456,15 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 */
 	public static void main(String[] args) {
 		try {
-			DDGExplorer explorer = new DDGExplorer();
+			DDGExplorer explorer = DDGExplorer.getInstance();
+			preferences.load();
 			explorer.createAndShowGUI();
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
 					"Error starting DDG Explorer", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		}
 	}
 

@@ -120,10 +120,14 @@ public class Preferences {
 	}
 
 	/**
-	 * @return true if the user prefers arrows that put from inputs to outputs
+	 * @return true if the user prefers arrows that put from inputs to outputs.
+	 * 	The default is true.
 	 */
 	public boolean isArrowDirectionDown() {
-		return preferences.get("ArrowDirection").toLowerCase().equals("intoout");
+		if (preferences.containsKey("ArrowDirection")) {
+			return preferences.get("ArrowDirection").toLowerCase().equals("intoout");
+		}
+		return true;
 	}
 
 	/**
@@ -145,10 +149,13 @@ public class Preferences {
 	}
 
 	/**
-	 * @return true if the user wants to see the legend
+	 * @return true if the user wants to see the legend.  The default is true.
 	 */
 	public boolean isShowLegend() {
-		return preferences.get("ShowLegend").toLowerCase().equals("true");
+		if (preferences.containsKey("ShowLegend")) {
+			return preferences.get("ShowLegend").toLowerCase().equals("true");
+		}
+		return true;
 	}
 
 	/**

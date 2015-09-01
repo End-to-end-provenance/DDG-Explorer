@@ -17,8 +17,6 @@ import laser.ddg.gui.DDGExplorer;
  */
 public class SetArrowDirectionCommand implements ActionListener {
 
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
 	/**
 	 * Sets the direction that arrows are drawn based on the setting of the
 	 * corresponding menu item.
@@ -35,6 +33,8 @@ public class SetArrowDirectionCommand implements ActionListener {
 	 * @param inToOutMenuItem
 	 */
 	public static void setArrowDirection(final JCheckBoxMenuItem inToOutMenuItem) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+
 		if (inToOutMenuItem.isSelected()) {
 			ddgExplorer.setArrowDirectionDown();
 		} else {

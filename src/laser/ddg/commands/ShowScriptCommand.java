@@ -15,10 +15,9 @@ import laser.ddg.visualizer.FileViewer;
  *
  */
 public class ShowScriptCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
 		String scriptFileName = curDDG.getScript();
 		FileViewer fileViewer = new FileViewer(scriptFileName, "");

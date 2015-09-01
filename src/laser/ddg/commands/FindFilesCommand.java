@@ -17,10 +17,10 @@ import laser.ddg.query.FileUseQuery;
  *
  */
 public class FindFilesCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+
 		try {
 			JenaLoader jenaLoader = JenaLoader.getInstance();
 			FileUseQuery query = new FileUseQuery();

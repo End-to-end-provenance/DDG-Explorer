@@ -638,7 +638,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 6. launch the visualization -------------------------------------
 
-		ddgPanel.displayDDG(vis, display, displayOverview, provData, this);
+		ddgPanel.displayDDG(vis, display, displayOverview, provData);
 
 		// new code
 		PopupMenu options = display.new PopupMenu();

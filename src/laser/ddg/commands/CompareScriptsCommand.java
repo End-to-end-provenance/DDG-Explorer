@@ -19,14 +19,13 @@ import laser.ddg.persist.JenaLoader;
  *
  */
 public class CompareScriptsCommand implements ActionListener {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-	
 	/**
 	 * Creates the window that allows the user to compare R scripts used
 	 * to create 2 different DDGs.
 	 */
 	private static void execute() {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		JPanel diffPanel = new DiffTab(ddgExplorer, jenaLoader);
 		/*diffFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		diffFrame.setSize(800,600);
@@ -40,6 +39,7 @@ public class CompareScriptsCommand implements ActionListener {
 		try {
 			execute();
 		} catch (Exception e) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to compare R scripts: " + e.getMessage(),
 					"Error comparing R scripts",

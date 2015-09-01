@@ -15,7 +15,6 @@ import laser.ddg.visualizer.DDGPanel;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
 class SearchPanel extends JPanel {
-	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	private JTextField searchField;
 	private JComboBox<String> optionsBox, ddgOptionsBox;
 	private String ddgOption;
@@ -96,8 +95,8 @@ class SearchPanel extends JPanel {
 	
 	// Do a search
 	public void doSearch() {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		DDGPanel panel = ddgExplorer.getCurrentDDGPanel();
-		PrefuseGraphBuilder build = panel.getBuilder();
 
 		boolean isText;
 		String searchFieldText = searchField.getText().toLowerCase();
