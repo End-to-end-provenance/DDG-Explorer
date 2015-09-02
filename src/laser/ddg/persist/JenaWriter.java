@@ -136,8 +136,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			}
 			//ErrorLog.showErrMsg("Initialization in DB done\n");
 		} catch (Exception e) {
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Unable to initialize the database for the DDG.\n");
-			DDGExplorer.getCurrentDDGPanel().showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to initialize the database for the DDG.\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			e.printStackTrace();
 		}
 	}
@@ -167,15 +167,15 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			List<String> timestampList = jenaLoader.getTimestamps(processName);
 			for(String temp : timestampList){
 				if(temp.equals(executionTimestamp)){
-					System.out.println("Already in DB");
-					DDGExplorer.getCurrentDDGPanel().showErrMsg("Already in DB\n");
+					//System.out.println("Already in DB");
+					//DDGExplorer.showErrMsg("Already in DB\n");
 					return true;
 				}
 			}
 			return false;
 		} catch (Exception e) {
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
-			DDGExplorer.getCurrentDDGPanel().showErrMsg(e.toString());
+			DDGExplorer.showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
+			DDGExplorer.showErrMsg(e.toString());
 			e.printStackTrace();
 			return false;
 		}

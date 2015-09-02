@@ -39,7 +39,7 @@ public class ScriptBrowser extends DBBrowser {
 		File scriptDir = FileUtil.findScriptVersionDir(script, getSelectedTimestamp());
 		
 		if (scriptDir == null) {
-			JOptionPane.showMessageDialog(this, "Could not find directory for " + script + " with timestamp " + getSelectedTimestamp());
+			DDGExplorer.showErrMsg("Could not find directory for " + script + " with timestamp " + getSelectedTimestamp());
 			return null;
 			
 		}
@@ -50,7 +50,7 @@ public class ScriptBrowser extends DBBrowser {
 			return scriptFile;
 		}
 		
-		JOptionPane.showMessageDialog(this, "Could not find " + script + " in " + scriptDir);
+		DDGExplorer.showErrMsg("Could not find " + script + " in " + scriptDir);
 		return null;
 		
 	}

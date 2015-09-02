@@ -57,7 +57,7 @@ public class RParser implements LanguageParser {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Cannot find script file: " + script + "\n\n");
+			DDGExplorer.showErrMsg("Cannot find script file: " + script + "\n\n");
 		} finally {
 			if (readFile != null) {
 				fileContents = contentsBuilder.toString();

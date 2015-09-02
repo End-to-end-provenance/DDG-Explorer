@@ -46,7 +46,7 @@ public class FileUtil {
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				DDGExplorer.getCurrentDDGPanel().showErrMsg("Warning! Unable to set " + ddgDir
+				DDGExplorer.showErrMsg("Warning! Unable to set " + ddgDir
 						+ "to hidden.");
 			}
 		}
@@ -199,8 +199,8 @@ public class FileUtil {
 			//ErrorLog.showErrMsg("Will copy to " + savedCopy + "\n");
 			return savedCopy;
 		} catch (IllegalStateException e) {
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
-			DDGExplorer.getCurrentDDGPanel().showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			return null;
 		}
 		
@@ -227,8 +227,8 @@ public class FileUtil {
 			File savedCopy = new File(savedCopyDir.getAbsolutePath() + File.separatorChar + originalFile.getName());
 			return savedCopy;
 		} catch (IllegalStateException e) {
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
-			DDGExplorer.getCurrentDDGPanel().showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			return null;
 		}
 	}

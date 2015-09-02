@@ -2,6 +2,7 @@ package laser.ddg;
 
 import java.util.ArrayList;
 
+import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;

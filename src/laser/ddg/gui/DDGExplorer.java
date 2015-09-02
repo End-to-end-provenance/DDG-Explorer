@@ -3,7 +3,6 @@ package laser.ddg.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -11,25 +10,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import laser.ddg.DataBindingEvent;
+import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
+import laser.ddg.Node;
+import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ProvenanceListener;
+import laser.ddg.RemoveListenerException;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
@@ -72,6 +71,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
 
 	private JCheckBoxMenuItem showLegendMenuItem;
+	
+	private static boolean loadingDDG = false;
+	
+	// Accumulates error messages while a ddg is being loaded.
+	// Added to the corresponding DDG panel's error log when 
+	// loading is complete.
+	private static String errors = "";
 
 	/**
 	 * Initializes the DDG Explorer by loading the preference file and
@@ -429,6 +435,27 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			showLegendMenuItem.setSelected(false);
 		}
 	}
+	
+	public static void showErrMsg (String msg) {
+		if (loadingDDG) {
+			errors = errors + "\n" + msg;
+			return;
+		}
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel == null) {
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
+		}
+	}
+
+	public static void loadingDDG() {
+		loadingDDG = true;
+		errors = "";
+	}
+	
+	public static void doneLoadingDDG() {
+		loadingDDG = false;
+		getCurrentDDGPanel().showErrMsg(errors);
+	}
 
 	/**
 	 * Main program
@@ -448,6 +475,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			e.printStackTrace();
 		}
 	}
+
 
 
 }

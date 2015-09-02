@@ -123,7 +123,7 @@ public class FileViewer {
 			
 		}catch (Exception ex){
 			// Catch block that will print out exception
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error with file. "+ ex.getMessage());
+			DDGExplorer.showErrMsg("Error with file. "+ ex.getMessage());
 			ex.printStackTrace();
 		}		
 		
@@ -206,7 +206,7 @@ public class FileViewer {
 			
 		}catch (Exception ex){
 			// Catch block that will print out exception
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error with file. "+ ex.getMessage());
+			DDGExplorer.showErrMsg("Error with file. "+ ex.getMessage());
 			ex.printStackTrace();
 		}		
 

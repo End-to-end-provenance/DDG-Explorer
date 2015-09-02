@@ -221,13 +221,13 @@ public class Parser {
 					parseAttribute();
 					nextToken = skipBlankLines();
 					if (nextToken == StreamTokenizer.TT_EOF) {
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Number of pins is missing from the file.\n\n");
+						DDGExplorer.showErrMsg("Number of pins is missing from the file.\n\n");
 						throw new IOException("Number of pins is missing from the file.");
 					}
 				}
 				
 				else {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected attribute name or pin counter.\n\n");
+					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected attribute name or pin counter.\n\n");
 					throw new IOException("Expected attribute name or pin counter.");
 				}
 			}
@@ -272,14 +272,14 @@ public class Parser {
 				in.pushBack();
 			}
 			else if (nextToken != StreamTokenizer.TT_EOF && nextToken != StreamTokenizer.TT_EOL) {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Unexpected tokens at end of line. Token:" + nextToken + "\n\n");
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected tokens at end of line. Token:" + nextToken + "\n\n");
 				
 				// Consume the rest of the line.
 				consumeRestOfLine();
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Unexpected first token.\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected first token.\n\n");
 			consumeRestOfLine();
 		}
 	}
@@ -324,7 +324,7 @@ public class Parser {
 		String nodeType = in.sval;
 		
 		if (in.nextToken() != StreamTokenizer.TT_WORD) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected data or procedure node identifier:  " + nodeType + "\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected data or procedure node identifier:  " + nodeType + "\n\n");
 			in.pushBack();
 			consumeRestOfLine();
 			return;
@@ -353,7 +353,7 @@ public class Parser {
 		try {
 			name = convertNextTokenToString ();
 		} catch (IllegalStateException e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Name is missing for node " + nodeId + "\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Name is missing for node " + nodeId + "\n\n");
 			in.pushBack();
 			consumeRestOfLine();
 			return;
@@ -396,7 +396,7 @@ public class Parser {
 				nextToken = in.nextToken();
 				if (nextToken != '=') {
 					in.pushBack();
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected =.\n\n");
+					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected =.\n\n");
 					consumeRestOfLine();
 					return null;
 				}
@@ -407,7 +407,7 @@ public class Parser {
 				}
 				
 				in.pushBack();
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Value is missing for node " + nodeId + "\n\n");
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Value is missing for node " + nodeId + "\n\n");
 				consumeRestOfLine();
 				return null;
 			}
@@ -418,7 +418,7 @@ public class Parser {
 		}
 
 		in.pushBack();
-		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
+		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
 		consumeRestOfLine();
 		return null;
 	}
@@ -444,7 +444,7 @@ public class Parser {
 				nextToken = in.nextToken();
 				if (nextToken != '=') {
 					in.pushBack();
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected =.\n\n");
+					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected =.\n\n");
 					consumeRestOfLine();
 					return null;
 				}
@@ -455,7 +455,7 @@ public class Parser {
 				}
 				
 				in.pushBack();
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Location is missing for node " + nodeId + "\n\n");
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Location is missing for node " + nodeId + "\n\n");
 				consumeRestOfLine();
 				return null;
 			}
@@ -466,7 +466,7 @@ public class Parser {
 		}
 
 		in.pushBack();
-		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
+		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
 		consumeRestOfLine();
 		return null;
 	}
@@ -516,7 +516,7 @@ public class Parser {
 				nextToken = in.nextToken();
 				if (nextToken != '=') {
 					in.pushBack();
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
+					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
 					consumeRestOfLine();
 					return null;
 				}
@@ -526,7 +526,7 @@ public class Parser {
 					return in.sval;
 				}
 				
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
 				consumeRestOfLine();
 				return null;
 			}
@@ -536,7 +536,7 @@ public class Parser {
 			return null;
 		}
 		in.pushBack();
-		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
+		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
 		consumeRestOfLine();
 		return null;
 	}
@@ -595,7 +595,7 @@ public class Parser {
 					}
 					else {
 						// Neither value nor timestamp nor location
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expecting VALUE or TIMESTAMP or LOCATION for node " + nodeId + "\n\n");
+						DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expecting VALUE or TIMESTAMP or LOCATION for node " + nodeId + "\n\n");
 						consumeRestOfLine();
 						break;
 					}
@@ -604,7 +604,7 @@ public class Parser {
 			}
 			
 			else if (nextToken != ';') {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Unexpected tokens for node " + nodeId + "\n\n");
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected tokens for node " + nodeId + "\n\n");
 				consumeRestOfLine();
 			}
 			
@@ -618,7 +618,7 @@ public class Parser {
 
 			
 		} catch (IllegalStateException e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Name missing for node " + nodeId + "\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Name missing for node " + nodeId + "\n\n");
 		}
 
 	}
@@ -634,7 +634,7 @@ public class Parser {
 		
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Expected = for attribute " + attributeName + "\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = for attribute " + attributeName + "\n\n");
 			consumeRestOfLine();
 			return;
 		}
@@ -656,7 +656,7 @@ public class Parser {
 			attributes.set(attributeName, attributeValue);
 			
 		} catch (IllegalStateException e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Line " + in.lineno() + ": Attribute value missing for " + attributeName + "\n\n");
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Attribute value missing for " + attributeName + "\n\n");
 		}
 	}
 
@@ -675,7 +675,7 @@ public class Parser {
 	 */
 	private String constructName(String nodeType, String nodeName) {
 		if(nodeName == null){
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Invalid node construct. No name given.");
+			DDGExplorer.showErrMsg("Invalid node construct. No name given.");
 			return null;
 		}
 		StringBuilder str = new StringBuilder();
@@ -743,12 +743,12 @@ public class Parser {
 	private void parseEdge(ArrayList<String> tokens) {
 		String edgeType = tokens.get(0);
 		if(edgeType == null){
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Invalid edge construct. Nothing to add.\n");
+			DDGExplorer.showErrMsg("Invalid edge construct. Nothing to add.\n");
 			return;
 		}
 		
 		if(tokens.size() < 3){
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Invalid edge construct. Need valid name, source and target.\n");
+			DDGExplorer.showErrMsg("Invalid edge construct. Need valid name, source and target.\n");
 			return;
 		}
 		
@@ -789,13 +789,15 @@ public class Parser {
 			try {
 				ddgBuilder.addDataConsumer(consumer, data);
 			} catch (NoSuchDataNodeException e) {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Can't create edge from data node " + data + " to procedure node " + consumer + "\n");
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No data node with id " + data + "\n");
+				String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
+				msg = msg + "No data node with id " + data;
+				DDGExplorer.showErrMsg(msg);
 				displayTokens(tokens);
 				throw e;
 			} catch (NoSuchProcNodeException e) {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Can't create edge from data node " + data + " to procedure node " + consumer + "\n");
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No procedure node with id " + consumer + "\n");
+				String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
+				msg = msg + "No procedure node with id " + consumer;
+				DDGExplorer.showErrMsg(msg);
 				displayTokens(tokens);
 				throw e;
 			} catch (NoSuchNodeException e) {
@@ -811,13 +813,15 @@ public class Parser {
 			try {
 				ddgBuilder.addDataProducer(data, producer);
 			} catch (NoSuchDataNodeException e) {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Can't create edge from procedure node " + producer + " to data node " + data + "\n");
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No data node with id " + data + "\n");
+				String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
+				msg = msg + "No data node with id " + data;
+				DDGExplorer.showErrMsg(msg);
 				displayTokens(tokens);
 				throw e;
 			} catch (NoSuchProcNodeException e) {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Can't create edge from procedure node " + producer + " to data node " + data + "\n");
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No procedure node with id " + producer + "\n");
+				String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
+				msg = msg + "No procedure node with id " + producer;
+				DDGExplorer.showErrMsg(msg);
 				displayTokens(tokens);	
 				throw e;
 			} catch (NoSuchNodeException e) {
@@ -825,12 +829,12 @@ public class Parser {
 				e.printStackTrace();
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e.getMessage());
+				DDGExplorer.showErrMsg(e.getMessage());
 				throw e;
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Neither source nor target of edge is a procedure node:  " + 
+			DDGExplorer.showErrMsg("Neither source nor target of edge is a procedure node:  " + 
 					tokens.get(0) + " " + tokens.get(1) + " " + tokens.get(2));
 		}
 	}
@@ -840,7 +844,7 @@ public class Parser {
 		for (int i = 0; i < tokens.size(); i++) {
 			s = s + tokens.get(i) + " ";
 		}
-		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), s + "\n\n");
+		DDGExplorer.showErrMsg(s + "\n\n");
 	}
 
 }

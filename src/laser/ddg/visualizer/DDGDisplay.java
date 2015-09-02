@@ -234,7 +234,7 @@ public class DDGDisplay extends Display {
 				return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 			}
 		} catch (ParseException e) {
-			DDGExplorer.getCurrentDDGPanel().showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
+			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
 			e.printStackTrace();
 			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 		}

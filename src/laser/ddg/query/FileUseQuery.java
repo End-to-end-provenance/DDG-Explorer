@@ -546,8 +546,9 @@ public class FileUseQuery extends AbstractQuery {
 							graphBuilder.focusOn(data.getNodeNameAt(modelRow));
 						}
 					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to show where the file is used.\n");
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
+						String msg = "Unable to show where the file is used.\n";
+						msg = msg + e1;
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
 						//e1.printStackTrace();
 					}
 					
@@ -569,8 +570,9 @@ public class FileUseQuery extends AbstractQuery {
 
 			
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to display file names.\n");
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e + "\n");
+			String msg = "Unable to display file names.\n";
+			msg = msg + e;
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
 			//e.printStackTrace();
 		}
 	}

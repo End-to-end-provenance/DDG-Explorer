@@ -116,12 +116,14 @@ public class LoadFromDBCommand implements ActionListener {
 		graphBuilder.setProvData(provData);
 		graphBuilder.setTitle(processName, timestamp);
 		provData.addProvenanceListener(graphBuilder);
+		DDGExplorer.loadingDDG();
 		provData.setQuery("Entire DDG");
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		jenaLoader.loadDDG(processName, timestamp, provData);
 		graphBuilder.createLegend(provData.getLanguage());
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab(graphBuilder.getPanel().getName(), graphBuilder.getPanel());
+		DDGExplorer.doneLoadingDDG();
 		return graphBuilder;
 	}
 

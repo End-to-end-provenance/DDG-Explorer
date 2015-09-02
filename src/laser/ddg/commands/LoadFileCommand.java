@@ -35,12 +35,14 @@ public class LoadFileCommand implements ActionListener {
 			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 			File selectedFile = FILE_CHOOSER.getSelectedFile();
 			String selectedFileName = selectedFile.getName();
+			DDGExplorer.loadingDDG();
 			builder.processStarted(selectedFileName, null);
 			Parser parser = new Parser(selectedFile, builder);
 			parser.addNodesAndEdges();
 
 			//new tab!
 			ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
+			DDGExplorer.doneLoadingDDG();
 		}
 	}
 	

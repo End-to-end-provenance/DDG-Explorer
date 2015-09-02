@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.JenaLoader;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -233,7 +234,9 @@ public abstract class DataQuery extends AbstractQuery {
 				// built incrementally as it is read from the DB.
 				dbLoader.loadAttributes(processName, timestamp, provData);
 				graphBuilder.createLegend(provData.getLanguage());
-				loadQueryResult(provData, rootResource);	
+				DDGExplorer.loadingDDG();
+				loadQueryResult(provData, rootResource);
+				DDGExplorer.doneLoadingDDG();
 				//also used to set Save to DB as disabled. This should be handled somewhere else
 			}
 		}.start();
@@ -265,7 +268,7 @@ public abstract class DataQuery extends AbstractQuery {
 		if (allPinsToShow.isEmpty()) {
 			String selectedName = nameMenu.getSelectedItem().toString();
 			String selectedValue = valueField.getText();
-			JOptionPane.showMessageDialog(queryFrame, getSingletonMessage(selectedName, selectedValue));
+			DDGExplorer.showErrMsg(getSingletonMessage(selectedName, selectedValue));
 		}
 		
 		// Cause the drawing to occur
