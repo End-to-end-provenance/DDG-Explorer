@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -32,9 +33,14 @@ import laser.ddg.commands.ManageDatabaseCommand;
 import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
+import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowScriptCommand;
+import laser.ddg.commands.ShowValueDerivationCommand;
+import laser.ddg.query.DerivationQuery;
+import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
+import laser.ddg.query.ResultsQuery;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -229,6 +235,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenu ddgMenu = createDDGMenu();
 		menuBar.add(ddgMenu);
 		
+		JMenu queryMenu = createQueryMenu();
+		menuBar.add(queryMenu);
+		
 		JMenu prefMenu = createPreferencesMenu();
 		menuBar.add(prefMenu);
 		
@@ -257,10 +266,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
 
-		// allow the user to look for a particular data file
-		JMenuItem findFiles = new JMenuItem("Find Data Files");
-		findFiles.addActionListener(new FindFilesCommand());
-
 		// allow the user to manage the database
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
@@ -270,7 +275,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
-		fileMenu.add(findFiles);
 		fileMenu.add(manageDB);
 		return fileMenu;
 	}
@@ -306,6 +310,27 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		saveDB.setEnabled(false);
 		attributesItem.setEnabled(false);
 		showScriptItem.setEnabled(false);
+	}
+
+	private JMenu createQueryMenu() {
+		final JMenu queryMenu = new JMenu("Query");
+		queryMenu.setBackground(MENU_COLOR);
+		
+		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
+		findFilesItem.addActionListener(new FindFilesCommand());
+		queryMenu.add(findFilesItem);
+		
+		final Query derivationQuery = new DerivationQuery();
+		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
+		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
+		queryMenu.add(showValueDerivationItem);
+		
+		final Query computedFromQuery = new ResultsQuery();
+		JMenuItem computedFromItem = new JMenuItem(computedFromQuery.getMenuItem());
+		computedFromItem.addActionListener(new ShowComputedFromValueCommand());
+		queryMenu.add(computedFromItem);
+		
+		return queryMenu;
 	}
 
 	/**
@@ -346,6 +371,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	@Override
 	public void queryFinished(String name, JComponent panel) {
 		addTab(name, panel);
+		doneLoadingDDG();
 	}
 
 	/**

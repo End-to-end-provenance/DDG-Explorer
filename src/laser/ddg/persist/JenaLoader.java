@@ -318,9 +318,7 @@ public class JenaLoader {
 	}
 	
 	private String getDDGClause(String queryVar, String processName, String timestamp) {
-		if (ddgURI == null) {
-			ddgURI = getDdgUri(processName, timestamp);
-		}
+		ddgURI = getDdgUri(processName, timestamp);
 		return getDDGClause(queryVar);
 	}
 

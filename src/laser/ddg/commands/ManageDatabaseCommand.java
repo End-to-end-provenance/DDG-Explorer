@@ -17,9 +17,6 @@ import laser.ddg.gui.DDGBrowser;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaLoader;
-import laser.ddg.query.DerivationQuery;
-import laser.ddg.query.Query;
-import laser.ddg.query.ResultsQuery;
 
 /**
  * Command to allow the user to modify the database.
@@ -49,10 +46,6 @@ public class ManageDatabaseCommand implements ActionListener {
 		final JButton deleteAllButton = new JButton("Delete all");
 		final JButton deleteOneButton = new JButton("Delete DDG");
 		final JButton openButton = new JButton("Open DDG");
-		final Query derivationQuery = new DerivationQuery();
-		final JButton derivationQueryButton = new JButton(derivationQuery.getMenuItem());
-		final Query computedFromQuery = new ResultsQuery();
-		final JButton computedFromQueryButton = new JButton(computedFromQuery.getMenuItem());
 		final JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 
@@ -85,42 +78,6 @@ public class ManageDatabaseCommand implements ActionListener {
 
 		});
 
-		derivationQueryButton.addActionListener(new ActionListener() {
-			/**
-			 * Loads the portion of a DDG that shows how a data value has been computed
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					loadFromDBFrame.dispose();
-					derivationQuery.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, ddgExplorer);
-					derivationQuery.addQueryListener(ddgExplorer);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(ddgExplorer,
-							"Unable to perform the query: " + e1.getMessage(),
-							"Error performing query", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
-		computedFromQueryButton.addActionListener(new ActionListener() {
-			/**
-			 * Loads the portion of a DDG that shows what has been computed from a data value.
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					loadFromDBFrame.dispose();
-					computedFromQuery.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, ddgExplorer);
-					computedFromQuery.addQueryListener(ddgExplorer);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(ddgExplorer,
-							"Unable to perform the query: " + e1.getMessage(),
-							"Error performing query", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
-
 		deleteOneButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -139,8 +96,6 @@ public class ManageDatabaseCommand implements ActionListener {
 					deleteOneButton.setEnabled(false);
 					deleteAllButton.setEnabled(true);
 					openButton.setEnabled(false);
-					derivationQueryButton.setEnabled(false);
-					computedFromQueryButton.setEnabled(false);
 				}
 			}
 
@@ -172,13 +127,9 @@ public class ManageDatabaseCommand implements ActionListener {
 		deleteAllButton.setEnabled(false);
 		deleteOneButton.setEnabled(false);
 		openButton.setEnabled(false);
-		derivationQueryButton.setEnabled(false);
-		computedFromQueryButton.setEnabled(false);
 		buttonPanel.add(deleteAllButton);
 		buttonPanel.add(deleteOneButton);
 		buttonPanel.add(openButton);
-		buttonPanel.add(derivationQueryButton);
-		buttonPanel.add(computedFromQueryButton);
 		buttonPanel.add(cancelButton);
 
 		dbBrowser.addDBBrowserListener(new DBBrowserListener() {
@@ -194,8 +145,6 @@ public class ManageDatabaseCommand implements ActionListener {
 				deleteAllButton.setEnabled(false);
 				deleteOneButton.setEnabled(true);
 				openButton.setEnabled(true);
-				derivationQueryButton.setEnabled(true);
-				computedFromQueryButton.setEnabled(true);
 			}
 		});
 
