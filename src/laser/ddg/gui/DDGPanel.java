@@ -28,6 +28,7 @@ import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
 
 /**
@@ -58,6 +59,9 @@ public class DDGPanel extends JPanel {
 
 	// The visualization of the ddg
 	private DDGVisualization vis;
+	
+	// The object that manages the visible nodes
+	private PrefuseGraphBuilder builder;
 
 	// The panel containing the complete legend
 	private Legend legendBox = new Legend();
@@ -95,6 +99,8 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Creates the layout for the panel.
 	 * 
+	 * @param builder
+	 * 		the object that manages the visible nodes and edges
 	 * @param vis
 	 *            the visualization to display
 	 * @param ddgDisplay
@@ -103,8 +109,9 @@ public class DDGPanel extends JPanel {
 	 * @param provData
 	 *            the ddg data being displayed
 	 */
-	public void displayDDG(DDGVisualization vis, final Display ddgDisplay,
+	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, final Display ddgDisplay,
 			final Display ddgOverview, ProvenanceData provData) {
+		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;
 		setBackground(Color.WHITE);
@@ -354,7 +361,9 @@ public class DDGPanel extends JPanel {
 
 	public void showSearchResults(ArrayList<SearchElement> resultList) {
 		if (searchList == null) {
-			searchList = new SearchResultsGUI(resultList, splitPane, this);
+			searchList = new SearchResultsGUI(resultList);
+			splitPane.setLeftComponent(searchList);
+			validate();
 		} else {
 			searchList.updateSearchList(resultList);
 		}
@@ -362,6 +371,14 @@ public class DDGPanel extends JPanel {
 
 	public void showErrMsg(String str) {
 		errorLog.append(str);
+	}
+
+	public void setHighlighted(int id, boolean value) {
+		builder.setHighlighted(id, value);
+	}
+
+	public void focusOn(String name) {
+		builder.focusOn(name);
 	}
 
 }

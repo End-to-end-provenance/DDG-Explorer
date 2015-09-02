@@ -4,6 +4,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -16,37 +18,40 @@ import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 
 class SearchPanel extends JPanel {
+	private static final String ALL_OPTIONS = "All Options";
+	private static final String FUNCTION_OPTION = "Function";
+	private static final String URL_OPTION = "URL";
+	private static final String FILE_OPTION = "File";
+	private static final String DATA_OPTION = "Data";
+	private static final String ERROR_OPTION = "Error";
 	private JTextField searchField;
-	private JComboBox<String> optionsBox, ddgOptionsBox;
-	private String ddgOption;
+	private JComboBox<String> ddgOptionsBox;
+	private boolean searchTyped = false;
+	private static JButton searchButton;
 
 	public SearchPanel() {
-		searchUI();
-	}
-
-	private void searchUI() {
 		searchField = new JTextField("Search");
-		JButton advancedSearchButton = new JButton("Advanced Search");
+		searchButton = new JButton("Search");
+		searchButton.setEnabled(false);
 
-		String[] options = { "Current DDG", "R Script", "Database" };
-		String[] ddgOptions = { "Error", "Data", "File", "URL", "Function",
-				"All Options" };
+		// Only search the current ddg so far.
+		// TODO:  Add other search options
+		//String[] options = { "Current DDG", "R Script", "Database" };
+		//JComboBox<String>optionsBox = new JComboBox<>(options);
+		
+		String[] ddgOptions = { ALL_OPTIONS, ERROR_OPTION, FILE_OPTION, URL_OPTION, DATA_OPTION, FUNCTION_OPTION };
+		ddgOptionsBox = createDDGOptionsBox(ddgOptions);
 
-		optionsBox = new JComboBox<>(options);
-		ddgOptionsBox = new JComboBox<>(ddgOptions);
-
-		ddgOption = ddgOptions[0];
 		setLayout(new GridBagLayout());
-
 		GridBagConstraints preferences = new GridBagConstraints();
 		preferences.fill = GridBagConstraints.BOTH;
 
 		// Add options box
-		preferences.weightx = 0.0;
-		preferences.weighty = 0.0;
-		preferences.gridx = 0;
-		preferences.gridy = 0;
-		add(optionsBox, preferences);
+//		preferences.weightx = 0.0;
+//		preferences.weighty = 0.0;
+//		preferences.gridx = 0;
+//		preferences.gridy = 0;
+//		add(optionsBox, preferences);
 
 		// Add ddg search options box
 		preferences.gridx = 1;
@@ -63,18 +68,8 @@ class SearchPanel extends JPanel {
 		preferences.weightx = 0.0;
 		preferences.gridx = 3;
 		preferences.gridy = 0;
-		add(advancedSearchButton, preferences);
+		add(searchButton, preferences);
 
-		// Changes text in search field in response to the selected ddgOptions
-		// box
-		ddgOptionsBox.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent select) {
-				searchField.setText("Search for "
-						+ ddgOptionsBox.getSelectedItem().toString());
-				ddgOption = ddgOptionsBox.getSelectedItem().toString();
-			}
-		});
 
 		// Submit Search if the enter button is pressed in the search field
 		searchField.addActionListener(new ActionListener() {
@@ -83,9 +78,17 @@ class SearchPanel extends JPanel {
 				doSearch();
 			}
 		});
+		
+		searchField.addKeyListener (new KeyAdapter () {
+
+			@Override
+			public void keyTyped(KeyEvent e) {
+				searchTyped = true;
+			}
+		});
 
 		// Submit Search if the advanced search button is pressed
-		advancedSearchButton.addActionListener(new ActionListener() {
+		searchButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				doSearch();
@@ -93,32 +96,46 @@ class SearchPanel extends JPanel {
 		});
 
 	}
+
+	private JComboBox<String> createDDGOptionsBox(String[] ddgOptions) {
+		final JComboBox<String> box = new JComboBox<>(ddgOptions);
+		// Changes text in search field in response to the selected ddgOptions
+		// box
+		box.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent select) {
+				String ddgOption = box.getSelectedItem().toString();
+				if (!searchTyped) {
+					searchField.setText("Search for " + ddgOption);
+				}
+			}
+		});
+		return box;
+	}
 	
 	// Do a search
-	public void doSearch() {
+	private void doSearch() {
 		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
 
 		SearchIndex searchIndex = panel.getSearchIndex();
 
 		// Gets which option was selected in the drop down
-		System.out.println("panel = " + panel);
-		System.out.println("searchIndex = " + searchIndex);
-		if (ddgOption.equals("Error"))
+		String ddgOption = ddgOptionsBox.getSelectedItem().toString();
+		if (ddgOption.equals(ERROR_OPTION))
 			searchList(searchIndex.getErrorList());
-		else if (ddgOption.equals("Data"))
+		else if (ddgOption.equals(DATA_OPTION))
 			searchList(searchIndex.getDataList());
-		else if (ddgOption.equals("File"))
+		else if (ddgOption.equals(FILE_OPTION))
 			searchList(searchIndex.getFileList());
-		else if (ddgOption.equals("URL"))
+		else if (ddgOption.equals(URL_OPTION))
 			searchList(searchIndex.getURLList());
-		else if (ddgOption.equals("Function"))
-			searchList(
-					searchIndex.getOperationList());
+		else if (ddgOption.equals(FUNCTION_OPTION))
+			searchList(searchIndex.getOperationList());
 		else
 			searchList(searchIndex.getAllList());
 	}
 
-	public void searchList(ArrayList<SearchElement> nodesList) {
+	private void searchList(ArrayList<SearchElement> nodesList) {
 		DDGPanel ddgPanel = DDGExplorer.getCurrentDDGPanel();
 		if (ddgPanel == null) {
 			DDGExplorer explorer = DDGExplorer.getInstance();
@@ -129,25 +146,15 @@ class SearchPanel extends JPanel {
 			return;
 		}
 
-		boolean isText;
-		String searchText = searchField.getText().toLowerCase();
-
-		// checks if information was entered into the search field
-		if (searchText.isEmpty())
-			isText = false;
-		else if (searchText.length() < 6)
-			isText = true;
-		else if (searchText.substring(0, 6).equals("search"))
-			isText = false;
-		else
-			isText = true;
-		
 		ArrayList<SearchElement> newList = new ArrayList<SearchElement>();
 		// if user entered information into the search bar
-		if (isText) {
-			for (SearchElement entry : nodesList)
-				if (entry.getName().toLowerCase().contains(searchText))
+		if (searchTyped) {
+			String searchText = searchField.getText().toLowerCase();
+			for (SearchElement entry : nodesList) {
+				if (entry.getName().toLowerCase().contains(searchText)) {
 					newList.add(entry);
+				}
+			}
 			ddgPanel.showSearchResults(newList);
 		}
 
@@ -155,6 +162,14 @@ class SearchPanel extends JPanel {
 		else {
 			ddgPanel.showSearchResults(nodesList);
 		}
+	}
+	
+	public static void enableSearch() {
+		searchButton.setEnabled (true);
+	}
+	
+	public static void disableSearch() {
+		searchButton.setEnabled(false);
 	}
 
 }

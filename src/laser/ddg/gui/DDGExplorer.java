@@ -21,14 +21,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import laser.ddg.DataBindingEvent;
-import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
-import laser.ddg.Node;
-import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
-import laser.ddg.ProvenanceListener;
-import laser.ddg.RemoveListenerException;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
@@ -173,6 +167,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				if (openTab instanceof laser.ddg.gui.DDGPanel) {
 					DDGPanel openDDGPanel = (DDGPanel) openTab;
 					enableDDGCommands();
+					SearchPanel.enableSearch();
 					if (preferences.isArrowDirectionDown()) {
 						openDDGPanel.setArrowDirectionDown();
 					}
@@ -187,11 +182,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 					}
 				} else {
 					disableDDGCommands();
+					SearchPanel.disableSearch();
 				}
 			}
 
 		});
-
+		
 		return tabbedPane;
 	}
 

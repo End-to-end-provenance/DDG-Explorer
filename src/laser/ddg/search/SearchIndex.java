@@ -2,18 +2,14 @@ package laser.ddg.search;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
-import prefuse.visual.NodeItem;
-import laser.ddg.visualizer.PrefuseGraphBuilder;
-
+/**
+ * Manages lists of nodes by type to facilitate searching.
+ * 
+ * @author Barbara Lerner
+ * @version Sep 2, 2015
+ *
+ */
 public class SearchIndex {
-	private PrefuseGraphBuilder builder;
-	
-	//Keep track of selected nodes from search results
-	private int prevNodeId; 
-	private boolean prevNodeHighlighted = false;
-	
 	//2D Array to hold information on each type of node for search within Current DDG
 	private ArrayList <SearchElement> errorList = new ArrayList<SearchElement>();
 	private ArrayList <SearchElement> dataList = new ArrayList<SearchElement>();
@@ -22,18 +18,22 @@ public class SearchIndex {
 	private ArrayList <SearchElement> operationList = new ArrayList<SearchElement>();
 	private ArrayList <SearchElement> allList = new ArrayList<SearchElement>();
 
-	public SearchIndex (PrefuseGraphBuilder builder) {
-		this.builder = builder;
-	}
-	
+	/**
+	 * Adds a node to the appropriate search index based on the node's type.
+	 * All nodes go into a general list as well.
+	 * 
+	 * @param type the type of node:  one of "Exception", "Data", "File", "URL", or "Operation"
+	 * @param id the node id used by Prefuse
+	 * @param name the node's label
+	 */
 	public void addToSearchIndex(String type, int id, String name) {
 		// hold individual node information
-		SearchElement element = new SearchElement(builder, type, name, id);
+		SearchElement element = new SearchElement(type, name, id);
 
 		// store each node with associated type
 		if(type.equals("Exception"))
 			errorList.add(element);
-		else if(type.equals("Data"))
+		else if(type.equals("Data") || type.equals("Snapshot"))
 			dataList.add(element);
 		else if(type.equals("File"))
 			fileList.add(element);
@@ -44,30 +44,6 @@ public class SearchIndex {
 
 		// keep track of all nodes in DDG
 		allList.add(element);
-	}
-
-	/**
-	 * updates the focus on the DDGExplorer's graph
-	 * @param entry 
-	 */
-	public void updateNodeFocus(SearchElement entry) {
-		// if a search result was previously selected, then remove
-		// highlighting from node
-		if (prevNodeHighlighted) {
-			builder.setHighlighted (prevNodeId, false);
-		}
-
-		// get selected search result's node and highlight it
-		int entryId = entry.getId();
-		builder.setHighlighted(entryId, true);
-
-		// bring node of graph into focus
-		builder.focusOn(entry.getName());
-
-		// keep track of highlighted node to remove highlighting in the
-		// future
-		prevNodeId = entryId;
-		prevNodeHighlighted = true;
 	}
 
 	/**

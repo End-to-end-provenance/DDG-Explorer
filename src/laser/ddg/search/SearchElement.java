@@ -1,29 +1,26 @@
 package laser.ddg.search;
 
 import java.awt.Color;
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
 
 import laser.ddg.visualizer.PrefuseGraphBuilder;
-import prefuse.visual.NodeItem;
 
 /**
- * An element holding the name, type, row and color of node
+ * SearchElement objects are placed into a JList of search results.
+ * An element holds the name, id and color of node.  The name is displayed
+ * in the list.  Its color is determined based on the type of node.
+ * The id is used to find the node to highlight and focus on it.
  */
 public class SearchElement {
-	/**
-	 * 
-	 */
-	private final PrefuseGraphBuilder prefuseGraphBuilder;
-	private final String name, type;
+	private final String name;
 	private final int id;
 	private final Color color;
 
-	public SearchElement(PrefuseGraphBuilder prefuseGraphBuilder, String type,
-			String name, int id) {
-		this.prefuseGraphBuilder = prefuseGraphBuilder;
-		this.type = type;
+	/**
+	 * @param type the type of node as recorded in the ddg
+	 * @param name the label of the node
+	 * @param id the node's id as used by prefuse
+	 */
+	public SearchElement(String type, String name, int id) {
 		this.name = name;
 		this.id = id;
 
@@ -78,10 +75,6 @@ public class SearchElement {
 		return id;
 	}
 
-//	public String getType() {
-//		return type;
-//	}
-//
 	public Color getColor() {
 		return color;
 	}

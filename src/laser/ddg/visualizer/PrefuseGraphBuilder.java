@@ -159,7 +159,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private int numPins;
 	
-	private SearchIndex searchIndex = new SearchIndex(this);
+	private SearchIndex searchIndex = new SearchIndex();
 
 	/**
 	 * Creates an object that builds a visual graph.  Creates a window in which
@@ -179,6 +179,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter) {
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
+		ddgPanel.setSearchIndex (searchIndex);
 	}
 
 	/**
@@ -192,6 +193,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.incremental = incremental;
 		this.dataDerivation = dataDerivation;
 		ddgPanel = new DDGPanel();
+		ddgPanel.setSearchIndex (searchIndex);
 	}
 
 	/**
@@ -641,7 +643,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 6. launch the visualization -------------------------------------
 
-		ddgPanel.displayDDG(vis, display, displayOverview, provData);
+		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
 
 		// new code
 		PopupMenu options = display.new PopupMenu();
