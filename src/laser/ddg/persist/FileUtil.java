@@ -22,7 +22,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import laser.ddg.visualizer.ErrorLog;
+import laser.ddg.gui.DDGExplorer;
 
 /**
  * @author xiang
@@ -46,7 +46,7 @@ public class FileUtil {
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				ErrorLog.showErrMsg("Warning! Unable to set " + ddgDir
+				DDGExplorer.showErrMsg("Warning! Unable to set " + ddgDir
 						+ "to hidden.");
 			}
 		}
@@ -199,8 +199,8 @@ public class FileUtil {
 			//ErrorLog.showErrMsg("Will copy to " + savedCopy + "\n");
 			return savedCopy;
 		} catch (IllegalStateException e) {
-			ErrorLog.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
-			ErrorLog.showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			return null;
 		}
 		
@@ -227,8 +227,8 @@ public class FileUtil {
 			File savedCopy = new File(savedCopyDir.getAbsolutePath() + File.separatorChar + originalFile.getName());
 			return savedCopy;
 		} catch (IllegalStateException e) {
-			ErrorLog.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
-			ErrorLog.showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			return null;
 		}
 	}

@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
-import laser.ddg.visualizer.ErrorLog;
-import laser.ddg.visualizer.LegendEntry;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
 /**
@@ -159,7 +161,7 @@ public class RDDGBuilder extends DDGBuilder {
 				attrText.append(printAttrNames[which] + " = " + attrValue + "\n");
 			}
 			else {
-				ErrorLog.showErrMsg("No value for " + attrName + "\n");
+				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No value for " + attrName + "\n");
 			}
 			which++;
 		}

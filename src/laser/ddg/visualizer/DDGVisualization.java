@@ -137,7 +137,7 @@ public class DDGVisualization extends Visualization {
 	 * 		prefuse.Constants.EDGE_ARROW_FORWARD and prefuse.Constants.EDGE_ARROW_REVERSE.
 	 *		FORWARD draws edges from outputs to inputs.  REVERSE draws from inputs to outputs.  
 	 */
-	void setRenderer(int arrowDirection) {
+	public void setRenderer(int arrowDirection) {
 		// draw the "name" label for NodeItems
 		LabelRenderer r = new LabelRenderer(PrefuseUtils.NAME);
 		r.setRoundedCorner(8, 8); // round the corners

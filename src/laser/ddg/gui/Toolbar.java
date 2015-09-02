@@ -1,4 +1,4 @@
-package laser.ddg.visualizer;
+package laser.ddg.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -18,6 +18,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import laser.ddg.visualizer.DDGDisplay;
 import prefuse.Display;
 import prefuse.util.display.PaintListener;
 

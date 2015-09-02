@@ -23,10 +23,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -36,11 +36,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import laser.ddg.FileInfo;
+import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.gui.DDGBrowser;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.TabComp;
 import laser.ddg.persist.JenaLoader;
-import laser.ddg.visualizer.ErrorLog;
 import laser.ddg.visualizer.FileViewer;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -63,12 +62,6 @@ public class FileUseQuery extends AbstractQuery {
 	private static final int INPUT = 0;
 	private static final int OUTPUT = 1;
 	private static final int IO = 2;
-	
-	//JTabbedPane to add new tab
-	private JTabbedPane tabbed = null;
-	
-	//frame to base pop-ups upon
-	private JFrame frame;
 	
 	private JPanel mainPanel;
 	
@@ -94,6 +87,8 @@ public class FileUseQuery extends AbstractQuery {
 	// The panel where the search results are displayed.
 	private JPanel resultsPanel;
 
+	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+	
 	/**
 	 * Return the command name for the query
 	 */
@@ -102,14 +97,6 @@ public class FileUseQuery extends AbstractQuery {
 		return "Find File Uses";
 	}
 	
-	/**
-	 * get component to center query window around
-	 * @param frame component base
-	 */
-	public void setFrameReferences(JFrame frame, JTabbedPane tabbed){
-		this.frame = frame;
-		this.tabbed = tabbed;
-	}
 	/**
 	 * Execute the query.  This will create a panel (in a tab) allowing the user to select options.
 	 * Hitting ok in the panel causes the query to run.
@@ -256,7 +243,7 @@ public class FileUseQuery extends AbstractQuery {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// Modal dialog.  selectedDDG will be set on return.
-				selectDDG(frame, dbLoader);
+				selectDDG(ddgExplorer, dbLoader);
 				disableFileTable();
 			}
 			
@@ -323,8 +310,8 @@ public class FileUseQuery extends AbstractQuery {
 					}
 					displayFilenames(dbLoader, selectedIO, selectedExtensions);
 				} catch (Exception e1) {
-					ErrorLog.showErrMsg("Unable to search for file uses.\n");
-					ErrorLog.showErrMsg(e1 + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to search for file uses.\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
 					//e1.printStackTrace();
 				}
 			}
@@ -341,10 +328,7 @@ public class FileUseQuery extends AbstractQuery {
 		mainPanel.add(searchPanel, BorderLayout.NORTH);
 		
 		//new tab!
-		tabbed.addTab(mainPanel.getName(), mainPanel);
-		int tabNum = tabbed.getTabCount()-1;
-		tabbed.setTabComponentAt(tabNum, new TabComp(tabbed, mainPanel));
-		tabbed.setSelectedIndex(tabNum);
+		ddgExplorer.addTab(mainPanel.getName(), mainPanel);
 	}
 	
 	/**
@@ -556,14 +540,15 @@ public class FileUseQuery extends AbstractQuery {
 							int modelRow = fileTable.convertRowIndexToModel(row);
 							//ErrorLog.showErrMsg("Selected script = " + data.getScriptAt(modelRow) + "\n");
 							//ErrorLog.showErrMsg("Selected timestamp = " + data.getTimeAt(modelRow) + "\n");
-							PrefuseGraphBuilder graphBuilder = DDGExplorer.loadDDGFromDB (data.getScriptAt(modelRow), data.getTimeAt(modelRow));
+							PrefuseGraphBuilder graphBuilder = new LoadFromDBCommand().loadDDGFromDB (data.getScriptAt(modelRow), data.getTimeAt(modelRow));
 							graphBuilder.drawFullGraph();
 							// ErrorLog.showErrMsg("Focusing on " + data.getNodeNameAt(modelRow));
 							graphBuilder.focusOn(data.getNodeNameAt(modelRow));
 						}
 					} catch (Exception e1) {
-						ErrorLog.showErrMsg("Unable to show where the file is used.\n");
-						ErrorLog.showErrMsg(e1 + "\n");
+						String msg = "Unable to show where the file is used.\n";
+						msg = msg + e1;
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
 						//e1.printStackTrace();
 					}
 					
@@ -585,8 +570,9 @@ public class FileUseQuery extends AbstractQuery {
 
 			
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Unable to display file names.\n");
-			ErrorLog.showErrMsg(e + "\n");
+			String msg = "Unable to display file names.\n";
+			msg = msg + e;
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
 			//e.printStackTrace();
 		}
 	}
