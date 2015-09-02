@@ -43,7 +43,6 @@ public class LoadFromDBCommand implements ActionListener {
 		final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		
 		final JDialog loadFromDBFrame = new JDialog(ddgExplorer, "Open from Database", true);
-		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 
 		// Create the buttons used to pick an action
 		final JButton openButton = new JButton("Open");
@@ -100,6 +99,7 @@ public class LoadFromDBCommand implements ActionListener {
 		loadFromDBFrame.add(dbBrowser, BorderLayout.CENTER);
 		loadFromDBFrame.add(buttonPanel, BorderLayout.SOUTH);
 		loadFromDBFrame.pack();
+		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 		loadFromDBFrame.setVisible(true);
 	}
 	

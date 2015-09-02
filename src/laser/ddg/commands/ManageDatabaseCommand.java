@@ -42,7 +42,6 @@ public class ManageDatabaseCommand implements ActionListener {
 	private void execute() {
 		final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		final JDialog loadFromDBFrame = new JDialog(ddgExplorer, "Manage Database", true);
-		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 		final JenaLoader jenaLoader = JenaLoader.getInstance();
 		final DDGBrowser dbBrowser = new DDGBrowser(jenaLoader);
 
@@ -207,6 +206,7 @@ public class ManageDatabaseCommand implements ActionListener {
 
 		loadFromDBFrame.add(selectionPanel);
 		loadFromDBFrame.setMinimumSize(new Dimension(800, 400));
+		loadFromDBFrame.setLocationRelativeTo(ddgExplorer);
 		loadFromDBFrame.setVisible(true);
 	}
 
