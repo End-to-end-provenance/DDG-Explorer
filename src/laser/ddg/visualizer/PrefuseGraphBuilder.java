@@ -1306,7 +1306,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				showMembersRecursively(nextMember);
 			}
 			else {
-				//System.out.println("showMembersRecursively: Making visible: " + nextMember);
+				System.out.println("showMembersRecursively: Making visible: " + nextMember);
 				nextMember.setVisible(true);
 			}
 		}
@@ -1505,14 +1505,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				//System.out.println ("Target: " + edge.getTargetItem());
 
 				NodeItem source = edge.getSourceItem();
-				if (PrefuseUtils.isAnyDataNode(source)) {
-					//System.out.println ("Setting StepDF source visible");
+				NodeItem target = edge.getTargetItem();
+				if (PrefuseUtils.isAnyDataNode(source) && target.isVisible()) {
+					//System.out.println ("setAllDataNodeVisibility: Setting StepDF source visible " + source.getString(PrefuseUtils.NAME));
 					source.setVisible(true);
 				}
 				else {
-					NodeItem target = edge.getTargetItem();
-					if (PrefuseUtils.isAnyDataNode(target)) {
-						//System.out.println ("Setting StepDF target visible");
+					if (PrefuseUtils.isAnyDataNode(target) && source.isVisible()) {
+						//System.out.println ("setAllDataNodeVisibility: Setting StepDF target visible " +  target.getString(PrefuseUtils.NAME));
 						target.setVisible(true);
 					}
 				}
@@ -1541,7 +1541,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 //		if (visible) {
-//			System.out.println("Making data visible: " + PrefuseUtils.getName(node));
+//			System.out.println("setDataNodeVisibility: Making data visible: " + PrefuseUtils.getName(node));
 //		}
 //		else {
 //			System.out.println("Making data INvisible: " + PrefuseUtils.getName(node));
