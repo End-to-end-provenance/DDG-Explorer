@@ -30,6 +30,7 @@ import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
+import laser.ddg.commands.QuitCommand;
 import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
@@ -270,12 +271,17 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
 
+		// allow the user to quit ddg explorer
+		JMenuItem quit = new JMenuItem("Quit");
+		quit.addActionListener(new QuitCommand());
+
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
 		fileMenu.add(manageDB);
+		fileMenu.add(quit);
 		return fileMenu;
 	}
 

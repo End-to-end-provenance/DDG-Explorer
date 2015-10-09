@@ -9,7 +9,7 @@
 	<property name="jrunner-project-lib" value="../juliette-runner-release/lib"/>
 	<property name="dropbox" value="${user.home}/Dropbox/HarvardForest/DDGExplorer/" /> 
 
-	<property name="version" value="2.0"/>
+	<property name="version" value="2.02"/>
 
 	<target name="buildinfo">
 	    <tstamp>
@@ -28,7 +28,7 @@
 	    </propertyfile>
 	</target>
 
-  <target name="ddg-explorer">
+  <target name="ddg-explorer" depends="buildinfo">
   	<jar destfile="tmp_ddg-explorer.jar">
   		<manifest>
   		  <attribute name="Main-Class"
