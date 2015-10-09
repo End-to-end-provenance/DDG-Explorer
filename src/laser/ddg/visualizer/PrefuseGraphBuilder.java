@@ -1732,6 +1732,17 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the definition
 	 */
 	public String getFunctionBody(String functionName) {
+		// Remove any parameters if they appear in the string
+		int blankIndex = functionName.indexOf(" ");
+		if (blankIndex != -1) {
+			functionName = functionName.substring(0, blankIndex);
+		}
+		
+		int parenIndex = functionName.indexOf("(");
+		if (parenIndex != -1) {
+			functionName = functionName.substring(0, parenIndex);
+		}
+		
 		return provData.getFunctionBody(functionName);
 	}
 
