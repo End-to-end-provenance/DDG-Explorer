@@ -1,6 +1,8 @@
 package laser.ddg.gui;
 
 import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
@@ -18,6 +20,7 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -237,9 +240,9 @@ public class DDGPanel extends JPanel {
 	private void setTitleToScriptAndTime(String attr) {
 		System.out.println("Setting title script and time");
 		String[] items = attr.split("[\\n]");
-		for(int i =0; i < items.length;i++){
-			System.out.println(items[i]);
-		}
+		/**for(int i =0; i < items.length;i++){
+		 System.out.println(items[i]);
+		 }**/
 
 		String script = "";
 		String time = "";
@@ -257,9 +260,7 @@ public class DDGPanel extends JPanel {
 
 				// use the index and go from there to the end
 				script = theLine.substring(startAt);
-			}
-
-			else if (items[s].startsWith("DateTime")) {
+			} else if (items[s].startsWith("DateTime")) {
 				// get rid of any spaces
 				String theLine = items[s].replaceAll("[\\s]", "");
 
@@ -274,10 +275,9 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
-		setTitle(script, time, startTime);
 	}
 
-	/**
+		/**
 	 * Set the panel title
 	 * 
 	 * @param title
@@ -286,19 +286,28 @@ public class DDGPanel extends JPanel {
 	 *            the time at which it was run. This can be null.
 	 */
 	public void setTitle(String title, String timestamp, String startTimeStamp)  {
+
+		//Date startTime = new Date(timestamp);
+		//Date endTime = new Date(startTimeStamp);
+	//	String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
+		String startTimestamp = "";
+		startTimestamp = startTimeStamp.substring(190, 194)+ "/" + startTimeStamp.substring(195, 197)+"/" +startTimeStamp.substring(199, 201)+" "+startTimeStamp.substring(202, 204)+ ":"+ startTimeStamp.substring(205, 207)+":"+startTimeStamp.substring(209, 301);
+		System.out.println("The start time stamp is "+startTimestamp);
 		if (timestamp == null) {
 			setName(title);
 		} else {
-			setName(title + " start: " + startTimeStamp + " end: " + timestamp);
+			setName(title + " start: " + startTimestamp + " end: " + timestamp);
 		}
-		//Date startTime = new Date(timestamp);
-		//Date endTime = new Date(startTimeStamp);
-		String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
-		System.out.println("The start tiem is "+startTimestamp);
-		String endTimestamp = timestamp.substring(11, timestamp.length()-3);
-		SimpleDateFormat df = new SimpleDateFormat("HH.mm.ss");
+		String endTimestamp = timestamp.substring(0, 4)+"/"+timestamp.substring(5,7)+"/"+timestamp.substring(8, 10)+" "+timestamp.substring(11, 13)+":" +timestamp.substring(14, 16) + ":"+timestamp.substring(17, timestamp.length()-3);
+		System.out.println("The end time stamp is "+endTimestamp);
+		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
 		try {
-				System.out.println("The start tiem is "+ df.parse(startTimestamp)  +" and the end time is "+ df.parse(endTimestamp));
+			Date timeStampStartTime = df.parse(startTimestamp);
+			Date timeStampEndTime = df.parse(endTimestamp);
+				System.out.println("The start tiem is " + timeStampStartTime + " and the end time is " + timeStampEndTime);
+			String totalExecutionTime = timeDifference(timeStampEndTime, timeStampEndTime);
+			System.out.println("The total execution time is "+totalExecutionTime);
 			//System.out.println("Total run time is "+totalRunTime);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -320,6 +329,37 @@ public class DDGPanel extends JPanel {
 		//	long totalRunTime =  timestamp -startTimeStamp
 	//	System.out.println("The total run time is "+totalRunTime);
 	}
+
+	private String timeDifference(Date d1, Date d2) {
+		//HH converts hour in 24 hours format (0-23), day calculation
+	//	SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String difference ="";
+		System.out.println("GETTING TIME DIFFERNECE");
+
+		try {
+
+			//in milliseconds
+			long diff = d2.getTime() - d1.getTime();
+			System.out.println("The first difference is " +diff);
+
+			long diffSeconds = diff / 1000 % 60;
+			long diffMinutes = diff / (60 * 1000) % 60;
+			long diffHours = diff / (60 * 60 * 1000) % 24;
+			//long diffDays = diff / (24 * 60 * 60 * 1000);
+
+			//System.out.print(diffDays + " days, ");
+			System.out.print(diffHours + " hours, ");
+			System.out.print(diffMinutes + " minutes, ");
+			System.out.print(diffSeconds + " seconds.");
+			difference = "The difference is "+diffHours + " hours "+diffMinutes + " minutes "+ " and "+diffSeconds;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return difference;
+	}
+
+
 
 	/**
 	 * Sets the provenance data and updates the main attributes for this ddg.
@@ -343,7 +383,24 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
-			setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
+
+
+
+			Attributes attributes;
+			try {
+				attributes = provData.getAttributes();
+				Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(provData.getLanguage());
+				String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attributes);
+				System.out.println("The attirubtes read is " + text);
+				setTitle(fileName, provData.getTimestamp(), text);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		//	setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
 			//getTotalRunTime(provData);
 		}
 	}

@@ -366,7 +366,8 @@ public class Parser {
 		
 		// TODO get the timeStamp
 		String timestamp = null;
-		timestamp = parseTimestamp(nodeId); //here is where it is. 
+		timestamp = parseTimestamp(nodeId); //here is where it is.
+		System.out.println("The time stamp of this node is "+timestamp);
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, null);
@@ -384,7 +385,7 @@ public class Parser {
 	 */
 	private String parseValue(String nodeId) throws IOException {
 		int nextToken = in.nextToken();
-		
+
 		// Value is optional.  This is the case where it is missing.
 		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF) {
 			in.pushBack();

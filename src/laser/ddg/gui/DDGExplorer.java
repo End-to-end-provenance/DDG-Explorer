@@ -1,46 +1,24 @@
 package laser.ddg.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
+import laser.ddg.LanguageConfigurator;
+import laser.ddg.ProvenanceData;
+import laser.ddg.commands.*;
+import laser.ddg.query.DerivationQuery;
+import laser.ddg.query.Query;
+import laser.ddg.query.QueryListener;
+import laser.ddg.query.ResultsQuery;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProvenanceData;
-import laser.ddg.commands.CommandOverviewCommand;
-import laser.ddg.commands.CompareScriptsCommand;
-import laser.ddg.commands.FindFilesCommand;
-import laser.ddg.commands.LoadFileCommand;
-import laser.ddg.commands.LoadFromDBCommand;
-import laser.ddg.commands.ManageDatabaseCommand;
-import laser.ddg.commands.SaveToDBCommand;
-import laser.ddg.commands.SetArrowDirectionCommand;
-import laser.ddg.commands.ShowAttributesCommand;
-import laser.ddg.commands.ShowComputedFromValueCommand;
-import laser.ddg.commands.ShowLegendMenuItem;
-import laser.ddg.commands.ShowScriptCommand;
-import laser.ddg.commands.ShowValueDerivationCommand;
-import laser.ddg.query.DerivationQuery;
-import laser.ddg.query.Query;
-import laser.ddg.query.QueryListener;
-import laser.ddg.query.ResultsQuery;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -319,6 +297,18 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
+
+		JMenuItem queryExecutionTime = new JMenuItem("List Procedural Nodes by Execution Time");
+		queryExecutionTime.addActionListener(new ActionListener() {
+												 @Override
+												 public void actionPerformed(ActionEvent e) {
+//TODO list by execution time.
+												 }
+											 }
+
+		);
+	//	queryExecutionTime.addActionListener();
+		queryMenu.add(queryExecutionTime);
 		
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
@@ -486,6 +476,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 */
 	public static void main(String[] args) {
 		try {
+			System.out.println("YADA'S CODE RUNNING");
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
 			explorer.createAndShowGUI();

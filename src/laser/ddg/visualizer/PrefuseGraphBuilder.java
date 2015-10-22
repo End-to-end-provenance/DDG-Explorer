@@ -393,6 +393,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
+
+
 	}
 
 	private void addNodesAndEdges(ProvenanceData ddg) {
@@ -558,7 +560,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			//System.out.println("Building node and edge tables.");
+		//	System.out.println("Building node and edge tables.");
 			buildNodeAndEdgeTables();
 
 			//System.out.println("Building graph");
@@ -762,6 +764,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// We are just initializing the display here, not actually drawing a graph.
 
 		this.provData = provData;
+		//System.out.println("The name of the prov data inserted is "+provData.getProcessName());
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID,
 				PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
