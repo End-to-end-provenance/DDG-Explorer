@@ -366,13 +366,14 @@ public class Parser {
 		
 		// TODO get the timeStamp
 		String timestamp = null;
-		timestamp = parseTimestamp(nodeId);
+		timestamp = parseTimestamp(nodeId); //here is where it is. 
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value); 
+		//Track down values. 
 	}
 
 	/**

@@ -1,0 +1,24 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jena-arq-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/icu4j-3.4.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-core-2.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-api-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xercesImpl-2.11.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-iri-0.9.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jena-tdb-0.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/xml-apis-1.4.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpcore-4.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/prefuse.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/CPL.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/httpclient-4.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/commons-codec-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/slf4j-log4j12-1.6.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/log4j-1.2.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jdiff.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

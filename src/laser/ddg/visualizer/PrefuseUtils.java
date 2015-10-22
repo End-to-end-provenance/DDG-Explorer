@@ -1,16 +1,12 @@
 package laser.ddg.visualizer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
+
+import java.util.*;
 
 /**
  * Utility functions to help us add ddg-specific information to 
@@ -488,6 +484,9 @@ public class PrefuseUtils {
 	 * @return the timestamp
 	 */
 	static String getTimestamp(Node n) {
+		//this isn't working.
+		System.out.println("The value is "+n.getString(VALUE));
+		System.out.println("The value of the timestamp is "+n.getString(TIMESTAMP));
 		return n.getString(TIMESTAMP);
 	}
 

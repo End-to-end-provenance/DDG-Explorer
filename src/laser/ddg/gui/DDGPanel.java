@@ -1,24 +1,5 @@
 package laser.ddg.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
 import laser.ddg.persist.DBWriter;
@@ -30,6 +11,17 @@ import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the
@@ -234,6 +226,7 @@ public class DDGPanel extends JPanel {
 	 *            the attribute list
 	 */
 	public void setAttributes(Attributes attrList) {
+		System.out.println("Setting attirbutws");
 		if (attrList.contains("Script")) {
 			setTitleToScriptAndTime(attrList.get("Script"));
 		} else {
@@ -242,10 +235,15 @@ public class DDGPanel extends JPanel {
 	}
 
 	private void setTitleToScriptAndTime(String attr) {
+		System.out.println("Setting title script and time");
 		String[] items = attr.split("[\\n]");
+		for(int i =0; i < items.length;i++){
+			System.out.println(items[i]);
+		}
 
 		String script = "";
 		String time = "";
+		String startTime = "";
 
 		// Get the name of the file from the attributes list
 		for (int s = 0; s < items.length; s++) {
@@ -276,7 +274,7 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
-		setTitle(script, time);
+		setTitle(script, time, startTime);
 	}
 
 	/**
@@ -287,12 +285,40 @@ public class DDGPanel extends JPanel {
 	 * @param timestamp
 	 *            the time at which it was run. This can be null.
 	 */
-	public void setTitle(String title, String timestamp) {
+	public void setTitle(String title, String timestamp, String startTimeStamp)  {
 		if (timestamp == null) {
 			setName(title);
 		} else {
-			setName(title + " " + timestamp);
+			setName(title + " start: " + startTimeStamp + " end: " + timestamp);
 		}
+		//Date startTime = new Date(timestamp);
+		//Date endTime = new Date(startTimeStamp);
+		String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
+		System.out.println("The start tiem is "+startTimestamp);
+		String endTimestamp = timestamp.substring(11, timestamp.length()-3);
+		SimpleDateFormat df = new SimpleDateFormat("HH.mm.ss");
+		try {
+				System.out.println("The start tiem is "+ df.parse(startTimestamp)  +" and the end time is "+ df.parse(endTimestamp));
+			//System.out.println("Total run time is "+totalRunTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		Date startTime = null;
+		Date endTime = null;
+		try {
+			 startTime = df.parse(startTimestamp);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		try {
+			endTime = df.parse(endTimestamp);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		System.out.println("The start time is "+startTime.getTime());
+
+		//	long totalRunTime =  timestamp -startTimeStamp
+	//	System.out.println("The total run time is "+totalRunTime);
 	}
 
 	/**
@@ -302,7 +328,9 @@ public class DDGPanel extends JPanel {
 	 *            the ddg data
 	 */
 	public void setProvData(ProvenanceData provData) {
+		System.out.println("Setting prov data");
 		this.provData = provData;
+		System.out.println("This prov data is " + provData.getScriptTimestamp());
 		if (descriptionArea != null) {
 			updateDescription();
 		}
@@ -315,10 +343,23 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
-			setTitle(fileName, provData.getTimestamp());
+			setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
+			//getTotalRunTime(provData);
 		}
 	}
 
+	public long getTotalRunTime(ProvenanceData provData){
+		//	this.provData = provData;
+		Date startTime = new Date(provData.getScriptTimestamp());
+		Date endTime = new Date(provData.getTimestamp());
+		long totalRunTime = startTime.getTime() - endTime.getTime();
+		System.out.println("The total run time is "+totalRunTime);
+		//int startTime = Integer.parseInt(provData.getScriptTimestamp());
+		//int endTime = Integer.parseInt(provData.getTimestamp());
+		//totalRunTime = endTime - startTime;
+		return totalRunTime;
+
+	}
 	public ProvenanceData getProvData() {
 		return provData;
 	}

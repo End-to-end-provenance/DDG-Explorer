@@ -228,7 +228,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param timestamp the timestamp when the DDG was created
 	 */
 	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp);
+		ddgPanel.setTitle(name, timestamp, timestamp);
 	}
 
 	/**
@@ -644,10 +644,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// -- 6. launch the visualization -------------------------------------
 
 		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
+	//
 
 		// new code
 		PopupMenu options = display.new PopupMenu();
 		options.createPopupMenu();
+	//	display.getTotalRunTime(provData);
 	}
 
 	private static ActionList assignColors() {
@@ -1053,7 +1055,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
 	 * @param startNode A start node or a checkpoint node
-	 * @param finshNode The corresponding finish or restore node
+	 * @param The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
