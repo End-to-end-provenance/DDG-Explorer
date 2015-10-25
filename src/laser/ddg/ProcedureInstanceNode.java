@@ -16,6 +16,7 @@ import java.util.Iterator;
  */
 public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanceNode> {
 
+	public String timeStamp ="";
 	/**
 	 * @return the definition of the procedure that this node represents an
 	 *         instance of
@@ -58,6 +59,8 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 	 */
 	public void addInput(String paramName, DataInstanceNode value)
 		throws ParameterAlreadyBoundException;
+
+	public String getTimeStamp();
 
 	/**
 	 * @param paramName

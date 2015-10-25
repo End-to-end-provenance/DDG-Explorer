@@ -370,10 +370,11 @@ public class Parser {
 		System.out.println("The time stamp of this node is "+timestamp);
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, null);
+					constructName(nodeType, name), value, timestamp, null); //this is the timestamp.
+
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value); 
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, timestamp);
 		//Track down values. 
 	}
 

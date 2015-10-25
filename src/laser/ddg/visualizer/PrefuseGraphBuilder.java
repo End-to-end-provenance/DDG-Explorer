@@ -1,38 +1,7 @@
 package laser.ddg.visualizer;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.event.MouseInputListener;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataBindingEvent;
+import laser.ddg.*;
 import laser.ddg.DataBindingEvent.BindingEvent;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
-import laser.ddg.ProvenanceDataVisitor;
-import laser.ddg.ProvenanceListener;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -63,6 +32,19 @@ import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.Queue;
 
 /**
  * Builds a visual DDG graph using prefuse.
@@ -454,6 +436,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String time, String location) {
+		System.out.println("In the addNode of the PrefuseGraphBuilder, the timestamp gotten is "+time+" for the value "+value);
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -470,6 +453,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
+				System.out.println("SETTING THE TIME OF THIS NODE TO BE " + time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
 
 				searchIndex.addToSearchIndex(type, id, name);
@@ -822,11 +806,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getCreatedTime());
+			System.out.println("Getting the prdocuredal node created time stap "+pin.getTimeStamp());
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getTimeStamp(), pin.getCreatedTime());
+			//adding a node that ahs a time
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
 			}
+			//System.out.println("the time stamp for this is "+pin.getT)
 
 			// Draw the root node immediately, but delay drawing the other nodes
 			// until
@@ -1058,7 +1045,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
 	 * @param startNode A start node or a checkpoint node
-	 * @param The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
@@ -1208,7 +1194,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Find the successors of a finish node and add edges from each successor to
 	 * the new collapsed node
-	 * @param finishNode the finish node whose successors we are searching for
 	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
 	 *    be the collapsed node that corresponds to the collapsing of finishNode
 	 */
