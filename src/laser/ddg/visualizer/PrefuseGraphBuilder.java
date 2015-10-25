@@ -210,7 +210,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param timestamp the timestamp when the DDG was created
 	 */
 	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp, timestamp);
+		ddgPanel.setTitle(name);
 	}
 
 	/**

@@ -21,8 +21,6 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -282,49 +280,15 @@ public class DDGPanel extends JPanel {
 	 * 
 	 * @param title
 	 *            the name of the process / script. This cannot be null.
-	 * @param timestamp
-	 *            the time at which it was run. This can be null.
-	 */
-	public void setTitle(String title, String timestamp, String startTimeStamp)  {
+	 **/
+	public void setTitle(String title)  {
 
 		//Date startTime = new Date(timestamp);
 		//Date endTime = new Date(startTimeStamp);
 	//	String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
-		String startTimestamp = "";
-		startTimestamp = startTimeStamp.substring(190, 194)+ "/" + startTimeStamp.substring(195, 197)+"/" +startTimeStamp.substring(199, 201)+" "+startTimeStamp.substring(202, 204)+ ":"+ startTimeStamp.substring(205, 207)+":"+startTimeStamp.substring(209, 301);
-		System.out.println("The start time stamp is "+startTimestamp);
-		if (timestamp == null) {
-			setName(title);
-		} else {
-			setName(title + " start: " + startTimestamp + " end: " + timestamp);
-		}
-		String endTimestamp = timestamp.substring(0, 4)+"/"+timestamp.substring(5,7)+"/"+timestamp.substring(8, 10)+" "+timestamp.substring(11, 13)+":" +timestamp.substring(14, 16) + ":"+timestamp.substring(17, timestamp.length()-3);
-		System.out.println("The end time stamp is "+endTimestamp);
-		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
-		try {
-			Date timeStampStartTime = df.parse(startTimestamp);
-			Date timeStampEndTime = df.parse(endTimestamp);
-				System.out.println("The start tiem is " + timeStampStartTime + " and the end time is " + timeStampEndTime);
-			String totalExecutionTime = timeDifference(timeStampEndTime, timeStampEndTime);
-			System.out.println("The total execution time is "+totalExecutionTime);
-			//System.out.println("Total run time is "+totalRunTime);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		Date startTime = null;
-		Date endTime = null;
-		try {
-			 startTime = df.parse(startTimestamp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		try {
-			endTime = df.parse(endTimestamp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		System.out.println("The start time is "+startTime.getTime());
+			setName(title);
+
 
 		//	long totalRunTime =  timestamp -startTimeStamp
 	//	System.out.println("The total run time is "+totalRunTime);
@@ -392,7 +356,7 @@ public class DDGPanel extends JPanel {
 				Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(provData.getLanguage());
 				String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attributes);
 				System.out.println("The attirubtes read is " + text);
-				setTitle(fileName, provData.getTimestamp(), text);
+				setTitle(fileName);
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {

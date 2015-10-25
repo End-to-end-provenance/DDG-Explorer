@@ -2,559 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdf572ff-49a0-41b7-8863-2d198aee691f" name="Default" comment="kk">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/AbstractedNode.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/CheckpointRestore.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/CollapsedSection.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ComputedFrom.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/ConsoleSession.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/ErrorMessage.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ExpandedNode.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/ExpandedSection.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/FindDataFiles.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/FindDataFilesList.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/LoadDDG.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ManageDatabase.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ManageDatabase2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ManageDatabase3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Werner/Melillo Lab R Scripts (Feb 25 2014).zip" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/NoFunctionAnnotation.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/Plot.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/ShowDerivation.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/SimpleExample.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/StartScreen.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/TimingComparison.xlsx" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img001.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img002.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img003.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img004.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img005.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img006.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img007.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img008.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img009.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img010.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img011.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img012.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer-img/UsingDDGExplorer-img013.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inst/doc/UsingDDGExplorer.pdf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-abstract.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-checkpoint.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-console.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-consoleoff.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-error1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-error2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-eval1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-eval2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-function.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-img001.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-img002.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-img003.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-img004.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-procedure.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-selectrun1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-selectrun2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-source.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-source1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-source2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-sqrroot1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker-img/UsingRDataTracker-sqrroot2.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inst/doc/UsingRDataTracker.pdf" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/ddg.checkpoint0" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_NestedFunctions.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar3/hf001-10-15min-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests-img/install-out.PNG" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests-img/main-out.PNG" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Website/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Website/processed-data.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests-img/report-example.PNG" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests-img/report-group-example.PNG" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests-img/single-test-out.PNG" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_NestedFunctions.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitattributes" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CalculateSquareRoot/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/FunctionAnnotationTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/HFDatasetPreview/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OddParameterTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OnOffTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/QualityControl15Min/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/RealTime15MinMET/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ReturnTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/S4ObjectTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ScopeTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSampling/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSamplingSmaller/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/basicTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ddgDeepNesting/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DDGHangBug/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgChangesBehavior/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar1/.gitignore" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/AaronSimesDendrochronology.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/Amherst_met_1893-2012-reduced.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Amherst_met_1893-2012-reduced.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/Amherst_met_1893-2012-reduced.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/AutoCreation.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/inst/CITATION" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CalculateSquareRoot/CalculateSquareRoot.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/Checkpoint.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/CheckpointConsoleTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/CheckpointConsoleTest2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/CheckpointFileTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/CheckpointFileTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/CheckpointTest-erb.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/CheckpointTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/CheckpointTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/R/DDGCheckpoint.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DDGHangBug/DDGHangBug.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/DESCRIPTION" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/DailySolarRadiation.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/DataFlowEdges.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/DataNodes.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/Debugging.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EnvTest/EnvTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/Eval2Test.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/EvalTest-Console.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/EvalTest-Source.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/EvalTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/FunctionAnnotationTest/FunctionAnnotationTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/FunctionAnnotationTest/FunctionAnnotationTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/HFDatasetPreview/HFDatasetPreview.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/InitSave.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/LICENSE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/MismatchedStartFinishBug.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/NAMESPACE" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/NULLandNA.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/NestedFunctions.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OddParameterTest/OddParameterTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OnOffTest/OnOffTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/PDSO - 267.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/PDSO - 267.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/PDSO - 267.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/ProcNodes.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/QualityControl15Min/QualityControl15Min.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/RCheckpointNode.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/RDataInstanceNode.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/man/RDataTracker-package.Rd" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/R/RDataTracker.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/README_Build_and_Test.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar4/RWorkshop-Session4-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar1/R_REU_S1-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar2/R_REU_S2-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar3/R_REU_S3-clean.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/RealTime15MinMET/RealTime15minMET.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/Return2.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/ReturnConsoleTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ReturnTest/ReturnTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/ReturnTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RscriptTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/S4ObjectTest/S4ObjectTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/S4ObjectTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-Full.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-Medium.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-Minimal.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoClasses-Full.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoClasses-Medium.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoClasses-MinimalInstrumentation.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoClasses-NoInstrumentation.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoClasses.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/Sampling-NoInstrumentation.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ScopeTest/ScopeTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/ScopeTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Website/SensorManagement.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file instrumented.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/originals/Simes dendrochronology master analysis file.html" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/originals/Simes dendrochronology master analysis file.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/Simes dendrochronology master analysis file_minimal_instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSampling/SivanSampling.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSamplingSmaller/SivanSamplingSmaller.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/SourceFuncTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/TimingComparison.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingDDGExplorer.Rnw" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/vignettes/UsingRDataTracker.Rnw" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/testDocs/UsingRDataTrackerTests.tex" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/aaron-annotated-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/aaron-min-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/aaron-min-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/RealTime15MinMET/archive-15min.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/archive-15min.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/area.under.roc.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/basicTest/basicTest.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/basicTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-3.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-barb-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/trycatchTest/calculate-square-root-error.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-input-1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-input-m-barb.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-input-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-input.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-minimal.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-no-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-source.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/calculate-square-root.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/calculate-square-root.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/trycatchTest/calculate-square-root.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/checkpoint-erb.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/checkpoint.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/checkpoint.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/chisquare.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/consoleEdgeCases.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/consoleSource.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/consoleTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/consoleTest2.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/console_expected_EvalTest-Console_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RMOOC/Week2Assignment/corr.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RMOOC/Week2Assignment_NoInstrumentation/corr.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/cumulative.percentiles.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/curve.shape.classification.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/daily-solar-radiation-abstraction.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-abstraction.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-abstraction2-errors.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-abstraction2-files-checkpoint.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-abstraction2-files.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-abstraction2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-barb-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-clean.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/daily-solar-radiation-minimal.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-minimal.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation-no-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/daily-solar-radiation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/data2" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/data3" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/data" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/ddg-barb.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/ddg-barb.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/ddg-emery.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/ddg-emery.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/ddg/ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/ddg/ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/expected/ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ddgDeepNesting/expected/ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgChangesBehavior/ddgChangesBehavior.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ddgDeepNesting/ddgDeepNesting.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/ddgTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTesttestfile2.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTesttestfile3.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/depends.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/ddg/dnodes.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/ddg/dnodes.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/dynamicConsole.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/env.data.or.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/env.data.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/environmentTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EnvTest/expected.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/expected_AaronSimesDendrochronology.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/expected_AaronSimesDendrochronology_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CalculateSquareRoot/expected_CalculateSquareRoot.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CalculateSquareRoot/expected_CalculateSquareRoot_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/expected_CheckpointFileTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/expected_CheckpointFileTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/expected_CheckpointFileTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/expected_CheckpointTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/expected_CheckpointTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/expected_CheckpointTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DDGHangBug/expected_DDGHangBug.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DDGHangBug/expected_DDGHangBug_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/expected_DailySolarRadiation.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/expected_DailySolarRadiation_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_EvalTest-Source.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_EvalTest-Source_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_EvalTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_EvalTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/FunctionAnnotationTest/expected_FunctionAnnotationTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/FunctionAnnotationTest/expected_FunctionAnnotationTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/HFDatasetPreview/expected_HFDatasetPreview.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/HFDatasetPreview/expected_HFDatasetPreview_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/expected_MismatchedStartFinishBug.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/expected_MismatchedStartFinishBug_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/expected_NULLandNA.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/expected_NULLandNA_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_NestedFunctions_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OddParameterTest/expected_OddParameterTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OddParameterTest/expected_OddParameterTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OnOffTest/expected_OnOffTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OnOffTest/expected_OnOffTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/QualityControl15Min/expected_QualityControl15Min.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/QualityControl15Min/expected_QualityControl15Min_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/RealTime15MinMET/expected_RealTime15MinMET.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/RealTime15MinMET/expected_RealTime15MinMET_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ReturnTest/expected_ReturnTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_ReturnTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ReturnTest/expected_ReturnTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_ReturnTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/S4ObjectTest/expected_S4ObjectTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/expected_S4ObjectTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/S4ObjectTest/expected_S4ObjectTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/expected_S4ObjectTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/expected_Sampling.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SivanSampling/expected_Sampling_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ScopeTest/expected_ScopeTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ScopeTest/expected_ScopeTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSampling/expected_SivanSampling.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSamplingSmaller/expected_SivanSamplingSmaller.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSamplingSmaller/expected_SivanSamplingSmaller_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SivanSampling/expected_SivanSampling_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/expected_SourceFuncTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/expected_SourceFuncTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_aaron-annotated-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_aaron-annotated-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/expected_aaron-min-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/expected_aaron-min-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_annotated_console_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/basicTest/expected_basicTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/expected_basicTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/basicTest/expected_basicTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/expected_basicTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-1.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-1_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-2.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-2_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-3.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/expected_calculate-square-root-3_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/expected_checkpointFileTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/expected_checkpointTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/expected_consoleEdgeCases.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/expected_consoleEdgeCases_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/expected_consoleSource.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/expected_consoleSource_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_consoleTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_consoleTest2.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_consoleTest2_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_consoleTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_console_ReturnTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_console_ScopeTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/expected_daily-solar-radiation-1.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/expected_daily-solar-radiation-1_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/expected_daily-solar-radiation-2.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/expected_daily-solar-radiation-2_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EnvTest/expected_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/expected_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgChangesBehavior/expected_ddgChangesBehavior.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgChangesBehavior/expected_ddgChangesBehavior_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ddgDeepNesting/expected_ddgDeepNesting.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/ddgDeepNesting/expected_ddgDeepNesting_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/expected_ddgTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/expected_ddgTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/expected_dynamicConsole.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/expected_dynamicConsole_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_eval2-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/expected_eval2-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/expected_hf-dataset-preview-annotated.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/expected_hf-dataset-preview-annotated_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/expected_manual_MismatchedStartFinishBug_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/expected_manual_NULLandNA_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/expected_manual_consoleEdgeCases_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_manual_consoleTest2_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/expected_manual_consoleTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/expected_manual_dynamicConsole_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_minimal_console_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/expected_minimal_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/expected_quality-control-15min-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/expected_quality-control-15min-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/expected_real-time-15min-met-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/expected_real-time-15min-met-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_scopeTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/expected_scopeTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/scopingTest/expected_scoping_error.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/scopingTest/expected_scoping_error_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/simpleTest/expected_simple.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/simpleTest/expected_simple_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/expected_source_checkpointTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/flagged-data.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/OnOffTest/foobar.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/foobar.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/foobar.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/genSmpls1.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/genSmpls1.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RMOOC/Week2Assignment/getmonitor.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RMOOC/Week2Assignment_NoInstrumentation/getmonitor.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/helpers.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/hf-dataset-preview-annotated.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/hf-dataset-preview.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/hf000-01-daily-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/hf000-01-daily-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/hf000-01-daily-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/hf001-02-annual-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/hf001-02-annual-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/hf001-02-annual-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar3/hf001-06-daily-m.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/hf086-01-dendro.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/hf086-01-dendro.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/hf086-01-dendro.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/interactiveTimer.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/manual_expected_S4ObjectTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/manual_expected_aaron-min-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/match.taxa.names.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/mean.tolerance.value.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/QualityControl15Min/met-15min.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/met-15min.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/met-daily.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/nonparametric.regressions.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/par-cal.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/par-cal.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/par-cal.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/par-cal.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/par-gf.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/par-gf.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/par-gf.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/par-gf.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/par-gf2.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/par-gf3.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/par-qc.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/par-qc.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/par-qc.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/TAPP2014/par-qc.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/parametric.regressions.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/phampop.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/phampop.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/phampop.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-using-stdin-barb-detailed-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-using-stdin-barb-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-using-stdin-no-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data-using-stdin.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/PlotDailyData/plot-daily-data.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/plot.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/ddg/pnodes.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/ddg/pnodes.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/processed-data.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/processed-data.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/processed-data.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/quality-control-15min-barb.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/quality-control-15min-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/quality-control-15min-no-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/quality-control-15min-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/quality-control-15min.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-barb-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-m.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-no-instrumentation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-simpler.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met-test.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/real-time-15min-met.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/ddg/returns.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/ddg/returns.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar1/reu.r.data2.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar1/reu_r_data1.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/scopingTest/scoping_error.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/scriptTimer.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/setupvar.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/basicTest/shortdata.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/simpleTest/simple.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/SimplifiedDailySolarRadiation/simplified-daily-solar-radiation.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/site.species.or.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/site.species.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/source1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source1.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/source2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source2.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/source3.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source3.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/SourceFuncTest/source4.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source4.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointTest/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/DailySolarRadiation/sourceTest.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/source_expected_CheckpointFileTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/source_expected_CheckpointTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_EvalTest-Source.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_EvalTest-Source_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_EvalTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_EvalTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/source_expected_MismatchedStartFinishBug.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/MismatchedStartFinishBug/source_expected_MismatchedStartFinishBug_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/source_expected_NULLandNA.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/NULLandNA/source_expected_NULLandNA_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_NestedFunctions_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_ReturnTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_ReturnTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/source_expected_S4ObjectTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/S4ObjectTest/source_expected_S4ObjectTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_ScopeTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ScopeTest/source_expected_ScopeTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/source_expected_aaron-min-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/source_expected_aaron-min-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/source_expected_basicTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/source_expected_basicTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/source_expected_checkpointFileTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/source_expected_checkpointTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/source_expected_consoleEdgeCases.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleEdgeCases/source_expected_consoleEdgeCases_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source_expected_consoleSource.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleSource/source_expected_consoleSource_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/source_expected_consoleTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/source_expected_consoleTest2.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/source_expected_consoleTest2_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/consoleTest/source_expected_consoleTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/source_expected_ddgTest.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/source_expected_ddgTest_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/source_expected_dynamicConsole.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/dynamicConsole/source_expected_dynamicConsole_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_eval2-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EvalTest/source_expected_eval2-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/source_expected_hf-dataset-preview-annotated.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Preview/source_expected_hf-dataset-preview-annotated_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/source_expected_quality-control-15min-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/QualityControl15Min/source_expected_quality-control-15min-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/source_expected_real-time-15min-met-test.out" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/RealTime15MinMET/source_expected_real-time-15min-met-test_ddg.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/sqr-root.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/trycatchTest/sqr-root.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar4/template_RWorkshop-Session4-annotated.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar1/template_R_REU_S1-annotated.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar2/template_R_REU_S2-annotated.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/seminars/seminar3/template_R_REU_S3-annotated.R" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/template_Simes dendrochronology master analysis file-annotated.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/CalculateSquareRoot/template_calculate-square-root-annotated.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/DailySolarRadiation/template_daily-solar-radiation-annotated.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test-no-instrumentation.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/testfile.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/testfile.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/CheckpointFileTest/testfile2.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/checkpointTest/testfile2.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/testfile2.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/ddgTest/testfile3.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/utilities/timerFunctions.r" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples-no-instrumentation/AaronSimesDendrochronology/trees03.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron/trees03.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/Aaron2/trees03.csv" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/examples/EPAScripts/weighted.average.R" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.xml" afterPath="$PROJECT_DIR$/build.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java" afterPath="$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java" afterPath="$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java" />
     </list>
     <ignored path="ddg.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -586,11 +35,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="build.xml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="DDGPanel.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-5.5555553">
+              <caret line="366" column="20" selection-start-line="366" selection-start-column="12" selection-end-line="366" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.xml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/build.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.125">
-              <caret line="6" column="43" selection-start-line="6" selection-start-column="43" selection-end-line="6" selection-end-column="43" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="15" column="16" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
               <folding />
             </state>
           </provider>
@@ -636,13 +95,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PrefuseGraphBuilder.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PrefuseGraphBuilder.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="805" column="4" selection-start-line="805" selection-start-column="4" selection-end-line="805" selection-end-column="4" />
+            <state vertical-scroll-proportion="0.39578947">
+              <caret line="214" column="0" selection-start-line="214" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#7334#7335#0" expanded="true" />
+                <element signature="e#7364#7365#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -673,16 +134,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CheckpointTable.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/laser/ddg/visualizer/CheckpointTable.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="20" column="44" selection-start-line="20" selection-start-column="44" selection-end-line="20" selection-end-column="44" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="Git.Settings">
@@ -696,7 +147,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/r/RStartNode.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/r/RLeafNode.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/r/RFinishNode.java" />
@@ -715,9 +165,10 @@
         <option value="$PROJECT_DIR$/src/laser/ddg/persist/CPLWriter.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/persist/Parser.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/DDGBuilder.java" />
-        <option value="$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java" />
         <option value="$PROJECT_DIR$/src/laser/ddg/visualizer/DDGDisplay.java" />
         <option value="$PROJECT_DIR$/build.xml" />
+        <option value="$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java" />
+        <option value="$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java" />
       </list>
     </option>
   </component>
@@ -732,8 +183,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-125" />
-    <option name="y" value="381" />
+    <option name="x" value="-73" />
+    <option name="y" value="636" />
     <option name="width" value="1440" />
     <option name="height" value="817" />
   </component>
@@ -764,7 +215,7 @@
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="configurable.group.editor" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="SearchEverywhereHistoryKey" value="build.xml&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/build.xml&#10;SETtiTLE&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel#setTitleToScriptAndTime&#10;setTitle&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel#setTitle&#10;setProv&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#setProvData&#10;provenanceDa&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/ProvenanceData.java&#10;nodes&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#nodes&#10;ProvenanceD&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/ProvenanceData.java&#10;.addProcedural&#9;PSI&#9;JAVA://laser.ddg.DDGBuilder#addProceduralNode&#10;AbstractPro&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/AbstractProcedureInstanceNode.java&#10;isLeaf&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#isLeafNode&#10;isLeafNode&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#isLeafNode&#10;Operation&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#OPERATION&#10;attribut&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/commands/ShowAttributesCommand.java&#10;show attributes&#9;PSI&#9;JAVA://laser.ddg.commands.ShowAttributesCommand&#10;Preferences&#9;PSI&#9;JAVA://laser.ddg.gui.DDGExplorer#preferences&#10;setProvData&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#setProvData&#10;setAttri&#9;PSI&#9;JAVA://laser.ddg.Node#setAttribute&#10;DDGPanel&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel&#10;main&#9;PSI&#9;JAVA://laser.ddg.gui.DDGExplorer#main&#10;DDGDis&#9;PSI&#9;JAVA://laser.ddg.visualizer.DDGDisplay" />
+    <property name="SearchEverywhereHistoryKey" value="setTitle&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel#setTitle&#10;build.xml&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/build.xml&#10;SETtiTLE&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel#setTitleToScriptAndTime&#10;setProv&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#setProvData&#10;provenanceDa&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/ProvenanceData.java&#10;nodes&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#nodes&#10;ProvenanceD&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/ProvenanceData.java&#10;.addProcedural&#9;PSI&#9;JAVA://laser.ddg.DDGBuilder#addProceduralNode&#10;AbstractPro&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/AbstractProcedureInstanceNode.java&#10;isLeaf&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#isLeafNode&#10;isLeafNode&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#isLeafNode&#10;Operation&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseUtils#OPERATION&#10;attribut&#9;FILE&#9;file:///Users/yadap/Desktop/ThisSemester/Research/ddgClone/ddg/src/laser/ddg/commands/ShowAttributesCommand.java&#10;show attributes&#9;PSI&#9;JAVA://laser.ddg.commands.ShowAttributesCommand&#10;Preferences&#9;PSI&#9;JAVA://laser.ddg.gui.DDGExplorer#preferences&#10;setProvData&#9;PSI&#9;JAVA://laser.ddg.visualizer.PrefuseGraphBuilder#setProvData&#10;setAttri&#9;PSI&#9;JAVA://laser.ddg.Node#setAttribute&#10;DDGPanel&#9;PSI&#9;JAVA://laser.ddg.gui.DDGPanel&#10;main&#9;PSI&#9;JAVA://laser.ddg.gui.DDGExplorer#main&#10;DDGDis&#9;PSI&#9;JAVA://laser.ddg.visualizer.DDGDisplay" />
     <property name="recentsLimit" value="5" />
     <property name="dynamic.classpath" value="false" />
     <property name="project.structure.last.edited" value="Project" />
@@ -962,7 +413,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-125" y="381" width="1440" height="817" extended-state="0" />
+    <frame x="-73" y="636" width="1440" height="817" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -975,7 +426,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3275401" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3275401" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1119,6 +570,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-10.0">
           <caret line="542" column="28" selection-start-line="542" selection-start-column="28" selection-end-line="542" selection-end-column="28" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1185,14 +637,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.888889">
-          <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/laser/ddg/gui/DiffTab.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-8.222222">
@@ -1225,6 +669,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-5.111111">
           <caret line="32" column="40" selection-start-line="32" selection-start-column="40" selection-end-line="32" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1337,16 +782,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="805" column="4" selection-start-line="805" selection-start-column="4" selection-end-line="805" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/laser/ddg/DDGBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1373,9 +808,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/build.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.125">
-          <caret line="6" column="43" selection-start-line="6" selection-start-column="43" selection-end-line="6" selection-end-column="43" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="15" column="16" selection-start-line="15" selection-start-column="16" selection-end-line="15" selection-end-column="16" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/laser/ddg/gui/DDGPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.5555553">
+          <caret line="366" column="20" selection-start-line="366" selection-start-column="12" selection-end-line="366" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/laser/ddg/visualizer/PrefuseGraphBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.39578947">
+          <caret line="214" column="0" selection-start-line="214" selection-start-column="0" selection-end-line="214" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7334#7335#0" expanded="true" />
+            <element signature="e#7364#7365#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
