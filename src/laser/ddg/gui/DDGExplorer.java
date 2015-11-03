@@ -12,8 +12,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
@@ -298,15 +296,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
 
-		JMenuItem queryExecutionTime = new JMenuItem("List Procedural Nodes by Execution Time");
-		queryExecutionTime.addActionListener(new ActionListener() {
-												 @Override
-												 public void actionPerformed(ActionEvent e) {
-//TODO list by execution time.
-												 }
-											 }
-
-		);
+		JMenuItem queryExecutionTime = new JMenuItem("OrderProcedural Nodes by Execution Time");
+		queryExecutionTime.addActionListener(new OrderByExecutionTime());
 	//	queryExecutionTime.addActionListener();
 		queryMenu.add(queryExecutionTime);
 		
