@@ -2,6 +2,7 @@ package laser.ddg.gui;
 
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
+
 import laser.ddg.commands.*;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
@@ -246,12 +247,17 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
 
+		// allow the user to quit ddg explorer
+		JMenuItem quit = new JMenuItem("Quit");
+		quit.addActionListener(new QuitCommand());
+
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
 		fileMenu.add(manageDB);
+		fileMenu.add(quit);
 		return fileMenu;
 	}
 
