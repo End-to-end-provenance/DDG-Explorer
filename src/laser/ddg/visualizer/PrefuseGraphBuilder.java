@@ -412,6 +412,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
+		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getCreatedTime());
 		addNode(din.getType(), din.getId() + numPins,
 				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
 	}
@@ -451,7 +452,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 		original file.  If it is not a file node, it will be null
 	 * @return the row of the table where the new node is added
 	 */
+
 	public int addNode(String type, int id, String name, String value, String time, String location) {
+System.out.println("THe time value is "+time);
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -470,7 +473,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
 
-				searchIndex.addToSearchIndex(type, id, name);
+				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
 			}
 		} catch (Exception e) {
@@ -499,7 +502,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String location) {
-		return addNode (type, id, name, value, null, location);
+		return addNode(type, id, name, value, null, location);
 	}
 
 	/**

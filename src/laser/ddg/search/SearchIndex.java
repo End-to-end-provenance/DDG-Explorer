@@ -2,6 +2,8 @@ package laser.ddg.search;
 
 import java.util.ArrayList;
 
+import laser.ddg.SearchElement;
+
 /**
  * Manages lists of nodes by type to facilitate searching.
  * 
@@ -26,13 +28,14 @@ public class SearchIndex {
 	 * @param id the node id used by Prefuse
 	 * @param name the node's label
 	 */
-	public void addToSearchIndex(String type, int id, String name) {
+	public void addToSearchIndex(String type, int id, String name, String time) {
 		// hold individual node information
-		SearchElement element = new SearchElement(type, name, id);
+		int intTime = Integer.parseInt(time); 
+		SearchElement element = new SearchElement(type, name, id, intTime);//defualt time right now.  
 
 		// store each node with associated type
 		if(type.equals("Exception"))
-			errorList.add(element);
+			errorList.add(element); //add to the arraylist of the different types of nodes. 
 		else if(type.equals("Data") || type.equals("Snapshot"))
 			dataList.add(element);
 		else if(type.equals("File"))

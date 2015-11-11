@@ -15,7 +15,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import laser.ddg.search.SearchElement;
+import laser.ddg.SearchElement;
 
 /**
  * Creates the GUI component to show search results.
@@ -39,7 +39,7 @@ public class SearchResultsGUI extends JScrollPane {
 	 * @param nodesList the list of nodes whose names appear in the search results
 	 */
 	public SearchResultsGUI(ArrayList<SearchElement> nodesList) {
-
+		System.out.println("The search results are being extraced from the SearchResultsGUI.java class"); 
 		model = new DefaultListModel<SearchElement>();
 		for (SearchElement entry : nodesList) {
 			model.addElement(entry);

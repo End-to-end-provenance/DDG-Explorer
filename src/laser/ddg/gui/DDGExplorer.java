@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
+import laser.ddg.commands.FindTImeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
@@ -315,6 +317,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenu createQueryMenu() {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
+		
+		JMenuItem timeItem = new JMenuItem("Find slowest scripts"); 
+		timeItem.addActionListener(new FindTImeCommand());
+		queryMenu.add(timeItem); 
 		
 		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
 		findFilesItem.addActionListener(new FindFilesCommand());

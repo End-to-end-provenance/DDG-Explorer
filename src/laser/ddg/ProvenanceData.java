@@ -130,6 +130,7 @@ public class ProvenanceData {
 	public ProvenanceData(String processName, String timestamp, String language) {
 		this(processName);
 		this.timestamp = timestamp;
+		System.out.println("Timestamp is "+timestamp);
 		this.language = language;
 	}
 

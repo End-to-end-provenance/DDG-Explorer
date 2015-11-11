@@ -2,10 +2,10 @@ package laser.ddg.gui;
 
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SearchElement;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
-import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
