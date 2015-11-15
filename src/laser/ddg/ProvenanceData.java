@@ -107,11 +107,13 @@ public class ProvenanceData {
 	 */
 	public ProvenanceData(String processName) {
 		this.processName = processName;
+		
 		agentConfigurations = new TreeSet<AgentConfiguration>();
 		pins = new LinkedList<ProcedureInstanceNode>();
 		dins = new LinkedList<DataInstanceNode>();
 		processInputs = new LinkedList<DataInstanceNode>();
 		processOutputs = new LinkedList<DataInstanceNode>();
+		System.out.println("Timestamp is "+timestamp);
 
 		nodesToResources = new Hashtable<Node, String>();
 		resourcesToNodes = new Hashtable<String, Node>();
@@ -129,7 +131,7 @@ public class ProvenanceData {
 	 */
 	public ProvenanceData(String processName, String timestamp, String language) {
 		this(processName);
-		this.timestamp = timestamp;
+		//this.timestamp = timestamp; Calendar time. 
 		System.out.println("Timestamp is "+timestamp);
 		this.language = language;
 	}

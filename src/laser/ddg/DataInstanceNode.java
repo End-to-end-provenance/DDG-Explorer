@@ -84,4 +84,6 @@ public interface DataInstanceNode extends Node {
 	 */
 	public String getLocation();
 
+	public String getTimeCreated(); 
+
 }

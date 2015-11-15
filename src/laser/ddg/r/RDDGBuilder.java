@@ -131,7 +131,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 */
 	@Override
 	public DataInstanceNode addDataNode(String type, int id, String name, String value, String time, String location){
-		RDataInstanceNode dataNode = new RDataInstanceNode(type, name, value, time, location);
+		RDataInstanceNode dataNode = new RDataInstanceNode(type, name, value, location);
 		getProvObject().addDIN(dataNode, id);
 		return dataNode;
 	}

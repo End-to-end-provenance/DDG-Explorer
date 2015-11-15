@@ -16,12 +16,14 @@ import java.util.Iterator;
  */
 public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanceNode> {
 
+
 	/**
 	 * @return the definition of the procedure that this node represents an
 	 *         instance of
 	 */
 	public Object getProcedureDefinition();
 
+	
 	/**
 	 * Save the procedure definition.  The exact form of the definition will depend on 
 	 * the language being executed
@@ -182,5 +184,9 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 	 * @return true if this type of procedure instance node can be the root of a ddg
 	 */
 	public boolean canBeRoot();
+
+	public String getElapsedTime();
+
+	
 
 }

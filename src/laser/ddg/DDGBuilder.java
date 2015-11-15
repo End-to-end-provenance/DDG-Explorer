@@ -43,7 +43,7 @@ public abstract class DDGBuilder {
 	 * @param name the name of the node
 	 * @return the new procedure instance node
 	 */
-	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name);
+	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, String timestamp);
 
 	/**
 	 * Determines what kind of procedure node to create and adds it
@@ -54,8 +54,8 @@ public abstract class DDGBuilder {
 	 * @param value the definition of the procedure
 	 * @return the new procedure instance node
 	 */
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value) {
-		ProcedureInstanceNode pin = addProceduralNode(type, id, name);
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, String timestamp) {
+		ProcedureInstanceNode pin = addProceduralNode(type, id, name, value, timestamp);
 		pin.setProcedureDefinition(value);
 		return pin;
 	}
@@ -201,5 +201,10 @@ public abstract class DDGBuilder {
 			attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
 		}
 		return attrText.toString();
+	}
+
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String name) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

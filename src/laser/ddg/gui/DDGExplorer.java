@@ -1,6 +1,6 @@
 package laser.ddg.gui;
 
-import java.awt.BorderLayout;
+import java.awt.BorderLayout;  
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -28,7 +28,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
-import laser.ddg.commands.FindTImeCommand;
+import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
@@ -200,6 +200,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 	private void setWindowTitle() {
+		
 		String title;
 		Properties props = new Properties();
 		InputStream propResource = null;
@@ -318,8 +319,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
 		
-		JMenuItem timeItem = new JMenuItem("Find slowest scripts"); 
-		timeItem.addActionListener(new FindTImeCommand());
+		JMenuItem timeItem = new JMenuItem("Display Execution Time of Scripts"); 
+		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
 		
 		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
@@ -386,6 +387,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * @param panel the component to display in the tab
 	 */
 	public void addTab(String name, JComponent panel) {
+		System.out.println("Adding tab");
 		tabbed.addTab(name, panel);
 		int tabNum = tabbed.getTabCount() - 1;
 		tabbed.setTabComponentAt(tabNum, new TabComp(tabbed, name));
@@ -393,6 +395,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 
+	
 	
 	/**
 	 * @return the DDGPanel that the user is currently viewing.  Returns

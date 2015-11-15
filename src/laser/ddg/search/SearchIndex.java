@@ -2,6 +2,8 @@ package laser.ddg.search;
 
 import java.util.ArrayList;
 
+import com.ibm.icu.util.Calendar;
+
 import laser.ddg.SearchElement;
 
 /**
@@ -30,8 +32,22 @@ public class SearchIndex {
 	 */
 	public void addToSearchIndex(String type, int id, String name, String time) {
 		// hold individual node information
-		int intTime = Integer.parseInt(time); 
-		SearchElement element = new SearchElement(type, name, id, intTime);//defualt time right now.  
+		System.out.println("Searching idnex");
+		double newTime; 
+		SearchElement element ; 
+		if(time != null){
+		 newTime = Double.parseDouble(time);
+		element = new SearchElement(type, name, id, newTime);//defualt time right now.  
+		System.out.println(newTime); 
+		}
+		else{
+			String newTime1 =  Calendar.getInstance().toString(); //for data nodes, should all be 1.0
+			element = new SearchElement(type, name, id, newTime1);//defualt time right now.  
+			System.out.println(newTime1); 
+		
+		}
+		
+
 
 		// store each node with associated type
 		if(type.equals("Exception"))

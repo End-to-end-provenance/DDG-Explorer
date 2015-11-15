@@ -149,7 +149,7 @@ public class FileUtil {
 		// When R generates file names, it always uses Unix file separators, even when run 
 		// on Windows.  We first translate to the native OS style.  Sigh.
 		//processName = processPathName.replaceAll("/", File.separator);  // This did not work.  Subtlety in having \ in replacement string.
-		char fileSep;
+		char fileSep; 
 		if (language != null && language.equals("R")) {
 			fileSep = '/';
 		}
@@ -168,6 +168,7 @@ public class FileUtil {
 		else {
 			pathDest = fullPath;
 		}
+		System.out.println("path destination is "+pathDest);
 		return pathDest;
 	}
 

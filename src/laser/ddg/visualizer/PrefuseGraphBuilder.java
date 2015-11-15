@@ -228,7 +228,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param timestamp the timestamp when the DDG was created
 	 */
 	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp, timestamp);
+		ddgPanel.setTitle(name, timestamp);
 	}
 
 	/**
@@ -405,16 +405,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getCreatedTime(), null);
+				pin.getNameAndType(), null, pin.getElapsedTime(), null);
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
-		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getCreatedTime());
+		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getTimeCreated());
 		addNode(din.getType(), din.getId() + numPins,
-				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
+				din.getName(), din.getValue().toString(),din.getTimeCreated(), din.getLocation());
 	}
 
 	@Override
@@ -456,6 +456,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public int addNode(String type, int id, String name, String value, String time, String location) {
 System.out.println("THe time value is "+time);
 		try {
+			System.out.println("Trying");
 			synchronized (vis) {
 				if (id < 1) {
 					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
@@ -472,11 +473,12 @@ System.out.println("THe time value is "+time);
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
-
+				System.out.println("Adding to searhc index'");
 				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
 			}
 		} catch (Exception e) {
+			
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding node *** \n ");
 			throw new IllegalArgumentException(e);
@@ -822,7 +824,7 @@ System.out.println("THe time value is "+time);
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getCreatedTime());
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), null);
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
@@ -1565,11 +1567,12 @@ System.out.println("THe time value is "+time);
 			int dinId = din.getId() + MIN_DATA_ID;
 			//add the data node, passing in the optional associated value and timestamp
 			Object value = din.getValue();
+			
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), null, din.getTimeCreated());
 			}
 			else {
-				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getTimeCreated());
 			}
 			NodeItem dataNode = getNode(dinId);
 

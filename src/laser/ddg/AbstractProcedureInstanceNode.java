@@ -25,6 +25,7 @@ public abstract class AbstractProcedureInstanceNode implements
 
 	// The ID of the PIN (zero if no ID has been assigned)
 	private int pinId = 0;
+	private double timeTaken = 0; 
 
 	// A mapping from the names of the inputs to this
 	// procedure to their DataInstanceNode-type values
@@ -95,6 +96,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	// Time when a Procedure Instance Node is created
 	private final String timeCreated;
 
+	private final String elapsedTime; 
 	// Information about the agent that carried out this procedure
 	private AgentConfiguration agent;
 	
@@ -119,11 +121,12 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param provData the provenance data that this node belongs to
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData) {
-
+			AgentConfiguration ac, ProvenanceData provData, String timestamp) {
+		System.out.println("Inserting in the timestamp "+timestamp + "i into a procedural node"); 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
 		agent = ac;
+		this.elapsedTime = timestamp; 
 		timeCreated = Calendar.getInstance().toString();
 		successors = new LinkedList<ProcedureInstanceNode>();
 		predecessors = new LinkedList<ProcedureInstanceNode>();
@@ -131,14 +134,9 @@ public abstract class AbstractProcedureInstanceNode implements
 
 	}
 	
-	/**
-	 * Get time when execution of PIN started
-	 * 
-	 * @return time of creation of the Procedure Instance Node
-	 */
-	@Override
-	public String getCreatedTime() {
-		return timeCreated;
+	
+	public String getElapsedTime(){
+		return elapsedTime; 
 	}
 
 	/**
@@ -396,7 +394,15 @@ public abstract class AbstractProcedureInstanceNode implements
 
 		return processOutputs;
 	}
+	
+	public void setTimeTaken(double time){
+		timeTaken = time; 
+	}
 
+	public double getTimeTaken(){
+		return timeTaken; 
+	}
+	
 	/**
 	 * @return the "raw data" input for a given PIN
 	 */

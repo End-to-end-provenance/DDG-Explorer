@@ -1,6 +1,7 @@
 package laser.ddg.visualizer;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SearchElement;
 import laser.ddg.gui.DDGExplorer;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -447,18 +448,48 @@ public class DDGDisplay extends Display {
 
 
 		private PopupCommand showExecutionTimeCommand = new PopupCommand("Show Execution Time") {
-			ArrayList<Date> dates = new ArrayList<>();
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("CLICKED");
 				VisualItem node = findItem(p);//finding the node.
 				String time = PrefuseUtils.getTimestamp((NodeItem) node); //find teh time.
 				JOptionPane.showMessageDialog(DDGDisplay.this,"The time gotten for this function is "+ time);
-				Date date = new Date(time);
-				dates.add(date);
+			
 				//Show  how much time has ellapsedfrom the time at the beginning.
 			}
 		};
+		
+		private PopupCommand showElapsedTimeCommand = new PopupCommand("Show Elapsed Execution Time"){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			//show the elapse d time at first. 
+				
+				//how can I get the elapsed time on here? 
+				ArrayList<SearchElement> nodeList =DDGExplorer.getCurrentDDGPanel().getSearchIndex().getOperationList();  
+				//you want too search for the unique ID.; 
+				VisualItem node = findItem(p);//finding the node.
+				String value = PrefuseUtils.getValue((NodeItem) node); //find the time.
+				System.out.println("The value is "+value);
+			double timeTaken =0; 
+				for(int i =0; i < nodeList.size(); i++){
+					System.out.println(nodeList.get(i).getName()); 
+					String str = nodeList.get(i).getName();
+					System.out.println(str.substring(str.indexOf("-")+1));
+					if(str.substring(str.indexOf("-")+1).equals(value)){
+						System.out.println(nodeList.get(i).getName()); 
+						//if the time matches the time in the node. 
+					    timeTaken = nodeList.get(i).getTimeTaken(); //get node list.  
+					    System.out.println("TIME TAKEN IS "+timeTaken);
+					}
+				}
+				JOptionPane.showMessageDialog(DDGDisplay.this,"The time needed to execute this script is "+ timeTaken);
+
+				
+			}
+
+			
+		}; 
 		private PopupCommand showValueCommand = new PopupCommand("Show Value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -565,11 +596,14 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
-						showPopup(e, expandCommand, expandAllCommand, showExecutionTimeCommand, showFunctionCommand);
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showExecutionTimeCommand, showFunctionCommand);
+					}
+					else if(PrefuseUtils.isCollapsed(item)){
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showFunctionCommand);
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
-						showPopup(e, collapseCommand, expandAllCommand, showExecutionTimeCommand, showFunctionCommand);
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showFunctionCommand);
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {
@@ -582,7 +616,7 @@ public class DDGDisplay extends Display {
 
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
-						showPopup(e, showFunctionCommand, showExecutionTimeCommand);
+						showPopup(e, expandCommand, expandAllCommand, showExecutionTimeCommand, showElapsedTimeCommand, showFunctionCommand);
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){

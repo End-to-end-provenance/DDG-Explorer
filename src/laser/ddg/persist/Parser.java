@@ -149,7 +149,7 @@ public class Parser {
 	 */
 	public void addNodesAndEdges() throws IOException {
 		parseHeader();
-		
+		System.out.println("Adding nodes and edges");
 		// If there was no script attribute, use the filename.
 		if (scrpt == null) {
 			scrpt = fileBeingParsed.getName();
@@ -189,6 +189,8 @@ public class Parser {
 			ddgBuilder.ddgBuilt();
 		}
 		builder.processFinished();
+		
+		
 	}
 
 	/**
@@ -197,6 +199,7 @@ public class Parser {
 	 *   a problem reading from the input stream.
 	 */
 	private void parseHeader() throws IOException {
+		System.out.println("Parsing header");
 		// Skip over blank lines
 		int nextToken = skipBlankLines();
 		if (nextToken == StreamTokenizer.TT_EOF) {
@@ -369,10 +372,10 @@ public class Parser {
 		timestamp = parseTimestamp(nodeId); //here is where it is. 
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, null);
+					constructName(nodeType, name), value, timestamp, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value); 
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, timestamp); 
 		//Track down values. 
 	}
 
@@ -519,26 +522,31 @@ public class Parser {
 					in.pushBack();
 					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
 					consumeRestOfLine();
+					System.out.println("Error 1"); 
 					return null;
 				}
 				
 				nextToken = in.nextToken();
 				if (nextToken == QUOTE || nextToken == StreamTokenizer.TT_WORD) {
+					System.out.println("Returning "+in.sval); 
 					return in.sval;
 				}
 				
 				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
 				consumeRestOfLine();
+				System.out.println("Error 2");
 				return null;
 			}
 			
 			// No error.  It might be some other attribute.
 			in.pushBack();
+			System.out.println("Error 3");
 			return null;
 		}
 		in.pushBack();
 		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
 		consumeRestOfLine();
+		System.out.println("Error 4");
 		return null;
 	}
 
@@ -830,6 +838,7 @@ public class Parser {
 				e.printStackTrace();
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
+				System.out.println("ERROR"); 
 				DDGExplorer.showErrMsg(e.getMessage());
 				throw e;
 			}

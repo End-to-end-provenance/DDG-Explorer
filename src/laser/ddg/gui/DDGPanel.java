@@ -21,6 +21,8 @@ import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -127,7 +129,6 @@ public class DDGPanel extends JPanel {
 		// add log to bottom of frame
 		JPanel logPanel = createLogPanel();
 		add(logPanel, BorderLayout.SOUTH);
-
 
 	}
 
@@ -274,7 +275,8 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
-		setTitle(script, time, startTime);
+		setTitle(script, time);
+		
 	}
 
 	/**
@@ -285,37 +287,15 @@ public class DDGPanel extends JPanel {
 	 * @param timestamp
 	 *            the time at which it was run. This can be null.
 	 */
-	public void setTitle(String title, String timestamp, String startTimeStamp)  {
+	public void setTitle(String title, String timestamp)  {
+	System.out.println("Setting the ttitl and timestamp was "+timestamp); 
+
 		if (timestamp == null) {
 			setName(title);
-		} else {
-			setName(title + " start: " + startTimeStamp + " end: " + timestamp);
 		}
 		//Date startTime = new Date(timestamp);
 		//Date endTime = new Date(startTimeStamp);
-		String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
-		System.out.println("The start tiem is "+startTimestamp);
-		String endTimestamp = timestamp.substring(11, timestamp.length()-3);
-		SimpleDateFormat df = new SimpleDateFormat("HH.mm.ss");
-		try {
-				System.out.println("The start tiem is "+ df.parse(startTimestamp)  +" and the end time is "+ df.parse(endTimestamp));
-			//System.out.println("Total run time is "+totalRunTime);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		Date startTime = null;
-		Date endTime = null;
-		try {
-			 startTime = df.parse(startTimestamp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		try {
-			endTime = df.parse(endTimestamp);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		System.out.println("The start time is "+startTime.getTime());
+		
 
 		//	long totalRunTime =  timestamp -startTimeStamp
 	//	System.out.println("The total run time is "+totalRunTime);
@@ -332,6 +312,7 @@ public class DDGPanel extends JPanel {
 		this.provData = provData;
 		System.out.println("This prov data is " + provData.getScriptTimestamp());
 		if (descriptionArea != null) {
+			System.out.println("updating descriptions");
 			updateDescription();
 		}
 		// set the Title for DDGs opened by file. Otherwise they have no title
@@ -343,23 +324,12 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
-			setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
+			setTitle(fileName, provData.getTimestamp()); //this will effectively get the start time.
 			//getTotalRunTime(provData);
 		}
 	}
 
-	public long getTotalRunTime(ProvenanceData provData){
-		//	this.provData = provData;
-		Date startTime = new Date(provData.getScriptTimestamp());
-		Date endTime = new Date(provData.getTimestamp());
-		long totalRunTime = startTime.getTime() - endTime.getTime();
-		System.out.println("The total run time is "+totalRunTime);
-		//int startTime = Integer.parseInt(provData.getScriptTimestamp());
-		//int endTime = Integer.parseInt(provData.getTimestamp());
-		//totalRunTime = endTime - startTime;
-		return totalRunTime;
 
-	}
 	public ProvenanceData getProvData() {
 		return provData;
 	}
