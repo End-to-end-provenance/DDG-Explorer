@@ -1,6 +1,8 @@
 package laser.ddg.gui;
 
 import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.SearchElement;
 import laser.ddg.persist.DBWriter;
@@ -18,8 +20,7 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -238,9 +239,9 @@ public class DDGPanel extends JPanel {
 	private void setTitleToScriptAndTime(String attr) {
 		System.out.println("Setting title script and time");
 		String[] items = attr.split("[\\n]");
-		for(int i =0; i < items.length;i++){
-			System.out.println(items[i]);
-		}
+		/**for(int i =0; i < items.length;i++){
+		 System.out.println(items[i]);
+		 }**/
 
 		String script = "";
 		String time = "";
@@ -258,9 +259,7 @@ public class DDGPanel extends JPanel {
 
 				// use the index and go from there to the end
 				script = theLine.substring(startAt);
-			}
-
-			else if (items[s].startsWith("DateTime")) {
+			} else if (items[s].startsWith("DateTime")) {
 				// get rid of any spaces
 				String theLine = items[s].replaceAll("[\\s]", "");
 
@@ -275,15 +274,19 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
+<<<<<<< HEAD
 		setTitle(script, time);
 		
+=======
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 	}
 
-	/**
+		/**
 	 * Set the panel title
 	 * 
 	 * @param title
 	 *            the name of the process / script. This cannot be null.
+<<<<<<< HEAD
 	 * @param timestamp
 	 *            the time at which it was run. This can be null.
 	 */
@@ -296,10 +299,52 @@ public class DDGPanel extends JPanel {
 		//Date startTime = new Date(timestamp);
 		//Date endTime = new Date(startTimeStamp);
 		
+=======
+	 **/
+	public void setTitle(String title)  {
+
+		//Date startTime = new Date(timestamp);
+		//Date endTime = new Date(startTimeStamp);
+	//	String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
+
+			setName(title);
+
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 
 		//	long totalRunTime =  timestamp -startTimeStamp
 	//	System.out.println("The total run time is "+totalRunTime);
 	}
+
+	private String timeDifference(Date d1, Date d2) {
+		//HH converts hour in 24 hours format (0-23), day calculation
+	//	SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String difference ="";
+		System.out.println("GETTING TIME DIFFERNECE");
+
+		try {
+
+			//in milliseconds
+			long diff = d2.getTime() - d1.getTime();
+			System.out.println("The first difference is " +diff);
+
+			long diffSeconds = diff / 1000 % 60;
+			long diffMinutes = diff / (60 * 1000) % 60;
+			long diffHours = diff / (60 * 60 * 1000) % 24;
+			//long diffDays = diff / (24 * 60 * 60 * 1000);
+
+			//System.out.print(diffDays + " days, ");
+			System.out.print(diffHours + " hours, ");
+			System.out.print(diffMinutes + " minutes, ");
+			System.out.print(diffSeconds + " seconds.");
+			difference = "The difference is "+diffHours + " hours "+diffMinutes + " minutes "+ " and "+diffSeconds;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return difference;
+	}
+
+
 
 	/**
 	 * Sets the provenance data and updates the main attributes for this ddg.
@@ -324,7 +369,28 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
+<<<<<<< HEAD
 			setTitle(fileName, provData.getTimestamp()); //this will effectively get the start time.
+=======
+
+
+
+			Attributes attributes;
+			try {
+				attributes = provData.getAttributes();
+				Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(provData.getLanguage());
+				String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attributes);
+				System.out.println("The attirubtes read is " + text);
+				setTitle(fileName);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		//	setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 			//getTotalRunTime(provData);
 		}
 	}

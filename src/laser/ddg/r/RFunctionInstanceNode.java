@@ -20,8 +20,13 @@ public abstract class RFunctionInstanceNode extends AbstractProcedureInstanceNod
 	 * @param procDefinition Procedure definition(R function itself)
 	 * @param provData Provenance data object it will be passed to
 	 */
+<<<<<<< HEAD
 	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData) {
 		super(name, procDefinition, null, provData, provData.getTimestamp());
 		
+=======
+	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData, String timeStamp) {
+		super(name, procDefinition, null, provData, timeStamp);
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 	}
 }

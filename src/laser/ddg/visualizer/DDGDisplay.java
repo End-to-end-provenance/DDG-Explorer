@@ -261,6 +261,9 @@ public class DDGDisplay extends Display {
  		// Value indicates this is a function node, look in node name for function name
  		if (funName.equals(FUNCTION)){
  			String nodeName = PrefuseUtils.getName(node);
+			System.out.println("The function is "+nodeName);
+			String nodeTime = PrefuseUtils.getTimestamp(node);
+			System.out.println("The time stamp is "+nodeTime);
  			
  			// The index exists, take that substring, otherwise take all of it
  			int beginIndex = nodeName.indexOf("-");
@@ -494,6 +497,7 @@ public class DDGDisplay extends Display {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				//get the firstitem in teh list.
+				//
 				VisualItem node = findItem(p);
 				//System.out.println(node.getString(0));
 				String time =null;

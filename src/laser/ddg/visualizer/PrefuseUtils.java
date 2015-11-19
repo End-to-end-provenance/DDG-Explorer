@@ -32,8 +32,7 @@ public class PrefuseUtils {
 	static final String VALUE = "Value";
 	
 	/** The field name to identify the timestamp of an item */
-	static final String TIMESTAMP = "Time";
-	
+	static final String TIMESTAMP = "TimeStamp";
 	/** The field name to identify the source of an edge */
 	static final String SOURCE = "source";
 
@@ -487,7 +486,7 @@ public class PrefuseUtils {
 		//this isn't working.
 		System.out.println("The value is "+n.getString(VALUE));
 		System.out.println("The value of the timestamp is "+n.getString(TIMESTAMP));
-		return n.getString(TIMESTAMP);
+		return n.getString(TIMESTAMP); //illegal arugment exception.
 	}
 
 	/**

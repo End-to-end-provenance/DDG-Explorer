@@ -27,6 +27,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	private int pinId = 0;
 	private double timeTaken = 0; 
 
+
 	// A mapping from the names of the inputs to this
 	// procedure to their DataInstanceNode-type values
 	private Map<String, DataInstanceNode> inputs = new TreeMap<String, DataInstanceNode>();
@@ -99,6 +100,8 @@ public abstract class AbstractProcedureInstanceNode implements
 	private final String elapsedTime; 
 	// Information about the agent that carried out this procedure
 	private AgentConfiguration agent;
+
+	private String timeStamp ="";
 	
 	// The provenance data object this node is part of
 	private ProvenanceData provData;
@@ -121,8 +124,13 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param provData the provenance data that this node belongs to
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
+<<<<<<< HEAD
 			AgentConfiguration ac, ProvenanceData provData, String timestamp) {
 		System.out.println("Inserting in the timestamp "+timestamp + "i into a procedural node"); 
+=======
+			AgentConfiguration ac, ProvenanceData provData, String timeStamp) {
+
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
 		agent = ac;
@@ -130,6 +138,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		timeCreated = Calendar.getInstance().toString();
 		successors = new LinkedList<ProcedureInstanceNode>();
 		predecessors = new LinkedList<ProcedureInstanceNode>();
+		this.timeStamp = timeStamp;
 		this.provData = provData;
 
 	}
@@ -152,6 +161,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	public String getName() {
 		return nameOfPIN;
 
+	}
+
+	public String getTimeStamp(){
+		return timeStamp;
 	}
 
 	/**

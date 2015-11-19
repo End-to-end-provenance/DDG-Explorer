@@ -369,13 +369,22 @@ public class Parser {
 		
 		// TODO get the timeStamp
 		String timestamp = null;
-		timestamp = parseTimestamp(nodeId); //here is where it is. 
+		timestamp = parseTimestamp(nodeId); //here is where it is.
+		System.out.println("The time stamp of this node is "+timestamp);
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
+<<<<<<< HEAD
 					constructName(nodeType, name), value, timestamp, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, timestamp); 
+=======
+					constructName(nodeType, name), value, timestamp, null); //this is the timestamp.
+
+		int idNum = Integer.parseInt(nodeId.substring(1));
+			
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, timestamp);
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 		//Track down values. 
 	}
 
@@ -387,7 +396,7 @@ public class Parser {
 	 */
 	private String parseValue(String nodeId) throws IOException {
 		int nextToken = in.nextToken();
-		
+
 		// Value is optional.  This is the case where it is missing.
 		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF) {
 			in.pushBack();

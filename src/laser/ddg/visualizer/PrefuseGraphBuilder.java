@@ -1,38 +1,7 @@
 package laser.ddg.visualizer;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.event.MouseInputListener;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataBindingEvent;
+import laser.ddg.*;
 import laser.ddg.DataBindingEvent.BindingEvent;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
-import laser.ddg.ProvenanceDataVisitor;
-import laser.ddg.ProvenanceListener;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -63,6 +32,19 @@ import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.Queue;
 
 /**
  * Builds a visual DDG graph using prefuse.
@@ -228,7 +210,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param timestamp the timestamp when the DDG was created
 	 */
 	public void setTitle(String name, String timestamp) {
+<<<<<<< HEAD
 		ddgPanel.setTitle(name, timestamp);
+=======
+		ddgPanel.setTitle(name);
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 	}
 
 	/**
@@ -393,6 +379,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
+
+
 	}
 
 	private void addNodesAndEdges(ProvenanceData ddg) {
@@ -454,7 +442,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 
 	public int addNode(String type, int id, String name, String value, String time, String location) {
+<<<<<<< HEAD
 System.out.println("THe time value is "+time);
+=======
+		System.out.println("In the addNode of the PrefuseGraphBuilder, the timestamp gotten is "+time+" for the value "+value);
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 		try {
 			System.out.println("Trying");
 			synchronized (vis) {
@@ -472,6 +464,7 @@ System.out.println("THe time value is "+time);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
+				System.out.println("SETTING THE TIME OF THIS NODE TO BE " + time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
 				System.out.println("Adding to searhc index'");
 				searchIndex.addToSearchIndex(type, id, name, time);
@@ -563,7 +556,7 @@ System.out.println("THe time value is "+time);
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			//System.out.println("Building node and edge tables.");
+		//	System.out.println("Building node and edge tables.");
 			buildNodeAndEdgeTables();
 
 			//System.out.println("Building graph");
@@ -767,6 +760,7 @@ System.out.println("THe time value is "+time);
 		// We are just initializing the display here, not actually drawing a graph.
 
 		this.provData = provData;
+		//System.out.println("The name of the prov data inserted is "+provData.getProcessName());
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID,
 				PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
@@ -824,11 +818,18 @@ System.out.println("THe time value is "+time);
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
+<<<<<<< HEAD
 			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), null);
+=======
+			System.out.println("Getting the prdocuredal node created time stap "+pin.getTimeStamp());
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getTimeStamp(), pin.getCreatedTime());
+			//adding a node that ahs a time
+>>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
 			}
+			//System.out.println("the time stamp for this is "+pin.getT)
 
 			// Draw the root node immediately, but delay drawing the other nodes
 			// until
@@ -1060,7 +1061,6 @@ System.out.println("THe time value is "+time);
 	/**
 	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
 	 * @param startNode A start node or a checkpoint node
-	 * @param The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
@@ -1210,7 +1210,6 @@ System.out.println("THe time value is "+time);
 	/**
 	 * Find the successors of a finish node and add edges from each successor to
 	 * the new collapsed node
-	 * @param finishNode the finish node whose successors we are searching for
 	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
 	 *    be the collapsed node that corresponds to the collapsing of finishNode
 	 */
@@ -1740,6 +1739,17 @@ System.out.println("THe time value is "+time);
 	 * @return the definition
 	 */
 	public String getFunctionBody(String functionName) {
+		// Remove any parameters if they appear in the string
+		int blankIndex = functionName.indexOf(" ");
+		if (blankIndex != -1) {
+			functionName = functionName.substring(0, blankIndex);
+		}
+		
+		int parenIndex = functionName.indexOf("(");
+		if (parenIndex != -1) {
+			functionName = functionName.substring(0, parenIndex);
+		}
+		
 		return provData.getFunctionBody(functionName);
 	}
 
