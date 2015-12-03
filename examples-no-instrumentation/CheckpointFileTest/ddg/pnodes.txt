@@ -1,3 +1,0 @@
-Start 1 CheckpointFileTest.R CheckpointFileTest.R FALSE FALSE
-Operation 2 rm(list = ls()) rm(list = ls()) FALSE FALSE
-Operation 3 tryCatch tryCatch FALSE FALSE

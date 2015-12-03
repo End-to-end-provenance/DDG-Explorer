@@ -209,17 +209,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name The name of the program that created the DDG
 	 * @param timestamp the timestamp when the DDG was created
 	 */
-	public void setTitle(String name, String timestamp) {
-<<<<<<< HEAD
-		ddgPanel.setTitle(name, timestamp);
-=======
-		ddgPanel.setTitle(name);
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
-	}
+	
 
-	/**
-	 * @return the pinID
-	 */
+	
 	public int getPinID() {
 		return pinID;
 	}
@@ -442,11 +434,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 
 	public int addNode(String type, int id, String name, String value, String time, String location) {
-<<<<<<< HEAD
-System.out.println("THe time value is "+time);
-=======
+
+
 		System.out.println("In the addNode of the PrefuseGraphBuilder, the timestamp gotten is "+time+" for the value "+value);
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
+
 		try {
 			System.out.println("Trying");
 			synchronized (vis) {
@@ -550,6 +541,9 @@ System.out.println("THe time value is "+time);
 	 * @param ddg
 	 *            the ddg to display
 	 */
+	public void setTitle(String name, String timestamp) {
+		ddgPanel.setTitle(name);
+	}
 	public void drawGraph(ProvenanceData ddg) {
 
 
@@ -818,13 +812,9 @@ System.out.println("THe time value is "+time);
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-<<<<<<< HEAD
+
 			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), null);
-=======
-			System.out.println("Getting the prdocuredal node created time stap "+pin.getTimeStamp());
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getTimeStamp(), pin.getCreatedTime());
-			//adding a node that ahs a time
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
+
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);

@@ -274,11 +274,9 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
-<<<<<<< HEAD
-		setTitle(script, time);
+		setTitle(script);
 		
-=======
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
+
 	}
 
 		/**
@@ -286,33 +284,13 @@ public class DDGPanel extends JPanel {
 	 * 
 	 * @param title
 	 *            the name of the process / script. This cannot be null.
-<<<<<<< HEAD
+
 	 * @param timestamp
 	 *            the time at which it was run. This can be null.
 	 */
-	public void setTitle(String title, String timestamp)  {
-	System.out.println("Setting the ttitl and timestamp was "+timestamp); 
-
-		if (timestamp == null) {
-			setName(title);
-		}
-		//Date startTime = new Date(timestamp);
-		//Date endTime = new Date(startTimeStamp);
-		
-=======
-	 **/
 	public void setTitle(String title)  {
+		setName(title);
 
-		//Date startTime = new Date(timestamp);
-		//Date endTime = new Date(startTimeStamp);
-	//	String startTimestamp = startTimeStamp.substring(11, timestamp.length()-3);
-
-			setName(title);
-
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
-
-		//	long totalRunTime =  timestamp -startTimeStamp
-	//	System.out.println("The total run time is "+totalRunTime);
 	}
 
 	private String timeDifference(Date d1, Date d2) {
@@ -369,29 +347,8 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
-<<<<<<< HEAD
-			setTitle(fileName, provData.getTimestamp()); //this will effectively get the start time.
-=======
+			setTitle(fileName); 
 
-
-
-			Attributes attributes;
-			try {
-				attributes = provData.getAttributes();
-				Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(provData.getLanguage());
-				String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attributes);
-				System.out.println("The attirubtes read is " + text);
-				setTitle(fileName);
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-		//	setTitle(fileName, provData.getTimestamp(), provData.getScriptTimestamp()); //this will effectively get the start time.
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
-			//getTotalRunTime(provData);
 		}
 	}
 

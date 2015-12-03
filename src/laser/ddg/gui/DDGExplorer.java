@@ -1,18 +1,15 @@
 package laser.ddg.gui;
 
-<<<<<<< HEAD
 import java.awt.BorderLayout;  
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -40,26 +37,12 @@ import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.commands.ShowValueDerivationCommand;
-=======
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProvenanceData;
 
-import laser.ddg.commands.*;
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
 import laser.ddg.query.ResultsQuery;
 
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -292,7 +275,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		// allow the user to quit ddg explorer
 		JMenuItem quit = new JMenuItem("Quit");
-		quit.addActionListener(new QuitCommand());
+	//	quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
@@ -349,10 +332,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
 
-		JMenuItem queryExecutionTime = new JMenuItem("OrderProcedural Nodes by Execution Time");
+	/**	JMenuItem queryExecutionTime = new JMenuItem("Order Procedural Nodes by Execution Time");
 		queryExecutionTime.addActionListener(new OrderByExecutionTime());
 	//	queryExecutionTime.addActionListener();
-		queryMenu.add(queryExecutionTime);
+		queryMenu.add(queryExecutionTime);**/
 		
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());

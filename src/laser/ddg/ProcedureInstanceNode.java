@@ -16,11 +16,9 @@ import java.util.Iterator;
  */
 public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanceNode> {
 
-<<<<<<< HEAD
 
-=======
 	public String timeStamp ="";
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
+
 	/**
 	 * @return the definition of the procedure that this node represents an
 	 *         instance of

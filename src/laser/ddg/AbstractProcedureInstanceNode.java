@@ -124,13 +124,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param provData the provenance data that this node belongs to
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-<<<<<<< HEAD
+
 			AgentConfiguration ac, ProvenanceData provData, String timestamp) {
 		System.out.println("Inserting in the timestamp "+timestamp + "i into a procedural node"); 
-=======
-			AgentConfiguration ac, ProvenanceData provData, String timeStamp) {
 
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
 		agent = ac;

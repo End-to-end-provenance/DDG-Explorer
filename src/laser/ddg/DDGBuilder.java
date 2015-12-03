@@ -54,12 +54,10 @@ public abstract class DDGBuilder {
 	 * @return the new procedure instance node
 	 */
 	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, String timestamp) {
-<<<<<<< HEAD
-		ProcedureInstanceNode pin = addProceduralNode(type, id, name, value, timestamp);
-=======
+
 		System.out.println("Adding a procedural node with timestamp "+timestamp);
 		ProcedureInstanceNode pin = addProceduralNode(type, id, name, timestamp);
->>>>>>> 9971dd090875f8c816b59c8fb164fb22bbe9cb7a
+
 		pin.setProcedureDefinition(value);
 		return pin;
 	}
