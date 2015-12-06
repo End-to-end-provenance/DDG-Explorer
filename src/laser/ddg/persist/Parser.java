@@ -18,6 +18,7 @@ import laser.ddg.NoSuchDataNodeException;
 import laser.ddg.NoSuchNodeException;
 import laser.ddg.NoSuchProcNodeException;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SearchElement;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -183,6 +184,7 @@ public class Parser {
 			parseDeclaration(nextToken);
 			nextToken = skipBlankLines();
 		}
+	
 		addEdges();
 		
 		if (ddgBuilder != null) {
@@ -192,7 +194,9 @@ public class Parser {
 		
 		
 	}
-
+	
+	
+	
 	/**
 	 * Parses the attributes and their values and the pin counter.
 	 * @throws IOException if the header is not formatted properly or there is

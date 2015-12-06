@@ -31,14 +31,13 @@ public class SearchIndex {
 	 * @param name the node's label
 	 */
 	public void addToSearchIndex(String type, int id, String name, String time) {
-		// hold individual node information
-		System.out.println("Searching idnex");
 		double newTime; 
 		SearchElement element ; 
 		if(time != null){
 		 newTime = Double.parseDouble(time);
 		element = new SearchElement(type, name, id, newTime);//defualt time right now.  
-		System.out.println(newTime); 
+		System.out.println(newTime);  
+	    
 		}
 		else{
 			String newTime1 =  Calendar.getInstance().toString(); //for data nodes, should all be 1.0
@@ -50,22 +49,47 @@ public class SearchIndex {
 
 
 		// store each node with associated type
-		if(type.equals("Exception"))
-			errorList.add(element); //add to the arraylist of the different types of nodes. 
-		else if(type.equals("Data") || type.equals("Snapshot"))
+		if(type.equals("Exception")){
+			errorList.add(element); //add to the arraylist of the different types of nodes.
+		}
+		else if(type.equals("Data") || type.equals("Snapshot")) {
+		
 			dataList.add(element);
-		else if(type.equals("File"))
+		}
+		else if(type.equals("File")){
 			fileList.add(element);
-		else if(type.equals("URL"))
+		}
+		else if(type.equals("URL")){
 			urlList.add(element);
-		else if(type.equals("Operation"))
-			operationList.add(element);
-
-		// keep track of all nodes in DDG
+		}
+		else if(type.equals("Operation")) {
+			element = addTimeTaken(element); 
+			operationList.add(element); 
+		}
+			
 		allList.add(element);
 	}
 
+	public SearchElement addTimeTaken(SearchElement element){
+		double current = element.getTime(); 
+		double timeTaken; 
+		if(!operationList.isEmpty()){
+		double previous = operationList.get(operationList.size() -1).getTime(); 
+		
+			//iterate through this, finding the difference 
+			 timeTaken = current - previous; 
+			System.out.println("The time taken between previous and current node is "+timeTaken);
+			
+		}else{ 
+			 timeTaken = current - 0; 
+		}
+		element.setTimeTaken(timeTaken);
+			return element; 
+		}
+	
+	
 	/**
+	 * 
 	 * @return associated error nodes in the search list
 	 */
 	public ArrayList<SearchElement> getErrorList() {
@@ -97,6 +121,7 @@ public class SearchIndex {
 	 * @return associated operation nodes in the search list
 	 */
 	public ArrayList<SearchElement> getOperationList() {
+		System.out.println("Getting the operations list");; 
 		return operationList;
 	}
 

@@ -1,5 +1,6 @@
 package laser.ddg.gui;
 
+
 import java.awt.BorderLayout;  
 import java.awt.Color;
 import java.awt.Component;
@@ -9,7 +10,6 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -37,6 +37,10 @@ import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.commands.ShowValueDerivationCommand;
+
+
+
+import laser.ddg.commands.*;
 
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
@@ -275,7 +279,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		// allow the user to quit ddg explorer
 		JMenuItem quit = new JMenuItem("Quit");
-	//	quit.addActionListener(new QuitCommand());
+		quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
@@ -332,11 +336,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
 
-	/**	JMenuItem queryExecutionTime = new JMenuItem("Order Procedural Nodes by Execution Time");
-		queryExecutionTime.addActionListener(new OrderByExecutionTime());
-	//	queryExecutionTime.addActionListener();
-		queryMenu.add(queryExecutionTime);**/
-		
+	
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
 		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
