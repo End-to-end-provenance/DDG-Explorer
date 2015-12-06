@@ -385,16 +385,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getElapsedTime(), null);
+				pin.getNameAndType(), null, null);
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
-		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getTimeCreated());
+		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getCreatedTime());
 		addNode(din.getType(), din.getId() + numPins,
-				din.getName(), din.getValue().toString(),din.getTimeCreated(), din.getLocation());
+				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
 	}
 
 	@Override
@@ -813,7 +813,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			//add the procedure node passing in null value since pin's do not have values
 
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), null);
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, null);
 
 			if (root == null) {
 				root = getNode(pinId);
@@ -1558,10 +1558,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			Object value = din.getValue();
 			
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getTimeCreated());
+				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime()); 
 			}
 			else {
-				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getTimeCreated());
+				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime());
 			}
 			NodeItem dataNode = getNode(dinId);
 

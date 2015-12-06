@@ -23,7 +23,7 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	 * @param location the original location for a file node, null if not a file node
 	 */
 	public RDataInstanceNode(String type, String name, String value, String location){		
-		super(value, name, location);
+		super(value, name, null, location);
 		this.type = type;
 	}
 
@@ -32,7 +32,6 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		return type;
 	}
 
-	@Override
 	public String getElapsedTime() {
 		// TODO Auto-generated method stub
 		return null;

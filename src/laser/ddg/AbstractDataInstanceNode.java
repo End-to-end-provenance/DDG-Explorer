@@ -49,7 +49,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	private String nameOfDIN;
 
 	// The date & time the DIN was created.
-	private String timeCreated; 
+
+	private String timeCreated;
 	
 	// The original location of a file.  Null if this is not a file node.
 	private String location;
@@ -82,11 +83,14 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 */
 	public AbstractDataInstanceNode(Serializable val, String name,
 			ProcedureInstanceNode producer, ProvenanceData provData) {
+
 		timeCreated = Calendar.getInstance().toString();  //get the cleandr 
+
 		value = val;
 		nameOfDIN = name;
 		producedBy = producer;
 		this.hasProducer = 1;
+
 		id = 0;
 		this.provData = provData;
 	}
@@ -103,9 +107,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 */
 	public AbstractDataInstanceNode(Serializable val, String name,
 			ProvenanceData provData) {
+
 		
 		timeCreated = Calendar.getInstance().toString();  //get the cleandr 
 		System.out.println("Time created is "+timeCreated);
+
 		value = val;
 		nameOfDIN = name;
 		id = 0;
@@ -126,10 +132,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 * @param location
 	 * 			   the original location of a file, or null if not a file
 	 */
-	public AbstractDataInstanceNode(String val, String name, String location) {
-		timeCreated = Calendar.getInstance().toString();  //get the cleandr 
+
+	public AbstractDataInstanceNode(String val, String name, String time, String location) {
 		value = val;
 		nameOfDIN = name;
+		timeCreated = time;
 		this.location = location;
 	}
 
@@ -197,6 +204,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 * @return date & time the Data Instance Node was created
 	 */
 
+
+	@Override
+	public String getCreatedTime() {
+		return timeCreated;
+	}
 	
 	/**
 	 * Adds a producer node to a data node
@@ -311,11 +323,6 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 				"Cannot reset the ID of a node that has already been assigned an ID.");
 		}
 	}
-	
-	@Override
-	public String getTimeCreated(){
-		return timeCreated;  //returning the time created. 
-	}
 
 	/**
 	 * @return an iterator over all the attribute names attached to this node.
@@ -348,6 +355,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	@Override
 	public void setAttribute(String name, Object value) {
 		attributeValues.put(name, value);
+	}
+
+	public String getElapsedTime() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

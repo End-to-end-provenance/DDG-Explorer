@@ -1,7 +1,10 @@
 package laser.ddg.visualizer;
 
 import laser.ddg.ProvenanceData;
+<<<<<<< HEAD
 import laser.ddg.SearchElement;
+=======
+>>>>>>> 079828ab0cbc49945b4597f36d88ec869ad88589
 import laser.ddg.gui.DDGExplorer;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -451,12 +454,17 @@ public class DDGDisplay extends Display {
 
 
 		private PopupCommand showExecutionTimeCommand = new PopupCommand("Show Execution Time") {
+<<<<<<< HEAD
+=======
+			ArrayList<Date> dates = new ArrayList<>();
+>>>>>>> 079828ab0cbc49945b4597f36d88ec869ad88589
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("CLICKED");
 				VisualItem node = findItem(p);//finding the node.
 				String time = PrefuseUtils.getTimestamp((NodeItem) node); //find teh time.
 				JOptionPane.showMessageDialog(DDGDisplay.this,"The time gotten for this function is "+ time);
+<<<<<<< HEAD
 			
 				//Show  how much time has ellapsedfrom the time at the beginning.
 			}
@@ -493,6 +501,13 @@ public class DDGDisplay extends Display {
 
 			
 		}; 
+=======
+				Date date = new Date(time);
+				dates.add(date);
+				//Show  how much time has ellapsedfrom the time at the beginning.
+			}
+		};
+>>>>>>> 079828ab0cbc49945b4597f36d88ec869ad88589
 		private PopupCommand showValueCommand = new PopupCommand("Show Value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -600,6 +615,7 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
+<<<<<<< HEAD
 						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showExecutionTimeCommand, showFunctionCommand);
 					}
 					else if(PrefuseUtils.isCollapsed(item)){
@@ -608,6 +624,13 @@ public class DDGDisplay extends Display {
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
 						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showFunctionCommand);
+=======
+						showPopup(e, expandCommand, expandAllCommand, showExecutionTimeCommand, showFunctionCommand);
+					}
+
+					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
+						showPopup(e, collapseCommand, expandAllCommand, showExecutionTimeCommand, showFunctionCommand);
+>>>>>>> 079828ab0cbc49945b4597f36d88ec869ad88589
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {
@@ -620,7 +643,11 @@ public class DDGDisplay extends Display {
 
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
+<<<<<<< HEAD
 						showPopup(e, expandCommand, expandAllCommand, showExecutionTimeCommand, showElapsedTimeCommand, showFunctionCommand);
+=======
+						showPopup(e, showFunctionCommand, showExecutionTimeCommand);
+>>>>>>> 079828ab0cbc49945b4597f36d88ec869ad88589
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){

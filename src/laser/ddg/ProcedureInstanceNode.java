@@ -18,14 +18,13 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 
 
 	public String timeStamp ="";
-
 	/**
 	 * @return the definition of the procedure that this node represents an
 	 *         instance of
 	 */
 	public Object getProcedureDefinition();
 
-	
+
 	/**
 	 * Save the procedure definition.  The exact form of the definition will depend on 
 	 * the language being executed
@@ -189,8 +188,5 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 	 */
 	public boolean canBeRoot();
 
-	public String getElapsedTime();
-
-	
 
 }

@@ -37,4 +37,6 @@ public class RIntermNode extends RFunctionInstanceNode {
 	public String getType() {
 		return "Interm";
 	}
+
+	
 }

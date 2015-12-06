@@ -325,8 +325,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		if(din.getValue() != null){
 			newDin.addProperty(props.getDinValue(model), din.getValue().toString());
 		}
-		if(din.getTimeCreated() != null){
-			newDin.addProperty(props.getTimestamp(model), din.getTimeCreated());
+		if(din.getCreatedTime() != null){
+			newDin.addProperty(props.getTimestamp(model), din.getCreatedTime());
 		}
 		if(din.getLocation() != null){
 			newDin.addProperty(props.getLocation(model), din.getLocation());
