@@ -1,6 +1,6 @@
 package laser.ddg.visualizer;
 
-import laser.ddg.ProvenanceData;
+import laser.ddg.ProvenanceData;  
 import laser.ddg.SearchElement;
 import laser.ddg.gui.DDGExplorer;
 import prefuse.Display;
@@ -11,7 +11,6 @@ import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -113,6 +112,7 @@ public class DDGDisplay extends Display {
 				// Should work for all kinds of files.  Uses a platform-specific
 				// application.
 				new FileViewer(value, ddgTime).displayFile();
+				
 			}
 			//else {
 //				JOptionPane.showMessageDialog(DDGDisplay.this,"This data does not have an associated file");
