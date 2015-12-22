@@ -49,6 +49,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	private String nameOfDIN;
 
 	// The date & time the DIN was created.
+
 	private String timeCreated;
 	
 	// The original location of a file.  Null if this is not a file node.
@@ -82,11 +83,14 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 */
 	public AbstractDataInstanceNode(Serializable val, String name,
 			ProcedureInstanceNode producer, ProvenanceData provData) {
+
+		timeCreated = Calendar.getInstance().toString();  //get the cleandr 
+
 		value = val;
 		nameOfDIN = name;
 		producedBy = producer;
 		this.hasProducer = 1;
-		timeCreated = Calendar.getInstance().toString();
+
 		id = 0;
 		this.provData = provData;
 	}
@@ -103,6 +107,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 */
 	public AbstractDataInstanceNode(Serializable val, String name,
 			ProvenanceData provData) {
+
+		
+		timeCreated = Calendar.getInstance().toString();  //get the cleandr 
+		System.out.println("Time created is "+timeCreated);
+
 		value = val;
 		nameOfDIN = name;
 		id = 0;
@@ -123,6 +132,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 * @param location
 	 * 			   the original location of a file, or null if not a file
 	 */
+
 	public AbstractDataInstanceNode(String val, String name, String time, String location) {
 		value = val;
 		nameOfDIN = name;
@@ -193,6 +203,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	/**
 	 * @return date & time the Data Instance Node was created
 	 */
+
 
 	@Override
 	public String getCreatedTime() {
@@ -344,6 +355,11 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	@Override
 	public void setAttribute(String name, Object value) {
 		attributeValues.put(name, value);
+	}
+
+	public String getElapsedTime() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

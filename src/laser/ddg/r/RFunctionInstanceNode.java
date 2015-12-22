@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.AbstractProcedureInstanceNode;
+import laser.ddg.AgentConfiguration;
 import laser.ddg.ProvenanceData;
 
 /**
@@ -18,8 +19,12 @@ public abstract class RFunctionInstanceNode extends AbstractProcedureInstanceNod
 	 * @param name Name of node 
 	 * @param procDefinition Procedure definition(R function itself)
 	 * @param provData Provenance data object it will be passed to
+	 * @param time 
 	 */
-	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData) {
-		super(name, procDefinition, null, provData);
+
+public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData, String time) {
+		super(name, procDefinition, null, provData, provData.getTimestamp());
+		
+
 	}
 }

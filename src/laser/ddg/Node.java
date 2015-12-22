@@ -18,7 +18,9 @@ public interface Node {
 	 * 
 	 * @return time when the procedure instance node is created
 	 */
+
 	public String getCreatedTime();
+
 
 	/**
 	 * @return the ID assigned to the node
@@ -61,4 +63,5 @@ public interface Node {
 	 * @return an iterator over all the attribute names.
 	 */
 	public Iterator<String> attributes();
+
 }

@@ -1,3 +1,5 @@
+
+
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
   <property name="jardir" value="${user.home}/Documents/JarFiles"/>
@@ -9,7 +11,7 @@
 	<property name="jrunner-project-lib" value="../juliette-runner-release/lib"/>
 	<property name="dropbox" value="${user.home}/Dropbox/HarvardForest/DDGExplorer/" /> 
 
-	<property name="version" value="2.02"/>
+	<property name="version" value="2.0"/>
 
 	<target name="buildinfo">
 	    <tstamp>
@@ -28,7 +30,7 @@
 	    </propertyfile>
 	</target>
 
-  <target name="ddg-explorer" depends="buildinfo">
+  <target name="ddg-explorer">
   	<jar destfile="tmp_ddg-explorer.jar">
   		<manifest>
   		  <attribute name="Main-Class"
@@ -97,4 +99,5 @@
 	  	<move file="tmp_jrunner.jar" tofile="${ddgjars}/jrunner.jar"/>
 	  </target>
 		
-</project>
+</project>
+

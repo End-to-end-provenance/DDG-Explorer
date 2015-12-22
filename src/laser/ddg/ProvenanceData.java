@@ -107,12 +107,12 @@ public class ProvenanceData {
 	 */
 	public ProvenanceData(String processName) {
 		this.processName = processName;
+
 		agentConfigurations = new TreeSet<AgentConfiguration>();
 		pins = new LinkedList<ProcedureInstanceNode>();
 		dins = new LinkedList<DataInstanceNode>();
 		processInputs = new LinkedList<DataInstanceNode>();
 		processOutputs = new LinkedList<DataInstanceNode>();
-
 		nodesToResources = new Hashtable<Node, String>();
 		resourcesToNodes = new Hashtable<String, Node>();
 	}

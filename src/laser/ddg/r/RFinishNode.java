@@ -16,8 +16,8 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * @param name name of the node
 	 * @param provData the ddg
 	 */
-	public RFinishNode(String name, ProvenanceData provData) {
-		super(name, null, provData);
+	public RFinishNode(String name, ProvenanceData provData,String time) {
+		super(name, null, provData, time);
 	}
 
 	/**
@@ -36,5 +36,7 @@ public class RFinishNode extends RFunctionInstanceNode {
 	public String getType() {
 		return "Finish";
 	}
+
+
 
 }

@@ -1,35 +1,30 @@
 package laser.ddg.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.util.ArrayList;
-
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
-import javax.swing.border.EtchedBorder;
-
 import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SearchElement;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
-import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the
@@ -136,7 +131,6 @@ public class DDGPanel extends JPanel {
 		JPanel logPanel = createLogPanel();
 		add(logPanel, BorderLayout.SOUTH);
 
-
 	}
 
 	private JPanel createLogPanel() {
@@ -234,6 +228,7 @@ public class DDGPanel extends JPanel {
 	 *            the attribute list
 	 */
 	public void setAttributes(Attributes attrList) {
+		System.out.println("Setting attirbutws");
 		if (attrList.contains("Script")) {
 			setTitleToScriptAndTime(attrList.get("Script"));
 		} else {
@@ -242,10 +237,15 @@ public class DDGPanel extends JPanel {
 	}
 
 	private void setTitleToScriptAndTime(String attr) {
+		System.out.println("Setting title script and time");
 		String[] items = attr.split("[\\n]");
+		/**for(int i =0; i < items.length;i++){
+		 System.out.println(items[i]);
+		 }**/
 
 		String script = "";
 		String time = "";
+		String startTime = "";
 
 		// Get the name of the file from the attributes list
 		for (int s = 0; s < items.length; s++) {
@@ -259,9 +259,7 @@ public class DDGPanel extends JPanel {
 
 				// use the index and go from there to the end
 				script = theLine.substring(startAt);
-			}
-
-			else if (items[s].startsWith("DateTime")) {
+			} else if (items[s].startsWith("DateTime")) {
 				// get rid of any spaces
 				String theLine = items[s].replaceAll("[\\s]", "");
 
@@ -276,24 +274,55 @@ public class DDGPanel extends JPanel {
 			}
 		}
 
-		setTitle(script, time);
+		setTitle(script);
+		
+
 	}
 
-	/**
+		/**
 	 * Set the panel title
 	 * 
 	 * @param title
 	 *            the name of the process / script. This cannot be null.
+
 	 * @param timestamp
 	 *            the time at which it was run. This can be null.
 	 */
-	public void setTitle(String title, String timestamp) {
-		if (timestamp == null) {
-			setName(title);
-		} else {
-			setName(title + " " + timestamp);
-		}
+	public void setTitle(String title)  {
+		setName(title);
+
 	}
+
+	private String timeDifference(Date d1, Date d2) {
+		//HH converts hour in 24 hours format (0-23), day calculation
+	//	SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		String difference ="";
+		System.out.println("GETTING TIME DIFFERNECE");
+
+		try {
+
+			//in milliseconds
+			long diff = d2.getTime() - d1.getTime();
+			System.out.println("The first difference is " +diff);
+
+			long diffSeconds = diff / 1000 % 60;
+			long diffMinutes = diff / (60 * 1000) % 60;
+			long diffHours = diff / (60 * 60 * 1000) % 24;
+			//long diffDays = diff / (24 * 60 * 60 * 1000);
+
+			//System.out.print(diffDays + " days, ");
+			System.out.print(diffHours + " hours, ");
+			System.out.print(diffMinutes + " minutes, ");
+			System.out.print(diffSeconds + " seconds.");
+			difference = "The difference is "+diffHours + " hours "+diffMinutes + " minutes "+ " and "+diffSeconds;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return difference;
+	}
+
+
 
 	/**
 	 * Sets the provenance data and updates the main attributes for this ddg.
@@ -302,8 +331,11 @@ public class DDGPanel extends JPanel {
 	 *            the ddg data
 	 */
 	public void setProvData(ProvenanceData provData) {
+		System.out.println("Setting prov data");
 		this.provData = provData;
+		System.out.println("This prov data is " + provData.getScriptTimestamp());
 		if (descriptionArea != null) {
+			System.out.println("updating descriptions");
 			updateDescription();
 		}
 		// set the Title for DDGs opened by file. Otherwise they have no title
@@ -315,9 +347,11 @@ public class DDGPanel extends JPanel {
 			// provData.getLanguage());
 			String fileName = FileUtil.getPathDest(provData.getProcessName(),
 					provData.getLanguage());
-			setTitle(fileName, provData.getTimestamp());
+			setTitle(fileName); 
+
 		}
 	}
+
 
 	public ProvenanceData getProvData() {
 		return provData;
