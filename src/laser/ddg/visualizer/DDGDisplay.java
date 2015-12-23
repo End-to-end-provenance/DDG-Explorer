@@ -1,30 +1,7 @@
 package laser.ddg.visualizer;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-
+import laser.ddg.ProvenanceData;   
+import laser.ddg.search.SearchElement;
 import laser.ddg.gui.DDGExplorer;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -34,6 +11,17 @@ import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * displays a DDG using prefuse
@@ -55,6 +43,8 @@ public class DDGDisplay extends Display {
 	private static final int FILE_INCONSISTENT_WITH_DDG_CANCEL = -1;
 	private static final int FILE_MISSING = -2;
 	private static final String FUNCTION = "#ddg.function";
+	private ProvenanceData provData;
+	private int totalRunTime = 0;
 	
 	/**
 	 * Create a display for a prefuse DDG
@@ -82,8 +72,10 @@ public class DDGDisplay extends Display {
 		proportionX = 0;
 		proportionY = -0.25;
 	}
-	
+
+
 	public void zoomToFit(){
+
 		if(!this.isTranformInProgress()){
 			int margin = 100;
 			int duration = 1500; //1.5 seconds
@@ -120,6 +112,7 @@ public class DDGDisplay extends Display {
 				// Should work for all kinds of files.  Uses a platform-specific
 				// application.
 				new FileViewer(value, ddgTime).displayFile();
+				
 			}
 			//else {
 //				JOptionPane.showMessageDialog(DDGDisplay.this,"This data does not have an associated file");
@@ -268,6 +261,9 @@ public class DDGDisplay extends Display {
  		// Value indicates this is a function node, look in node name for function name
  		if (funName.equals(FUNCTION)){
  			String nodeName = PrefuseUtils.getName(node);
+			System.out.println("The function is "+nodeName);
+			String nodeTime = PrefuseUtils.getTimestamp(node);
+			System.out.println("The time stamp is "+nodeTime);
  			
  			// The index exists, take that substring, otherwise take all of it
  			int beginIndex = nodeName.indexOf("-");
@@ -453,15 +449,68 @@ public class DDGDisplay extends Display {
 			}
 		};
 
+
+		private PopupCommand showExecutionTimeCommand = new PopupCommand("Show Execution Time") {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("CLICKED");
+				VisualItem node = findItem(p);//finding the node.
+				String time = PrefuseUtils.getTimestamp((NodeItem) node); //find teh time.
+				JOptionPane.showMessageDialog(DDGDisplay.this,"The time gotten for this function is "+ time);
+
+			
+				//Show  how much time has ellapsedfrom the time at the beginning.
+			}
+		};
+		
+		private PopupCommand showElapsedTimeCommand = new PopupCommand("Show Elapsed Execution Time"){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			//show the elapse d time at first. 
+				
+				//how can I get the elapsed time on here? 
+				ArrayList<SearchElement> nodeList =DDGExplorer.getCurrentDDGPanel().getSearchIndex().getOperationList();  
+				//you want too search for the unique ID.; 
+				VisualItem node = findItem(p);//finding the node.
+				String value = PrefuseUtils.getValue((NodeItem) node); //find the time.
+				System.out.println("The value is "+value);
+			double timeTaken =0; 
+				for(int i =0; i < nodeList.size(); i++){
+					System.out.println(nodeList.get(i).getName()); 
+					String str = nodeList.get(i).getName();
+					System.out.println(str.substring(str.indexOf("-")+1));
+					if(str.substring(str.indexOf("-")+1).equals(value)){
+						System.out.println(nodeList.get(i).getName()); 
+						//if the time matches the time in the node. 
+					    timeTaken = nodeList.get(i).getTimeTaken(); //get node list.  
+					    System.out.println("TIME TAKEN IS "+timeTaken);
+					}
+				}
+				JOptionPane.showMessageDialog(DDGDisplay.this,"The time needed to execute this script is "+ timeTaken);
+
+				
+			}
+
+			
+		}; 	
+	
 		private PopupCommand showValueCommand = new PopupCommand("Show Value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//get the firstitem in teh list.
+				//
 				VisualItem node = findItem(p);
-				String time = null;
+				//System.out.println(node.getString(0));
+				String time =null;
 				//display time without the seconds
 				if(PrefuseUtils.getTimestamp((NodeItem) node) != null){
+					System.out.println("Time is not null");
 					time = PrefuseUtils.getTimestamp((NodeItem) node).substring(0, 16);
+					System.out.println("Substring is "+time);
 				}
+				//TODO to actually show this dialog box.
 				//if the node is a data node only show dialog boxes with values and/or timestamps
 				String nodeType = node.getString(PrefuseUtils.TYPE);
 				if(nodeType.equals(PrefuseUtils.DATA_NODE) || nodeType.equals(PrefuseUtils.EXCEPTION) || nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)){
@@ -554,11 +603,16 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
-						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand);
+
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showExecutionTimeCommand, showFunctionCommand);
+					}
+					else if(PrefuseUtils.isCollapsed(item)){
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showFunctionCommand);
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
-						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand);
+						showPopup(e, expandCommand, expandAllCommand, showElapsedTimeCommand , showFunctionCommand);
+
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {
@@ -568,9 +622,12 @@ public class DDGDisplay extends Display {
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {
 						showPopup(e, showValueCommand);
 					}
+
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
-						showPopup(e, showFunctionCommand);
+
+						showPopup(e, expandCommand, expandAllCommand, showExecutionTimeCommand, showElapsedTimeCommand, showFunctionCommand);
+
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){

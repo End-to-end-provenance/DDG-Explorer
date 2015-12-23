@@ -927,7 +927,7 @@ public class JenaLoader {
 	 * @return the node created
 	 */
 	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef) {
-		return load.addProceduralNode(type, id, name, procDef);
+		return load.addProceduralNode(type, id, name, procDef, procDef);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {

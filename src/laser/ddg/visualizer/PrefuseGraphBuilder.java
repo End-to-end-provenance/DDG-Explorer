@@ -1,38 +1,7 @@
 package laser.ddg.visualizer;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.event.MouseInputListener;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataBindingEvent;
+import laser.ddg.*;
 import laser.ddg.DataBindingEvent.BindingEvent;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
-import laser.ddg.ProvenanceDataVisitor;
-import laser.ddg.ProvenanceListener;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -63,6 +32,19 @@ import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.Queue;
 
 /**
  * Builds a visual DDG graph using prefuse.
@@ -227,13 +209,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name The name of the program that created the DDG
 	 * @param timestamp the timestamp when the DDG was created
 	 */
-	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp);
-	}
+	
 
-	/**
-	 * @return the pinID
-	 */
+	
 	public int getPinID() {
 		return pinID;
 	}
@@ -393,6 +371,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
+
+
 	}
 
 	private void addNodesAndEdges(ProvenanceData ddg) {
@@ -405,13 +385,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getCreatedTime(), null);
+				pin.getNameAndType(), null, null);
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
+		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getCreatedTime());
 		addNode(din.getType(), din.getId() + numPins,
 				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
 	}
@@ -451,8 +432,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 		original file.  If it is not a file node, it will be null
 	 * @return the row of the table where the new node is added
 	 */
+
 	public int addNode(String type, int id, String name, String value, String time, String location) {
+
+
+		System.out.println("In the addNode of the PrefuseGraphBuilder, the timestamp gotten is "+time+" for the value "+value);
+
 		try {
+			System.out.println("Trying");
 			synchronized (vis) {
 				if (id < 1) {
 					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
@@ -468,12 +455,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
+				System.out.println("SETTING THE TIME OF THIS NODE TO BE " + time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
-
-				searchIndex.addToSearchIndex(type, id, name);
+				System.out.println("Adding to searhc index'");
+				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
 			}
 		} catch (Exception e) {
+			
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding node *** \n ");
 			throw new IllegalArgumentException(e);
@@ -499,7 +488,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String location) {
-		return addNode (type, id, name, value, null, location);
+		return addNode(type, id, name, value, null, location);
 	}
 
 	/**
@@ -552,13 +541,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param ddg
 	 *            the ddg to display
 	 */
+	public void setTitle(String name, String timestamp) {
+		ddgPanel.setTitle(name);
+	}
 	public void drawGraph(ProvenanceData ddg) {
 
 
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			//System.out.println("Building node and edge tables.");
+		//	System.out.println("Building node and edge tables.");
 			buildNodeAndEdgeTables();
 
 			//System.out.println("Building graph");
@@ -644,10 +636,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// -- 6. launch the visualization -------------------------------------
 
 		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
+	//
 
 		// new code
 		PopupMenu options = display.new PopupMenu();
 		options.createPopupMenu();
+	//	display.getTotalRunTime(provData);
 	}
 
 	private static ActionList assignColors() {
@@ -760,6 +754,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// We are just initializing the display here, not actually drawing a graph.
 
 		this.provData = provData;
+		//System.out.println("The name of the prov data inserted is "+provData.getProcessName());
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID,
 				PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
@@ -817,11 +812,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getCreatedTime());
+
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, null);
+
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
 			}
+			//System.out.println("the time stamp for this is "+pin.getT)
 
 			// Draw the root node immediately, but delay drawing the other nodes
 			// until
@@ -1053,7 +1051,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
 	 * @param startNode A start node or a checkpoint node
-	 * @param finshNode The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
@@ -1203,7 +1200,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Find the successors of a finish node and add edges from each successor to
 	 * the new collapsed node
-	 * @param finishNode the finish node whose successors we are searching for
 	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
 	 *    be the collapsed node that corresponds to the collapsing of finishNode
 	 */
@@ -1560,8 +1556,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			int dinId = din.getId() + MIN_DATA_ID;
 			//add the data node, passing in the optional associated value and timestamp
 			Object value = din.getValue();
+			
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime()); 
 			}
 			else {
 				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime());

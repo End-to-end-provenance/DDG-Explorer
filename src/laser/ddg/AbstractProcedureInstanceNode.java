@@ -117,9 +117,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param ac
 	 *            the agent that executed the procedure
 	 * @param provData the provenance data that this node belongs to
+	 * @param time 
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData) {
+			AgentConfiguration ac, ProvenanceData provData, String time) {
 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;

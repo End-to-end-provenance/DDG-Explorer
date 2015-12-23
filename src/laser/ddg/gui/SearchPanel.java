@@ -1,6 +1,6 @@
 package laser.ddg.gui;
 
-import java.awt.GridBagConstraints;
+import java.awt.GridBagConstraints; 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +40,7 @@ class SearchPanel extends JPanel {
 		//JComboBox<String>optionsBox = new JComboBox<>(options);
 		
 		String[] ddgOptions = { ALL_OPTIONS, ERROR_OPTION, FILE_OPTION, URL_OPTION, DATA_OPTION, FUNCTION_OPTION };
-		ddgOptionsBox = createDDGOptionsBox(ddgOptions);
+		ddgOptionsBox = createDDGOptionsBox(ddgOptions); //this is the ddg options
 
 		setLayout(new GridBagLayout());
 		GridBagConstraints preferences = new GridBagConstraints();
@@ -121,7 +121,9 @@ class SearchPanel extends JPanel {
 
 		// Gets which option was selected in the drop down
 		String ddgOption = ddgOptionsBox.getSelectedItem().toString();
-		if (ddgOption.equals(ERROR_OPTION))
+		if (ddgOption.equals(ERROR_OPTION)) 
+			//youw ant to break down the arraylist down to a 
+			//lower subset. 
 			searchList(searchIndex.getErrorList());
 		else if (ddgOption.equals(DATA_OPTION))
 			searchList(searchIndex.getDataList());
