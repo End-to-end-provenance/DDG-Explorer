@@ -17,8 +17,8 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * @param procDefinition the code the node represents
 	 * @param provData the ddg
 	 */
-	public RStartNode(String name, Object procDefinition, ProvenanceData provData) {
-		super(name, procDefinition, provData);
+	public RStartNode(String name, Object procDefinition, ProvenanceData provData, String timeStamp) {
+		super(name, procDefinition, provData, timeStamp);
 		assert provData != null;
 	}
 
@@ -38,4 +38,5 @@ public class RStartNode extends RFunctionInstanceNode {
 		return "Start";
 	}
 
+	
 }

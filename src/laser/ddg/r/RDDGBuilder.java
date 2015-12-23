@@ -1,20 +1,15 @@
 package laser.ddg.r;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.swing.JOptionPane;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
+import laser.ddg.*;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Builds the nodes used by ddgs that represent the execution of R scripts.
@@ -76,32 +71,33 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName){
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, String timeStamp){
 		RFunctionInstanceNode newFuncNode = null;
 		ProvenanceData provObject = getProvObject();
 		if(type.equals("Start")){
-			newFuncNode = new RStartNode(nodeName, funcName, provObject);
+			newFuncNode = new RStartNode(nodeName, funcName, provObject, timeStamp); //now, add a timestamp.
 		}
 		else if(type.equals("Leaf") || type.equals("Operation")){
-			newFuncNode = new RLeafNode(nodeName, funcName, provObject);
+			newFuncNode = new RLeafNode(nodeName, funcName, provObject, timeStamp);
 		}
 		else if(type.equals("Finish")){
-			newFuncNode = new RFinishNode(nodeName, provObject);
+			newFuncNode = new RFinishNode(nodeName, provObject, timeStamp);
 		}
 		else if(type.equals("Interm")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RIntermNode(nodeName, provObject);
+			newFuncNode = new RIntermNode(nodeName, provObject, timeStamp);
 		}
 		else if(type.equals("Binding")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RBindingNode(nodeName, provObject);
+			newFuncNode = new RBindingNode(nodeName, provObject, timeStamp);
 		}
 		else if (type.equals("Checkpoint")) {
-			newFuncNode = new RCheckpointNode(nodeName, provObject);
+			newFuncNode = new RCheckpointNode(nodeName, provObject, timeStamp);
 		}
 		else if (type.equals("Restore")) {
-			newFuncNode = new RRestoreNode(nodeName, provObject);
+			newFuncNode = new RRestoreNode(nodeName, provObject, timeStamp);
 		}
+		System.out.println("Time stamp gotten correctly");
 		provObject.addPIN(newFuncNode, id);
 		return newFuncNode;
 	}
@@ -116,7 +112,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 */
 	@Override
 	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name) {
-		return addProceduralNode(type, id, name, null);
+		return addProceduralNode(type, id, name);
 	}
 
 	/**
@@ -131,7 +127,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 */
 	@Override
 	public DataInstanceNode addDataNode(String type, int id, String name, String value, String time, String location){
-		RDataInstanceNode dataNode = new RDataInstanceNode(type, name, value, time, location);
+		RDataInstanceNode dataNode = new RDataInstanceNode(type, name, value, location);
 		getProvObject().addDIN(dataNode, id);
 		return dataNode;
 	}
@@ -177,4 +173,5 @@ public class RDDGBuilder extends DDGBuilder {
 		return attrText.toString();
 	}
 
+	
 }

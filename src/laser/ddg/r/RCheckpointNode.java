@@ -17,8 +17,8 @@ public class RCheckpointNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 */
-	public RCheckpointNode(String name, ProvenanceData provData) {
-		super(name, null, provData);
+	public RCheckpointNode(String name, ProvenanceData provData, String time) {
+		super(name, null, provData, time);
 	}
 
 	/**
@@ -39,5 +39,7 @@ public class RCheckpointNode extends RFunctionInstanceNode {
 	public String getType() {
 		return "Checkpoint";
 	}
+
+	
 
 }
