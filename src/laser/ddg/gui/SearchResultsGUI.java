@@ -36,12 +36,12 @@ public class SearchResultsGUI extends JScrollPane {
 
 	/**
 	 * Creates the search results
-	 * @param nodesList the list of nodes whose names appear in the search results
+	 * @param resultList the list of nodes whose names appear in the search results
 	 */
-	public SearchResultsGUI(ArrayList<SearchElement> nodesList) {
+	public SearchResultsGUI(ArrayList<? extends SearchElement> resultList) {
 
 		model = new DefaultListModel<SearchElement>();
-		for (SearchElement entry : nodesList) {
+		for (SearchElement entry : resultList) {
 			model.addElement(entry);
 		}
 
@@ -76,12 +76,12 @@ public class SearchResultsGUI extends JScrollPane {
 	/**
 	 * Updates the JList if a new search is done
 	 * 
-	 * @param nodesList
+	 * @param resultList
 	 */
-	public void updateSearchList(ArrayList<SearchElement> nodesList) {
+	public void updateSearchList(ArrayList<? extends SearchElement> resultList) {
 		model.clear();
 
-		for (SearchElement entry : nodesList)
+		for (SearchElement entry : resultList)
 			model.addElement(entry);
 	}
 

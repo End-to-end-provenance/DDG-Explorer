@@ -470,7 +470,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
 
-				searchIndex.addToSearchIndex(type, id, name);
+				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
 			}
 		} catch (Exception e) {
@@ -2004,6 +2004,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public void setHighlighted(int id, boolean value) {
 		getNode(id).setHighlighted(value);
 	}
+
 
 
 }

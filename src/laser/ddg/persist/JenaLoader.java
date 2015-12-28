@@ -303,8 +303,9 @@ public class JenaLoader {
 		String type = retrieveSinType(res);
 		String name = retrieveSinName(res);
 		String value = retrieveSinValue(res);
+		Double elapsedTime = retrieveSinElapsedTime(res);
 		ProcedureInstanceNode pin = addSinToProvData(name,
-				type, value, res, id, provData);
+				type, value, elapsedTime, res, id, provData);
 		System.out.println("Adding sin" + id + ": "
 				+ pin.toString());
 		return pin;
@@ -749,10 +750,10 @@ public class JenaLoader {
 	 * @param id The node's id
 	 * @return the procedure instance node that has been added to the provenance data
 	 */
-	private ProcedureInstanceNode addSinToProvData(String name, String type, String value,
+	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime,
 			Resource res, int id, ProvenanceData provData) {
 		if (!nodesToResContains(res, provData)) {
-			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value);
+			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime);
 			provData.addPIN(pin, res.getURI());
 			return pin;
 		}
@@ -926,8 +927,8 @@ public class JenaLoader {
 	 * @param procDef the definition of the procedure that was executed
 	 * @return the node created
 	 */
-	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef) {
-		return load.addProceduralNode(type, id, name, procDef);
+	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime) {
+		return load.addProceduralNode(type, id, name, procDef, elapsedTime);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {
@@ -964,6 +965,10 @@ public class JenaLoader {
 	private String retrieveSinValue(Resource res) {
 		// TODO Auto-generated method stub
 		return retrieveStringProperty(res, prop.getStepProperty(res.getModel()));
+	}
+
+	private double retrieveSinElapsedTime(Resource res) {
+		return retrieveDoubleProperty(res, prop.getSinElapsedTime(res.getModel()));
 	}
 
 	/**
@@ -1024,6 +1029,17 @@ public class JenaLoader {
 	private static int retrieveIntProperty(Resource res, Property propertyName) {
 		Statement propertyValue = res.getProperty(propertyName);
 		return propertyValue.getInt();
+	}
+
+	/**
+	 * Returns a double value of a property 
+	 * @param res this resource the property belongs to
+	 * @param propertyName the property to return.  This must be a double property
+	 * @return the property value
+	 */
+	private static double retrieveDoubleProperty(Resource res, Property propertyName) {
+		Statement propertyValue = res.getProperty(propertyName);
+		return propertyValue.getDouble();
 	}
 
 	/**

@@ -453,6 +453,23 @@ public class DDGDisplay extends Display {
 			}
 		};
 
+		private PopupCommand showElapsedTimeCommand = new PopupCommand("Show Elapsed Execution Time"){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VisualItem item = findItem(p);
+				String timestamp = PrefuseUtils.getTimestamp((NodeItem) item);
+				if (timestamp != null){
+					JOptionPane.showMessageDialog(DDGDisplay.this, timestamp);
+				}
+				else {
+					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no elapsed time associated with this node.");
+				}
+			}
+
+			
+		}; 	
+	
 		private PopupCommand showValueCommand = new PopupCommand("Show Value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -554,11 +571,11 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
-						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand);
+						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand);
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
-						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand);
+						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand);
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {
@@ -570,7 +587,7 @@ public class DDGDisplay extends Display {
 					}
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
-						showPopup(e, showFunctionCommand);
+						showPopup(e, showFunctionCommand, showElapsedTimeCommand);
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){

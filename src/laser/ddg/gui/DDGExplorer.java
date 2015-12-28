@@ -27,6 +27,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
+import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
@@ -325,6 +326,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
+		
+		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
+		timeItem.addActionListener(new FindTimeCommand());
+		queryMenu.add(timeItem); 
 		
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());

@@ -94,6 +94,9 @@ public abstract class AbstractProcedureInstanceNode implements
 
 	// Time when a Procedure Instance Node is created
 	private final String timeCreated;
+	
+	// CPU time that this opeartion took
+	private double elapsedTime;
 
 	// Information about the agent that carried out this procedure
 	private AgentConfiguration agent;
@@ -117,9 +120,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param ac
 	 *            the agent that executed the procedure
 	 * @param provData the provenance data that this node belongs to
+	 * @param elapsedTime 
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData) {
+			AgentConfiguration ac, ProvenanceData provData, double elapsedTime) {
 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
@@ -128,7 +132,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		successors = new LinkedList<ProcedureInstanceNode>();
 		predecessors = new LinkedList<ProcedureInstanceNode>();
 		this.provData = provData;
-
+		this.elapsedTime = elapsedTime;
 	}
 	
 	/**

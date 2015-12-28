@@ -135,7 +135,7 @@ class SearchPanel extends JPanel {
 			searchList(searchIndex.getAllList());
 	}
 
-	private void searchList(ArrayList<SearchElement> nodesList) {
+	private void searchList(ArrayList<? extends SearchElement> nodesList) {
 		DDGPanel ddgPanel = DDGExplorer.getCurrentDDGPanel();
 		if (ddgPanel == null) {
 			DDGExplorer explorer = DDGExplorer.getInstance();

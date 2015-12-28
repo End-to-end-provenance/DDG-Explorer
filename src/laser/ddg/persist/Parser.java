@@ -111,6 +111,9 @@ public class Parser {
 	
 	private File fileBeingParsed;
 	
+	// Time of the last procedure node encountered
+	private double lastProcElapsedTime = 0.0;
+	
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
@@ -365,14 +368,28 @@ public class Parser {
 		//System.out.println("name = " + name + "  value = " + value);
 		
 		// TODO get the timeStamp
-		String timestamp = null;
-		timestamp = parseTimestamp(nodeId);
+		String time = parseElapsedTime(nodeId);
+		double elapsedTime;
+		if (time == null) {
+			elapsedTime = 0;
+			time = "0.0";
+		}
+		else {
+			double elapsedTimeFromStart = Double.parseDouble(time);
+			elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
+			lastProcElapsedTime = elapsedTimeFromStart;
+		}
 			
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, null);
+					constructName(nodeType, name), value, time, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime);
+	}
+
+	private String parseElapsedTime(String nodeId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**

@@ -24,6 +24,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
+import laser.ddg.search.OperationSearchElement;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
@@ -359,7 +360,7 @@ public class DDGPanel extends JPanel {
 		return searchIndex;
 	}
 
-	public void showSearchResults(ArrayList<SearchElement> resultList) {
+	public void showSearchResults(ArrayList<? extends SearchElement> resultList) {
 		if (searchList == null) {
 			searchList = new SearchResultsGUI(resultList);
 			splitPane.setLeftComponent(searchList);
@@ -380,5 +381,6 @@ public class DDGPanel extends JPanel {
 	public void focusOn(String name) {
 		builder.focusOn(name);
 	}
+
 
 }

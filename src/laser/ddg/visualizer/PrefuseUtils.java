@@ -481,7 +481,7 @@ public class PrefuseUtils {
 	static String getValue(Node n) {
 		return n.getString(VALUE);
 	}
-	
+
 	/**
 	 * Returns the timestamp associated with a node
 	 * @param n

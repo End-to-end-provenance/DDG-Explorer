@@ -15,9 +15,10 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * Creates a finish node
 	 * @param name name of the node
 	 * @param provData the ddg
+	 * @param elapsedTime 
 	 */
-	public RFinishNode(String name, ProvenanceData provData) {
-		super(name, null, provData);
+	public RFinishNode(String name, ProvenanceData provData, double elapsedTime) {
+		super(name, null, provData, elapsedTime);
 	}
 
 	/**

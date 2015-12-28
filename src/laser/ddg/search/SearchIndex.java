@@ -2,6 +2,8 @@ package laser.ddg.search;
 
 import java.util.ArrayList;
 
+import com.ibm.icu.util.Calendar;
+
 /**
  * Manages lists of nodes by type to facilitate searching.
  * 
@@ -15,7 +17,7 @@ public class SearchIndex {
 	private ArrayList <SearchElement> dataList = new ArrayList<SearchElement>();
 	private ArrayList <SearchElement> fileList = new ArrayList<SearchElement>();
 	private ArrayList <SearchElement> urlList = new ArrayList<SearchElement>();
-	private ArrayList <SearchElement> operationList = new ArrayList<SearchElement>();
+	private ArrayList <OperationSearchElement> operationList = new ArrayList<OperationSearchElement>();
 	private ArrayList <SearchElement> allList = new ArrayList<SearchElement>();
 
 	/**
@@ -26,21 +28,29 @@ public class SearchIndex {
 	 * @param id the node id used by Prefuse
 	 * @param name the node's label
 	 */
-	public void addToSearchIndex(String type, int id, String name) {
-		// hold individual node information
-		SearchElement element = new SearchElement(type, name, id);
+	public void addToSearchIndex(String type, int id, String name, String time) {
+		SearchElement element;
+		
+		if (type.equals("Operation")) {
+			double parsedTime = Double.parseDouble(time);
+			OperationSearchElement opElement = new OperationSearchElement (type, name, id, parsedTime);
+			operationList.add (opElement);
+			element = opElement;
+		}
+		else {
+			// hold individual node information
+			element = new SearchElement(type, name, id);
 
-		// store each node with associated type
-		if(type.equals("Exception"))
-			errorList.add(element);
-		else if(type.equals("Data") || type.equals("Snapshot"))
-			dataList.add(element);
-		else if(type.equals("File"))
-			fileList.add(element);
-		else if(type.equals("URL"))
-			urlList.add(element);
-		else if(type.equals("Operation"))
-			operationList.add(element);
+			// store each node with associated type
+			if(type.equals("Exception"))
+				errorList.add(element);
+			else if(type.equals("Data") || type.equals("Snapshot"))
+				dataList.add(element);
+			else if(type.equals("File"))
+				fileList.add(element);
+			else if(type.equals("URL"))
+				urlList.add(element);
+		}
 
 		// keep track of all nodes in DDG
 		allList.add(element);
@@ -77,7 +87,7 @@ public class SearchIndex {
 	/**
 	 * @return associated operation nodes in the search list
 	 */
-	public ArrayList<SearchElement> getOperationList() {
+	public ArrayList<OperationSearchElement> getOperationList() {
 		return operationList;
 	}
 
