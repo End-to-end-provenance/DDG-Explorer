@@ -1,3 +1,4 @@
+
 package laser.ddg.query;
 
 import javax.swing.JComponent;

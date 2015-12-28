@@ -318,9 +318,7 @@ public class JenaLoader {
 	}
 	
 	private String getDDGClause(String queryVar, String processName, String timestamp) {
-		if (ddgURI == null) {
-			ddgURI = getDdgUri(processName, timestamp);
-		}
+		ddgURI = getDdgUri(processName, timestamp);
 		return getDDGClause(queryVar);
 	}
 
@@ -929,7 +927,7 @@ public class JenaLoader {
 	 * @return the node created
 	 */
 	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef) {
-		return load.addProceduralNode(type, id, name, procDef);
+		return load.addProceduralNode(type, id, name, procDef, procDef);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {

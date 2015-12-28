@@ -13,7 +13,7 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.RemoveListenerException;
-import laser.ddg.visualizer.ErrorLog;
+import laser.ddg.gui.DDGExplorer;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.ReadWrite;
@@ -136,8 +136,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			}
 			//ErrorLog.showErrMsg("Initialization in DB done\n");
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Unable to initialize the database for the DDG.\n");
-			ErrorLog.showErrMsg(e + "\n");
+			DDGExplorer.showErrMsg("Unable to initialize the database for the DDG.\n");
+			DDGExplorer.showErrMsg(e + "\n");
 			e.printStackTrace();
 		}
 	}
@@ -167,15 +167,15 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			List<String> timestampList = jenaLoader.getTimestamps(processName);
 			for(String temp : timestampList){
 				if(temp.equals(executionTimestamp)){
-					System.out.println("Already in DB");
-					ErrorLog.showErrMsg("Already in DB\n");
+					//System.out.println("Already in DB");
+					//DDGExplorer.showErrMsg("Already in DB\n");
 					return true;
 				}
 			}
 			return false;
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
-			ErrorLog.showErrMsg(e.toString());
+			DDGExplorer.showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
+			DDGExplorer.showErrMsg(e.toString());
 			e.printStackTrace();
 			return false;
 		}

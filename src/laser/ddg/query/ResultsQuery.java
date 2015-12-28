@@ -25,6 +25,7 @@ public class ResultsQuery extends DataQuery {
 	public String getMenuItem() {
 		return "Show Values Computed From";
 	}
+	
 
 	@Override
 	protected String getFrameTitle() {

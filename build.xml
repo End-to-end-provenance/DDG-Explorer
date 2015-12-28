@@ -5,12 +5,11 @@
   <property name="tdblib" value="${jardir}/apache-jena-2.10.1/lib"/>
   <property name="cpl" value="/usr/java" />
 	<property name="ragent" value="../juliette-r-agent/bin"/>
-	<property name="ddg-r" value="../ddg-r/bin"/>
 	<property name="ddg-littlejil" value="../juliette-ddgbuilder-2/bin"/>
 	<property name="jrunner-project-lib" value="../juliette-runner-release/lib"/>
 	<property name="dropbox" value="${user.home}/Dropbox/HarvardForest/DDGExplorer/" /> 
 
-	<property name="version" value="1.020"/>
+	<property name="version" value="2.02"/>
 
 	<target name="buildinfo">
 	    <tstamp>
@@ -29,21 +28,7 @@
 	    </propertyfile>
 	</target>
 
-	<target name="DDG-Builder">  
-  	<delete file="ddgbuilder.jar" />
-  	<jar destfile="ddgbuilder.jar">
-  		<!-- The GUI code -->
-  		<fileset dir="bin" includes="**/*.class" />
-  		
-  		<!-- The R specific code -->
-  		<fileset dir="../ddg-r" includes="**/*.class" />
-  		
-  		<!-- The Little-JIL agnostic DDG code -->
-  		<fileset dir="../ddg-official" includes="**/*.class" />
-  	</jar>
-  </target>
-	
-  <target name="ddg-explorer" depends="DDG-Builder,buildinfo">
+  <target name="ddg-explorer" depends="buildinfo">
   	<jar destfile="tmp_ddg-explorer.jar">
   		<manifest>
   		  <attribute name="Main-Class"
@@ -53,8 +38,8 @@
   		<!-- The properties file containing build information -->
   		<fileset dir="bin" includes=".properties" />
   		
-  		<!-- The code to actually build the DDGs -->
-        <zipfileset includes="**/*.class" src="ddgbuilder.jar"/>
+  		<!-- The code within the project -->
+  		<fileset dir="bin" includes="**/*.class" />  		
   		
   		<!-- The display package that is used -->
         <zipfileset includes="**/*.class" src="${jardir}/prefuse.jar"/>
@@ -62,9 +47,6 @@
   		<!-- The agent that interfaces with R -->
   		<fileset dir="${ragent}" includes="**/*.class" />
   		<zipfileset includes="**/*" src="${jardir}/jri/src/JRI.jar" />
-  		
-  		<!-- The code to work with DDGs generated from R scripts -->
-  		<fileset dir="${ddg-r}" includes="**/*.class" />
   		
   		<!-- The code to make DDGs persistent with Jena.  It's important to include all files,
   		     not just the class files -->

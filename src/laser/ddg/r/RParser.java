@@ -2,15 +2,15 @@ package laser.ddg.r;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import laser.ddg.LanguageParser;
-import laser.ddg.visualizer.ErrorLog;
+import laser.ddg.gui.DDGExplorer;
 
 /**
  * Minimal parser for R.  It can find function definitions.
@@ -57,7 +57,7 @@ public class RParser implements LanguageParser {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			ErrorLog.showErrMsg("Cannot find script file: " + script + "\n\n");
+			DDGExplorer.showErrMsg("Cannot find script file: " + script + "\n\n");
 		} finally {
 			if (readFile != null) {
 				fileContents = contentsBuilder.toString();
@@ -114,7 +114,7 @@ public class RParser implements LanguageParser {
 				//ErrorLog.showErrMsg("Block: " + blockName);
 				System.out.println("Found block start: " + blockName);
 				if (blockTable.containsKey(blockName)) {
-					ErrorLog.showErrMsg("There is more than one definition of block " + blockName + "\n\n");
+					DDGExplorer.showErrMsg("There is more than one definition of block " + blockName + "\n\n");
 					blockTable.put(blockName, "There is more than one definition of block " + blockName + ".");
 				}
 				else {
@@ -122,7 +122,7 @@ public class RParser implements LanguageParser {
 					count++;
 					int blockFinish = getBlockFinish(fileContents, nextStart, blockName);
 					if (blockFinish == -1) {
-						ErrorLog.showErrMsg("ddg.finish is missing for block " + blockName + "\n\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "ddg.finish is missing for block " + blockName + "\n\n");
 					}
 					else {
 						//ErrorLog.showErrMsg("Found block finish");
@@ -189,19 +189,21 @@ public class RParser implements LanguageParser {
 			int bindSymbolStart = getPrecedingTokenBindSymbol(script, nextFunctionKeyword);
 			if(bindSymbolStart != -1) {
 				String functionName = getBoundName(script, bindSymbolStart);
-				if (functionTable.containsKey(functionName)) {
-					// What about overloadings?  Overridings?  R does not have these.  However, function
-					// names are bound late to function bodies, so the same name can be assigned more
-					// than one function.  Also, functions can anonymous and be passed as parameters.
-					ErrorLog.showErrMsg("There is more than one definition of the function " + functionName + "\n\n");
-					functionTable.put(functionName, "There is more than one definition of the function " + functionName + ".");
-				}
-				else {
-					count++;
-					String functionBody = getFunctionBody(script, nextFunctionKeyword);
-					functionTable.put(functionName, functionBody);
-					System.out.println(functionName);
-					//System.out.println(functionBody + "\n\n\n");
+				if (!functionName.equals("")) {
+					if (functionTable.containsKey(functionName)) {
+						// What about overloadings?  Overridings?  R does not have these.  However, function
+						// names are bound late to function bodies, so the same name can be assigned more
+						// than one function.  Also, functions can anonymous and be passed as parameters.
+						DDGExplorer.showErrMsg("There is more than one definition of the function " + functionName + "\n\n");
+						functionTable.put(functionName, "There is more than one definition of the function " + functionName + ".");
+					}
+					else {
+						count++;
+						String functionBody = getFunctionBody(script, nextFunctionKeyword);
+						functionTable.put(functionName, functionBody);
+						System.out.println(functionName);
+						//System.out.println(functionBody + "\n\n\n");
+					}
 				}
 			}
 			nextFunctionKeyword = script.indexOf("function", nextFunctionKeyword + 1);

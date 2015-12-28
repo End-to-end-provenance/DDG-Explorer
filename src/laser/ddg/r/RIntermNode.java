@@ -16,8 +16,8 @@ public class RIntermNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 */
-	public RIntermNode(String name, ProvenanceData provData) {
-		super(name, null, provData);
+	public RIntermNode(String name, ProvenanceData provData, String time) {
+		super(name, null, provData, time);
 	}
 	
 	/**
@@ -37,4 +37,6 @@ public class RIntermNode extends RFunctionInstanceNode {
 	public String getType() {
 		return "Interm";
 	}
+
+	
 }

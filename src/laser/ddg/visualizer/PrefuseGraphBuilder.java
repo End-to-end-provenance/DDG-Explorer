@@ -1,54 +1,15 @@
 package laser.ddg.visualizer;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.MouseInputListener;
-
-import com.sun.xml.internal.ws.api.Component;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataBindingEvent;
+import laser.ddg.*;
 import laser.ddg.DataBindingEvent.BindingEvent;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
-import laser.ddg.ProvenanceDataVisitor;
-import laser.ddg.ProvenanceListener;
+import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.DDGPanel;
+import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.Parser;
+import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay.AutoPanAction;
 import laser.ddg.visualizer.DDGDisplay.PopupMenu;
-import laser.ddg.visualizer.DDGSearchGUI;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -71,6 +32,19 @@ import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
+
+import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+import java.util.Queue;
 
 /**
  * Builds a visual DDG graph using prefuse.
@@ -138,7 +112,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private DDGDisplay displayOverview = new DDGDisplay(this);
 
 	//private Object lock = new Object();
-	private DDGPanel ddgPanel;
+	DDGPanel ddgPanel;
 	private DDGLayout ddgLayout;
 
 	// The root of the provenance graph, where layout begins
@@ -166,126 +140,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private ProvenanceData provData;
 
 	private int numPins;
-
-	//Keep track of selected nodes from search results
-	private int prevNodeID; 
-	private boolean prevNodeHighlighted = false;
 	
-	//2D Array to hold information on each type of node for search within Current DDG
-	private ArrayList <tupleElement> errorList = new ArrayList<tupleElement>();
-	private ArrayList <tupleElement> dataList = new ArrayList<tupleElement>();
-	private ArrayList <tupleElement> fileList = new ArrayList<tupleElement>();
-	private ArrayList <tupleElement> urlList = new ArrayList<tupleElement>();
-	private ArrayList <tupleElement> operationList = new ArrayList<tupleElement>();
-	private ArrayList <tupleElement> allList = new ArrayList<tupleElement>();
-
-	/**
-	 * An element holding the name, type, row and color of node
-	 */
-	class tupleElement{
-	  private final String name, type;
-	  private final int id;
-	  private final Color color;
-
-	  public tupleElement(String type, String name, int id){
-	    this.type = type;
-	    this.name = name;
-		this.id = id;
-
-	    //sets the color of the search item
-	    switch(type){
-	    	case "Exception": this.color = new Color(209, 114, 110);
-	    					  break;
-
-	    	case "Data":
-	    	case "Snapshot": this.color = new Color(175, 184, 233);
-						 	 break;
-
-	    	case "URL":	 this.color = new Color(255, 204, 229);
-						 break;
-
-	    	case "File": this.color = new Color(255, 204, 153);
-						 break;
-
-	    	case "Operation": this.color = new Color(255, 255, 98);
-							  break;
-
-	    	case "Binding": this.color = new Color(255, 254, 231);
-			  				break;
-
-	    	case "Start":
-	    	case "Finish": this.color = new Color(175, 217, 123);
-	    				   break;
-
-	    	case "Step": this.color = new Color(176, 226, 255);
-	    				 break;
-
-			default: this.color = Color.WHITE;
-					 break;
-	    }
-
-	  }
-	  
-	  String getName(){
-	    return name;
-	  }
-	  String getType(){
-		return type;
-	  }
-	  Color getColor(){
-	    return color;
-	  }
-
-	  //updates the focus on the DDGExplorer's graph
-	  void updateNodeFocus(){
-		  try{
-			//if a search result was previously selected, then remove highlighting from node
-			if(prevNodeHighlighted)
-				getNode(prevNodeID).setHighlighted(false);
-			
-			//get selected search result's node and highlight it
-			NodeItem item = getNode(id);
-			item.setHighlighted(true);
-			
-			//bring node of graph into focus
-			focusOn(name);
-			
-			//keep track of highlighted node to remove highlighting in the future
-			prevNodeID = id;
-			prevNodeHighlighted = true;
-		  }
-		  
-		  //Some nodes do not appear on the graph, this message comes up when that node is in the list
-		  catch(Exception e){
-			  JOptionPane.showMessageDialog(ddgPanel, "Can't display node: " + name, "Error", JOptionPane.ERROR_MESSAGE);
-		  }
-	  }
-	}
-
-	//returns associated error nodes in the search list
-	public ArrayList <tupleElement> getErrorList(){
-		return errorList;
-	}
-	//returns associated data nodes in the search list
-	public ArrayList <tupleElement> getDataList(){
-		return dataList;
-	}
-	//returns associated URL nodes in the search list
-	public ArrayList <tupleElement> getURLList(){
-		return urlList;
-	}
-	//returns associated file nodes in the search list
-	public ArrayList <tupleElement> getFileList(){
-		return fileList;
-	}
-	//returns associated operation nodes in the search list
-	public ArrayList <tupleElement> getOperationList(){
-		return operationList;
-	}
-	//returns all nodes in the search list
-	public ArrayList <tupleElement> getAllList(){
-		return allList;
-	}
+	private SearchIndex searchIndex = new SearchIndex();
 
 	/**
 	 * Creates an object that builds a visual graph.  Creates a window in which
@@ -293,6 +149,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public PrefuseGraphBuilder() {
 		ddgPanel = new DDGPanel();
+		ddgPanel.setSearchIndex (searchIndex);
 	}
 
 	/**
@@ -304,6 +161,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter) {
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
+		ddgPanel.setSearchIndex (searchIndex);
 	}
 
 	/**
@@ -317,6 +175,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.incremental = incremental;
 		this.dataDerivation = dataDerivation;
 		ddgPanel = new DDGPanel();
+		ddgPanel.setSearchIndex (searchIndex);
 	}
 
 	/**
@@ -350,13 +209,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name The name of the program that created the DDG
 	 * @param timestamp the timestamp when the DDG was created
 	 */
-	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp);
-	}
+	
 
-	/**
-	 * @return the pinID
-	 */
+	
 	public int getPinID() {
 		return pinID;
 	}
@@ -462,7 +317,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		repaint();
 	}
 
-	private NodeItem getNode(int nodeId) {
+	NodeItem getNode(int nodeId) {
 		Iterator items = vis.items();
 		Object item = null;
 		while (items.hasNext()) {
@@ -516,6 +371,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
+
+
 	}
 
 	private void addNodesAndEdges(ProvenanceData ddg) {
@@ -528,13 +385,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getCreatedTime(), null);
+				pin.getNameAndType(), null, null);
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
+		System.out.println("The din id is "+din.getId()+ " and the timestamp is "+din.getCreatedTime());
 		addNode(din.getType(), din.getId() + numPins,
 				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
 	}
@@ -574,16 +432,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 		original file.  If it is not a file node, it will be null
 	 * @return the row of the table where the new node is added
 	 */
+
 	public int addNode(String type, int id, String name, String value, String time, String location) {
+
+
+		System.out.println("In the addNode of the PrefuseGraphBuilder, the timestamp gotten is "+time+" for the value "+value);
+
 		try {
+			System.out.println("Trying");
 			synchronized (vis) {
 				if (id < 1) {
-					ErrorLog.showErrMsg("Adding node " + id + " " + name + "\n");
-					ErrorLog.showErrMsg("*** ERROR negative id " + id + " for node " + name + " !!\n\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR negative id " + id + " for node " + name + " !!\n\n");
 				}
 				if (getNode(id) != null) {
-					ErrorLog.showErrMsg("Adding node " + id + " " + name + "\n");
-					ErrorLog.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
@@ -591,30 +455,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
+				System.out.println("SETTING THE TIME OF THIS NODE TO BE " + time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
-
-				// hold individual node information
-				tupleElement element = new tupleElement(type, name, id);
-
-				// store each node with associated type
-				if(type.equals("Exception"))
-					errorList.add(element);
-				else if(type.equals("Data"))
-					dataList.add(element);
-				else if(type.equals("File"))
-					fileList.add(element);
-				else if(type.equals("URL"))
-					urlList.add(element);
-				else if(type.equals("Operation"))
-					operationList.add(element);
-
-				// keep track of all nodes in DDG
-				allList.add(element);
+				System.out.println("Adding to searhc index'");
+				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
 			}
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Adding node " + id + " " + name + "\n");
-			ErrorLog.showErrMsg("*** Error adding node *** \n ");
+			
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding node *** \n ");
 			throw new IllegalArgumentException(e);
 		}
 
@@ -638,7 +488,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String location) {
-		return addNode (type, id, name, value, null, location);
+		return addNode(type, id, name, value, null, location);
 	}
 
 	/**
@@ -655,12 +505,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		try {
 			synchronized (vis) {
 				if (getNode(source) == null) {
-					ErrorLog.showErrMsg("Adding edge between " + source + " and " + target + "\n");
-					ErrorLog.showErrMsg("*** ERROR:  source node " + source + " does not exist!!\n\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR:  source node " + source + " does not exist!!\n\n");
 				}
 				if (getNode(target) == null) {
-					ErrorLog.showErrMsg("Adding edge between " + source + " and " + target + "\n");
-					ErrorLog.showErrMsg("*** ERROR:  target node " + target + " does not exist!!\n\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR:  target node " + target + " does not exist!!\n\n");
 				}
 				int rowNum = edges.addRow();
 				edges.setString(rowNum, PrefuseUtils.TYPE, type);
@@ -678,8 +528,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			}
 		} catch (Exception e) {
-			ErrorLog.showErrMsg("Adding edge between " + source + " and " + target + "\n");
-			ErrorLog.showErrMsg("*** Error adding the edge ***");
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding the edge ***");
 			throw new IllegalArgumentException(e);
 		}
 
@@ -691,13 +541,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param ddg
 	 *            the ddg to display
 	 */
+	public void setTitle(String name, String timestamp) {
+		ddgPanel.setTitle(name);
+	}
 	public void drawGraph(ProvenanceData ddg) {
 
 
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			//System.out.println("Building node and edge tables.");
+		//	System.out.println("Building node and edge tables.");
 			buildNodeAndEdgeTables();
 
 			//System.out.println("Building graph");
@@ -782,11 +635,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 6. launch the visualization -------------------------------------
 
-		ddgPanel.displayDDG(vis, display, displayOverview, provData, this);
+		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
+	//
 
 		// new code
 		PopupMenu options = display.new PopupMenu();
 		options.createPopupMenu();
+	//	display.getTotalRunTime(provData);
 	}
 
 	private static ActionList assignColors() {
@@ -899,6 +754,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// We are just initializing the display here, not actually drawing a graph.
 
 		this.provData = provData;
+		//System.out.println("The name of the prov data inserted is "+provData.getProcessName());
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID,
 				PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
@@ -956,11 +812,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getCreatedTime());
+
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, null);
+
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
 			}
+			//System.out.println("the time stamp for this is "+pin.getT)
 
 			// Draw the root node immediately, but delay drawing the other nodes
 			// until
@@ -1167,9 +1026,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 						startName = startName.substring(startName.indexOf('-')+1, startStarts);
 					}
 					if (startStarts == -1 || !startName.equals(finishName)) {
-						ErrorLog.showErrMsg("Start and Finish nodes not paired up correctly.\n");
-						ErrorLog.showErrMsg("    Start = " + startName + "\n");
-						ErrorLog.showErrMsg("    Finish = " + finishName + "\n\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Start and Finish nodes not paired up correctly.\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "    Start = " + startName + "\n");
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "    Finish = " + finishName + "\n\n");
 					}
 				}
 
@@ -1192,7 +1051,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
 	 * @param startNode A start node or a checkpoint node
-	 * @param finshNode The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
@@ -1342,7 +1200,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Find the successors of a finish node and add edges from each successor to
 	 * the new collapsed node
-	 * @param finishNode the finish node whose successors we are searching for
 	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
 	 *    be the collapsed node that corresponds to the collapsing of finishNode
 	 */
@@ -1395,7 +1252,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			collapsedRoot = vis.getCollapsedStartFinish(root);
 			if (collapsedRoot == null) {
 				String rootName = PrefuseUtils.getName(root);
-				ErrorLog.showErrMsg("Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start"))+"\n\n");
+				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start"))+"\n\n");
 			}
 			else {
 				//System.out.println("expand: Making collapsed node invisible: " + collapsedRoot);
@@ -1445,7 +1302,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				showMembersRecursively(nextMember);
 			}
 			else {
-				//System.out.println("showMembersRecursively: Making visible: " + nextMember);
+				System.out.println("showMembersRecursively: Making visible: " + nextMember);
 				nextMember.setVisible(true);
 			}
 		}
@@ -1644,14 +1501,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				//System.out.println ("Target: " + edge.getTargetItem());
 
 				NodeItem source = edge.getSourceItem();
-				if (PrefuseUtils.isAnyDataNode(source)) {
-					//System.out.println ("Setting StepDF source visible");
+				NodeItem target = edge.getTargetItem();
+				if (PrefuseUtils.isAnyDataNode(source) && target.isVisible()) {
+					//System.out.println ("setAllDataNodeVisibility: Setting StepDF source visible " + source.getString(PrefuseUtils.NAME));
 					source.setVisible(true);
 				}
 				else {
-					NodeItem target = edge.getTargetItem();
-					if (PrefuseUtils.isAnyDataNode(target)) {
-						//System.out.println ("Setting StepDF target visible");
+					if (PrefuseUtils.isAnyDataNode(target) && source.isVisible()) {
+						//System.out.println ("setAllDataNodeVisibility: Setting StepDF target visible " +  target.getString(PrefuseUtils.NAME));
 						target.setVisible(true);
 					}
 				}
@@ -1680,7 +1537,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 //		if (visible) {
-//			System.out.println("Making data visible: " + PrefuseUtils.getName(node));
+//			System.out.println("setDataNodeVisibility: Making data visible: " + PrefuseUtils.getName(node));
 //		}
 //		else {
 //			System.out.println("Making data INvisible: " + PrefuseUtils.getName(node));
@@ -1699,8 +1556,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			int dinId = din.getId() + MIN_DATA_ID;
 			//add the data node, passing in the optional associated value and timestamp
 			Object value = din.getValue();
+			
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime()); 
 			}
 			else {
 				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime());
@@ -1871,6 +1729,17 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the definition
 	 */
 	public String getFunctionBody(String functionName) {
+		// Remove any parameters if they appear in the string
+		int blankIndex = functionName.indexOf(" ");
+		if (blankIndex != -1) {
+			functionName = functionName.substring(0, blankIndex);
+		}
+		
+		int parenIndex = functionName.indexOf("(");
+		if (parenIndex != -1) {
+			functionName = functionName.substring(0, parenIndex);
+		}
+		
 		return provData.getFunctionBody(functionName);
 	}
 
@@ -2128,5 +1997,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 	}
+
+	public void setHighlighted(int id, boolean value) {
+		getNode(id).setHighlighted(value);
+	}
+
 
 }

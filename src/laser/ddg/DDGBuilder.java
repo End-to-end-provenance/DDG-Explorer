@@ -2,9 +2,10 @@ package laser.ddg;
 
 import java.util.ArrayList;
 
+import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;
-import laser.ddg.visualizer.LegendEntry;
 
 /**
  * The interface that language-specific DDG builders must satisfy
@@ -53,7 +54,7 @@ public abstract class DDGBuilder {
 	 * @param value the definition of the procedure
 	 * @return the new procedure instance node
 	 */
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value) {
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, String timestamp) {
 		ProcedureInstanceNode pin = addProceduralNode(type, id, name);
 		pin.setProcedureDefinition(value);
 		return pin;
