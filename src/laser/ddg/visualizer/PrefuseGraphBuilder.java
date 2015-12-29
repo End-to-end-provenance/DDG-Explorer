@@ -251,9 +251,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * adds a step node to the graph
 	 *
 	 * @param name
+	 * @param string 
 	 * @return the id of the node just added
 	 */
-	private NodeItem addCollapsedNode(String name, String value) {
+	private NodeItem addCollapsedNode(String name, String value, String time) {
 
 		int rowNum = nodes.addRow();
 		int id = rowNum + MIN_STEP_NODE_ID;
@@ -262,6 +263,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		nodes.setInt(rowNum, PrefuseUtils.ID, id);
 		nodes.setString(rowNum, PrefuseUtils.NAME, name);
 		nodes.setString(rowNum, PrefuseUtils.VALUE, value);
+		nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 
 		return getNode(id);
 	}
@@ -405,7 +407,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getCreatedTime(), null);
+				pin.getNameAndType(), null, pin.getElapsedTime(), null);
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
@@ -434,6 +436,28 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		addEdge(PrefuseUtils.DATA_FLOW, output.getId() + numPins, producer.getId());
 	}
 
+	/**
+	 * Adds a node to the prefuse graph
+	 *
+	 * @param type
+	 *            the type of node
+	 * @param id
+	 *            the node's id
+	 * @param name
+	 *            the node's name
+	 * @param value
+	 * 			value of the node (could be null)
+	 * @param time
+	 * 			timestamp of the node (could be null)
+	 * @param location if this is a file node, this will be the full path to the
+	 * 		original file.  If it is not a file node, it will be null
+	 * @return the row of the table where the new node is added
+	 */
+	public int addNode(String type, int id, String name, String value, double time, String location) {
+		String formattedTime = PrefuseUtils.elapsedTimeFormat.format(time);
+		return addNode (type, id, name, value, formattedTime, location);
+	}
+	
 	/**
 	 * Adds a node to the prefuse graph
 	 *
@@ -939,7 +963,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		NodeItem nextRoot = root;
 		Queue<NodeItem> roots = new LinkedList<NodeItem>();
 		while (nextRoot != null) {
-			NodeItem rootFinish = addStartFinishCollapsedNodes(nextRoot, rootMembers);
+			NodeItem rootFinish = addStartFinishCollapsedNodes(nextRoot, rootMembers, 0.0);
 			if (rootFinish != null) {
 				NodeItem collapsedRoot = addCollapsedNode(nextRoot, rootFinish, rootMembers);
 
@@ -987,7 +1011,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param startNode the start node we are searching for
 	 * @return the matching finish node
 	 */
-	private NodeItem addStartFinishCollapsedNodes(NodeItem startNode, Set<NodeItem> memberNodes) {
+	private NodeItem addStartFinishCollapsedNodes(NodeItem startNode, Set<NodeItem> memberNodes, double totalElapsedTime) {
 		Queue<NodeItem> nodesReached = new LinkedList<NodeItem>();
 		addSuccessorsToQueue(startNode, nodesReached);
 		NodeItem finishNode = null;
@@ -1004,12 +1028,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// Begin a new search when encounter a new Start node
 			if (nextName.endsWith(" Start")) {
 				Set<NodeItem> nestedMembers = new HashSet<NodeItem>();
-				NodeItem nestedFinish = addStartFinishCollapsedNodes(next, nestedMembers);
+				NodeItem nestedFinish = addStartFinishCollapsedNodes(next, nestedMembers, 0.0);
 
 				if (nestedFinish != null) {
 					addSuccessorsToQueue(nestedFinish, nodesReached);
 					NodeItem collapsedNode = addCollapsedNode(next, nestedFinish, nestedMembers);
 					memberNodes.add(collapsedNode);
+					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
 				}
 			}
 			else {
@@ -1026,6 +1051,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					int startStarts = startName.indexOf(" Start");
 					if (startStarts != -1) {
 						startName = startName.substring(startName.indexOf('-')+1, startStarts);
+						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp (finishNode));
+						PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
+						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
 					}
 					if (startStarts == -1 || !startName.equals(finishName)) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Start and Finish nodes not paired up correctly.\n");
@@ -1067,11 +1095,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// Adds the node
 		int collapsedNodeId;
 		if (PrefuseUtils.isStartNode(startNode)) {
-			collapsedNode = addCollapsedNode(getStepNameFromFinishNode(finishNode), PrefuseUtils.getValue(finishNode));
+			collapsedNode = addCollapsedNode(getStepNameFromFinishNode(finishNode), PrefuseUtils.getValue(finishNode), 
+					PrefuseUtils.getTimestamp(finishNode));
 		}
 
 		else if (PrefuseUtils.isCheckpointNode(startNode)) {
-			collapsedNode = addCollapsedNode(PrefuseUtils.getName(finishNode), PrefuseUtils.getValue(finishNode));
+			collapsedNode = addCollapsedNode(PrefuseUtils.getName(finishNode), PrefuseUtils.getValue(finishNode), 
+					PrefuseUtils.getTimestamp(finishNode));
 		}
 
 		else {

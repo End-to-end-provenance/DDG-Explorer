@@ -17,7 +17,8 @@ public class FindTimeCommand implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 
 		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
-		ArrayList<OperationSearchElement> nodeList = panel.getSearchIndex().getOperationList();
+		ArrayList<OperationSearchElement> nodeList = 
+				(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
 
 		// order nodelist and show in GUI.
 		Collections.sort(nodeList, new Comparator<OperationSearchElement>() {

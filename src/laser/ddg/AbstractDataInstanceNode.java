@@ -199,6 +199,10 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		return timeCreated;
 	}
 	
+	public double getElapsedTime() {
+		return 0.0;
+	}
+
 	/**
 	 * Adds a producer node to a data node
 	 * @param p the procedure/function node that serves as the producer for the data

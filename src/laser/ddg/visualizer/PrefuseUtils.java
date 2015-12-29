@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.DecimalFormat;
+
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.visual.EdgeItem;
@@ -80,6 +82,8 @@ public class PrefuseUtils {
 	static final String SNAPSHOT = "Snapshot";
 
 	static final String LOCATION = "Location";
+	
+	static final DecimalFormat elapsedTimeFormat = new DecimalFormat("##.###");
 
 	/**
 	 * Filter used to identify visible edges
@@ -489,6 +493,15 @@ public class PrefuseUtils {
 	 */
 	static String getTimestamp(Node n) {
 		return n.getString(TIMESTAMP);
+	}
+
+	static void setTimestamp(Node n, String time) {
+		n.setString(TIMESTAMP, time);
+	}
+
+	static void setTimestamp(Node n, double time) {
+		String formattedTime = elapsedTimeFormat.format(time);
+		n.setString(TIMESTAMP, formattedTime);
 	}
 
 	/**

@@ -372,7 +372,6 @@ public class Parser {
 		double elapsedTime;
 		if (time == null) {
 			elapsedTime = 0;
-			time = "0.0";
 		}
 		else {
 			double elapsedTimeFromStart = Double.parseDouble(time);
@@ -380,16 +379,17 @@ public class Parser {
 			lastProcElapsedTime = elapsedTimeFromStart;
 		}
 			
+		System.out.println ("Parser:  Storing time in prefuse graph of " + time);
+		System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, time, null);
+					constructName(nodeType, name), value, elapsedTime, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime);
 	}
 
-	private String parseElapsedTime(String nodeId) {
-		// TODO Auto-generated method stub
-		return null;
+	private String parseElapsedTime(String nodeId) throws IOException {
+		return parseTimestamp (nodeId);
 	}
 
 	/**

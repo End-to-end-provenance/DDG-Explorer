@@ -460,7 +460,7 @@ public class DDGDisplay extends Display {
 				VisualItem item = findItem(p);
 				String timestamp = PrefuseUtils.getTimestamp((NodeItem) item);
 				if (timestamp != null){
-					JOptionPane.showMessageDialog(DDGDisplay.this, timestamp);
+					JOptionPane.showMessageDialog(DDGDisplay.this, timestamp + " seconds");
 				}
 				else {
 					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no elapsed time associated with this node.");

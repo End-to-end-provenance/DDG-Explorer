@@ -145,6 +145,10 @@ public abstract class AbstractProcedureInstanceNode implements
 		return timeCreated;
 	}
 
+	public double getElapsedTime() {
+		return elapsedTime;
+	}
+
 	/**
 	 * return the name of the PIN
 	 * 

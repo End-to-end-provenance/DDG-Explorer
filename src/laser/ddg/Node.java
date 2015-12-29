@@ -16,9 +16,15 @@ public interface Node {
 
 	/**
 	 * 
-	 * @return time when the procedure instance node is created
+	 * @return time when the node is created
 	 */
 	public String getCreatedTime();
+
+	/**
+	 * 
+	 * @return time the node took to execute
+	 */
+	public double getElapsedTime();
 
 	/**
 	 * @return the ID assigned to the node
