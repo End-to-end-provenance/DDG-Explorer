@@ -1,12 +1,11 @@
 package laser.ddg.visualizer;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
-import com.ibm.icu.text.DecimalFormat;
 
 import prefuse.data.Edge;
 import prefuse.data.Node;
