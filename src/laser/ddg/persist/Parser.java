@@ -374,9 +374,15 @@ public class Parser {
 			elapsedTime = 0;
 		}
 		else {
-			double elapsedTimeFromStart = Double.parseDouble(time);
-			elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
-			lastProcElapsedTime = elapsedTimeFromStart;
+			try {
+				double elapsedTimeFromStart = Double.parseDouble(time);
+				elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
+				lastProcElapsedTime = elapsedTimeFromStart;
+			} catch (NumberFormatException e) {
+				// Old style file, probably storing a timestamp instead so just ignore
+				time = null;
+				elapsedTime = 0;
+			}
 		}
 			
 		System.out.println ("Parser:  Storing time in prefuse graph of " + time);
