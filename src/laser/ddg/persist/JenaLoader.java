@@ -968,7 +968,15 @@ public class JenaLoader {
 	}
 
 	private double retrieveSinElapsedTime(Resource res) {
-		return retrieveDoubleProperty(res, prop.getSinElapsedTime(res.getModel()));
+		Property sinElapsedTimeProperty = prop.getSinElapsedTime(res.getModel());
+		try {
+			double sinElapsedTime = retrieveDoubleProperty(res, sinElapsedTimeProperty);
+			return sinElapsedTime;
+		} catch (NullPointerException e) {
+			// No elapsed time in the database.  Happens for ddgs saved before
+			// we started recording elapsed time.
+			return 0.0;
+		}
 	}
 
 	/**
