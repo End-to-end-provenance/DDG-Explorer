@@ -210,7 +210,7 @@ public class DDGDisplay extends Display {
 		Date fileTime = new Date(timeStamp);
 		
 		//make a date object out of the original timestamp so they can be compared
-		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.ss");
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.sszzz");
 		Date ddgTime;
 		
 		try {

@@ -84,7 +84,7 @@ public class FileViewer {
 		if (path.endsWith(".csv")) {
 			createTable();
 		}
-		else if (path.endsWith(".jpg") || path.endsWith(".jpeg")){
+		else if (path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".png")){
 			displayImage();
 		}
 		else if (path.endsWith(".txt") || path.endsWith(".r")) {
