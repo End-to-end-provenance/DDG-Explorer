@@ -1039,6 +1039,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 			else {
 				memberNodes.add(next);
+				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
 
 				// Remember the finish node
 				if (nextName.endsWith(" Finish")) {
