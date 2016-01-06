@@ -367,11 +367,17 @@ public class Parser {
 		value = parseValue(nodeId);
 		//System.out.println("name = " + name + "  value = " + value);
 		
-		// TODO get the timeStamp
+		// get the timeStamp
 		String time = parseElapsedTime(nodeId);
 		double elapsedTime;
 		if (time == null) {
 			elapsedTime = 0;
+		}
+		// We later calculate the time for start/finish nodes to be the sum of the times of the internal
+		// operations.
+		else if (!nodeType.equals("Operation")) {
+			elapsedTime = 0;
+			time = null;
 		}
 		else {
 			try {

@@ -841,7 +841,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getCreatedTime());
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), "");
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
@@ -1039,6 +1039,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 			else {
 				memberNodes.add(next);
+				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
 
 				// Remember the finish node
 				if (nextName.endsWith(" Finish")) {
