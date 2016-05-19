@@ -479,12 +479,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		try {
 			synchronized (vis) {
 				if (id < 1) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR negative id " + id + " for node " + name + " !!\n\n");
+					DDGExplorer.showErrMsg("Adding node " + id + " " + name + "\n");
+					DDGExplorer.showErrMsg("*** ERROR negative id " + id + " for node " + name + " !!\n\n");
 				}
 				if (getNode(id) != null) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
+					DDGExplorer.showErrMsg("Adding node " + id + " " + name + "\n");
+					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
@@ -498,8 +498,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				return rowNum;
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding node " + id + " " + name + "\n");
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding node *** \n ");
+			DDGExplorer.showErrMsg("Adding node " + id + " " + name + "\n");
+			DDGExplorer.showErrMsg("*** Error adding node *** \n ");
 			throw new IllegalArgumentException(e);
 		}
 
@@ -540,12 +540,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		try {
 			synchronized (vis) {
 				if (getNode(source) == null) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR:  source node " + source + " does not exist!!\n\n");
+					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
+					DDGExplorer.showErrMsg("*** ERROR:  source node " + source + " does not exist!!\n\n");
 				}
 				if (getNode(target) == null) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** ERROR:  target node " + target + " does not exist!!\n\n");
+					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
+					DDGExplorer.showErrMsg("*** ERROR:  target node " + target + " does not exist!!\n\n");
 				}
 				int rowNum = edges.addRow();
 				edges.setString(rowNum, PrefuseUtils.TYPE, type);
@@ -563,8 +563,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			}
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Adding edge between " + source + " and " + target + "\n");
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "*** Error adding the edge ***");
+			DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
+			DDGExplorer.showErrMsg("*** Error adding the edge ***");
 			throw new IllegalArgumentException(e);
 		}
 
@@ -1057,9 +1057,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
 					}
 					if (startStarts == -1 || !startName.equals(finishName)) {
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Start and Finish nodes not paired up correctly.\n");
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "    Start = " + startName + "\n");
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "    Finish = " + finishName + "\n\n");
+						DDGExplorer.showErrMsg("Start and Finish nodes not paired up correctly.\n");
+						DDGExplorer.showErrMsg("    Start = " + startName + "\n");
+						DDGExplorer.showErrMsg("    Finish = " + finishName + "\n\n");
 					}
 				}
 
@@ -1287,7 +1287,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			collapsedRoot = vis.getCollapsedStartFinish(root);
 			if (collapsedRoot == null) {
 				String rootName = PrefuseUtils.getName(root);
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start"))+"\n\n");
+				DDGExplorer.showErrMsg("Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start"))+"\n\n");
 			}
 			else {
 				//System.out.println("expand: Making collapsed node invisible: " + collapsedRoot);

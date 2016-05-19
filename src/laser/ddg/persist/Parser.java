@@ -46,14 +46,14 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * <DataFlowDecl> -> <DF_TOKEN> <DataFlowEdgeDecl>
  * <DataFlowEdgeDecl> -> <DataNodeID><ProcedureNodeID> | <ProcedureNodeID><DataNodeID>
  * <NodeDecl> -> <DataNode> | <ProcedureNode>
- * <ProcedureNode> -> <ProcedureNodeType> <ProcedureNodeID> <NAME>
+ * <ProcedureNode> -> <ProcedureNodeType> <ProcedureNodeID> <NAME> ["Time" "="�� <Timestamp >] <Attributes>*
  * <ProcedureNodeType> -> "Start" | "Finish" | "Interm" | "Leaf" | "Operation" | "SimpleHandler" | "VStart" | "VFinish" | "VInterm" | "Checkpoint" | "Restore"
  * <DataNode> -> <DataNodeType> <DataNodeID> <NAME> ["Value" "="<Value> ]["Time" "="�� <Timestamp >]["Location" "=" <FILENAME>]
  * <DataNodeType> -> "Data" | "Exception" | "URL" | "File" | "Snapshot"
  * <Value> -> <URL> | <FILENAME> | <STRING>
  * <Timestamp> -> <YEAR>"-"<MONTH>"-"<DATE>["T"<HOUR>":"<MINUTE>[":"<SECOND>["."<FRACTIONAL>]]]
  * <Attributes> -><NAME>["="]<AttrValue>
- * <AttrValue> -> <STRING>
+ * <AttrValue> -> <STRING> | <INT>
  * <PinCounter> -> <INT>
  * <DataNodeID> -> 'd' <INT>
  * <ProcedureNodeID> -> 'p' <INT>
@@ -391,8 +391,8 @@ public class Parser {
 			}
 		}
 			
-		System.out.println ("Parser:  Storing time in prefuse graph of " + time);
-		System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
+		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
+		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null);
 		int idNum = Integer.parseInt(nodeId.substring(1));
