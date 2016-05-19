@@ -491,17 +491,36 @@ public class DDGDisplay extends Display {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VisualItem item = findItem(p);
-				int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-				if (lineNumber != -1){
-					JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
-					displaySourceCode(lineNumber);
+				if (PrefuseUtils.isCollapsed(item)) {
+					// Get the first member & its line number
+					NodeItem firstMember = builder.getFirstMember(item);
+					int firstLine = PrefuseUtils.getLineNumber(firstMember);
+					
+					// Get the last member & its line number
+					NodeItem lastMember = builder.getLastMember(item);
+					int lastLine = PrefuseUtils.getLineNumber(lastMember);
+					
+					// display source code between those lines
+					if (firstLine != -1 && lastLine != -1) {
+						displaySourceCode (firstLine, lastLine);
+					}
+					else {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
+					}
 				}
 				else {
-					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
+					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
+					if (lineNumber != -1){
+						JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
+						displaySourceCode(lineNumber);
+					}
+					else {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
+					}
 				}
 			}
 
-			private void displaySourceCode(int lineNumber) {
+			private void displaySourceCode(int firstLine, int lastLine) {
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
@@ -545,13 +564,13 @@ public class DDGDisplay extends Display {
 
 					try {
 						fileFrame.setVisible(true);
-						fileTextArea.setCaretPosition(lineStarts.get(lineNumber - 1));
+						fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1));
 						fileHighlighter.removeAllHighlights();
-						if (lineNumber < lineStarts.size()) {
-							fileHighlighter.addHighlight(lineStarts.get(lineNumber - 1), lineStarts.get(lineNumber), fileHighlightPainter);
+						if (lastLine < lineStarts.size()) {
+							fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine), fileHighlightPainter);
 						}
 						else {
-							fileHighlighter.addHighlight(lineStarts.get(lineNumber - 1), fileContents.length()-1, fileHighlightPainter);
+							fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length()-1, fileHighlightPainter);
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
@@ -560,6 +579,10 @@ public class DDGDisplay extends Display {
 
 				}
 
+			}
+
+			private void displaySourceCode(int lineNumber) {
+				displaySourceCode (lineNumber, lineNumber);
 			}
 
 			
@@ -666,7 +689,7 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
-						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand);
+						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {

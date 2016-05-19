@@ -2046,6 +2046,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return provData.getScript();
 	}
 
+	public NodeItem getFirstMember(VisualItem collapsedNode) {
+		return vis.getStart((Node) collapsedNode);
+	}
+
+	public NodeItem getLastMember(VisualItem collapsedNode) {
+		return vis.getFinish((Node) collapsedNode);
+	}
+
 
 
 }
