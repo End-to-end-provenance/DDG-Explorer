@@ -18,8 +18,8 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * @param provData the ddg
 	 * @param elapsedTime 
 	 */
-	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime) {
-		super(name, procDefinition, provData, elapsedTime);
+	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, int lineNum) {
+		super(name, procDefinition, provData, elapsedTime, lineNum);
 		assert provData != null;
 	}
 

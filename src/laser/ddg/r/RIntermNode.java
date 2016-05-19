@@ -17,8 +17,8 @@ public class RIntermNode extends RFunctionInstanceNode {
 	 * @param provData the ddg
 	 * @param elapsedTime 
 	 */
-	public RIntermNode(String name, ProvenanceData provData, double elapsedTime) {
-		super(name, null, provData, elapsedTime);
+	public RIntermNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
+		super(name, null, provData, elapsedTime, lineNum);
 	}
 	
 	/**

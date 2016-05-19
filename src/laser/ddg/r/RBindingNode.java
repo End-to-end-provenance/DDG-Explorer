@@ -4,8 +4,8 @@ import laser.ddg.ProvenanceData;
 
 public class RBindingNode extends RFunctionInstanceNode {
 
-	public RBindingNode(String name, ProvenanceData provData, double elapsedTime) {
-		super(name, null, provData, elapsedTime);
+	public RBindingNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
+		super(name, null, provData, elapsedTime, lineNum);
 	}
 
 	@Override

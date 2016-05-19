@@ -18,8 +18,8 @@ public class RCheckpointNode extends RFunctionInstanceNode {
 	 * @param provData the ddg
 	 * @param elapsedTime 
 	 */
-	public RCheckpointNode(String name, ProvenanceData provData, double elapsedTime) {
-		super(name, null, provData, elapsedTime);
+	public RCheckpointNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
+		super(name, null, provData, elapsedTime, lineNum);
 	}
 
 	/**

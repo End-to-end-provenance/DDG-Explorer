@@ -76,31 +76,31 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime){
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime, int lineNum){
 		RFunctionInstanceNode newFuncNode = null;
 		ProvenanceData provObject = getProvObject();
 		if(type.equals("Start")){
-			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime);
+			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, lineNum);
 		}
 		else if(type.equals("Leaf") || type.equals("Operation")){
-			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime);
+			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, lineNum);
 		}
 		else if(type.equals("Finish")){
-			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime);
+			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime, lineNum);
 		}
 		else if(type.equals("Interm")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime);
+			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime, lineNum);
 		}
 		else if(type.equals("Binding")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime);
+			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime, lineNum);
 		}
 		else if (type.equals("Checkpoint")) {
-			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime);
+			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime, lineNum);
 		}
 		else if (type.equals("Restore")) {
-			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime);
+			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, lineNum);
 		}
 		provObject.addPIN(newFuncNode, id);
 		return newFuncNode;
@@ -115,8 +115,8 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime) {
-		return addProceduralNode(type, id, name, null, elapsedTime);
+	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime, int lineNum) {
+		return addProceduralNode(type, id, name, null, elapsedTime, lineNum);
 	}
 
 	/**
