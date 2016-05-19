@@ -80,7 +80,7 @@ public class Parser {
 	private static final String TIMESTAMP = "Time";
 	private static final String LOCATION = "Location";
 
-	private static final String LINE_NUMBER = "scriptLine";
+	private static final String LINE_NUMBER = "Line";
 
 	// The input stream
 	private StreamTokenizer in;
@@ -436,8 +436,13 @@ public class Parser {
 		}
 
 		nextToken = in.nextToken();
-		if (nextToken == StreamTokenizer.TT_NUMBER) {
-			return (int) in.nval;
+		if (nextToken == QUOTE) {
+			try {
+				return Integer.parseInt(in.sval);
+			} catch (NumberFormatException e) {
+				// ddg.txt uses "NA" for a missing line number
+				return -1;
+			}
 		}
 
 		return -1;
