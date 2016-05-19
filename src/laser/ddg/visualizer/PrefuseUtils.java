@@ -519,8 +519,8 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return the line number associated with a node
 	 */
-	public static String getLineNumber(Node n) {
-		return n.getString(LINE);
+	public static int getLineNumber(Node n) {
+		return n.getInt(LINE);
 	}
 
 	/**

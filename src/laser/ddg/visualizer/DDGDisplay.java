@@ -36,7 +36,8 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
 /**
- * displays a DDG using prefuse
+ * Displays a DDG using prefuse.  
+ * Manages panning and zooming and things in the right-click menu.
  * 
  * @author Antonia Miruna Oprescu
  * 
@@ -470,6 +471,23 @@ public class DDGDisplay extends Display {
 			
 		}; 	
 	
+		private PopupCommand showLineNumberCommand = new PopupCommand("Show Line Number"){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VisualItem item = findItem(p);
+				int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
+				if (lineNumber != -1){
+					JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
+				}
+				else {
+					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
+				}
+			}
+
+			
+		}; 	
+
 		private PopupCommand showValueCommand = new PopupCommand("Show Value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -587,7 +605,7 @@ public class DDGDisplay extends Display {
 					}
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
-						showPopup(e, showFunctionCommand, showElapsedTimeCommand);
+						showPopup(e, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){
