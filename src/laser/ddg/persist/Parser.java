@@ -408,10 +408,10 @@ public class Parser {
 						}
 					}
 				}
-			}
 			
-			else if (in.sval.equals(LINE_NUMBER)) {
-				lineNum = parseLineNumber();
+				else if (in.sval.equals(LINE_NUMBER)) {
+					lineNum = parseLineNumber();
+				}
 			}
 		}
 			
