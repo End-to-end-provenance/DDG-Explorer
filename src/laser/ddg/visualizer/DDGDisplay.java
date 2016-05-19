@@ -1,5 +1,6 @@
 package laser.ddg.visualizer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -12,10 +13,13 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -24,6 +28,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 import laser.ddg.gui.DDGExplorer;
 import prefuse.Display;
@@ -473,16 +481,85 @@ public class DDGDisplay extends Display {
 	
 		private PopupCommand showLineNumberCommand = new PopupCommand("Show Line Number"){
 			
+			private String fileContents;
+			private ArrayList<Integer> lineStarts;
+			private JFrame fileFrame;
+			private JTextArea fileTextArea;
+			private Highlighter fileHighlighter;
+			private HighlightPainter fileHighlightPainter;
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VisualItem item = findItem(p);
 				int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
 				if (lineNumber != -1){
 					JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
+					displaySourceCode(lineNumber);
 				}
 				else {
 					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
 				}
+			}
+
+			private void displaySourceCode(int lineNumber) {
+				// Just read the file in one time.
+				if (fileContents == null) {
+					String fileName = builder.getScriptPath();
+					System.out.println("Reading script from " + fileName);
+					File theFile = new File(fileName);
+					Scanner readFile = null;
+			    	StringBuilder contentsBuilder = new StringBuilder(); 
+			    	lineStarts = new ArrayList<Integer>();
+	
+					try {
+						readFile = new Scanner(theFile);
+	
+						//System.out.println("\n" + str);
+						while (readFile.hasNextLine()) {
+							String line = readFile.nextLine();
+							lineStarts.add(contentsBuilder.length());
+							contentsBuilder.append(line + "\n");
+						}
+						fileContents = contentsBuilder.toString();
+	
+					} catch (FileNotFoundException e) {
+						DDGExplorer.showErrMsg("Cannot find script file: " + fileName + "\n\n");
+					} finally {
+						if (readFile != null) {
+							readFile.close();
+						}
+					}
+				}
+				
+				if (fileContents != null) {
+					if (fileFrame == null || !fileFrame.isDisplayable()) {
+						fileFrame = new JFrame();
+						fileTextArea = new JTextArea();
+						fileTextArea.setText(fileContents);
+						JScrollPane scroller = new JScrollPane(fileTextArea);
+						fileFrame.add(scroller, BorderLayout.CENTER);
+						fileFrame.setSize(600, 800);
+						fileHighlighter = fileTextArea.getHighlighter();
+						fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+					}
+
+					try {
+						fileFrame.setVisible(true);
+						fileTextArea.setCaretPosition(lineStarts.get(lineNumber - 1));
+						fileHighlighter.removeAllHighlights();
+						if (lineNumber < lineStarts.size()) {
+							fileHighlighter.addHighlight(lineStarts.get(lineNumber - 1), lineStarts.get(lineNumber), fileHighlightPainter);
+						}
+						else {
+							fileHighlighter.addHighlight(lineStarts.get(lineNumber - 1), fileContents.length()-1, fileHighlightPainter);
+						}
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+
 			}
 
 			
@@ -593,7 +670,7 @@ public class DDGDisplay extends Display {
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
-						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand);
+						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {

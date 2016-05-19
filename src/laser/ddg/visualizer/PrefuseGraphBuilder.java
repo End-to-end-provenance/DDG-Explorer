@@ -2042,6 +2042,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		getNode(id).setHighlighted(value);
 	}
 
+	public String getScriptPath() {
+		return provData.getScript();
+	}
+
 
 
 }
