@@ -304,8 +304,9 @@ public class JenaLoader {
 		String name = retrieveSinName(res);
 		String value = retrieveSinValue(res);
 		Double elapsedTime = retrieveSinElapsedTime(res);
+		int lineNumber = retrieveSinLineNumber(res);
 		ProcedureInstanceNode pin = addSinToProvData(name,
-				type, value, elapsedTime, res, id, provData);
+				type, value, elapsedTime, lineNumber, res, id, provData);
 		System.out.println("Adding sin" + id + ": "
 				+ pin.toString());
 		return pin;
@@ -750,10 +751,10 @@ public class JenaLoader {
 	 * @param id The node's id
 	 * @return the procedure instance node that has been added to the provenance data
 	 */
-	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime,
+	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber,
 			Resource res, int id, ProvenanceData provData) {
 		if (!nodesToResContains(res, provData)) {
-			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime);
+			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber);
 			provData.addPIN(pin, res.getURI());
 			return pin;
 		}
@@ -925,10 +926,11 @@ public class JenaLoader {
 	 * @param type the type of node
 	 * @param id the id of the procedure node
 	 * @param procDef the definition of the procedure that was executed
+	 * @param lineNumber the line in the script that generated the node
 	 * @return the node created
 	 */
-	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime) {
-		return load.addProceduralNode(type, id, name, procDef, elapsedTime);
+	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber) {
+		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {
@@ -976,6 +978,18 @@ public class JenaLoader {
 			// No elapsed time in the database.  Happens for ddgs saved before
 			// we started recording elapsed time.
 			return 0.0;
+		}
+	}
+
+	private int retrieveSinLineNumber (Resource res) {
+		Property sinLineNumberProperty = prop.getSinLineNumber(res.getModel());
+		try {
+			int sinLineNumber = retrieveIntProperty(res, sinLineNumberProperty);
+			return sinLineNumber;
+		} catch (NullPointerException e) {
+			// No line number in the database.  Happens for ddgs saved before
+			// we started recording line numbers.
+			return -1;
 		}
 	}
 
