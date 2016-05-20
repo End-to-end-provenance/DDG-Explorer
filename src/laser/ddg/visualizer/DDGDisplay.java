@@ -555,6 +555,7 @@ public class DDGDisplay extends Display {
 						fileFrame = new JFrame();
 						fileTextArea = new JTextArea();
 						fileTextArea.setText(fileContents);
+						fileTextArea.setEditable(false);
 						JScrollPane scroller = new JScrollPane(fileTextArea);
 						fileFrame.add(scroller, BorderLayout.CENTER);
 						fileFrame.setSize(600, 800);
