@@ -615,7 +615,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 3. the renderers and renderer factory ---------------------------
 
-		vis.setRenderer(DEFAULT_ARROW_DIRECTION);
+		vis.setRenderer(DEFAULT_ARROW_DIRECTION, false);
 
 		// -- 4. the processing actions ---------------------------------------
 

@@ -37,6 +37,7 @@ public class Preferences {
 		// Set default values
 		preferences.put("WindowWidth", "950");
 		preferences.put("WindowHeight", "700");
+		preferences.put("ShowLineNumbers", "false");
 
 		try {
 			if (PREFERENCE_FILE.exists()) {
@@ -168,6 +169,23 @@ public class Preferences {
 		}
 		else {
 			preferences.put("ShowLegend", "false");
+		}
+		savePreferences();
+	}
+
+	public boolean isShowLineNumbers() {
+		if (preferences.containsKey("ShowLineNumbers")) {
+			return preferences.get("ShowLineNumbers").toLowerCase().equals("true");
+		}
+		return true;
+	}
+
+	public void showLineNumbers(boolean show) {
+		if (show) {
+			preferences.put("ShowLineNumbers", "true");
+		}
+		else {
+			preferences.put("ShowLineNumbers", "false");
 		}
 		savePreferences();
 	}
