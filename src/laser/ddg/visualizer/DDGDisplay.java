@@ -560,6 +560,10 @@ public class DDGDisplay extends Display {
 						fileFrame.setSize(600, 800);
 						fileHighlighter = fileTextArea.getHighlighter();
 						fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+
+						TextLineNumber tln = new TextLineNumber(fileTextArea);
+						scroller.setRowHeaderView( tln );
+					
 					}
 
 					try {
