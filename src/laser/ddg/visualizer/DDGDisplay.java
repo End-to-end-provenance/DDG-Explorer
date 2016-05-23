@@ -445,22 +445,20 @@ public class DDGDisplay extends Display {
 			}
 		};
 
-		private PopupCommand showFunctionCommand = new PopupCommand("Show Code") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				VisualItem item = findItem(p);
-				if (PrefuseUtils.isCollapsed(item)) {
-					
-				}
-				if (PrefuseUtils.getValue((NodeItem) item) != null){
-					//Get the name of the script file 
-					displayFunc(item);
-				}
-				else {
-					JOptionPane.showMessageDialog(DDGDisplay.this,"There is no function associated with this node.");
-				}
-			}
-		};
+//		private PopupCommand showFunctionCommand = new PopupCommand("Show Code") {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				VisualItem item = findItem(p);
+//				if (PrefuseUtils.getValue((NodeItem) item) != null){
+//					//Get the name of the script file 
+//					displayFunc(item);
+//				}
+//				else {
+//					showLineNumberCommand.actionPerformed(e);
+//					//JOptionPane.showMessageDialog(DDGDisplay.this,"There is no function associated with this node.");
+//				}
+//			}
+//		};
 
 		private PopupCommand showElapsedTimeCommand = new PopupCommand("Show Elapsed Execution Time"){
 			
@@ -479,7 +477,8 @@ public class DDGDisplay extends Display {
 			
 		}; 	
 	
-		private PopupCommand showLineNumberCommand = new PopupCommand("Show Line Number"){
+//		private PopupCommand showLineNumberCommand = new PopupCommand("Show Line Number"){
+		private PopupCommand showFunctionCommand = new PopupCommand("Show Code"){
 			
 			private String fileContents;
 			private ArrayList<Integer> lineStarts;
@@ -511,7 +510,7 @@ public class DDGDisplay extends Display {
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
 					if (lineNumber != -1){
-						JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
+						//JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
 						displaySourceCode(lineNumber);
 					}
 					else {
@@ -690,11 +689,11 @@ public class DDGDisplay extends Display {
 					}
 
 					if (PrefuseUtils.isCollapsed(item)) {
-						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
+						showPopup(e, expandCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand/*, showLineNumberCommand*/);
 					}
 
 					else if (PrefuseUtils.isStart(item) || PrefuseUtils.isFinish(item)) {
-						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
+						showPopup(e, collapseCommand, expandAllCommand, showFunctionCommand, showElapsedTimeCommand/*, showLineNumberCommand*/);
 					}
 					
 					else if (PrefuseUtils.isException((NodeItem) item)) {
@@ -706,7 +705,7 @@ public class DDGDisplay extends Display {
 					}
 					
 					else if (PrefuseUtils.isLeafNode((NodeItem)item)){
-						showPopup(e, showFunctionCommand, showElapsedTimeCommand, showLineNumberCommand);
+						showPopup(e, showFunctionCommand, showElapsedTimeCommand/*, showLineNumberCommand*/);
 					}
 					
 					else if (PrefuseUtils.isRestoreNode((NodeItem)item)){
