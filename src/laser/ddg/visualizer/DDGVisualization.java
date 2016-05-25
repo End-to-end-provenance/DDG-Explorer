@@ -242,7 +242,7 @@ public class DDGVisualization extends Visualization {
 				return super.getText(item);
 			}
 			else {
-				return super.getText(item) + "[" + lineNum + "]";
+				return super.getText(item) + " [" + lineNum + "]";
 			}
 		}
 	}

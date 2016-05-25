@@ -9,7 +9,7 @@
 	<property name="jrunner-project-lib" value="../juliette-runner-release/lib"/>
 	<property name="dropbox" value="${user.home}/Dropbox/HarvardForest/DDGExplorer/" /> 
 
-	<property name="version" value="2.06"/>
+	<property name="version" value="2.07"/>
 
 	<target name="buildinfo">
 	    <tstamp>
