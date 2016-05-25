@@ -38,6 +38,7 @@ public class Properties {
 	public static final String SUCCESSORS = "successors";
 	public static final String NAME = "name";
 	public static final String ELAPSED_TIME = "time";
+	public static final String LINE_NUMBER = "line";
 	public static final String VALUE = "value";
 	static final String LANGUAGE = "Language";
 	private static final String PROCESS_FILE_TIMESTAMP = "ProcessFileTimestamp";
@@ -80,6 +81,10 @@ public class Properties {
 
 	public Property getSinElapsedTime(Model m) {
 		return m.createProperty(ALL_SINS_URI, ELAPSED_TIME);
+	}
+
+	public Property getSinLineNumber(Model m) {
+		return m.createProperty(ALL_SINS_URI, LINE_NUMBER);
 	}
 
 	public Property getSinPredecessors(Model m) {

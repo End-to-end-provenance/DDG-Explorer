@@ -80,6 +80,8 @@ public class Parser {
 	private static final String TIMESTAMP = "Time";
 	private static final String LOCATION = "Location";
 
+	private static final String LINE_NUMBER = "Line";
+
 	// The input stream
 	private StreamTokenizer in;
 	
@@ -367,42 +369,106 @@ public class Parser {
 		value = parseValue(nodeId);
 		//System.out.println("name = " + name + "  value = " + value);
 		
-		// get the timeStamp
-		String time = parseElapsedTime(nodeId);
-		double elapsedTime;
-		if (time == null) {
-			elapsedTime = 0;
-		}
-		// We later calculate the time for start/finish nodes to be the sum of the times of the internal
-		// operations.
-		else if (!nodeType.equals("Operation")) {
-			elapsedTime = 0;
-			time = null;
-		}
-		else {
-			try {
-				double elapsedTimeFromStart = Double.parseDouble(time);
-				elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
-				lastProcElapsedTime = elapsedTimeFromStart;
-			} catch (NumberFormatException e) {
-				// Old style file, probably storing a timestamp instead so just ignore
-				time = null;
-				elapsedTime = 0;
+		double elapsedTime = 0;
+		int lineNum = -1;
+		
+		// The remaining attributes are optional
+		while (true) {
+			int nextToken = in.nextToken();
+		
+			// Line number is optional.  This is the case where it is missing.
+			if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF || nextToken == ';') {
+				in.pushBack();
+				break;
+			}
+			
+			if (nextToken == StreamTokenizer.TT_WORD ) {
+				if (in.sval.equals(TIMESTAMP)) {
+					// get the timeStamp
+					String time = parseElapsedTime(nodeId);
+
+					if (time == null) {
+						elapsedTime = 0;
+					}
+					// We later calculate the time for start/finish nodes to be the sum of the times of the internal
+					// operations.
+					else if (!nodeType.equals("Operation")) {
+						elapsedTime = 0;
+						time = null;
+					}
+					else {
+						try {
+							double elapsedTimeFromStart = Double.parseDouble(time);
+							elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
+							lastProcElapsedTime = elapsedTimeFromStart;
+						} catch (NumberFormatException e) {
+							// Old style file, probably storing a timestamp instead so just ignore
+							time = null;
+							elapsedTime = 0;
+						}
+					}
+				}
+			
+				else if (in.sval.equals(LINE_NUMBER)) {
+					lineNum = parseLineNumber();
+				}
 			}
 		}
 			
+
 		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
+
+		System.out.println("Line number = " + lineNum);
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, elapsedTime, null);
+					constructName(nodeType, name), value, elapsedTime, null, lineNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum);
+	}
+
+	/** 
+	 * Parse the line number attribute
+	 * @return the line number value of the attribute, or -1 if there is no line number attribute 
+	 * 
+	 **/
+	private int parseLineNumber() throws IOException {
+		int nextToken = in.nextToken();
+		if (nextToken != '=') {
+			in.pushBack();
+			return -1;
+		}
+
+		nextToken = in.nextToken();
+		if (nextToken == QUOTE) {
+			try {
+				return Integer.parseInt(in.sval);
+			} catch (NumberFormatException e) {
+				// ddg.txt uses "NA" for a missing line number
+				return -1;
+			}
+		}
+
+		return -1;
 	}
 
 	private String parseElapsedTime(String nodeId) throws IOException {
-		return parseTimestamp (nodeId);
+		int nextToken = in.nextToken();
+		if (nextToken != '=') {
+			in.pushBack();
+			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
+			return null;
+		}
+
+		nextToken = in.nextToken();
+		if (nextToken == QUOTE || nextToken == StreamTokenizer.TT_WORD) {
+			return in.sval;
+		}
+
+		//DDGExplorer.showErrMsg("Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
+		return null;
 	}
+
 
 	/**
 	 * Parses a VALUE = <value> string
@@ -643,7 +709,7 @@ public class Parser {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
 			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location);
+					constructName(nodeType, name), value, timestamp, location, -1);
 
 			
 		} catch (IllegalStateException e) {

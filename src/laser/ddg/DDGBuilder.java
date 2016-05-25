@@ -44,7 +44,7 @@ public abstract class DDGBuilder {
 	 * @param elapsedTime 
 	 * @return the new procedure instance node
 	 */
-	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime);
+	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime, int lineNum);
 
 	/**
 	 * Determines what kind of procedure node to create and adds it
@@ -56,8 +56,8 @@ public abstract class DDGBuilder {
 	 * @param elapsedTime 
 	 * @return the new procedure instance node
 	 */
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime) {
-		ProcedureInstanceNode pin = addProceduralNode(type, id, name, elapsedTime);
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime, int lineNum) {
+		ProcedureInstanceNode pin = addProceduralNode(type, id, name, elapsedTime, lineNum);
 		pin.setProcedureDefinition(value);
 		return pin;
 	}

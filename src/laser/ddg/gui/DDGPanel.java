@@ -78,7 +78,13 @@ public class DDGPanel extends JPanel {
 
 	// Contains information to make nodes easier to find when searching
 	private SearchIndex searchIndex;
-
+	
+	// Remembers if the line numbers should be shown in the node labels
+	private boolean showLines = false;
+	
+	// Remembers the direction of the arrows.  REVERSE == down
+	private int arrowDirection = prefuse.Constants.EDGE_ARROW_REVERSE;
+	
 	/**
 	 * Create a frame to display the DDG graph in
 	 */
@@ -325,12 +331,17 @@ public class DDGPanel extends JPanel {
 	}
 
 	public void setArrowDirectionDown() {
-		vis.setRenderer(prefuse.Constants.EDGE_ARROW_REVERSE);
+		vis.setRenderer(prefuse.Constants.EDGE_ARROW_REVERSE, showLines);
 		vis.repaint();
 	}
 
 	public void setArrowDirectionUp() {
-		vis.setRenderer(prefuse.Constants.EDGE_ARROW_FORWARD);
+		vis.setRenderer(prefuse.Constants.EDGE_ARROW_FORWARD, showLines);
+		vis.repaint();
+	}
+	
+	public void showLineNumbers(boolean show) {
+		vis.setRenderer(arrowDirection, show);
 		vis.repaint();
 	}
 

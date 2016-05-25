@@ -20,7 +20,7 @@ public abstract class RFunctionInstanceNode extends AbstractProcedureInstanceNod
 	 * @param provData Provenance data object it will be passed to
 	 * @param elapsedTime 
 	 */
-	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime) {
-		super(name, procDefinition, null, provData, elapsedTime);
+	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, int lineNum) {
+		super(name, procDefinition, null, provData, elapsedTime, lineNum);
 	}
 }

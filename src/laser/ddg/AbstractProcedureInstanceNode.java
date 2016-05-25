@@ -41,6 +41,9 @@ public abstract class AbstractProcedureInstanceNode implements
 	// is another ProcedureInstanceNode (rather than a DataInstanceNode)
 	private List<ProcedureInstanceNode> predecessors;
 	
+	// The line number where the code is that corresponds to this node. */
+	private int lineNumber;
+	
 	/**
 	 * @return inputs map of names of input parameters to DIN values of those
 	 *         parameters
@@ -123,7 +126,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param elapsedTime 
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData, double elapsedTime) {
+			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, int lineNum) {
 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
@@ -133,6 +136,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		predecessors = new LinkedList<ProcedureInstanceNode>();
 		this.provData = provData;
 		this.elapsedTime = elapsedTime;
+		this.lineNumber = lineNum;
 	}
 	
 	/**
@@ -552,5 +556,12 @@ public abstract class AbstractProcedureInstanceNode implements
 		return pinId - other.getId();
 	}
 	
+	/**
+	 * @return the line number in the script that corresponds to this node.
+	 * @return
+	 */
+	public int getLineNumber() {
+		return lineNumber;
+	}
 	
 }

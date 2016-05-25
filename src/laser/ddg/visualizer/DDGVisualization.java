@@ -9,6 +9,7 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.visual.NodeItem;
+import prefuse.visual.VisualItem;
 
 /**
  * This class extends Prefuse's Visualization class by keeping
@@ -135,11 +136,19 @@ public class DDGVisualization extends Visualization {
 	 * Changes the renderer for edges
 	 * @param arrowDirection the direction the arrows should point.  Possible values are
 	 * 		prefuse.Constants.EDGE_ARROW_FORWARD and prefuse.Constants.EDGE_ARROW_REVERSE.
-	 *		FORWARD draws edges from outputs to inputs.  REVERSE draws from inputs to outputs.  
+	 *		FORWARD draws edges from outputs to inputs.  REVERSE draws from inputs to outputs. 
+	 * @param showLineNumbers if true line numbers will be displayed in square brackets at
+	 * 	    the end of node names 
 	 */
-	public void setRenderer(int arrowDirection) {
+	public void setRenderer(int arrowDirection, boolean showLineNumbers) {
 		// draw the "name" label for NodeItems
-		LabelRenderer r = new LabelRenderer(PrefuseUtils.NAME);
+		LabelRenderer r;
+		if (showLineNumbers) {
+			r = new LineNumberRenderer();
+		}
+		else {
+			r = new LabelRenderer(PrefuseUtils.NAME);
+		}
 		r.setRoundedCorner(8, 8); // round the corners
 		// create a new default renderer factory
 		// return our name label renderer as the default for all non-EdgeItems
@@ -221,6 +230,21 @@ public class DDGVisualization extends Visualization {
 	public boolean contains(NodeItem collapsedNode, NodeItem node) {
 		return stepTable.contains(collapsedNode, node);
 	}
-
 	
+	class LineNumberRenderer extends LabelRenderer {
+		public LineNumberRenderer() {
+			super (PrefuseUtils.NAME);
+		}
+		
+		protected String getText(VisualItem item) {
+			int lineNum = PrefuseUtils.getLineNumber((Node)item);
+			if (lineNum <= 0) {
+				return super.getText(item);
+			}
+			else {
+				return super.getText(item) + "[" + lineNum + "]";
+			}
+		}
+	}
+
 }

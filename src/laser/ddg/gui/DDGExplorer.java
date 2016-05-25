@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -37,6 +36,7 @@ import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
 import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
+import laser.ddg.commands.ShowLineNumbersCommand;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.commands.ShowValueDerivationCommand;
 import laser.ddg.query.DerivationQuery;
@@ -188,6 +188,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 					else {
 						openDDGPanel.removeLegend();
 					}
+					openDDGPanel.showLineNumbers(preferences.isShowLineNumbers());
 				} else {
 					disableDDGCommands();
 					SearchPanel.disableSearch();
@@ -362,6 +363,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
 		prefMenu.add(showLegendMenuItem);
 		
+		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
+				preferences.isShowLineNumbers());
+		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
+		prefMenu.add(showLineNumbersMenuItem);
+		
+		
+		
 		return prefMenu;
 	}
 
@@ -441,6 +449,19 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			getCurrentDDGPanel().setArrowDirectionUp();
 		}
 		preferences.setArrowDirectionUp();
+	}
+
+	/**
+	 * Change the way node labels are displayed.
+	 * Save this as the persistent value.
+	 * @param show if true line numbers are displayed
+	 */
+	public void showLineNumbers(boolean show) {
+		DDGPanel curDDGPanel = getCurrentDDGPanel();
+		if (curDDGPanel != null) { 
+			getCurrentDDGPanel().showLineNumbers(show);
+		}
+		preferences.showLineNumbers(show);
 	}
 
 	/**

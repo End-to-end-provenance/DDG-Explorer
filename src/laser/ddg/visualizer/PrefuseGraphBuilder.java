@@ -391,6 +391,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			nodes.addColumn(PrefuseUtils.VALUE, String.class);
 			nodes.addColumn(PrefuseUtils.TIMESTAMP, String.class);
 			nodes.addColumn(PrefuseUtils.LOCATION, String.class);
+			nodes.addColumn(PrefuseUtils.LINE, int.class);
 			edges.addColumn(PrefuseUtils.TYPE, String.class);
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
@@ -407,7 +408,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
 		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getElapsedTime(), null);
+				pin.getNameAndType(), null, pin.getElapsedTime(), null, pin.getLineNumber());
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
@@ -415,7 +416,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitDin(DataInstanceNode din) {
 		addNode(din.getType(), din.getId() + numPins,
-				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation());
+				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation(), -1);
 	}
 
 	@Override
@@ -451,11 +452,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 			timestamp of the node (could be null)
 	 * @param location if this is a file node, this will be the full path to the
 	 * 		original file.  If it is not a file node, it will be null
+	 * @param the line number in the script where the node is derived from
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, double time, String location) {
+	public int addNode(String type, int id, String name, String value, double time, String location, int lineNum) {
 		String formattedTime = PrefuseUtils.elapsedTimeFormat.format(time);
-		return addNode (type, id, name, value, formattedTime, location);
+		return addNode (type, id, name, value, formattedTime, location, lineNum);
 	}
 	
 	/**
@@ -473,9 +475,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 			timestamp of the node (could be null)
 	 * @param location if this is a file node, this will be the full path to the
 	 * 		original file.  If it is not a file node, it will be null
+	 * @param the line number in the script where the node is derived from
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, String time, String location) {
+	public int addNode(String type, int id, String name, String value, String time, String location, int lineNum) {
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -493,6 +496,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
+				nodes.setInt(rowNum, PrefuseUtils.LINE, lineNum);
 
 				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
@@ -520,10 +524,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 			value of the node (could be null)
 	 * @param location
 	 * 			original location of the file (could be null)
+	 * @param lineNum
+	 * 		    line number that the corresponding code is on in the script.  Is -1 if not recorded.
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, String location) {
-		return addNode (type, id, name, value, null, location);
+	public int addNode(String type, int id, String name, String value, String location, int lineNum) {
+		return addNode (type, id, name, value, null, location, lineNum);
 	}
 
 	/**
@@ -609,7 +615,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 3. the renderers and renderer factory ---------------------------
 
-		vis.setRenderer(DEFAULT_ARROW_DIRECTION);
+		vis.setRenderer(DEFAULT_ARROW_DIRECTION, false);
 
 		// -- 4. the processing actions ---------------------------------------
 
@@ -841,7 +847,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 
 			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), "");
+			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), "", pin.getLineNumber());
 			if (root == null) {
 				root = getNode(pinId);
 				//System.out.println("procedureNodeCreated:  root set to " + root);
@@ -1592,10 +1598,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			//add the data node, passing in the optional associated value and timestamp
 			Object value = din.getValue();
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime(), -1);
 			}
 			else {
-				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime());
+				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime(), -1);
 			}
 			NodeItem dataNode = getNode(dinId);
 
@@ -2034,6 +2040,18 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	public void setHighlighted(int id, boolean value) {
 		getNode(id).setHighlighted(value);
+	}
+
+	public String getScriptPath() {
+		return provData.getScript();
+	}
+
+	public NodeItem getFirstMember(VisualItem collapsedNode) {
+		return vis.getStart((Node) collapsedNode);
+	}
+
+	public NodeItem getLastMember(VisualItem collapsedNode) {
+		return vis.getFinish((Node) collapsedNode);
 	}
 
 

@@ -39,6 +39,9 @@ public class PrefuseUtils {
 	/** The field name to identify the timestamp of an item */
 	static final String TIMESTAMP = "Time";
 	
+	/** The field name to identify the line number in the script */
+	static final String LINE = "Line";
+
 	/** The field name to identify the source of an edge */
 	static final String SOURCE = "source";
 
@@ -83,6 +86,7 @@ public class PrefuseUtils {
 	static final String LOCATION = "Location";
 	
 	static final DecimalFormat elapsedTimeFormat = new DecimalFormat("##.###");
+
 
 	/**
 	 * Filter used to identify visible edges
@@ -509,6 +513,14 @@ public class PrefuseUtils {
 	 */
 	public static String getLocation(Node n) {
 		return n.getString(LOCATION);
+	}
+
+	/**
+	 * @param n
+	 * @return the line number associated with a node
+	 */
+	public static int getLineNumber(Node n) {
+		return n.getInt(LINE);
 	}
 
 	/**
