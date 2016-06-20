@@ -39,13 +39,30 @@ public class LoadFileCommand implements ActionListener {
 			builder.processStarted(selectedFileName, null);
 			Parser parser = new Parser(selectedFile, builder);
 			parser.addNodesAndEdges();
-
+			
 			//new tab!
 			ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 			DDGExplorer.doneLoadingDDG();
 		}
 	}
-	
+
+
+	public static void loadFile(File userFile) throws Exception{
+		JenaWriter jenaWriter = JenaWriter.getInstance();
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		
+		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
+		String userFileName = userFile.getName();
+		DDGExplorer.loadingDDG();
+		builder.processStarted(userFileName, null);
+		Parser parser = new Parser(userFile, builder);
+		parser.addNodesAndEdges();
+		//new tab!
+		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
+		DDGExplorer.doneLoadingDDG();
+	}
+
+
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		try {
@@ -57,6 +74,4 @@ public class LoadFileCommand implements ActionListener {
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-
-
 }
