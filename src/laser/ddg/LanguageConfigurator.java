@@ -39,7 +39,7 @@ public class LanguageConfigurator {
 			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class, dbWriterClass);
 			return builderConstructor.newInstance(scrpt, provData, dbWriter);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create DB loader for " + language, e);
 		}
 	}
@@ -86,7 +86,7 @@ public class LanguageConfigurator {
 			Class<LanguageParser> parserClass = (Class<LanguageParser>) Class.forName(parserClassName);
 			return parserClass.newInstance();
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create parser for " + language, e);
 		}
 	}

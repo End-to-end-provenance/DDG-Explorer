@@ -179,7 +179,7 @@ public class Parser {
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		
 		int nextToken = skipBlankLines();
@@ -864,7 +864,7 @@ public class Parser {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		} catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -897,7 +897,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 		}
 		//if target is function node
@@ -921,7 +921,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
 				DDGExplorer.showErrMsg(e.getMessage());

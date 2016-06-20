@@ -73,7 +73,7 @@ public class ShowAttributesCommand implements ActionListener {
 			return text;
 		} catch (Exception e) {
 			System.out.println("Can't create attribute text");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return null;
 		}
 	}

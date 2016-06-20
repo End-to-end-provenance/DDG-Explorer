@@ -1,5 +1,6 @@
 package laser.ddg.gui;
 
+import com.alee.laf.WebLookAndFeel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,6 +19,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -213,14 +216,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				props.load(propResource);
 				title = "DDG Explorer v." + props.getProperty("version");
 			}
-		} catch (IOException e1) {
+		} catch (IOException e1) { // Thomas: that's never used, was it the intent?
 			title = "DDG Explorer";
 		} finally {
 			if (propResource != null) {
 				try {
 					propResource.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		}
@@ -517,6 +520,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+                try{
+                    UIManager.setLookAndFeel( new WebLookAndFeel() );
+                } catch (UnsupportedLookAndFeelException e) {
+                    e.printStackTrace(System.out);
+                }
+            
 		try {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
@@ -526,7 +535,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
 					"Error starting DDG Explorer", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 

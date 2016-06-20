@@ -774,7 +774,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (Exception e) {
 			System.out.println("Can't create legend");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -882,9 +882,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				System.out.println("Hit return to continue.");
 				in.readLine();
 			}
-		} catch (IOException exception) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch-block stub.
-			exception.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 
 	}
@@ -2023,7 +2023,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				builder.initializeDisplay();
 			} catch (HeadlessException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Cannot read the file");
 			}
@@ -2033,7 +2033,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				builder.initializeDisplay();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 		}
 	}

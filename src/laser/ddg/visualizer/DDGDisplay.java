@@ -244,7 +244,7 @@ public class DDGDisplay extends Display {
 			}
 		} catch (ParseException e) {
 			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 		}
 	}
@@ -578,7 +578,7 @@ public class DDGDisplay extends Display {
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e.printStackTrace(System.err);
 					}
 
 				}
