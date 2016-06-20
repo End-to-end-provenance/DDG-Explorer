@@ -48,6 +48,7 @@ import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
+import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -645,6 +646,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		display.addControlListener(new PanControl());
 		// zoom with right-click drag
 		display.addControlListener(new ZoomControl());
+                // zoom with mouse wheel
+                display.addControlListener(new WheelZoomControl(true, true));
 		// make node and incident edges invisible
 		//d.addControlListener(mControl);
 		display.addControlListener(new ExpandCollapseControl(this));
