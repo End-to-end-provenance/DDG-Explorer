@@ -6,8 +6,11 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -521,7 +524,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
 			explorer.createAndShowGUI();
-
+			if(args.length==1){
+				LoadFileCommand myFileCommand = new LoadFileCommand();
+				Path p1 = Paths.get(args[0]);
+				myFileCommand.loadFile(p1.toFile());
+			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
@@ -529,7 +536,4 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			e.printStackTrace();
 		}
 	}
-
-
-
 }
