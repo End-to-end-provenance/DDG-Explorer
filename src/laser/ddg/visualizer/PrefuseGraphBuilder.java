@@ -116,7 +116,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private DDGVisualization vis = new DDGVisualization();
+	private final DDGVisualization vis = new DDGVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(
 			System.in));
 	//private PINClickControl pinClickControl = new PINClickControl(this);
