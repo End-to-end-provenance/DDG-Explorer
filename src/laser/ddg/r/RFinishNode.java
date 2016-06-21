@@ -16,6 +16,7 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * @param name name of the node
 	 * @param provData the ddg
 	 * @param elapsedTime 
+         * @param lineNum 
 	 */
 	public RFinishNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
 		super(name, null, provData, elapsedTime, lineNum);
@@ -25,6 +26,7 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * States whether or not the node could be the root
 	 * @return false - a finish node cannot be the root 
 	 */
+        @Override
 	public boolean canBeRoot() {
 		return false;
 	}
@@ -34,6 +36,7 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * 
 	 * @return "Finish" as the type
 	 */
+        @Override
 	public String getType() {
 		return "Finish";
 	}

@@ -19,6 +19,7 @@ public class ShowLineNumbersCommand implements ActionListener {
 	/**
 	 * Sets whether line numbers are shown based on the setting of the
 	 * corresponding menu item.
+         * @param e
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

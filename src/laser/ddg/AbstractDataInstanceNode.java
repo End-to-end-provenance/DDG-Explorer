@@ -61,13 +61,13 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	private int hasProducer;
 
 	// The procedures that use this data
-	private Set<ProcedureInstanceNode> usedByPIN = new LinkedHashSet<ProcedureInstanceNode>();
+	private Set<ProcedureInstanceNode> usedByPIN = new LinkedHashSet<>();
 
 	// The provenance data that this node belongs to
 	private ProvenanceData provData;
 
 	// Attribute-value pairs to allow arbitrary extensions
-	private Map<String, Object> attributeValues = new TreeMap<String, Object>();
+	private Map<String, Object> attributeValues = new TreeMap<>();
 
 	/**
 	 * Create a data instance node wrapping the value passed in the process.
@@ -199,6 +199,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		return timeCreated;
 	}
 	
+        @Override
 	public double getElapsedTime() {
 		return 0.0;
 	}
@@ -268,8 +269,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	@Override
 	public Set<DataInstanceNode> getProcessOutputsDerived() {
-		HashSet<DataInstanceNode> processOutputs 
-			= new HashSet<DataInstanceNode>();
+		HashSet<DataInstanceNode> processOutputs = new HashSet<>();
 		if (provData.isProcessOutput(this)) {
 			processOutputs.add(this);
 		}
@@ -286,7 +286,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	@Override
 	public Set<DataInstanceNode> getProcessInputsDerived() {
-		Set<DataInstanceNode> processInputs = new HashSet<DataInstanceNode>();
+		Set<DataInstanceNode> processInputs = new HashSet<>();
 		if (provData.isProcessInput(this)) {
 			processInputs.add(this);
 		}

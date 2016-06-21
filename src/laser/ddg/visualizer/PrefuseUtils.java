@@ -122,7 +122,7 @@ public class PrefuseUtils {
 
 		Iterator<Node> neighbors = n.neighbors();
 		Node neighbor;
-		List<Node> orderedNeighborList = new ArrayList<Node>();
+		List<Node> orderedNeighborList = new ArrayList<>();
 
 		while (neighbors.hasNext()) {
 			neighbor = neighbors.next();
@@ -323,7 +323,7 @@ public class PrefuseUtils {
 		Iterator<Node> neighbors = orderedNeighbors(n);
 		Node neighbor;
 		EdgeItem nodeNeighborEdge;
-		List<Node> childrenList = new ArrayList<Node>();
+		List<Node> childrenList = new ArrayList<>();
 
 		while (neighbors.hasNext()) {
 			neighbor = neighbors.next();

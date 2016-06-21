@@ -84,7 +84,7 @@ public class RParser implements LanguageParser {
 			
 		} 
 		
-		return new HashMap<String, String>();
+		return new HashMap<>();
 	}
 
 	/**
@@ -94,16 +94,17 @@ public class RParser implements LanguageParser {
 	 * @return a table mapping block names to the code within
 	 * 	the blocks.
 	 */
+        @Override
 	public Map<String, String> buildBlockTable(String script) {
 		if (!script.equals(fileName)) {
 			readScript(script);
 		}
 
 		if (fileContents == null) {
-			return new HashMap<String, String>();
+			return new HashMap<>();
 		}
 		
-		Map<String, String> blockTable = new HashMap<String, String>();
+		Map<String, String> blockTable = new HashMap<>();
 		//ErrorLog.showErrMsg("Searching for start-finish blocks");
 		int nextStart = fileContents.indexOf("ddg.start");
 		int count = 0;

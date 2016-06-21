@@ -2,7 +2,6 @@ package laser.ddg;
 
 import java.util.ArrayList;
 
-import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;
@@ -42,6 +41,7 @@ public abstract class DDGBuilder {
 	 * @param id the id number of the node
 	 * @param name the name of the node
 	 * @param elapsedTime 
+         * @param lineNum 
 	 * @return the new procedure instance node
 	 */
 	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime, int lineNum);
@@ -54,6 +54,7 @@ public abstract class DDGBuilder {
 	 * @param name the name of the node
 	 * @param value the definition of the procedure
 	 * @param elapsedTime 
+         * @param lineNum 
 	 * @return the new procedure instance node
 	 */
 	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime, int lineNum) {

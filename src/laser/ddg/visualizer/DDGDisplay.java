@@ -109,7 +109,7 @@ public class DDGDisplay extends Display {
 
 		//Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
-		String valueExt = "";
+		String valueExt;
 		if(value != null){
 			int index = value.lastIndexOf(".");
 			valueExt = value.substring(index);
@@ -527,7 +527,7 @@ public class DDGDisplay extends Display {
 					File theFile = new File(fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
-			    	lineStarts = new ArrayList<Integer>();
+			    	lineStarts = new ArrayList<>();
 	
 					try {
 						readFile = new Scanner(theFile);

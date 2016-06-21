@@ -28,13 +28,13 @@ public abstract class AbstractProcedureInstanceNode implements
 
 	// A mapping from the names of the inputs to this
 	// procedure to their DataInstanceNode-type values
-	private Map<String, DataInstanceNode> inputs = new TreeMap<String, DataInstanceNode>();
+	private Map<String, DataInstanceNode> inputs = new TreeMap<>();
 
 	// A map from the names of the outputs produced by this procedure
 	// to their DataInstanceNode-type values, complete with their
 	// derivation graphs. If a procedure execution throws exceptions,
 	// each exception object will be an output.
-	private Map<String, DataInstanceNode> outputs = new TreeMap<String, DataInstanceNode>();
+	private Map<String, DataInstanceNode> outputs = new TreeMap<>();
 
 	// Used in case the procedure that precedes the current
 	// ProcedureInstanceNode
@@ -108,7 +108,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	private ProvenanceData provData;
 	
 	// Attribute-value pairs to allow arbitrary extensions
-	private Map<String, Object> attributeValues = new TreeMap<String, Object>();
+	private Map<String, Object> attributeValues = new TreeMap<>();
 	
 	// A definition of the procedure that this node derives from.
 	private Object procedureDefinition;
@@ -132,8 +132,8 @@ public abstract class AbstractProcedureInstanceNode implements
 		procedureDefinition = procDefinition;
 		agent = ac;
 		timeCreated = Calendar.getInstance().toString();
-		successors = new LinkedList<ProcedureInstanceNode>();
-		predecessors = new LinkedList<ProcedureInstanceNode>();
+		successors = new LinkedList<>();
+		predecessors = new LinkedList<>();
 		this.provData = provData;
 		this.elapsedTime = elapsedTime;
 		this.lineNumber = lineNum;
@@ -149,6 +149,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		return timeCreated;
 	}
 
+        @Override
 	public double getElapsedTime() {
 		return elapsedTime;
 	}
@@ -214,14 +215,14 @@ public abstract class AbstractProcedureInstanceNode implements
 	public void addInput(String paramName, DataInstanceNode value)
 		throws ParameterAlreadyBoundException {
 		if (inputs.containsKey(paramName)) {
-			// It is possible that the same argument is an input more than
-			// once to a node.  This can happen if it is passed in to 2 or more
-			// parameters, or if it is both passed in as a parameter and
-			// accessed as a global.  This second condition can happen in DDGs
-			// generated from R but not from Little-JIL.
-			return;
-			//throw new ParameterAlreadyBoundException(
-					//"Parameter already bound:  " + paramName);
+                    // It is possible that the same argument is an input more than
+                    // once to a node.  This can happen if it is passed in to 2 or more
+                    // parameters, or if it is both passed in as a parameter and
+                    // accessed as a global.  This second condition can happen in DDGs
+                    // generated from R but not from Little-JIL.
+                    //throw new ParameterAlreadyBoundException(
+                    //"Parameter already bound:  " + paramName);
+                    
 		} else {
 			inputs.put(paramName, value);
 			
@@ -393,8 +394,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 */
 	@Override
 	public Set<DataInstanceNode> getProcessOutputsDerived() {
-		HashSet<DataInstanceNode> processOutputs 
-			= new HashSet<DataInstanceNode>();
+		HashSet<DataInstanceNode> processOutputs = new HashSet<>();
 
 		Iterator<DataInstanceNode> it = this.outputParamValues();
 		while (it.hasNext()) {
@@ -414,8 +414,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 */
 	@Override
 	public Set<DataInstanceNode> getProcessInputsDerived() {
-		HashSet<DataInstanceNode> processInputs 
-			= new HashSet<DataInstanceNode>();
+		HashSet<DataInstanceNode> processInputs = new HashSet<>();
 
 		Iterator<DataInstanceNode> it = this.inputParamValues();
 		while (it.hasNext()) {
@@ -560,6 +559,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @return the line number in the script that corresponds to this node.
 	 * @return
 	 */
+        @Override
 	public int getLineNumber() {
 		return lineNumber;
 	}

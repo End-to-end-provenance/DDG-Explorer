@@ -109,7 +109,7 @@ public class Parser {
 	// Edges are saved and processed after all the nodes have been added
 	// to the graph.  That way there can be no references to edges that
 	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<ArrayList<String>>();
+	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
 	
 	private File fileBeingParsed;
 	
@@ -308,7 +308,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private void saveEdgeDeclaration() throws IOException {
-		ArrayList<String> decl = new ArrayList<String>();
+		ArrayList<String> decl = new ArrayList<>();
 		decl.add(in.sval);
 		
 		try {

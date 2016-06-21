@@ -231,7 +231,7 @@ public class FileViewer {
 	 */
 	private static ArrayList<String[]> readRows(Scanner readFile) {
 		//This will hold all the row information
-		ArrayList<String[]> rowData= new ArrayList<String[]>(); 
+		ArrayList<String[]> rowData= new ArrayList<>(); 
 		
 		//each row takes up one line, each value is split by ","
 		while(readFile.hasNextLine()){
@@ -326,7 +326,6 @@ public class FileViewer {
 			// pdfs and other files not handled above will try to use 
 			// a platform-specific application
 			displayNatively();
-			return;
 		}
 		
 

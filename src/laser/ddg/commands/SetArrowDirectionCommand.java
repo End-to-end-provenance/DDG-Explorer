@@ -20,6 +20,7 @@ public class SetArrowDirectionCommand implements ActionListener {
 	/**
 	 * Sets the direction that arrows are drawn based on the setting of the
 	 * corresponding menu item.
+         * @param e
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
