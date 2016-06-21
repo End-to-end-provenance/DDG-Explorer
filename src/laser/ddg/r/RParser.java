@@ -183,7 +183,7 @@ public class RParser implements LanguageParser {
 	}
 
 	private Map<String, String> findFunctionDeclarations(String script) {
-		Map<String, String> functionTable = new HashMap<String, String>();
+		Map<String, String> functionTable = new HashMap<>();
 		int nextFunctionKeyword = script.indexOf("function");
 		int count = 0;
 		while (nextFunctionKeyword != -1) {

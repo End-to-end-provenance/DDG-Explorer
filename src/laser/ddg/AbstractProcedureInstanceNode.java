@@ -124,6 +124,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 *            the agent that executed the procedure
 	 * @param provData the provenance data that this node belongs to
 	 * @param elapsedTime 
+         * @param lineNum 
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
 			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, int lineNum) {
@@ -557,7 +558,6 @@ public abstract class AbstractProcedureInstanceNode implements
 	
 	/**
 	 * @return the line number in the script that corresponds to this node.
-	 * @return
 	 */
         @Override
 	public int getLineNumber() {
