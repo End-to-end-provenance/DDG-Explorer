@@ -5,14 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StreamTokenizer;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
+import laser.ddg.DDGServer;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoSuchDataNodeException;
 import laser.ddg.NoSuchNodeException;
@@ -147,6 +150,34 @@ public class Parser {
 		ddgBuilder = null;
 		fileBeingParsed = file;
 	}
+	
+	
+	public Parser(DDGServer ddgServer, PrefuseGraphBuilder builder) 
+			throws IOException {
+			Reader r = new BufferedReader (new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
+		    in = new StreamTokenizer(r);
+		    in.eolIsSignificant(true);
+		    in.resetSyntax();
+
+		    // Only ; and = are special characters
+		    in.wordChars('a', 'z');
+		    in.wordChars('A', 'Z');
+		    in.wordChars('0', '9');
+		    in.wordChars('!', '/');
+		    in.wordChars(':', ':');
+		    in.wordChars('<', '<');
+		    in.wordChars('>', '@');
+		    in.wordChars('[', '`');
+		    in.wordChars('{', '~');
+
+		    in.quoteChar('\"');
+		    in.whitespaceChars(0, ' ');
+
+		    this.builder = builder;
+			ddgBuilder = null;
+		}
+
+	
 
 	/**
 	 * Adds the nodes and edges from the DDG to the graph.
