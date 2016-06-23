@@ -78,6 +78,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JCheckBoxMenuItem showLegendMenuItem;
 	
 	private static boolean loadingDDG = false;
+	private static LoadFileCommand ddgLFC;
 	
 	// Accumulates error messages while a ddg is being loaded.
 	// Added to the corresponding DDG panel's error log when 
@@ -525,9 +526,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			preferences.load();
 			explorer.createAndShowGUI();
 			if(args.length==1){
-				LoadFileCommand myFileCommand = new LoadFileCommand();
-				Path p1 = Paths.get(args[0]);
-				myFileCommand.loadFile(p1.toFile());
+				ddgLFC = new LoadFileCommand();
+				Path ddgtxtPath = Paths.get(args[0]);
+				myFileCommand.loadFile(ddgtxtPath.toFile());
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
