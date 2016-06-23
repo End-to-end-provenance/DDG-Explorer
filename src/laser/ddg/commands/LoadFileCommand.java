@@ -47,15 +47,15 @@ public class LoadFileCommand implements ActionListener {
 	}
 
 
-	public static void loadFile(File userFile) throws Exception{
+	public static void loadFile(File ddgtxtFile) throws Exception{
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
-		String userFileName = userFile.getName();
+		String ddgtxtFileName = ddgtxtFile.getName();
 		DDGExplorer.loadingDDG();
-		builder.processStarted(userFileName, null);
-		Parser parser = new Parser(userFile, builder);
+		builder.processStarted(ddgtxtFileName, null);
+		Parser parser = new Parser(ddgtxtFile, builder);
 		parser.addNodesAndEdges();
 		//new tab!
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
