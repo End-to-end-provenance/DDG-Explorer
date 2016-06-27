@@ -528,7 +528,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			if(args.length==1){
 				ddgLFC = new LoadFileCommand();
 				Path ddgtxtPath = Paths.get(args[0]);
-				myFileCommand.loadFile(ddgtxtPath.toFile());
+				ddgLFC.loadFile(ddgtxtPath.toFile());
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
