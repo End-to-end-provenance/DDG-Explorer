@@ -24,6 +24,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import laser.ddg.DDGServer;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
@@ -65,7 +66,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 	// The singleton
 	private static DDGExplorer instance;
-	
+
 	private static final Preferences preferences = new Preferences();
 
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
@@ -76,9 +77,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
 
 	private JCheckBoxMenuItem showLegendMenuItem;
-	
+
 	private static boolean loadingDDG = false;
-	
+	private static DDGServer ddgServer;
+	private static LoadFileCommand ddgLFC;
+
 	// Accumulates error messages while a ddg is being loaded.
 	// Added to the corresponding DDG panel's error log when 
 	// loading is complete.
@@ -170,7 +173,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		};
 		tabbedPane.setOpaque(true);
-		
+
 		tabbedPane.addChangeListener(new ChangeListener () {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -199,7 +202,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			}
 
 		});
-		
+
 		return tabbedPane;
 	}
 
@@ -237,16 +240,16 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		JMenu fileMenu = createFileMenu();
 		menuBar.add(fileMenu);
-		
+
 		JMenu ddgMenu = createDDGMenu();
 		menuBar.add(ddgMenu);
-		
+
 		JMenu queryMenu = createQueryMenu();
 		menuBar.add(queryMenu);
-		
+
 		JMenu prefMenu = createPreferencesMenu();
 		menuBar.add(prefMenu);
-		
+
 		JMenu helpMenu = createHelpMenu();
 		menuBar.add(helpMenu);
 		return menuBar;
@@ -297,17 +300,17 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenu createDDGMenu() {
 		final JMenu DDGMenu = new JMenu("DDG");
 		DDGMenu.setBackground(MENU_COLOR);
-		
+
 		attributesItem = new JMenuItem("Show attributes");
 		attributesItem.addActionListener(new ShowAttributesCommand());
 		attributesItem.setEnabled(false);
 		DDGMenu.add(attributesItem);
-		
+
 		showScriptItem = new JMenuItem("Show R script");
 		showScriptItem.addActionListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
-		
+
 		return DDGMenu;
 	}
 
@@ -326,25 +329,25 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenu createQueryMenu() {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
-		
+
 		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
 		findFilesItem.addActionListener(new FindFilesCommand());
 		queryMenu.add(findFilesItem);
-		
+
 		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
 		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
-		
+
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
 		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
 		queryMenu.add(showValueDerivationItem);
-		
+
 		final Query computedFromQuery = new ResultsQuery();
 		JMenuItem computedFromItem = new JMenuItem(computedFromQuery.getMenuItem());
 		computedFromItem.addActionListener(new ShowComputedFromValueCommand());
 		queryMenu.add(computedFromItem);
-		
+
 		return queryMenu;
 	}
 
@@ -355,24 +358,24 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenu createPreferencesMenu() {
 		JMenu prefMenu = new JMenu("Preferences");
 		prefMenu.setBackground(MENU_COLOR);
-		
+
 		final JCheckBoxMenuItem inToOutMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
 				preferences.isArrowDirectionDown());
 		inToOutMenuItem.addActionListener(new SetArrowDirectionCommand());
 		prefMenu.add(inToOutMenuItem);
-		
+
 		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
 				preferences.isShowLegend());
 		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
 		prefMenu.add(showLegendMenuItem);
-		
+
 		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
 				preferences.isShowLineNumbers());
 		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
 		prefMenu.add(showLineNumbersMenuItem);
-		
-		
-		
+
+
+
 		return prefMenu;
 	}
 
@@ -383,13 +386,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private JMenu createHelpMenu() {
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setBackground(MENU_COLOR);
-		
+
 		JMenuItem commandOverviewItem = new JMenuItem("Command overview");
 		commandOverviewItem.addActionListener(new CommandOverviewCommand());
 		helpMenu.add(commandOverviewItem);
 		return helpMenu;
 	}
-	
+
 	@Override
 	public void queryFinished(String name, JComponent panel) {
 		addTab(name, panel);
@@ -409,7 +412,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 
-	
+
 	/**
 	 * @return the DDGPanel that the user is currently viewing.  Returns
 	 *   null if the user is viewing the home panel (i.e., no DDG).
@@ -492,7 +495,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			showLegendMenuItem.setSelected(false);
 		}
 	}
-	
+
 	public static void showErrMsg (String msg) {
 		if (loadingDDG) {
 			errors = errors + "\n" + msg;
@@ -508,7 +511,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		loadingDDG = true;
 		errors = "";
 	}
-	
+
 	public static void doneLoadingDDG() {
 		loadingDDG = false;
 		getCurrentDDGPanel().showErrMsg(errors);
@@ -524,11 +527,20 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
 			explorer.createAndShowGUI();
+
 			if(args.length==1){
-				LoadFileCommand myFileCommand = new LoadFileCommand();
-				Path p1 = Paths.get(args[0]);
-				myFileCommand.loadFile(p1.toFile());
+				if(args[0].equals("True")){
+					ddgServer = new DDGServer(6096);
+					ddgLFC = new LoadFileCommand();
+					//ddgLFC.executeIncrementalDrawing(ddgServer.getFileName(),ddgServer);
+				}
+				else{
+					ddgLFC = new LoadFileCommand();
+					Path ddgtxtPath = Paths.get(args[0]);
+					ddgLFC.loadFile(ddgtxtPath.toFile());
+				}
 			}
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
