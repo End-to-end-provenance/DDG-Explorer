@@ -215,18 +215,15 @@ public abstract class AbstractProcedureInstanceNode implements
 	@Override
 	public void addInput(String paramName, DataInstanceNode value)
 		throws ParameterAlreadyBoundException {
-		if (inputs.containsKey(paramName)) {
-                    // It is possible that the same argument is an input more than
+                // It is possible that the same argument is an input more than
                     // once to a node.  This can happen if it is passed in to 2 or more
                     // parameters, or if it is both passed in as a parameter and
                     // accessed as a global.  This second condition can happen in DDGs
                     // generated from R but not from Little-JIL.
                     //throw new ParameterAlreadyBoundException(
                     //"Parameter already bound:  " + paramName);
-                    
-		} else {
-			inputs.put(paramName, value);
-			
+		if (!inputs.containsKey(paramName)) {
+			inputs.put(paramName, value);			
 			DataBindingEvent e 
 				= new DataBindingEvent (DataBindingEvent.BindingEvent.INPUT, value, this, paramName);
 			provData.notifyDataBindingListeners(e);
