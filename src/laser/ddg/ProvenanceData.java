@@ -151,7 +151,6 @@ public class ProvenanceData {
 	 *            PIN to add
 	 */
 	public synchronized void addPIN(ProcedureInstanceNode p) {
-
 		pins.add(p);
 		p.setId(nextPinId);
 		nextPinId++;
@@ -814,7 +813,7 @@ public class ProvenanceData {
 
 	public String getQuery() {
 		return query;
-	}
+	} 
 
 	public void setQuery(String query) {
 		this.query = query;

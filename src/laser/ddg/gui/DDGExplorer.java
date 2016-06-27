@@ -532,7 +532,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				if(args[0].equals("True")){
 					ddgServer = new DDGServer(6096);
 					ddgLFC = new LoadFileCommand();
-					//ddgLFC.executeIncrementalDrawing(ddgServer.getFileName(),ddgServer);
+					ddgLFC.executeIncrementalDrawing(ddgServer.getFileName(),ddgServer);
 				}
 				else{
 					ddgLFC = new LoadFileCommand();

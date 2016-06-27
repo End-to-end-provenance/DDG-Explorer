@@ -10,9 +10,7 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
-
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DDGServer;
@@ -169,7 +167,7 @@ public class Parser {
 		    in.wordChars('>', '@');
 		    in.wordChars('[', '`');
 		    in.wordChars('{', '~');
-
+		    
 		    in.quoteChar('\"');
 		    in.whitespaceChars(0, ' ');
 
@@ -190,7 +188,9 @@ public class Parser {
 		if (scrpt == null) {
 			scrpt = fileBeingParsed.getName();
 		}
-		ProvenanceData provData = new ProvenanceData(scrpt, timestamp, language);
+		
+		ProvenanceData provData = new ProvenanceData(scrpt,timestamp,language);
+		
 		
 		// Store the file path to the selected file in attributes
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
@@ -207,6 +207,51 @@ public class Parser {
 			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
 			builder.createLegend(language);
 
+			//System.out.println("Using " + ddgBuilder.getClass().getName());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
+			e.printStackTrace();
+		}
+		
+		int nextToken = skipBlankLines();
+		while (nextToken != StreamTokenizer.TT_EOF) {
+			// System.out.println(in.sval);
+			parseDeclaration(nextToken);
+			nextToken = skipBlankLines();
+		}
+		addEdges();
+		
+		if (ddgBuilder != null) {
+			ddgBuilder.ddgBuilt();
+		}
+		builder.processFinished();
+	}
+	
+	/**
+	 * Adds the nodes and edges from the DDG to the graph.
+	 * @throws IOException if there is a problem reading the file
+	 */
+	public void addNodesAndEdgesForIncrementalDrawing(DDGServer ddgServer) throws IOException {
+		
+		// If there was no script attribute, use the filename.
+		if (scrpt == null) {
+			scrpt = ddgServer.getFileName();
+		}
+		ProvenanceData provData = new ProvenanceData(scrpt,ddgServer.getTimeStamp(),"R");
+	
+		// Store the file path to the selected file in attributes
+		provData.setSourceDDGFile("");
+		provData.setAttributes(attributes);	
+		provData.createFunctionTable();
+		provData.setQuery("Entire DDG");
+		builder.setProvData(provData);
+		
+		try {
+			if (language == null) {
+				language = "Little-JIL";
+			}
+			ddgBuilder = LanguageConfigurator.createDDGBuilder("R", scrpt, provData, null);
+			builder.createLegend("R");
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");

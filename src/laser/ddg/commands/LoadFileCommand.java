@@ -25,8 +25,6 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
 public class LoadFileCommand implements ActionListener {
 
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
-	
-	private DDGServer myDDGServer;
 	/**
 	 * Loads a text file containing a ddg
 	 * @throws Exception thrown if the file cannot be loaded
@@ -54,9 +52,9 @@ public class LoadFileCommand implements ActionListener {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
-		String userFileName = ddgtxtFile.getName();
+		String ddgtxtFileName = ddgtxtFile.getName();
 		DDGExplorer.loadingDDG();
-		builder.processStarted(userFileName, null);
+		builder.processStarted(ddgtxtFileName, null);
 		Parser parser = new Parser(ddgtxtFile, builder);
 		parser.addNodesAndEdges();
 		//new tab!
@@ -65,16 +63,15 @@ public class LoadFileCommand implements ActionListener {
 	}
 
 
-	public static void executeIncrementalDrawing(String fileName, ServerSocket DDGSocket) throws Exception {
+	public static void executeIncrementalDrawing(String fileName, DDGServer ddgSocket) throws Exception {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter);
-//		File selectedFile = FILE_CHOOSER.getSelectedFile();
 		String selectedFileName = fileName;
 		DDGExplorer.loadingDDG();
 		builder.processStarted(selectedFileName, null);
-//		Parser parser = new Parser(selectedFile, builder);
+		Parser parser = new Parser(ddgSocket, builder);
 		//new tab!
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
