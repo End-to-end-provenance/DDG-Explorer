@@ -247,6 +247,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return getStepNameFromFinishNode(PrefuseUtils.getName(finishNode));
 	}
 
+	private static String getStepNameFromStartNode(String nodeStartName) {
+		return nodeStartName.substring(0, nodeStartName.lastIndexOf("Start"));
+	}
+
+	private String getStepNameFromStartNode(Node startNode){
+		return getStepNameFromStartNode(PrefuseUtils.getName(startNode));
+	}
+
 	/**
 	 * adds a step node to the graph
 	 *
@@ -1102,13 +1110,21 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// Adds the node
 		int collapsedNodeId;
 		if (PrefuseUtils.isStartNode(startNode)) {
-			collapsedNode = addCollapsedNode(getStepNameFromFinishNode(finishNode), PrefuseUtils.getValue(finishNode), 
-					PrefuseUtils.getTimestamp(finishNode));
+			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode),
+				PrefuseUtils.getValue(startNode), PrefuseUtils.getTimestamp(startNode));
+
+		// 	collapsedNode = addCollapsedNode(
+		// 		getStepNameFromFinishNode(finishNode), 
+		// 		PrefuseUtils.getValue(finishNode), 
+		// 			PrefuseUtils.getTimestamp(finishNode));
 		}
 
+
+
 		else if (PrefuseUtils.isCheckpointNode(startNode)) {
-			collapsedNode = addCollapsedNode(PrefuseUtils.getName(finishNode), PrefuseUtils.getValue(finishNode), 
-					PrefuseUtils.getTimestamp(finishNode));
+			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode),
+				PrefuseUtils.getValue(startNode), PrefuseUtils.getTimestamp(startNode));
+
 		}
 
 		else {
