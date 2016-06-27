@@ -667,6 +667,9 @@ public class Parser {
 					if (value == null) {
 						value = parseValue(nodeId);
 						if (value != null) {
+							File thefile = new File(value);
+							File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+							value = relative.getAbsolutePath();
 							somethingMatched = true;
 						}
 					}

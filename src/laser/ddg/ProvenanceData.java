@@ -756,6 +756,12 @@ public class ProvenanceData {
 	public void setSourceDDGFile(String sourceDDGFile) {
 		this.sourceDDGFile = sourceDDGFile;
 		attributes.set("souceDDGFile", sourceDDGFile);
+
+	}
+
+	public File getSourceDDGDirectory(){
+		File thefile = new File(sourceDDGFile);
+		return thefile.getParentFile();
 	}
 	
 	public void addAttribute(String name, String value) {

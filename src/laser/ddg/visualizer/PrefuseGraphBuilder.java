@@ -2070,6 +2070,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return vis.getFinish((Node) collapsedNode);
 	}
 
+	public File getSourceDDGDirectory(){
+		return provData.getSourceDDGDirectory();
+	}
+
 
 
 }
