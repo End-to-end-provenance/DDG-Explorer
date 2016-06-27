@@ -523,7 +523,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
                 try{
                     UIManager.setLookAndFeel( new WebLookAndFeel() );
                 } catch (UnsupportedLookAndFeelException e) {
-                    e.printStackTrace(System.out);
+                    e.printStackTrace(System.err);
                 }
             
 		try {
