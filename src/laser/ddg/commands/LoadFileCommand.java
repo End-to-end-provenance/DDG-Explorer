@@ -25,44 +25,47 @@ public class LoadFileCommand implements ActionListener {
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
 
 	/**
-	 * Loads a text file containing a ddg
+	 * Loads a ddg text file from user selection
 	 * @throws Exception thrown if the file cannot be loaded
 	 */
 	public static void execute() throws Exception {
-		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
-			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 			File selectedFile = FILE_CHOOSER.getSelectedFile();
-			String selectedFileName = selectedFile.getName();
-			DDGExplorer.loadingDDG();
-			builder.processStarted(selectedFileName, null);
-			Parser parser = new Parser(selectedFile, builder);
-			parser.addNodesAndEdges();
-			
-			//new tab!
-			ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
-			DDGExplorer.doneLoadingDDG();
+			loadFile(selectedFile);
 		}
 	}
+	
+	/**
+	 * Loads a ddg text file form the path it is stored
+	 * @param ddgtxtPath
+	 * @throws Exception thrown if the file cannot be loaded 
+	 */
+	public static void loadDDG(String ddgtxtPath) throws Exception{
+		loadFile(new File(ddgtxtPath));
+	}
 
-
-	public static void loadFile(File userFile) throws Exception{
+	
+	/**
+	 * loads a file that contains ddg
+	 * @param selectedFile
+	 * @throws Exception
+	 */
+	public static void loadFile(File selectedFile) throws Exception{
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
-		String userFileName = userFile.getName();
+		String selectedFileName = selectedFile.getName();
 		DDGExplorer.loadingDDG();
-		builder.processStarted(userFileName, null);
-		Parser parser = new Parser(userFile, builder);
+		builder.processStarted(selectedFileName, null);
+		Parser parser = new Parser(selectedFile, builder);
 		parser.addNodesAndEdges();
+		
 		//new tab!
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
 	}
-
-
+	
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		try {
