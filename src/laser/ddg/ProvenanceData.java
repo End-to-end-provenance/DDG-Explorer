@@ -81,10 +81,10 @@ public class ProvenanceData {
 	private int nextPinId = 1;
 
 	// The objects that want to be notified of data bindings.
-	private List<DataBindingListener> bindingListeners = new LinkedList<DataBindingListener>();
+	private List<DataBindingListener> bindingListeners = new LinkedList<>();
 
 	// Listeners to changes to the DDG
-	private List<ProvenanceListener> provListeners = new LinkedList<ProvenanceListener>();
+	private List<ProvenanceListener> provListeners = new LinkedList<>();
 
 	// Table mapping function names to function bodies
 	private Map<String, String> functionTable;

@@ -27,7 +27,7 @@ import laser.ddg.persist.FileUtil;
 public class Preferences {
 	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY
 			+ "prefs.txt");
-	private static Map<String, String> preferences = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> preferences = new ConcurrentHashMap<>();
 
 
 	/**

@@ -292,7 +292,7 @@ public class FileUseQuery extends AbstractQuery {
 						selectedIO = IO;
 					}
 					
-					ArrayList<String> selectedExtensions = new ArrayList<String>();
+					ArrayList<String> selectedExtensions = new ArrayList<>();
 					if (!allBox.isSelected()) {
 						if (csvBox.isSelected()) {
 							selectedExtensions.add(".csv");
