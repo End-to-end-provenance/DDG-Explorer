@@ -187,11 +187,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param jenaWriter the object used to write to the DB
 	 * @throws IOException 
 	 */
-	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter,DDGServer ddgServer) throws IOException {
+	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter,BufferedReader clientReader) throws IOException {
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
 		ddgPanel.setSearchIndex (searchIndex);
-		in = new BufferedReader(new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
+		in = clientReader;
 	}
 
 	/**

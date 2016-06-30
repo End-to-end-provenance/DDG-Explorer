@@ -152,7 +152,8 @@ public class Parser {
 	
 	public Parser(DDGServer ddgServer, PrefuseGraphBuilder builder) 
 			throws IOException {
-			Reader r = new BufferedReader (new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
+			//Reader r = new BufferedReader (new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
+			Reader r = ddgServer.getClientReader();
 		    in = new StreamTokenizer(r);
 		    in.eolIsSignificant(true);
 		    in.resetSyntax();
@@ -237,6 +238,10 @@ public class Parser {
 	 * @throws IOException if there is a problem reading the file
 	 */
 	public void addNodesAndEdgesForIncrementalDrawing(DDGServer ddgServer) throws IOException {
+		System.out.println("Calling parseHeader");
+		parseHeader();
+		// Probably should not hardwire this in.
+		//language = "R";
 		
 		// If there was no script attribute, use the filename.
 		if (scrpt == null) {
@@ -259,6 +264,7 @@ public class Parser {
 			ddgBuilder = LanguageConfigurator.createDDGBuilder("R", scrpt, provData, null);
 			builder.createLegend("R");
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
+			provData.addProvenanceListener(builder);
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
 			e.printStackTrace();
@@ -273,7 +279,7 @@ public class Parser {
 			parseDeclaration(nextToken);
 			nextToken = skipBlankLines();
 		}
-		addEdges();
+		//addEdges();
 		
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
@@ -294,14 +300,14 @@ public class Parser {
 			throw new IOException("The file is empty.");
 		}
 		
-		// Loop until we find the number of procedure nodes.
+		// Loop until we find the number of procedure nodes .
 		while(true){
 			//System.out.println(nextToken);
 			try {
 				// System.out.println(in.sval);
 				numPins = Integer.parseInt(in.sval);
 				assert in.nextToken() == StreamTokenizer.TT_EOL;
-				// System.out.println("Number of pins = " + numPins);
+				System.out.println("Number of pins = " + numPins);
 				break;
 			}
 			catch (NumberFormatException e) {
@@ -350,7 +356,8 @@ public class Parser {
 	private void parseDeclaration(int nextToken) throws IOException {
 		if (nextToken == StreamTokenizer.TT_WORD) {
 			if (in.sval.equals(CONTROL_FLOW) || in.sval.equals(DATA_FLOW)) {
-				saveEdgeDeclaration();
+				//saveEdgeDeclaration();
+				parseEdge();
 			}
 			else {
 				parseNode();
@@ -386,6 +393,20 @@ public class Parser {
 		}
 		nextToken = skipBlankLines();
 		in.pushBack();
+	}
+	
+	private void parseEdge() throws IOException {
+		ArrayList<String> decl = new ArrayList<String>();
+		decl.add(in.sval);
+		
+		try {
+			while (true) {
+				decl.add(convertNextTokenToString());
+			}
+		} catch (IllegalStateException e) {
+			// Thrown when we reach the end of the line.
+		}
+		parseEdge(decl);
 	}
 
 	/**
@@ -451,7 +472,7 @@ public class Parser {
 		String value = null;
 
 		value = parseValue(nodeId);
-		//System.out.println("name = " + name + "  value = " + value);
+		System.out.println("proc node: name = " + name + "  value = " + value);
 		
 		double elapsedTime = 0;
 		int lineNum = -1;
@@ -743,7 +764,7 @@ public class Parser {
 			
 			else if (nextToken == StreamTokenizer.TT_WORD) {
 				while (nextToken == StreamTokenizer.TT_WORD) {
-					//System.out.println("parseDataNode: Found " + in.sval);
+					System.out.println("parseDataNode: Found " + in.sval);
 					in.pushBack();
 					boolean somethingMatched = false;
 					
@@ -810,6 +831,7 @@ public class Parser {
 	 */
 	private void parseAttribute() throws IOException{
 		String attributeName = in.sval;
+		System.out.println("parseAttribute: attributeName = " + attributeName);
 		
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
@@ -832,6 +854,7 @@ public class Parser {
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
 			}
+			System.out.println("Got attribute " + attributeName + " with value " + attributeValue);
 			attributes.set(attributeName, attributeValue);
 			
 		} catch (IllegalStateException e) {
@@ -932,7 +955,7 @@ public class Parser {
 		}
 		
 		try {
-			//System.out.println("Found edge " + tokens.get(1) + " to " + tokens.get(2));
+			System.out.println("Found edge " + tokens.get(1) + " to " + tokens.get(2));
 			if(edgeType.equals("CF") && ddgBuilder != null){
 				parseControlFlowEdge(tokens);
 			}

@@ -73,9 +73,8 @@ public class LoadFileCommand implements ActionListener {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
-		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter,ddgSocket);
-		File file = new File(ddgSocket.getFileName());
-		String selectedFileName = file.getName();
+		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter,ddgSocket.getClientReader());
+		String selectedFileName = ddgSocket.getFileName();
 
 		DDGExplorer.loadingDDG();
 		builder.setTitle(selectedFileName, ddgSocket.getTimeStamp());
@@ -84,9 +83,14 @@ public class LoadFileCommand implements ActionListener {
 		Parser parser = new Parser(ddgSocket, builder);
 		//new tab!
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
+		
+		// Hmmm.  Do we want to call this here?
 		DDGExplorer.doneLoadingDDG();
+		
 		parser.addNodesAndEdgesForIncrementalDrawing(ddgSocket);
-
+		
+		System.out.println("Server closing");
+		ddgSocket.close();
 	}
 
 

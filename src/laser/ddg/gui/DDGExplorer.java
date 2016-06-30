@@ -529,7 +529,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 			if(args.length==1){
 				if(args[0].equals("True")){
+					System.out.println("Server starting");
 					ddgServer = new DDGServer(6096);
+					System.out.println("Server started");
 					LoadFileCommand.executeIncrementalDrawing(ddgServer);
 				}
 				else{
