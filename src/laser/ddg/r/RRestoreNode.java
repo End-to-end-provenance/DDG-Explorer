@@ -17,6 +17,7 @@ public class RRestoreNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 * @param elapsedTime 
+         * @param lineNum 
 	 */
 	public RRestoreNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
 		super(name, null, provData, elapsedTime, lineNum);
