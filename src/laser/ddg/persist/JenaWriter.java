@@ -138,7 +138,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		} catch (Exception e) {
 			DDGExplorer.showErrMsg("Unable to initialize the database for the DDG.\n");
 			DDGExplorer.showErrMsg(e + "\n");
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		} catch (Exception e) {
 			DDGExplorer.showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
 			DDGExplorer.showErrMsg(e.toString());
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 			return false;
 		}
 	}

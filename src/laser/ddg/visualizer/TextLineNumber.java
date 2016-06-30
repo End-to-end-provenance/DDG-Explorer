@@ -100,8 +100,7 @@ public class TextLineNumber extends JPanel
 		setCurrentLineForeground( Color.RED );
 		setDigitAlignment( RIGHT );
 		setMinimumDisplayDigits( minimumDisplayDigits );
-                
-                /* Thomas : TODO should avoid passing this from constructor */
+
 		component.getDocument().addDocumentListener(this);
 		component.addCaretListener( this );
 		component.addPropertyChangeListener("font", this);
@@ -193,7 +192,7 @@ public class TextLineNumber extends JPanel
 	 *  <li>TextLineNumber.CENTER
 	 *  <li>TextLineNumber.RIGHT (default)
 	 *	</ul>
-         * @param digitAlignment
+	 *  @param currentLineForeground  the Color used to render the current line
 	 */
 	public void setDigitAlignment(float digitAlignment)
 	{
@@ -358,7 +357,7 @@ public class TextLineNumber extends JPanel
 		else  // We need to check all the attributes for font changes
 		{
 			if (fonts == null)
-				fonts = new HashMap<>();
+				fonts = new HashMap<String, FontMetrics>();
 
 			Element root = component.getDocument().getDefaultRootElement();
 			int index = root.getElementIndex( rowStartOffset );

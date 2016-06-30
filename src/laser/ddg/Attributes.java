@@ -12,7 +12,7 @@ import java.util.Set;
  *
  */
 public class Attributes {
-	private Map<String, String> attributes = new HashMap<>();
+	private Map<String, String> attributes = new HashMap<String, String>();
 
 	public String get(String attrName) {
 		return attributes.get(attrName);

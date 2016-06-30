@@ -40,13 +40,13 @@ public class SearchResultsGUI extends JScrollPane {
 	 */
 	public SearchResultsGUI(ArrayList<? extends SearchElement> resultList) {
 
-		model = new DefaultListModel<>();
+		model = new DefaultListModel<SearchElement>();
 		for (SearchElement entry : resultList) {
 			model.addElement(entry);
 		}
 
 		final JList<SearchElement> searchList;
-		searchList = new JList<>(model);
+		searchList = new JList<SearchElement>(model);
 		searchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		searchList.setCellRenderer(new NodeCellRenderer());
 		searchList.setVisibleRowCount(-1);

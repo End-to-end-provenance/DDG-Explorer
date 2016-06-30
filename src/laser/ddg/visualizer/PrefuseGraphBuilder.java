@@ -12,7 +12,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,7 +48,6 @@ import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
-import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.data.Graph;
 import prefuse.data.Node;
@@ -117,7 +115,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private final DDGVisualization vis = new DDGVisualization();
+	private DDGVisualization vis = new DDGVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(
 			System.in));
 	//private PINClickControl pinClickControl = new PINClickControl(this);
@@ -462,7 +460,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 			timestamp of the node (could be null)
 	 * @param location if this is a file node, this will be the full path to the
 	 * 		original file.  If it is not a file node, it will be null
-	 * @param lineNum the line number in the script where the node is derived from
+	 * @param the line number in the script where the node is derived from
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, double time, String location, int lineNum) {
@@ -485,7 +483,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 			timestamp of the node (could be null)
 	 * @param location if this is a file node, this will be the full path to the
 	 * 		original file.  If it is not a file node, it will be null
-	 * @param lineNum the line number in the script where the node is derived from
+	 * @param the line number in the script where the node is derived from
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String time, String location, int lineNum) {
@@ -655,8 +653,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		display.addControlListener(new PanControl());
 		// zoom with right-click drag
 		display.addControlListener(new ZoomControl());
-                // zoom with mouse wheel
-                display.addControlListener(new WheelZoomControl(true, true));
 		// make node and incident edges invisible
 		//d.addControlListener(mControl);
 		display.addControlListener(new ExpandCollapseControl(this));
@@ -784,9 +780,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createNodeLegend").invoke(null);
 			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend").invoke(null);
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (Exception e) {
 			System.out.println("Can't create legend");
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 		}
 	}
 
@@ -894,9 +890,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				System.out.println("Hit return to continue.");
 				in.readLine();
 			}
-		} catch (IOException e) {
+		} catch (IOException exception) {
 			// TODO Auto-generated catch-block stub.
-			e.printStackTrace(System.err);
+			exception.printStackTrace();
 		}
 
 	}
@@ -974,12 +970,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * displays those in place of the expanded versions.
 	 */
 	private void addCollapsedNodes() {
-		Set<NodeItem> rootMembers = new HashSet<>();
+		Set<NodeItem> rootMembers = new HashSet<NodeItem>();
 		if (root == null) {
 			setRoot();
 		}
 		NodeItem nextRoot = root;
-		Queue<NodeItem> roots = new LinkedList<>();
+		Queue<NodeItem> roots = new LinkedList<NodeItem>();
 		while (nextRoot != null) {
 			NodeItem rootFinish = addStartFinishCollapsedNodes(nextRoot, rootMembers, 0.0);
 			if (rootFinish != null) {
@@ -992,7 +988,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					setCollapsedRoot(collapsedRoot);
 				}
 
-				rootMembers = new HashSet<>();
+				rootMembers = new HashSet<NodeItem>();
 				Iterator<NodeItem> successorIter = rootFinish.inNeighbors();
 				while (successorIter.hasNext()) {
 					NodeItem successor = successorIter.next();
@@ -1030,7 +1026,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the matching finish node
 	 */
 	private NodeItem addStartFinishCollapsedNodes(NodeItem startNode, Set<NodeItem> memberNodes, double totalElapsedTime) {
-		Queue<NodeItem> nodesReached = new LinkedList<>();
+		Queue<NodeItem> nodesReached = new LinkedList<NodeItem>();
 		addSuccessorsToQueue(startNode, nodesReached);
 		NodeItem finishNode = null;
 
@@ -1045,7 +1041,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			// Begin a new search when encounter a new Start node
 			if (nextName.endsWith(" Start")) {
-				Set<NodeItem> nestedMembers = new HashSet<>();
+				Set<NodeItem> nestedMembers = new HashSet<NodeItem>();
 				NodeItem nestedFinish = addStartFinishCollapsedNodes(next, nestedMembers, 0.0);
 
 				if (nestedFinish != null) {
@@ -1179,7 +1175,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// Search the outgoing edges of one member
 		while (outNeighbors.hasNext()) {
-			Set<Node> edgesAddedTo = new HashSet<>();
+			Set<Node> edgesAddedTo = new HashSet<Node>();
 			Node neighbor = outNeighbors.next();
 
 			// Check if it is a data node
@@ -1212,7 +1208,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	private void addIncomingDataEdgesToCollapsedNode(Node collapsedNode, Node member) {
 		int collapsedNodeId = PrefuseUtils.getId(collapsedNode);
-		Set<Node> edgesAddedFrom = new HashSet<>();
+		Set<Node> edgesAddedFrom = new HashSet<Node>();
 
 		// Get the incoming edges for this member
 		Iterator<Node> inNeighbors = member.inNeighbors();
@@ -1879,7 +1875,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 }
 
 	 public static class updateOverview implements PaintListener{
-		private DDGDisplay overview;
+		 private DDGDisplay overview;
 		public updateOverview(DDGDisplay overview){
 			super();
 			this.overview = overview;
@@ -2043,7 +2039,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				builder.initializeDisplay();
 			} catch (HeadlessException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
+				e.printStackTrace();
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, "Cannot read the file");
 			}
@@ -2053,7 +2049,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				builder.initializeDisplay();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
+				e.printStackTrace();
 			}
 		}
 	}

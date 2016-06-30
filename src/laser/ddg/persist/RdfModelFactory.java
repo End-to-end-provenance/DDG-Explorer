@@ -19,7 +19,7 @@ public class RdfModelFactory {
 	public static final String JENA_DIRECTORY
 		= FileUtil.DDG_DIRECTORY + "jena" + File.separatorChar;
 	
-	private static Map<String,Dataset> datasetMap = new HashMap<>();
+	private static Map<String,Dataset> datasetMap = new HashMap<String,Dataset>();
 	
 	// Nobody should try to create an instance of this class.
 	private RdfModelFactory() {

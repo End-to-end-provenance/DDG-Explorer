@@ -3,9 +3,3 @@
 /.project
 /ddgbuilder.jar
 /.settings/
-/nbproject
-/build/
-manifest.mf
-/lib/CopyLibs/*
-lib/nblibraries.properties
-nbbuild.xml

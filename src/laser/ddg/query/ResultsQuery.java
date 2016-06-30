@@ -20,7 +20,6 @@ public class ResultsQuery extends DataQuery {
 
 	/**
 	 * The value to display in the query menu
-         * @return 
 	 */
 	@Override
 	public String getMenuItem() {

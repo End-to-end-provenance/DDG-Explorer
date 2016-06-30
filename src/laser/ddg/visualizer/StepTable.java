@@ -16,16 +16,16 @@ import prefuse.visual.NodeItem;
  */
 public class StepTable {
 	// Maps from a step node to its start node
-	private Map<Node, NodeItem> startTable = new HashMap<>();
+	private Map<Node, NodeItem> startTable = new HashMap<Node, NodeItem>();
 
 	// Maps from a step node to its finish node
-	private Map<Node, NodeItem> finishTable = new HashMap<>();
+	private Map<Node, NodeItem> finishTable = new HashMap<Node, NodeItem>();
 
 	// Maps from a node to the collapsed node that it belongs to
-	private Map<Node, NodeItem> startFinishTable = new HashMap<>();
+	private Map<Node, NodeItem> startFinishTable = new HashMap<Node, NodeItem>();
 
 	// Maps from collapsed node to the member steps.
-	private Map<Node, Set<NodeItem>> memberTable = new HashMap<> ();
+	private Map<Node, Set<NodeItem>> memberTable = new HashMap<Node, Set<NodeItem>> ();
 	
 	/**
 	 * Adds information about a new collapsed node

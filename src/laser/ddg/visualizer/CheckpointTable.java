@@ -19,19 +19,19 @@ import prefuse.visual.NodeItem;
  */
 public class CheckpointTable {
 	// Maps from a checkpoint node to every node that follows it.
-	private Map<Node, Set<NodeItem>> checkpointFollowers = new HashMap<>();
+	private Map<Node, Set<NodeItem>> checkpointFollowers = new HashMap<Node, Set<NodeItem>>();
 	
 	// Maps from a restore node to every node between its checkpoint and the restore
-	private Map<Node, Set<NodeItem>> restoreMembers = new HashMap<>();
+	private Map<Node, Set<NodeItem>> restoreMembers = new HashMap<Node, Set<NodeItem>>();
 	
 	// Maps from a restore node to the checkpoint it pairs with
-	private Map<Node, NodeItem> restoreCheckpoint = new HashMap<>();
+	private Map<Node, NodeItem> restoreCheckpoint = new HashMap<Node, NodeItem>();
 	
 	// Maps from a restore node to the collapsed node
-	private Map<Node, NodeItem> collapsedTable = new HashMap<>();
+	private Map<Node, NodeItem> collapsedTable = new HashMap<Node, NodeItem>();
 	
 	// Restore nodes in order 
-	private LinkedList<NodeItem> checkpointRestoreNodes = new LinkedList<>();
+	private LinkedList<NodeItem> checkpointRestoreNodes = new LinkedList<NodeItem>();
 	
 	/**
 	 * Add a node as a follower to every checkpoint encountered so far.
@@ -39,7 +39,7 @@ public class CheckpointTable {
 	 */
 	public void add(NodeItem n) {
 		if (PrefuseUtils.isCheckpointNode(n)) {
-			checkpointFollowers.put(n, new HashSet<>());
+			checkpointFollowers.put(n, new HashSet<NodeItem>());
 			checkpointRestoreNodes.add(n);
 		}
 		
@@ -67,7 +67,7 @@ public class CheckpointTable {
 					Set<NodeItem> followers = checkpointFollowers.get(checkpointNode);
 					
 					// Record these as the nodes belonging to this restore node.
-					Set<NodeItem> nodesForRestore = new HashSet<>();
+					Set<NodeItem> nodesForRestore = new HashSet<NodeItem>();
 					for (NodeItem f : followers) {
 						nodesForRestore.add(f);
 						// System.out.println("Added " + f + " to nodes for restore");

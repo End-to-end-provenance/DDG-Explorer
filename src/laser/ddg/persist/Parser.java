@@ -109,7 +109,7 @@ public class Parser {
 	// Edges are saved and processed after all the nodes have been added
 	// to the graph.  That way there can be no references to edges that
 	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
+	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<ArrayList<String>>();
 	
 	private File fileBeingParsed;
 	
@@ -179,7 +179,7 @@ public class Parser {
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 		}
 		
 		int nextToken = skipBlankLines();
@@ -308,7 +308,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private void saveEdgeDeclaration() throws IOException {
-		ArrayList<String> decl = new ArrayList<>();
+		ArrayList<String> decl = new ArrayList<String>();
 		decl.add(in.sval);
 		
 		try {
@@ -867,7 +867,7 @@ public class Parser {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		} catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 		}
 	}
 
@@ -900,7 +900,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
+				e.printStackTrace();
 			}
 		}
 		//if target is function node
@@ -924,7 +924,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
+				e.printStackTrace();
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
 				DDGExplorer.showErrMsg(e.getMessage());

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 
 import laser.ddg.persist.FileUtil;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
@@ -67,10 +67,10 @@ public class ProvenanceData {
 
 	// Map to/from resource URIs
 	// private Hashtable<Node, Resource> nodesToResources;
-	private Map<Node, String> nodesToResources;
+	private Hashtable<Node, String> nodesToResources;
 
 	// private Hashtable<Resource, Node> resourcesToNodes;
-	private Map<String, Node> resourcesToNodes;
+	private Hashtable<String, Node> resourcesToNodes;
 
 	// The ID of the DIN that is incremented when the DIN is added to the dins
 	// set
@@ -81,10 +81,10 @@ public class ProvenanceData {
 	private int nextPinId = 1;
 
 	// The objects that want to be notified of data bindings.
-	private List<DataBindingListener> bindingListeners = new LinkedList<>();
+	private List<DataBindingListener> bindingListeners = new LinkedList<DataBindingListener>();
 
 	// Listeners to changes to the DDG
-	private List<ProvenanceListener> provListeners = new LinkedList<>();
+	private List<ProvenanceListener> provListeners = new LinkedList<ProvenanceListener>();
 
 	// Table mapping function names to function bodies
 	private Map<String, String> functionTable;
@@ -107,14 +107,14 @@ public class ProvenanceData {
 	 */
 	public ProvenanceData(String processName) {
 		this.processName = processName;
-		agentConfigurations = new TreeSet<>();
-		pins = new LinkedList<>();
-		dins = new LinkedList<>();
-		processInputs = new LinkedList<>();
-		processOutputs = new LinkedList<>();
+		agentConfigurations = new TreeSet<AgentConfiguration>();
+		pins = new LinkedList<ProcedureInstanceNode>();
+		dins = new LinkedList<DataInstanceNode>();
+		processInputs = new LinkedList<DataInstanceNode>();
+		processOutputs = new LinkedList<DataInstanceNode>();
 
-		nodesToResources = new ConcurrentHashMap<>();
-		resourcesToNodes = new ConcurrentHashMap<>();
+		nodesToResources = new Hashtable<Node, String>();
+		resourcesToNodes = new Hashtable<String, Node>();
 	}
 	
 	/**
@@ -412,7 +412,6 @@ public class ProvenanceData {
 	/**
 	 * Returns a String representation of all the nodes, edges and agents held
 	 * in this ProvenanceData object.
-         * @return 
 	 */
 	@Override
 	public String toString() {
@@ -621,8 +620,8 @@ public class ProvenanceData {
 	 * @return
 	 */
 	public Map<String, Serializable> revertTo(ProcedureInstanceNode pin) {
-		Map<String, Serializable> artifacts = new HashMap<>();
-		List<DataInstanceNode> outputParamList = new ArrayList<>();
+		Map<String, Serializable> artifacts = new HashMap<String, Serializable>();
+		List<DataInstanceNode> outputParamList = new ArrayList<DataInstanceNode>();
 
 		ProcedureInstanceNode currentpin = pin;
 		Iterator<DataInstanceNode> outputParamValues = currentpin
@@ -792,8 +791,8 @@ public class ProvenanceData {
 			blockTable = scriptParser.buildBlockTable(fileName);
 		}
 		else {
-			functionTable = new HashMap<>();
-			blockTable = new HashMap<>();
+			functionTable = new HashMap<String, String>();
+			blockTable = new HashMap<String, String>();
 		}
 	}
 

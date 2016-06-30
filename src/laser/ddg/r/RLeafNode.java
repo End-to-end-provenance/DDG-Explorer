@@ -18,7 +18,6 @@ public class RLeafNode extends RFunctionInstanceNode {
 	 * @param procName the name of the function
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
 	 */
 	public RLeafNode(String name, String procName, ProvenanceData provData, double elapsedTime, int lineNum) {
 		super(name, procName, provData, elapsedTime, lineNum);

@@ -18,7 +18,6 @@ import laser.ddg.query.Query;
 public class ShowValueDerivationCommand implements ActionListener {
 	/**
 	 * Loads the portion of a DDG that shows how a data value has been computed
-         * @param e
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

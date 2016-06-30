@@ -2,6 +2,7 @@ package laser.ddg.search;
 
 import java.util.ArrayList;
 
+import com.ibm.icu.util.Calendar;
 
 /**
  * Manages lists of nodes by type to facilitate searching.
@@ -12,12 +13,12 @@ import java.util.ArrayList;
  */
 public class SearchIndex {
 	//2D Array to hold information on each type of node for search within Current DDG
-	private ArrayList<SearchElement> errorList = new ArrayList<>();
-	private ArrayList<SearchElement> dataList = new ArrayList<>();
-	private ArrayList<SearchElement> fileList = new ArrayList<>();
-	private ArrayList<SearchElement> urlList = new ArrayList<>();
-	private ArrayList<OperationSearchElement> operationList = new ArrayList<>();
-	private ArrayList<SearchElement> allList = new ArrayList<>();
+	private ArrayList <SearchElement> errorList = new ArrayList<SearchElement>();
+	private ArrayList <SearchElement> dataList = new ArrayList<SearchElement>();
+	private ArrayList <SearchElement> fileList = new ArrayList<SearchElement>();
+	private ArrayList <SearchElement> urlList = new ArrayList<SearchElement>();
+	private ArrayList <OperationSearchElement> operationList = new ArrayList<OperationSearchElement>();
+	private ArrayList <SearchElement> allList = new ArrayList<SearchElement>();
 
 	/**
 	 * Adds a node to the appropriate search index based on the node's type.
@@ -26,7 +27,6 @@ public class SearchIndex {
 	 * @param type the type of node:  one of "Exception", "Data", "File", "URL", or "Operation"
 	 * @param id the node id used by Prefuse
 	 * @param name the node's label
-         * @param time
 	 */
 	public void addToSearchIndex(String type, int id, String name, String time) {
 		SearchElement element;

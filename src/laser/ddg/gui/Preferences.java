@@ -7,8 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
@@ -27,7 +26,7 @@ import laser.ddg.persist.FileUtil;
 public class Preferences {
 	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY
 			+ "prefs.txt");
-	private static Map<String, String> preferences = new ConcurrentHashMap<>();
+	private static Hashtable<String, String> preferences = new Hashtable<String, String>();
 
 
 	/**
