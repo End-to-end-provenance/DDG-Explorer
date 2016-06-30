@@ -146,7 +146,7 @@ class SearchPanel extends JPanel {
 			return;
 		}
 
-		ArrayList<SearchElement> newList = new ArrayList<SearchElement>();
+		ArrayList<SearchElement> newList = new ArrayList<>();
 		// if user entered information into the search bar
 		if (searchTyped) {
 			String searchText = searchField.getText().toLowerCase();

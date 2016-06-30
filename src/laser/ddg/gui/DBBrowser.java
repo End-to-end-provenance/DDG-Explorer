@@ -39,7 +39,7 @@ import laser.ddg.persist.JenaLoader;
  */
 public abstract class DBBrowser extends JPanel{
 	// Listeners to the selections made in the process and timestamp lists.
-	private Set<DBBrowserListener> listeners = new HashSet<DBBrowserListener>();
+	private Set<DBBrowserListener> listeners = new HashSet<>();
 	
 	// The timestamp list
 	private JList<String> timestampList;
@@ -60,7 +60,7 @@ public abstract class DBBrowser extends JPanel{
 	 * @param jenaLoader the object that can read information from the database
 	 */
 	public DBBrowser(final JenaLoader jenaLoader) {
-		processNames = new ArrayList<String>(jenaLoader.getAllProcessNames());
+		processNames = new ArrayList<>(jenaLoader.getAllProcessNames());
 		Collections.sort(processNames, new Comparator<String>() {
 
 			@Override
@@ -69,12 +69,12 @@ public abstract class DBBrowser extends JPanel{
 			}
 			
 		});
-		final JList<String> processNameList = new JList<String>(processNames.toArray(new String[1]));
+		final JList<String> processNameList = new JList<>(processNames.toArray(new String[1]));
 		processNameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		// Create an emtpy timestamp list
-		final Vector<String> timestampVector = new Vector<String>();
-		timestampList = new JList<String>(timestampVector);
+		final Vector<String> timestampVector = new Vector<>();
+		timestampList = new JList<>(timestampVector);
 		timestampList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
 		processNameList.addListSelectionListener(new ListSelectionListener() {
@@ -140,7 +140,7 @@ public abstract class DBBrowser extends JPanel{
 	 * @param timestampList the GUI component that is updated
 	 */
 	private void updateTimestampList(JenaLoader jenaLoader) {
-		DefaultListModel<String> timestampData = new DefaultListModel<String>();
+		DefaultListModel<String> timestampData = new DefaultListModel<>();
 		List<String> timestamps = jenaLoader.getTimestamps(selectedProcessName);
 		for (String timestamp : timestamps) {
 			timestampData.addElement(timestamp);
@@ -155,7 +155,7 @@ public abstract class DBBrowser extends JPanel{
 	 */
 	public List<String> getDisplayedTimestamps() {
 		ListModel<String> listModel = timestampList.getModel();
-		List<String> timestamps = new ArrayList<String>();
+		List<String> timestamps = new ArrayList<>();
 		for (int i = 0; i < listModel.getSize(); i++) {
 			timestamps.add(listModel.getElementAt(i));
 		}

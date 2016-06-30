@@ -41,7 +41,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the items to appear in the legend
 	 */
 	public static ArrayList<LegendEntry> createNodeLegend () {
-		ArrayList<LegendEntry> legend = new ArrayList<LegendEntry>();
+		ArrayList<LegendEntry> legend = new ArrayList<>();
 		legend.add(new LegendEntry("Collapsible Operation", PrefuseGraphBuilder.NONLEAF_COLOR));
 		legend.add(new LegendEntry("Expandable Operation", PrefuseGraphBuilder.STEP_COLOR));
 		legend.add(new LegendEntry("Simple Operation", PrefuseGraphBuilder.LEAF_COLOR));
@@ -60,7 +60,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the items to appear in the legend
 	 */
 	public static ArrayList<LegendEntry> createEdgeLegend () {
-		ArrayList<LegendEntry> legend = new ArrayList<LegendEntry>();
+		ArrayList<LegendEntry> legend = new ArrayList<>();
 		legend.add(new LegendEntry("Control Flow", PrefuseGraphBuilder.CONTROL_FLOW_COLOR));
 		legend.add(new LegendEntry("Data Flow", PrefuseGraphBuilder.DATA_FLOW_COLOR));
 		return legend;
@@ -128,6 +128,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @param value optional value associated with the data node
 	 * @param time the timestamp of the data node
 	 * @param location the original location of a file, null if not a file node
+         * @return 
 	 */
 	@Override
 	public DataInstanceNode addDataNode(String type, int id, String name, String value, String time, String location){

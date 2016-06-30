@@ -9,7 +9,6 @@ import java.util.Comparator;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.search.OperationSearchElement;
-import laser.ddg.search.SearchElement;
 
 public class FindTimeCommand implements ActionListener {
 

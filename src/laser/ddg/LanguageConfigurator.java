@@ -1,6 +1,7 @@
 package laser.ddg;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +15,10 @@ import laser.ddg.persist.DBWriter;
  */
 public class LanguageConfigurator {
 	// Map from a language name to the name of a class to construct to be the DDGBuiler.
-	private static Map<String, String> languageBuilders = new HashMap<String, String>();
+	private static Map<String, String> languageBuilders = new HashMap<>();
 
 	// Map from a language name to the name of a class to parse programs written in that language
-	private static Map<String, String> parsers= new HashMap<String, String>();
+	private static Map<String, String> parsers= new HashMap<>();
 
 	/**
 	 * Creates a language-specific DDG builder for the given language.  The class implementing that 
@@ -38,8 +39,8 @@ public class LanguageConfigurator {
 			Constructor<DDGBuilder> builderConstructor;
 			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class, dbWriterClass);
 			return builderConstructor.newInstance(scrpt, provData, dbWriter);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create DB loader for " + language, e);
 		}
 	}
@@ -85,8 +86,8 @@ public class LanguageConfigurator {
 		try {
 			Class<LanguageParser> parserClass = (Class<LanguageParser>) Class.forName(parserClassName);
 			return parserClass.newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create parser for " + language, e);
 		}
 	}

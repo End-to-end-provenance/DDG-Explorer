@@ -121,10 +121,10 @@ public class FileViewer {
 			contents = new JScrollPane(text,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			
-		}catch (Exception ex){
+		}catch (Exception e){
 			// Catch block that will print out exception
-			DDGExplorer.showErrMsg("Error with file. "+ ex.getMessage());
-			ex.printStackTrace();
+			DDGExplorer.showErrMsg("Error with file. "+ e.getMessage());
+			e.printStackTrace(System.err);
 		}		
 		
 	}
@@ -145,15 +145,15 @@ public class FileViewer {
 				// browser
 				uri = new URI(path);
 				desktop.browse(uri);
-			} catch (URISyntaxException e1) {
+			} catch (URISyntaxException e) {
 				// Catch block that will print out exception for URI
-				JOptionPane.showMessageDialog(null, "Error with URL. " + e1.getMessage());
-				e1.printStackTrace();
-			} catch (IOException e2) {
+				JOptionPane.showMessageDialog(null, "Error with URL. " + e.getMessage());
+				e.printStackTrace(System.err);
+			} catch (IOException e) {
 				// Catch block that will print out exception for IO when
 				// opening browser
-				JOptionPane.showMessageDialog(null, "Error loading URL. " + e2.getMessage());
-				e2.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Error loading URL. " + e.getMessage());
+				e.printStackTrace(System.err);
 			}
 		}
 		else {
@@ -204,10 +204,10 @@ public class FileViewer {
 					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			contents = scroll;
 			
-		}catch (Exception ex){
+		}catch (Exception e){
 			// Catch block that will print out exception
-			DDGExplorer.showErrMsg("Error with file. "+ ex.getMessage());
-			ex.printStackTrace();
+			DDGExplorer.showErrMsg("Error with file. "+ e.getMessage());
+			e.printStackTrace(System.err);
 		}		
 
 	}
@@ -231,7 +231,7 @@ public class FileViewer {
 	 */
 	private static ArrayList<String[]> readRows(Scanner readFile) {
 		//This will hold all the row information
-		ArrayList<String[]> rowData= new ArrayList<String[]>(); 
+		ArrayList<String[]> rowData= new ArrayList<>(); 
 		
 		//each row takes up one line, each value is split by ","
 		while(readFile.hasNextLine()){
@@ -326,7 +326,6 @@ public class FileViewer {
 			// pdfs and other files not handled above will try to use 
 			// a platform-specific application
 			displayNatively();
-			return;
 		}
 		
 
