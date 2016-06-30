@@ -525,8 +525,8 @@ public class Parser {
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 
 		System.out.println("Line number = " + lineNum);
-		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, elapsedTime, null, lineNum);
+		//builder.addNode(nodeType, extractUID(nodeId), 
+//					constructName(nodeType, name), value, elapsedTime, null, lineNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum);
@@ -813,8 +813,8 @@ public class Parser {
 			if (ddgBuilder != null) {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
-			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location, -1);
+			//builder.addNode(nodeType, extractUID(nodeId), 
+					//constructName(nodeType, name), value, timestamp, location, -1);
 
 			
 		} catch (IllegalStateException e) {
@@ -964,7 +964,7 @@ public class Parser {
 				parseDataFlowEdge(tokens);
 			}
 
-			builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
+			//builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
 		} catch (NoSuchDataNodeException e) {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		} catch (NoSuchProcNodeException e) {

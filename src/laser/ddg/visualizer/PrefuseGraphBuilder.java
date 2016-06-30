@@ -510,6 +510,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
+				System.out.println("Adding node at row " + rowNum);
+				//Thread.currentThread().dumpStack();
+				
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
 				nodes.setInt(rowNum, PrefuseUtils.ID, id);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
@@ -853,7 +856,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void procedureNodeCreated(ProcedureInstanceNode pin) {
-		//System.out.println("Adding procedure node " + pin.getName());
+		System.out.println("Adding procedure node " + pin.getName());
 		synchronized (vis) {
 			int pinId = pin.getId();
 			if (pinId >= MIN_DATA_ID) {
@@ -943,7 +946,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	void layout(Node focusNode) {
 		synchronized (vis) {
-			vis.run("layout");
+			//vis.run("layout");
 			updateFocusGroup(PrefuseUtils.getId(focusNode));
 			vis.run("color");
 			vis.run("repaint");
@@ -1651,7 +1654,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		synchronized (vis) {
 			int successorId = successor.getId();
 			int predecessorId = predecessor.getId();
-			//System.out.println("Creating successor edge from " + successor.getNameAndType() + " to " + predecessor.getNameAndType());
+			System.out.println("Creating successor edge from " + successor.getNameAndType() + " to " + predecessor.getNameAndType());
 			addEdge(PrefuseUtils.CONTROL_FLOW, successorId, predecessorId);
 			if (!incremental) {
 				return;
@@ -1705,6 +1708,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		synchronized (vis) {
 			int dataNodeId = e.getDataNode().getId() + MIN_DATA_ID;
 			int procNodeId = e.getProcNode().getId();
+			System.out.println("Creating data edge from " + procNodeId + " to " + dataNodeId);
 			if (e.getEvent() == BindingEvent.INPUT) {
 				addEdge(PrefuseUtils.DATA_FLOW, procNodeId, dataNodeId);
 
