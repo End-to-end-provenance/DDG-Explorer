@@ -894,20 +894,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		synchronized (vis) {
 			vis.run("color");
+			vis.run("layout");
 			vis.run("repaint");
+			
 		}
 
-		try {
-			if (incremental) {
-				System.out.println("Hit return to continue.");
-				in.readLine();
-				ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
-				
-			}
-		} catch (IOException exception) {
-			// TODO Auto-generated catch-block stub.
-			exception.printStackTrace();
-		}
+//		try {
+//			if (incremental) {
+////				System.out.println("Hit return to continue.");
+////				in.readLine();
+//			}
+//		} catch (IOException exception) {
+//			// TODO Auto-generated catch-block stub.
+//			exception.printStackTrace();
+//		}
 
 	}
 

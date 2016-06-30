@@ -781,7 +781,7 @@ public class ProvenanceData {
 		System.out.println("LANGUAGE " + language);
 		scriptFileName = fileName;
 		System.out.println("SCRIPT FILE NAME IN PROVENANCE DATA " + fileName.toString());
-		//this is just the R script file...
+		//this is just R Scipt..
 		if (scriptParser != null) {
 			functionTable = scriptParser.buildFunctionTable(fileName);
 			blockTable = scriptParser.buildBlockTable(fileName);

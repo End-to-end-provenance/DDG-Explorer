@@ -221,7 +221,7 @@ public class Parser {
 		while (nextToken != StreamTokenizer.TT_EOF) {
 			// System.out.println(in.sval);
 			parseDeclaration(nextToken);
-			System.out.println("TOKEN IN WHILE" + nextToken);
+			System.out.println("TOKEN" + nextToken);
 			nextToken = skipBlankLines();
 		}
 		addEdges();
