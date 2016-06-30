@@ -778,7 +778,10 @@ public class ProvenanceData {
 	 */
 	public void createFunctionTable(String fileName) {
 		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
+		System.out.println("LANGUAGE " + language);
 		scriptFileName = fileName;
+		System.out.println("SCRIPT FILE NAME IN PROVENANCE DATA " + fileName.toString());
+		//this is just the R script file...
 		if (scriptParser != null) {
 			functionTable = scriptParser.buildFunctionTable(fileName);
 			blockTable = scriptParser.buildBlockTable(fileName);

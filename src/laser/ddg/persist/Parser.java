@@ -186,10 +186,12 @@ public class Parser {
 		
 		// If there was no script attribute, use the filename.
 		if (scrpt == null) {
+			System.out.println("DID IT EVEN GET IN HERE");
 			scrpt = fileBeingParsed.getName();
 		}
 		
 		ProvenanceData provData = new ProvenanceData(scrpt,timestamp,language);
+		System.out.println("SCRPT NAME" + scrpt);
 		
 		
 		// Store the file path to the selected file in attributes
@@ -199,24 +201,27 @@ public class Parser {
 		provData.createFunctionTable();
 		provData.setQuery("Entire DDG");
 		builder.setProvData(provData);
-		
+		System.out.println("HERE IN");
 		try {
 			if (language == null) {
 				language = "Little-JIL";
+				System.out.println("HERE IN IF ");
 			}
 			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
 			builder.createLegend(language);
-
-			//System.out.println("Using " + ddgBuilder.getClass().getName());
+			System.out.println("ARE WE EVEN IN TRY");
+			System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
 			e.printStackTrace();
 		}
 		
 		int nextToken = skipBlankLines();
+		System.out.println("TOKEN" + nextToken);
 		while (nextToken != StreamTokenizer.TT_EOF) {
 			// System.out.println(in.sval);
 			parseDeclaration(nextToken);
+			System.out.println("TOKEN IN WHILE" + nextToken);
 			nextToken = skipBlankLines();
 		}
 		addEdges();
@@ -249,6 +254,7 @@ public class Parser {
 		try {
 			if (language == null) {
 				language = "Little-JIL";
+				System.out.println("HERE");
 			}
 			ddgBuilder = LanguageConfigurator.createDDGBuilder("R", scrpt, provData, null);
 			builder.createLegend("R");
@@ -258,8 +264,11 @@ public class Parser {
 			e.printStackTrace();
 		}
 		
+		
 		int nextToken = skipBlankLines();
+		System.out.println("TOKEN" + nextToken);
 		while (nextToken != StreamTokenizer.TT_EOF) {
+			System.out.println("TOKEN IN WHILE" + nextToken);
 			// System.out.println(in.sval);
 			parseDeclaration(nextToken);
 			nextToken = skipBlankLines();
@@ -420,7 +429,6 @@ public class Parser {
 		else if(nodeId.startsWith("d") && ddgBuilder != null){
 			parseDataNode(nodeType, nodeId);
 		}
-		
 	}
 
 	/**

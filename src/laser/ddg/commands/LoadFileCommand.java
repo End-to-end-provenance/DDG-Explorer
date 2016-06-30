@@ -33,9 +33,11 @@ public class LoadFileCommand implements ActionListener {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
-			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
+			PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter);
 			File selectedFile = FILE_CHOOSER.getSelectedFile();
+			System.out.println("FILE " + selectedFile.toString());
 			String selectedFileName = selectedFile.getName();
+			System.out.println("FILE NAME " + selectedFile.getName());
 			DDGExplorer.loadingDDG();
 			builder.processStarted(selectedFileName, null);
 			Parser parser = new Parser(selectedFile, builder);
@@ -63,19 +65,24 @@ public class LoadFileCommand implements ActionListener {
 	}
 
 
-	public static void executeIncrementalDrawing(String fileName, DDGServer ddgSocket) throws Exception {
+	public static void executeIncrementalDrawing(DDGServer ddgSocket) throws Exception {
+		System.out.println("FILE NAME" + ddgSocket.getFileName());
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
-		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter);
-		String selectedFileName = fileName;
+		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(true, jenaWriter,ddgSocket);
+		File file = new File(ddgSocket.getFileName());
+		String selectedFileName = file.getName();
+
 		DDGExplorer.loadingDDG();
+		builder.setTitle(selectedFileName, ddgSocket.getTimeStamp());
 		builder.processStarted(selectedFileName, null);
+		
 		Parser parser = new Parser(ddgSocket, builder);
 		//new tab!
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
-//		parser.addNodesAndEdges();
+		parser.addNodesAndEdgesForIncrementalDrawing(ddgSocket);
 
 	}
 

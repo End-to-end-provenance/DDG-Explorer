@@ -25,6 +25,7 @@ import javax.swing.event.MouseInputListener;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
+import laser.ddg.DDGServer;
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
 import laser.ddg.DataInstanceNode;
@@ -116,8 +117,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	// visualization and display tools
 	private DDGVisualization vis = new DDGVisualization();
-	private BufferedReader in = new BufferedReader(new InputStreamReader(
-			System.in));
+//	private BufferedReader in = new BufferedReader(new InputStreamReader(
+//			System.in));
+	private BufferedReader in; 
 	//private PINClickControl pinClickControl = new PINClickControl(this);
 
 	// display
@@ -169,17 +171,27 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		ddgPanel = new DDGPanel();
 		ddgPanel.setSearchIndex (searchIndex);
 	}
+	
+	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter) {
+		this.incremental = incremental;
+		ddgPanel = new DDGPanel(jenaWriter);
+		in = new BufferedReader(new InputStreamReader(System.in));
+		ddgPanel.setSearchIndex (searchIndex);
+		
+	}
 
 	/**
 	 * Creates an object that builds a visual graph.
 	 * @param incremental if true, pauses after adding each node to the graph so
 	 * 		that the user can see the updates
 	 * @param jenaWriter the object used to write to the DB
+	 * @throws IOException 
 	 */
-	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter) {
+	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter,DDGServer ddgServer) throws IOException {
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
 		ddgPanel.setSearchIndex (searchIndex);
+		in = new BufferedReader(new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
 	}
 
 	/**
@@ -889,6 +901,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			if (incremental) {
 				System.out.println("Hit return to continue.");
 				in.readLine();
+				ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
+				
 			}
 		} catch (IOException exception) {
 			// TODO Auto-generated catch-block stub.

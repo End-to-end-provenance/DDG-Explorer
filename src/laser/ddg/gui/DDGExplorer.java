@@ -80,7 +80,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 	private static boolean loadingDDG = false;
 	private static DDGServer ddgServer;
-	private static LoadFileCommand ddgLFC;
 
 	// Accumulates error messages while a ddg is being loaded.
 	// Added to the corresponding DDG panel's error log when 
@@ -531,13 +530,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			if(args.length==1){
 				if(args[0].equals("True")){
 					ddgServer = new DDGServer(6096);
-					ddgLFC = new LoadFileCommand();
-					ddgLFC.executeIncrementalDrawing(ddgServer.getFileName(),ddgServer);
+					LoadFileCommand.executeIncrementalDrawing(ddgServer);
 				}
 				else{
-					ddgLFC = new LoadFileCommand();
-					Path ddgtxtPath = Paths.get(args[0]);
-					ddgLFC.loadFile(ddgtxtPath.toFile());
+					LoadFileCommand.loadFile(new File(args[0]));
 				}
 			}
 

@@ -22,9 +22,9 @@ public class DDGServer extends ServerSocket{
 		}
 		fileName = in.readLine();
 		timeStamp = in.readLine();
-		while((s =in.readLine())!=null){
-			System.out.println(s);
-		}
+//		while((s =in.readLine())!=null){
+//			System.out.println(s);
+//		}
 		this.close();
 	}
 	
