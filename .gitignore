@@ -9,3 +9,4 @@ manifest.mf
 /lib/CopyLibs/*
 lib/nblibraries.properties
 nbbuild.xml
+*.jar
