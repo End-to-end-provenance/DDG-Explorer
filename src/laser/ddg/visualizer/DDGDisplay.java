@@ -109,7 +109,7 @@ public class DDGDisplay extends Display {
 
 		//Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
-		String valueExt;
+		String valueExt = "";
 		if(value != null){
 			int index = value.lastIndexOf(".");
 			valueExt = value.substring(index);
@@ -244,7 +244,7 @@ public class DDGDisplay extends Display {
 			}
 		} catch (ParseException e) {
 			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 		}
 	}
@@ -527,7 +527,7 @@ public class DDGDisplay extends Display {
 					File theFile = new File(fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
-			    	lineStarts = new ArrayList<>();
+			    	lineStarts = new ArrayList<Integer>();
 	
 					try {
 						readFile = new Scanner(theFile);
@@ -578,7 +578,7 @@ public class DDGDisplay extends Display {
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace(System.err);
+						e.printStackTrace();
 					}
 
 				}

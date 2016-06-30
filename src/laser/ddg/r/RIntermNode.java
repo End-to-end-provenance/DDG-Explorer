@@ -16,7 +16,6 @@ public class RIntermNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
 	 */
 	public RIntermNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
 		super(name, null, provData, elapsedTime, lineNum);
@@ -27,7 +26,6 @@ public class RIntermNode extends RFunctionInstanceNode {
 	 * 
 	 * @return false-Interim node cannot be root
 	 */
-        @Override
 	public boolean canBeRoot() {
 		return false;
 	}
@@ -37,7 +35,6 @@ public class RIntermNode extends RFunctionInstanceNode {
 	 * 
 	 * @return "Interm"
 	 */
-        @Override
 	public String getType() {
 		return "Interm";
 	}

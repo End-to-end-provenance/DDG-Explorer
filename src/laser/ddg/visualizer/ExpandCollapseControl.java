@@ -28,8 +28,6 @@ public class ExpandCollapseControl extends ControlAdapter {
 	 * When ther user left-clicks on a start node, the node is 
 	 * collapsed.  When the user left-clicks on a step node, the
 	 * node is expanded.
-         * @param item
-         * @param e
 	 */
 	@Override
 	public void itemClicked(VisualItem item, MouseEvent e) {

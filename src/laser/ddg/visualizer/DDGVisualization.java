@@ -236,7 +236,6 @@ public class DDGVisualization extends Visualization {
 			super (PrefuseUtils.NAME);
 		}
 		
-                @Override
 		protected String getText(VisualItem item) {
 			int lineNum = PrefuseUtils.getLineNumber((Node)item);
 			if (lineNum <= 0) {

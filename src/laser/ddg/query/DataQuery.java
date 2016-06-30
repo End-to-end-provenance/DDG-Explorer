@@ -107,14 +107,14 @@ public abstract class DataQuery extends AbstractQuery {
 		
 		SortedSet<String> dinNames = dbLoader.getAllDinNames(processName, timestamp);
 		
-		Vector<String> names = new Vector<>();
+		Vector<String> names = new Vector<String>();
 		for (String dinName : dinNames) {
 			names.add(dinName);
 		}
 		
 		queryFrame = new JFrame (getFrameTitle());
 		final JPanel varQueryPanel = new JPanel();
-		nameMenu = new JComboBox<>(names);
+		nameMenu = new JComboBox<String>(names);
 		final JButton okButton = new JButton("OK");
 		
 		nameMenu.addActionListener(new ActionListener() {

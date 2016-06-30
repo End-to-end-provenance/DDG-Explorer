@@ -90,7 +90,7 @@ public class FileUseQuery extends AbstractQuery {
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	
 	/**
-	 * @return the command name for the query
+	 * Return the command name for the query
 	 */
 	@Override
 	public String getMenuItem() {
@@ -101,10 +101,6 @@ public class FileUseQuery extends AbstractQuery {
 	 * Execute the query.  This will create a panel (in a tab) allowing the user to select options.
 	 * Hitting ok in the panel causes the query to run.
 	 *
-         * @param dbLoader
-         * @param processName
-         * @param timestamp
-         * @param visualization
 	 */
 	@Override
 	public void performQuery(final JenaLoader dbLoader, String processName, String timestamp, Component visualization) {
@@ -292,7 +288,7 @@ public class FileUseQuery extends AbstractQuery {
 						selectedIO = IO;
 					}
 					
-					ArrayList<String> selectedExtensions = new ArrayList<>();
+					ArrayList<String> selectedExtensions = new ArrayList<String>();
 					if (!allBox.isSelected()) {
 						if (csvBox.isSelected()) {
 							selectedExtensions.add(".csv");

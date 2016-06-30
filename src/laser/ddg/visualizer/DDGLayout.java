@@ -42,7 +42,7 @@ public class DDGLayout extends TreeLayout {
 	private Set<NodeItem> secondWalkDone;
 	
 	// The rightmost node at each depth
-	private Map<Integer, NodeItem> rightMostAtDepth = new HashMap<>();
+	private Map<Integer, NodeItem> rightMostAtDepth = new HashMap<Integer, NodeItem>();
 
 	// If true, means that we are drawing a data derivation, not a full DDG.
 	// The graph might not contain any control flow edges, which affects the way
@@ -111,8 +111,8 @@ public class DDGLayout extends TreeLayout {
 		NodeItem root = getLayoutRoot();
 		synchronized(root.getVisualization()) {
 			// initialize the two sets every time the layout is done
-			laidOutNodes = new HashSet<>();
-			secondWalkDone = new HashSet<>();
+			laidOutNodes = new HashSet<NodeItem>();
+			secondWalkDone = new HashSet<NodeItem>();
 
 			Graph g = (Graph) m_vis.getGroup(m_group);
 			TupleSet nodes = g.getNodes();
@@ -314,7 +314,7 @@ public class DDGLayout extends TreeLayout {
 	 */
 	private Iterator<NodeItem> unattachedParents(NodeItem n) {
 		//System.out.println("Getting unattached parents of " + n);
-		ArrayList<NodeItem> unattachedParents = new ArrayList<>();
+		ArrayList<NodeItem> unattachedParents = new ArrayList<NodeItem>();
 		Iterator<Node> neighbors = n.outNeighbors();
 		Node root = getLayoutRoot();
 
@@ -330,7 +330,7 @@ public class DDGLayout extends TreeLayout {
 	}
 
 	private void resetRightMost() {
-		rightMostAtDepth = new HashMap<>();
+		rightMostAtDepth = new HashMap<Integer, NodeItem>();
 	}
 
 	/**

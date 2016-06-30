@@ -50,8 +50,8 @@ public class AgentConfiguration {
 	public AgentConfiguration(String name, String ver) {
 		agentName = name;
 		version = ver;
-		configParameters = new TreeMap<>();
-		additionalInfo = new TreeMap<>();
+		configParameters = new TreeMap<String, String>();
+		additionalInfo = new TreeMap<String, Object>();
 		agentId = agentCounter;
 		agentCounter++;
 	}
