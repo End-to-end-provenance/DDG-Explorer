@@ -442,7 +442,7 @@ public class GraphComp extends JPanel {
       parserRight = new Parser(selectedFileRight, builderRight);
       parserRight.addNodesAndEdges();
     } catch (Exception e) {
-      System.out.println("Exceptions caught" + e.getMessage());
+      //System.out.println("Exceptions caught" + e.getMessage());
     }
 
     //System.out.println("Left DDG Build Complete");
@@ -488,7 +488,7 @@ public class GraphComp extends JPanel {
               new OutputStreamWriter(
                   new FileOutputStream("rightTemp.txt"), StandardCharsets.UTF_8));
     } catch (Exception e) {
-      System.out.println("File creation exception raised" + e.getMessage());
+      //System.out.println("File creation exception raised" + e.getMessage());
     }
 
     for (int i = 1; i <= parserLeft.numPins; i++) {
@@ -507,7 +507,7 @@ public class GraphComp extends JPanel {
           writerLeft.write(add + "\n");
         }
       } catch (IOException e) {
-        System.out.println("writing to left file error"+e.getMessage());
+       // System.out.println("writing to left file error"+e.getMessage());
       }
     }
 
@@ -527,7 +527,7 @@ public class GraphComp extends JPanel {
           writerRight.write(add + "\n");
         }
       } catch (IOException e) {
-        System.out.println("writing to right file error" + e.getMessage());
+        //System.out.println("writing to right file error" + e.getMessage());
       }
     }
 
@@ -535,7 +535,7 @@ public class GraphComp extends JPanel {
       writerLeft.close();
       writerRight.close();
     } catch (IOException e) {
-      System.out.println("Exception caught in write close" + e.getMessage());
+      //System.out.println("Exception caught in write close" + e.getMessage());
     }
   }
 
