@@ -442,7 +442,7 @@ public class GraphComp extends JPanel {
       parserRight = new Parser(selectedFileRight, builderRight);
       parserRight.addNodesAndEdges();
     } catch (Exception e) {
-      System.out.println("Exceptions caught");
+      System.out.println("Exceptions caught" + e.getMessage());
     }
 
     //System.out.println("Left DDG Build Complete");
@@ -496,7 +496,7 @@ public class GraphComp extends JPanel {
       int position = Integer.MAX_VALUE;
       boolean isPresent = false;
       String curNodeName = builderLeft.getName(builderLeft.getNode(i));
-      System.out.println(curNodeName.replaceAll("\\s+", ""));
+     // System.out.println(curNodeName.replaceAll("\\s+", ""));
       try {
         String dummy = curNodeName.replaceAll("\\s+", "");
         if (dummy.indexOf("[") < 0) {
@@ -507,7 +507,7 @@ public class GraphComp extends JPanel {
           writerLeft.write(add + "\n");
         }
       } catch (IOException e) {
-        System.out.println("writing to left file error");
+        System.out.println("writing to left file error"+e.getMessage());
       }
     }
 
@@ -516,7 +516,7 @@ public class GraphComp extends JPanel {
       int position = Integer.MAX_VALUE;
       boolean isPresent = false;
       String curNodeName = builderRight.getName(builderRight.getNode(i));
-      System.out.println(curNodeName.replaceAll("\\s+", ""));
+      //System.out.println(curNodeName.replaceAll("\\s+", ""));
       try {
         String dummy = curNodeName.replaceAll("\\s+", "");
         if (dummy.indexOf("[") < 0) {
@@ -548,7 +548,7 @@ public class GraphComp extends JPanel {
   private void computeDiffResult() {
     diffOutput =
         new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
-    System.out.println(diffOutput);
+   // System.out.println(diffOutput);
     String[] diffOutputArray = diffOutput.split("\n");
     int leftnode = 1, rightnode = 1;
     for (int i = 0; i < diffOutputArray.length; i++) {
