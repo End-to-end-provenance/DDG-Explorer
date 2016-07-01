@@ -83,6 +83,7 @@ public class Parser {
 
 	private static final String LINE_NUMBER = "Line";
 
+
 	// The input stream
 	private StreamTokenizer in;
 	
@@ -117,8 +118,11 @@ public class Parser {
 	// Time of the last procedure node encountered
 	private double lastProcElapsedTime = 0.0;
 	
+	//Determine whether the execution is incremental or not
+	private boolean incremental = false;
+	
 	/**
-	 * Initializes the parser
+	 * Initializes the parser and reads from the file
 	 * @param file the file to read the DDG from
 	 * @param builder the prefuse object that will build the graph
 	 * @throws FileNotFoundException if the file to parse cannot be found
@@ -149,10 +153,14 @@ public class Parser {
 		fileBeingParsed = file;
 	}
 	
-	
-	public Parser(DDGServer ddgServer, PrefuseGraphBuilder builder) 
-			throws IOException {
-			//Reader r = new BufferedReader (new InputStreamReader(ddgServer.getClientSocket().getInputStream()));
+	/**
+	 * Initializes the parser and reads from the server
+	 * @param ddgServer to read from the server
+	 * @param builder the prefuse object that will build the graph
+	 * @throws IOException
+	 */
+	public Parser(DDGServer ddgServer, PrefuseGraphBuilder builder) throws IOException {
+			incremental = true;
 			Reader r = ddgServer.getClientReader();
 		    in = new StreamTokenizer(r);
 		    in.eolIsSignificant(true);
@@ -176,7 +184,6 @@ public class Parser {
 			ddgBuilder = null;
 		}
 
-	
 
 	/**
 	 * Adds the nodes and edges from the DDG to the graph.
@@ -187,7 +194,6 @@ public class Parser {
 		
 		// If there was no script attribute, use the filename.
 		if (scrpt == null) {
-			System.out.println("DID IT EVEN GET IN HERE");
 			scrpt = fileBeingParsed.getName();
 		}
 		
@@ -202,7 +208,7 @@ public class Parser {
 		provData.createFunctionTable();
 		provData.setQuery("Entire DDG");
 		builder.setProvData(provData);
-		System.out.println("HERE IN");
+
 		try {
 			if (language == null) {
 				language = "Little-JIL";
@@ -239,7 +245,7 @@ public class Parser {
 	 */
 	public void addNodesAndEdgesForIncrementalDrawing(DDGServer ddgServer) throws IOException {
 		System.out.println("Calling parseHeader");
-		parseHeader();
+		//parseHeader();
 		// Probably should not hardwire this in.
 		//language = "R";
 		
@@ -272,7 +278,7 @@ public class Parser {
 		
 		
 		int nextToken = skipBlankLines();
-		System.out.println("TOKEN" + nextToken);
+
 		while (nextToken != StreamTokenizer.TT_EOF) {
 			System.out.println("TOKEN IN WHILE" + nextToken);
 			// System.out.println(in.sval);
@@ -355,8 +361,12 @@ public class Parser {
 	 */
 	private void parseDeclaration(int nextToken) throws IOException {
 		if (nextToken == StreamTokenizer.TT_WORD) {
-			if (in.sval.equals(CONTROL_FLOW) || in.sval.equals(DATA_FLOW)) {
-				//saveEdgeDeclaration();
+			if ((in.sval.equals(CONTROL_FLOW) || in.sval.equals(DATA_FLOW)) && (!incremental)) {
+				saveEdgeDeclaration();
+			}
+			
+			else if((in.sval.equals(CONTROL_FLOW) || in.sval.equals(DATA_FLOW)) && incremental){
+				System.out.println("DID THE IF STATEMENT WORK");
 				parseEdge();
 			}
 			else {
@@ -521,12 +531,13 @@ public class Parser {
 		}
 			
 
-		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
-		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
-
 		System.out.println("Line number = " + lineNum);
-		//builder.addNode(nodeType, extractUID(nodeId), 
-//					constructName(nodeType, name), value, elapsedTime, null, lineNum);
+		if(!incremental){
+			System.out.println("DID WE GET IN BUILDER.ADDNODE");
+		builder.addNode(nodeType, extractUID(nodeId),
+				constructName(nodeType, name), value, elapsedTime, null, lineNum);
+		
+		}
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum);
@@ -813,8 +824,11 @@ public class Parser {
 			if (ddgBuilder != null) {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
-			//builder.addNode(nodeType, extractUID(nodeId), 
-					//constructName(nodeType, name), value, timestamp, location, -1);
+			
+			if(!incremental){
+				builder.addNode(nodeType, extractUID(nodeId), 
+					constructName(nodeType, name), value, timestamp, location, -1);
+			}
 
 			
 		} catch (IllegalStateException e) {
@@ -963,8 +977,9 @@ public class Parser {
 			else if(edgeType.equals("DF") && ddgBuilder != null){
 				parseDataFlowEdge(tokens);
 			}
-
-			//builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
+			
+			if(!incremental)
+				builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
 		} catch (NoSuchDataNodeException e) {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		} catch (NoSuchProcNodeException e) {

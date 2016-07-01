@@ -904,8 +904,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 //		try {
 //			if (incremental) {
-////				System.out.println("Hit return to continue.");
-////				in.readLine();
+//				System.out.println("Hit return to continue.");
+//				in.readLine();
 //			}
 //		} catch (IOException exception) {
 //			// TODO Auto-generated catch-block stub.
