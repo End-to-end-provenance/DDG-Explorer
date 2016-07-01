@@ -10,3 +10,4 @@ manifest.mf
 lib/nblibraries.properties
 nbbuild.xml
 *.jar
+/dist/

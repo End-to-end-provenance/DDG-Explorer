@@ -191,6 +191,28 @@ public class Preferences {
 		savePreferences();
 	}
 
-
-
+        /**
+        * Determine from preference if default or system LAF should be used. 
+        * @return true if system LAF should be used, false by default.
+        */
+        public boolean isSystemLookAnFeel() {
+            if (preferences.containsKey("SystemLookAnFeel")) {
+                    return preferences.get("SystemLookAnFeel").toLowerCase().equals("true");
+            }
+            return false;
+        }
+        
+        /**
+        * Set either to use the default LAF (false) or the system one (true)
+        * @param use true for system LAF, false set to default.
+        */
+        public void useSystemLookAndFeel(boolean use){
+            if (use) {
+                    preferences.put("SystemLookAnFeel", "true");
+            }
+            else {
+                    preferences.put("SystemLookAnFeel", "false");
+            }
+            savePreferences();
+        }
 }

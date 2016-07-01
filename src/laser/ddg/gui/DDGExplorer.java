@@ -1,6 +1,5 @@
 package laser.ddg.gui;
 
-import com.alee.laf.WebLookAndFeel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -19,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
@@ -42,6 +42,7 @@ import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowLineNumbersCommand;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.commands.ShowValueDerivationCommand;
+import laser.ddg.commands.SystemLookAndFeelCommand;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
@@ -156,6 +157,24 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
+        
+        /**
+        * Load look and feel based on user preference.
+        * @param system
+        */
+        public void loadLookAndFeel(boolean system) {
+            try{
+                String lookAndFeel;
+                if(system) {
+                    lookAndFeel = UIManager.getSystemLookAndFeelClassName();                    
+                }else{
+                    lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+                }
+                UIManager.setLookAndFeel( lookAndFeel );
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                e.printStackTrace(System.err);
+            }
+        }
 
 	private JTabbedPane createTabbedPane() {
 		JTabbedPane tabbedPane = new JTabbedPane() {
@@ -356,10 +375,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenu prefMenu = new JMenu("Preferences");
 		prefMenu.setBackground(MENU_COLOR);
 		
-		final JCheckBoxMenuItem inToOutMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
+		final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
 				preferences.isArrowDirectionDown());
-		inToOutMenuItem.addActionListener(new SetArrowDirectionCommand());
-		prefMenu.add(inToOutMenuItem);
+		arrowsDirectionMenuItem.addActionListener(new SetArrowDirectionCommand());
+		prefMenu.add(arrowsDirectionMenuItem);
 		
 		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
 				preferences.isShowLegend());
@@ -371,8 +390,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
 		prefMenu.add(showLineNumbersMenuItem);
 		
-		
-		
+		final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
+				preferences.isSystemLookAnFeel());
+		useSystemLAFMenuItem.addActionListener(new SystemLookAndFeelCommand());
+                prefMenu.add(useSystemLAFMenuItem);
 		return prefMenu;
 	}
 
@@ -466,6 +487,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 		preferences.showLineNumbers(show);
 	}
+        
+        public void useSystemLookAndFeel(boolean use){
+            loadLookAndFeel(use);
+            SwingUtilities.updateComponentTreeUI(this);
+            preferences.useSystemLookAndFeel(use);
+        }
 
 	/**
 	 * Show the legend.  Change the user's preferences to always show
@@ -519,18 +546,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
-                try{
-                    UIManager.setLookAndFeel( new WebLookAndFeel() );
-                } catch (UnsupportedLookAndFeelException e) {
-                    e.printStackTrace(System.err);
-                }
-            
+	public static void main(String[] args) {            
 		try {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
+                        explorer.loadLookAndFeel(preferences.isSystemLookAnFeel());
 			explorer.createAndShowGUI();
-
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
