@@ -102,12 +102,12 @@ public class FileUtil {
 			in.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		// Get the object of DataInputStream
 		catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		return filecontent.toString();
 

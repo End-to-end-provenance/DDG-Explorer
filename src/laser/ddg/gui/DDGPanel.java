@@ -24,7 +24,6 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
-import laser.ddg.search.OperationSearchElement;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;

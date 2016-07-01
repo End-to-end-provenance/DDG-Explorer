@@ -6,11 +6,8 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -21,6 +18,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -42,6 +42,7 @@ import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowLineNumbersCommand;
 import laser.ddg.commands.ShowScriptCommand;
 import laser.ddg.commands.ShowValueDerivationCommand;
+import laser.ddg.commands.SystemLookAndFeelCommand;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
@@ -157,6 +158,24 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		setVisible(true);
 	}
 
+        /**
+        * Load look and feel based on user preference.
+        * @param system
+        */
+        public void loadLookAndFeel(boolean system) {
+            try{
+                String lookAndFeel;
+                if(system) {
+                    lookAndFeel = UIManager.getSystemLookAndFeelClassName();                    
+                }else{
+                    lookAndFeel = UIManager.getCrossPlatformLookAndFeelClassName();
+                }
+                UIManager.setLookAndFeel( lookAndFeel );
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+                e.printStackTrace(System.err);
+            }
+        }
+
 	private JTabbedPane createTabbedPane() {
 		JTabbedPane tabbedPane = new JTabbedPane() {
 
@@ -216,14 +235,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				props.load(propResource);
 				title = "DDG Explorer v." + props.getProperty("version");
 			}
-		} catch (IOException e1) {
+		} catch (IOException e1) { // Thomas: that's never used, was it the intent?
 			title = "DDG Explorer";
 		} finally {
 			if (propResource != null) {
 				try {
 					propResource.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace(System.err);
 				}
 			}
 		}
@@ -252,7 +271,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		return menuBar;
 	}
 
-	private JMenu createFileMenu() {
+	private static JMenu createFileMenu() {
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.setBackground(MENU_COLOR);
 
@@ -323,7 +342,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.setEnabled(false);
 	}
 
-	private JMenu createQueryMenu() {
+	private static JMenu createQueryMenu() {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
 		
@@ -356,10 +375,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenu prefMenu = new JMenu("Preferences");
 		prefMenu.setBackground(MENU_COLOR);
 		
-		final JCheckBoxMenuItem inToOutMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
+		final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
 				preferences.isArrowDirectionDown());
-		inToOutMenuItem.addActionListener(new SetArrowDirectionCommand());
-		prefMenu.add(inToOutMenuItem);
+		arrowsDirectionMenuItem.addActionListener(new SetArrowDirectionCommand());
+		prefMenu.add(arrowsDirectionMenuItem);
 		
 		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
 				preferences.isShowLegend());
@@ -371,8 +390,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
 		prefMenu.add(showLineNumbersMenuItem);
 		
-		
-		
+		final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
+				preferences.isSystemLookAnFeel());
+		useSystemLAFMenuItem.addActionListener(new SystemLookAndFeelCommand());
+        prefMenu.add(useSystemLAFMenuItem);
 		return prefMenu;
 	}
 
@@ -380,7 +401,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * Create help menu
 	 * @return 
 	 */
-	private JMenu createHelpMenu() {
+	private static JMenu createHelpMenu() {
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.setBackground(MENU_COLOR);
 		
@@ -467,6 +488,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		preferences.showLineNumbers(show);
 	}
 
+        public void useSystemLookAndFeel(boolean use){
+            loadLookAndFeel(use);
+            SwingUtilities.updateComponentTreeUI(this);
+            preferences.useSystemLookAndFeel(use);
+        }
+
 	/**
 	 * Show the legend.  Change the user's preferences to always show
 	 * the legend.
@@ -523,6 +550,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		try {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			preferences.load();
+            explorer.loadLookAndFeel(preferences.isSystemLookAnFeel());
 			explorer.createAndShowGUI();
 			if(args.length==1){
 				LoadFileCommand.loadDDG(args[0]);
@@ -531,7 +559,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			JOptionPane.showMessageDialog(null,
 					"Unable to start DDG Explorer: " + e.getMessage(),
 					"Error starting DDG Explorer", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 
