@@ -882,7 +882,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// left
 			// corner of the window.
 			if (incremental && !rootDrawn) {
-				vis.run("layout");
 				//System.out.println("Updating focus from procedureNodeCreated");
 				updateFocusGroup(pinId);
 				repaint();
@@ -898,19 +897,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		synchronized (vis) {
 			vis.run("color");
 			vis.run("layout");
-			vis.run("repaint");
-			
+			vis.run("repaint");		
 		}
-
-//		try {
-//			if (incremental) {
-//				System.out.println("Hit return to continue.");
-//				in.readLine();
-//			}
-//		} catch (IOException exception) {
-//			// TODO Auto-generated catch-block stub.
-//			exception.printStackTrace();
-//		}
 
 	}
 
@@ -946,7 +934,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	void layout(Node focusNode) {
 		synchronized (vis) {
-			//vis.run("layout");
+			vis.run("layout");
 			updateFocusGroup(PrefuseUtils.getId(focusNode));
 			vis.run("color");
 			vis.run("repaint");
