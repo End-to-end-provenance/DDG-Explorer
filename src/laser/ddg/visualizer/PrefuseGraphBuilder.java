@@ -118,9 +118,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// True if the root has been drawn
 	private boolean rootDrawn = false;
 
-	public boolean compareDDG = false;
+	// True if the builder is being used for comparing 2 DDGs
+	private boolean compareDDG = false;
 
-	public int compareDDGCount = 0;
+	
 
 	// visualization and display tools
 	private DDGVisualization vis = new DDGVisualization();
@@ -212,11 +213,21 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public DDGPanel getPanel(){
 		return ddgPanel;
 	}
+	/**
+	* return the graph display to place it into the
+	* DDGExplorer's tabbed pane
+	* @return display
+	*/
 
 	public DDGDisplay getDisplay(){
 		return display;
 	}
 
+	/**
+	* return the overview graph display to place it into the
+	* DDGExplorer's tabbed pane
+	* @return displayOverview
+	*/
 	public DDGDisplay getOverview(){
 		return displayOverview;
 	}
@@ -790,27 +801,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	public void fillDDGPallette(){
-		// for(int i = 1; i<= compareDDGCount;i++)
-		// {
-		// 	// double a = (double)i/(double)compareDDGCount;int g=255, r=0;
-		// 	// if(a<0.5 && a>=0.0){
-		// 	// 	g=255;
-		// 	// 	r = (int)(2* a);
-		// 	// }
-		// 	// if(a>=0.5 && a<=1)
-		// 	// {
-		// 	// 	g=(int)(255-2*(a - 0.5));
-		// 	// 	r = 255;
-		// 	// }
-		// 	double a = 100.0*((double)i/(double)compareDDGCount);
-		// 	int r = (int)((a > 50.0 ? 1-2.0*(a-50.0)/100.0 : 1.0)*255.0);
-		// 	int g = (int)((a > 50.0 ? 1.0 : 2*a/100.0)*255.0);
-		// 	int b = 0;
-		// 	//System.out.println("RGB: "+r+" "+g+" "+b);
-		// 	String group = "ingroup('copied_"+Integer.toString(i)+"')";
-		// 	fill.add(group, ColorLib.rgb(r,g, b));
-		// }
-		// //String a ="ingroup('copied')";
+		
 		fill.add("ingroup('left_group')", ColorLib.rgb(255,0,0));
 		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
 		
@@ -845,6 +836,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255,255,255));
 			fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255,255,255));
 
+	}
+
+	/**
+	* Sets the boolean compareDDG.
+	* Used if the builder is being used to compare DDGs.
+	*/
+	public void setCompareDDG(boolean b)
+	{
+		compareDDG = b;
 	}
 	/**
 	 * Adds a legend to the display for the given language.
