@@ -13,7 +13,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import laser.ddg.search.SearchElement;
 
@@ -53,21 +52,18 @@ public class SearchResultsGUI extends JScrollPane {
 
 		// update the focus in the DDG to focus on selected node from search
 		// results
-		searchList.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent listener) {
-				SearchElement entry = searchList.getSelectedValue();
-				if (entry != null) {
-					try {
-						updateNodeFocus(entry);
-					} catch (Exception e) {
-						JOptionPane.showMessageDialog(SearchResultsGUI.this,
-								"Can't display node: " + entry.getName(),
-								"Error", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		});
+		searchList.addListSelectionListener((ListSelectionEvent listener) -> {
+                    SearchElement entry = searchList.getSelectedValue();
+                    if (entry != null) {
+                        try {
+                            updateNodeFocus(entry); // could be overidden, but called from constructor
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(SearchResultsGUI.this,
+                                    "Can't display node: " + entry.getName(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
 
 		setViewportView(searchList);
 		setMinimumSize(new Dimension(150, 200));

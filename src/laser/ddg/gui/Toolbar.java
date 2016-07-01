@@ -16,7 +16,6 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import laser.ddg.visualizer.DDGDisplay;
 import prefuse.Display;
@@ -85,51 +84,45 @@ public class Toolbar extends JToolBar implements ActionListener{
 	    zoomSetting.setPreferredSize(new Dimension(10, 20));
 	    zoomSetting.setMinorTickSpacing(10);
 	    zoomSetting.setPaintTicks(true);
-	    zoomSetting.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				//slider value = desired scale	
-				double zoomedScale = zoomSetting.getValue();
-				zoomedScale = zoomedScale/10;
-				//System.out.println(zoomedScale + " slider/10");
-				
-				//current scale
-				double currentScale = ddgDisplay.getScale();
-				//System.out.println(currentScale + " current display scale");
-				
-				// Technically, we should not do an exact comparison of doubles, but
-				// not really a problem here.  It is not controlling a loop and the
-				// code inside the if is fast.  Better to keep the code easy to
-				// understand.
-				if(currentScale != zoomedScale){
-					//To set absolute scale, use desiredScale*(1/currentScale) as parameter to zoom()	
-					double scaleFactor = (zoomedScale/currentScale);
-					//System.out.println(scaleFactor + " scale Factor");
-							
-					//find center of screen, second parameter to zoom()
-					Rectangle frameBounds = ddgDisplay.getBounds();
-					int xMiddle = (int)(frameBounds.getWidth()-frameBounds.getX())/2;
-					int yMiddle = (int)(frameBounds.getHeight()-frameBounds.getY())/2;
-					Point2D centerScreen = new Point(xMiddle, yMiddle);
-					//System.out.println("center at " + centerScreen.toString());
-					
-					//call zoom!
-					ddgDisplay.zoom(centerScreen, scaleFactor);
-					//System.out.println(ddgDisplay.getScale() + " new scale");
-					ddgDisplay.repaint();
-				}
-			}
-		});
+	    zoomSetting.addChangeListener((ChangeEvent e) -> {
+                //slider value = desired scale
+                double zoomedScale = zoomSetting.getValue();
+                zoomedScale = zoomedScale/10;
+                //System.out.println(zoomedScale + " slider/10");
+                
+                //current scale
+                double currentScale = ddgDisplay.getScale();
+                //System.out.println(currentScale + " current display scale");
+                
+                // Technically, we should not do an exact comparison of doubles, but
+                // not really a problem here.  It is not controlling a loop and the
+                // code inside the if is fast.  Better to keep the code easy to
+                // understand.
+                if(currentScale != zoomedScale){
+                    //To set absolute scale, use desiredScale*(1/currentScale) as parameter to zoom()
+                    double scaleFactor = (zoomedScale/currentScale);
+                    //System.out.println(scaleFactor + " scale Factor");
+                    
+                    //find center of screen, second parameter to zoom()
+                    Rectangle frameBounds = ddgDisplay.getBounds();
+                    int xMiddle = (int)(frameBounds.getWidth()-frameBounds.getX())/2;
+                    int yMiddle = (int)(frameBounds.getHeight()-frameBounds.getY())/2;
+                    Point2D centerScreen = new Point(xMiddle, yMiddle);
+                    //System.out.println("center at " + centerScreen.toString());
+                    
+                    //call zoom!
+                    ddgDisplay.zoom(centerScreen, scaleFactor);
+                    //System.out.println(ddgDisplay.getScale() + " new scale");
+                    ddgDisplay.repaint();
+                }
+            });
 	    	
 	    JButton refocuser = new JButton("Refocus");
-    	refocuser.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent arg0){
-				ddgDisplay.zoomToFit();
-				int newZoom = (int)(ddgDisplay.getScale())*10;
-				zoomSetting.setValue(newZoom);
-			}
-		});	
+            refocuser.addActionListener((ActionEvent arg0) -> {
+                ddgDisplay.zoomToFit();
+                int newZoom = (int)(ddgDisplay.getScale())*10;
+                zoomSetting.setValue(newZoom);
+            });	
 	    
 	    
 //    	tools = new JComponent[8];
@@ -166,19 +159,16 @@ public class Toolbar extends JToolBar implements ActionListener{
      * @return	propertyChangeListener
      */
     private PropertyChangeListener createListener(){
-    	PropertyChangeListener propListener = new PropertyChangeListener() {		
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				String propName = e.getPropertyName();
-				if ("orientation".equals(propName)){
-					if ((Integer)e.getNewValue() == JToolBar.VERTICAL) {
-						zoomSetting.setOrientation(JSlider.VERTICAL);
-					}else{
-						zoomSetting.setOrientation(JSlider.HORIZONTAL);
-					}
-				}
-			}
-		};
+    	PropertyChangeListener propListener = (PropertyChangeEvent e) -> {
+            String propName = e.getPropertyName();
+            if ("orientation".equals(propName)){
+                if ((Integer)e.getNewValue() == JToolBar.VERTICAL) {
+                    zoomSetting.setOrientation(JSlider.VERTICAL);
+                }else{
+                    zoomSetting.setOrientation(JSlider.HORIZONTAL);
+                }
+            }
+            };
     	return propListener;
     }
     

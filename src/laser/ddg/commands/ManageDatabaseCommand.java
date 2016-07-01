@@ -47,79 +47,58 @@ public class ManageDatabaseCommand implements ActionListener {
 		final JButton deleteOneButton = new JButton("Delete DDG");
 		final JButton openButton = new JButton("Open DDG");
 		final JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
+		cancelButton.addActionListener((ActionEvent e) -> {
+                    loadFromDBFrame.dispose();
+                } /**
+                 * Remove the window on cancel.
+                 */ );
 
-			/**
-			 * Remove the window on cancel.
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				loadFromDBFrame.dispose();
-			}
+		openButton.addActionListener((ActionEvent e) -> {
+                    try {
+                        loadFromDBFrame.dispose();
+                        new LoadFromDBCommand().execute();
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(ddgExplorer,
+                                "Unable to load the DDG: " + e1.getMessage(),
+                                "Error loading DDG", JOptionPane.ERROR_MESSAGE);
+                    }
+                } /**
+                 * Loads an entire DDG
+                 */ );
 
-		});
+		deleteOneButton.addActionListener((ActionEvent e) -> {
+                    if (JOptionPane.showConfirmDialog(loadFromDBFrame,
+                            "Are you sure that you want to delete this DDG permanently from the database?") == JOptionPane.YES_OPTION) {
+                        try {
+                            deleteDDG(jenaLoader, selectedProcessName, selectedTimestamp);
+                        } catch (Exception e1) {
+                            JOptionPane.showMessageDialog(ddgExplorer,
+                                    "Unable to delete the DDG: " + e1.getMessage(),
+                                    "Error deleting DDG", JOptionPane.ERROR_MESSAGE);
+                        }
+                        // loadFromDBFrame.dispose();
+                        dbBrowser.removeTimestamp(selectedTimestamp);
+                        deleteOneButton.setEnabled(false);
+                        deleteAllButton.setEnabled(true);
+                        openButton.setEnabled(false);
+                    }
+                });
 
-		openButton.addActionListener(new ActionListener() {
-
-			/**
-			 * Loads an entire DDG
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					loadFromDBFrame.dispose();
-					new LoadFromDBCommand().execute();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(ddgExplorer,
-							"Unable to load the DDG: " + e1.getMessage(),
-							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-
-		});
-
-		deleteOneButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
-						"Are you sure that you want to delete this DDG permanently from the database?") == JOptionPane.YES_OPTION) {
-					try {
-						deleteDDG(jenaLoader, selectedProcessName, selectedTimestamp);
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(ddgExplorer,
-								"Unable to delete the DDG: " + e1.getMessage(),
-								"Error deleting DDG", JOptionPane.ERROR_MESSAGE);
-					}
-					// loadFromDBFrame.dispose();
-					dbBrowser.removeTimestamp(selectedTimestamp);
-					deleteOneButton.setEnabled(false);
-					deleteAllButton.setEnabled(true);
-					openButton.setEnabled(false);
-				}
-			}
-
-		});
-
-		deleteAllButton.addActionListener (new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(loadFromDBFrame,
-						"Are you sure that you want to delete *ALL* DDGs with this name permanently from the database?") == JOptionPane.YES_OPTION) {
-					try {
-						deleteAll(jenaLoader, dbBrowser.getDisplayedTimestamps());
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(ddgExplorer,
-								"Unable to delete all DDGs: " + e1.getMessage(),
-								"Error deleting DDGs", JOptionPane.ERROR_MESSAGE);
-					}
-					// loadFromDBFrame.dispose();
-					dbBrowser.clearTimestamps();
-					dbBrowser.removeProcess(selectedProcessName);
-				}
-			}
-		});
+		deleteAllButton.addActionListener ((ActionEvent e) -> {
+                    if (JOptionPane.showConfirmDialog(loadFromDBFrame,
+                            "Are you sure that you want to delete *ALL* DDGs with this name permanently from the database?") == JOptionPane.YES_OPTION) {
+                        try {
+                            deleteAll(jenaLoader, dbBrowser.getDisplayedTimestamps());
+                        } catch (Exception e1) {
+                            JOptionPane.showMessageDialog(ddgExplorer,
+                                    "Unable to delete all DDGs: " + e1.getMessage(),
+                                    "Error deleting DDGs", JOptionPane.ERROR_MESSAGE);
+                        }
+                        // loadFromDBFrame.dispose();
+                        dbBrowser.clearTimestamps();
+                        dbBrowser.removeProcess(selectedProcessName);
+                    }
+                });
 
 		// Build the GUI layout
 		JPanel buttonPanel = new JPanel();
