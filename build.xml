@@ -24,7 +24,6 @@
         <pathelement location="lib/xml-apis-1.4.01.jar"/>
         <pathelement location="lib/CPL.jar"/>
         <pathelement location="lib/jdiff.jar"/>
-		<pathelement location="lib/weblaf-complete-1.29.jar"/>
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -109,9 +108,6 @@
   		
   		<!-- Code to support text file differences -->
   		<zipfileset includes="**/*" src="lib/jdiff.jar" />
-		
-		<!-- Look and feel -->
-		<zipfileset includes="**/*" src="lib/weblaf-complete-1.29.jar"/>
    	</jar>
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>
     <chmod file="ddg-explorer_${version}.jar" perm="755"/>
