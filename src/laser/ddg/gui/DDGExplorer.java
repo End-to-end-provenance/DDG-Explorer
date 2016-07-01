@@ -25,6 +25,8 @@ import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
+import laser.ddg.commands.CompareScriptsMossCommand;
+import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
@@ -269,6 +271,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
 
+		JMenuItem compareRMoss = new JMenuItem("Compare R Scripts:MOSS");
+		compareRMoss.addActionListener(new CompareScriptsMossCommand());
+
+		//allow the user to compare 2 DDGs
+		JMenuItem compareGraph = new JMenuItem("Compare DDGs");
+		compareGraph.addActionListener(new CompareGraphsCommand());
+
 		// allow the user to manage the database
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
@@ -282,6 +291,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
+		fileMenu.add(compareRMoss);
+		fileMenu.add(compareGraph);
 		fileMenu.add(manageDB);
 		fileMenu.add(quit);
 		return fileMenu;

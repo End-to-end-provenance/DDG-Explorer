@@ -105,14 +105,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	// Used for nodes introduced by the interpreter rather than the program
 	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
+	public ColorAction fill = new ColorAction(GRAPH_NODES,
+				VisualItem.FILLCOLOR);
 
 	// The parts of the graph
 	private Table nodes = new Table();
 	private Table edges = new Table();
 	private Graph graph;
 
+
+
 	// True if the root has been drawn
 	private boolean rootDrawn = false;
+
+	public boolean compareDDG = false;
+
+	public int compareDDGCount = 0;
 
 	// visualization and display tools
 	private DDGVisualization vis = new DDGVisualization();
@@ -203,6 +211,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public DDGPanel getPanel(){
 		return ddgPanel;
+	}
+
+	public DDGDisplay getDisplay(){
+		return display;
+	}
+
+	public DDGDisplay getOverview(){
+		return displayOverview;
 	}
 
 	/**
@@ -341,7 +357,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		repaint();
 	}
 
-	NodeItem getNode(int nodeId) {
+	public NodeItem getNode(int nodeId) {
 		Iterator items = vis.items();
 		Object item = null;
 		while (items.hasNext()) {
@@ -490,6 +506,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
+				//System.out.println(type);
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
 				nodes.setInt(rowNum, PrefuseUtils.ID, id);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
@@ -609,7 +626,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private void initializeDisplay() {
 		// -- 2. the visualization --------------------------------------------
-
+		
 		vis.add(GRAPH, graph);
 		vis.setInteractive(GRAPH_EDGES, null, false);
 
@@ -639,17 +656,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		display.setVisualization(vis);
 		// display size
 		display.setSize(720, 500);
-		// drag individual items around
+		if(!compareDDG){
 		display.addControlListener(new DragControl());
-		// pan with left-click drag on background
 		display.addControlListener(new PanControl());
-		// zoom with right-click drag
 		display.addControlListener(new ZoomControl());
-		// make node and incident edges invisible
-		//d.addControlListener(mControl);
+		
 		display.addControlListener(new ExpandCollapseControl(this));
-		//d.addControlListener(pinClickControl);
 		display.addPaintListener(new updateOverview(displayOverview));
+		}
+		
 
 
 		//set up the display's overview
@@ -657,14 +672,18 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		displayOverview.setVisualization(vis);
 		// display size
 		displayOverview.setSize(175, 500);
-		//To force overview's shape and zoom when bounds change
+		if(!compareDDG)
+		{
 		displayOverview.addItemBoundsListener(new FitOverviewListener());
-		//keep track of the display's view and draw Overview's square accordingly
+		
 		displayOverview.addPaintListener(new vfBorders(display));
-		//keep track of mouse clicks to move the grey rectangle
+		
 		vfListener vfL = new vfListener(display, displayOverview);
 		displayOverview.addMouseMotionListener(vfL);
-		displayOverview.addMouseListener(vfL);
+		displayOverview.addMouseListener(vfL);	
+		}
+		
+		
 
 		// focus action
 		ActionList animate = new ActionList();
@@ -672,7 +691,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		vis.putAction("animate", animate);
 
 		// -- 6. launch the visualization -------------------------------------
-
+		// if(root!=null)
+		// {
+		// 	root.setFillColor(ColorLib.rgb(255,51,255));
+		// }
 		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
 
 		// new code
@@ -680,16 +702,21 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		options.createPopupMenu();
 	}
 
-	private static ActionList assignColors() {
+	private ActionList assignColors() {
 		ColorAction stroke = new ColorAction(GRAPH_NODES,
 				VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
-		ColorAction fill = new ColorAction(GRAPH_NODES,
-				VisualItem.FILLCOLOR);
 		
+		//root.setFillColor(ColorLib.rgb(255,51,255));
 		// highlight node if selected from search results
+		if(compareDDG){
+			fillDDGPallette();			
+		}
+		else{
 		fill.add("_highlight", ColorLib.rgb(193,253,51));
+
+		//fill.add("ingroup('copied')", ColorLib.rgb(225, 51, 255));
 		
 		fill.add(ExpressionParser.predicate("Type = 'Binding'"),
 				INTERPRETER_COLOR);
@@ -720,7 +747,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
-		
+		}
 		// use black for node text
 		ColorAction text = new ColorAction(GRAPH_NODES,
 				VisualItem.TEXTCOLOR, ColorLib.gray(0));
@@ -762,6 +789,63 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return color;
 	}
 
+	public void fillDDGPallette(){
+		// for(int i = 1; i<= compareDDGCount;i++)
+		// {
+		// 	// double a = (double)i/(double)compareDDGCount;int g=255, r=0;
+		// 	// if(a<0.5 && a>=0.0){
+		// 	// 	g=255;
+		// 	// 	r = (int)(2* a);
+		// 	// }
+		// 	// if(a>=0.5 && a<=1)
+		// 	// {
+		// 	// 	g=(int)(255-2*(a - 0.5));
+		// 	// 	r = 255;
+		// 	// }
+		// 	double a = 100.0*((double)i/(double)compareDDGCount);
+		// 	int r = (int)((a > 50.0 ? 1-2.0*(a-50.0)/100.0 : 1.0)*255.0);
+		// 	int g = (int)((a > 50.0 ? 1.0 : 2*a/100.0)*255.0);
+		// 	int b = 0;
+		// 	//System.out.println("RGB: "+r+" "+g+" "+b);
+		// 	String group = "ingroup('copied_"+Integer.toString(i)+"')";
+		// 	fill.add(group, ColorLib.rgb(r,g, b));
+		// }
+		// //String a ="ingroup('copied')";
+		fill.add("ingroup('left_group')", ColorLib.rgb(255,0,0));
+		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
+		
+		fill.add("_highlight", ColorLib.rgb(193,253,51));
+			fill.add(ExpressionParser.predicate("Type = 'Binding'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Start'"),
+				ColorLib.rgb(160,160,160));
+			fill.add(ExpressionParser.predicate("Type = 'Finish'"),
+				ColorLib.rgb(160,160,160));
+			fill.add(ExpressionParser.predicate("Type = 'Interm'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Leaf'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Operation'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Data'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'File'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'URL'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Exception'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'VStart'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'VFinish'"),
+				ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'VInterm'"),
+				ColorLib.rgb(255,255,255));
+		// color for Steps
+			fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255,255,255));
+			fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255,255,255));
+
+	}
 	/**
 	 * Adds a legend to the display for the given language.
 	 * @param language the language to add the legend for
@@ -776,6 +860,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			System.out.println("Can't create legend");
 			e.printStackTrace();
 		}
+	}
+	public DDGVisualization getVisualization()
+
+	{
+		return vis;
 	}
 
 	/**
@@ -826,6 +915,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			drawFullGraph();
 		}
 		repaint();
+		//setCopiedColors(root);
 	}
 
 	/**
@@ -875,6 +965,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		synchronized (vis) {
 			vis.run("color");
 			vis.run("repaint");
+
+			
 		}
 
 		try {
@@ -888,6 +980,30 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 
 	}
+
+	public int getDataNodeCount(){
+			int count = 0;
+			Iterator graphNodes = vis.items();
+
+			// Walk all the items (nodes and edges)
+		//Iterator graphNodes = vis.items();
+		while (graphNodes.hasNext()) {
+			Object next = graphNodes.next();
+			//System.out.println(next);
+
+			// Skip the edges
+			if (next instanceof NodeItem ){
+			 NodeItem node = (NodeItem) next;
+			 if(PrefuseUtils.isAnyDataNode((NodeItem) next))  {
+				count = count+1;			
+			}
+		}
+		
+
+		}
+		return count;
+	}
+
 
 	/**
 	 * Draw the complete graph at once instead of incrementally.
@@ -935,6 +1051,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			//System.out.println("setRoot: Root set to " + root);
 		}
 		ddgLayout.setLayoutRoot(root);
+	}
+
+	public NodeItem getRoot(){
+		return root;
 	}
 
 	private void setCollapsedRoot(NodeItem collapsedRoot) {
@@ -1717,9 +1837,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * Handles clicking on a node
 	 * @param nodeItem the node that was clicked on
 	 */
-	void handleNodeClick(NodeItem nodeItem) {
+	public void handleNodeClick(NodeItem nodeItem) {
 		if (PrefuseUtils.isStart(nodeItem)) {
-			//System.out.println("Clicked on start node: " + item);
 			collapseStartNode(nodeItem);
 			Node collapsedNode = vis.getCollapsedStartFinish(nodeItem);
 
@@ -1741,7 +1860,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 
 		else if (PrefuseUtils.isFinish(nodeItem)) {
-			//System.out.println("Clicked on finish node: " + item);
 			Node collapsedNode = vis.getCollapsedStartFinish(nodeItem);
 			handleNodeClick(vis.getStart(collapsedNode));
 		}
@@ -1757,9 +1875,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 
-		//else {
-			// System.out.println("*** Clicked on " + item);
-		//}
 	}
 
 	/**
@@ -1838,6 +1953,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			public FitOverviewListener() {
 				super();
 			}
+			
 
 			@Override
 			public void itemBoundsChanged(Display displayGiven) {
@@ -1908,6 +2024,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			g.setColor(new Color(150, 150, 200, 50));
 			g.fillRoundRect(x, y, width, height, 10, 10);
 		}
+		
 	}
 
 
@@ -2042,6 +2159,27 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		getNode(id).setHighlighted(value);
 	}
 
+	public void createCopiedGroup(String groupName){
+		vis.addFocusGroup(groupName);
+		//TupleSet focusgroup = vis.getGroup(groupName);
+		//focusgroup.setTuple(getTableNodeItem(id));
+	}
+
+	public void updateCopiedGroup(int id, String groupName)
+	{
+		TupleSet focusgroup = vis.getGroup(groupName);
+		focusgroup.addTuple(getTableNodeItem(id));
+		// focusGroup.addTupleSetListener(new TupleSetListener() 
+  //       {
+  //           public void tupleSetChanged(TupleSet ts, Tuple[] add, Tuple[] rem)
+  //           {
+  //               // You can access the group here whenever it changes.
+  //               System.out.println("ch ch ch ch changes");
+  //           }
+  //       });
+        
+	}
+
 	public String getScriptPath() {
 		return provData.getScript();
 	}
@@ -2054,6 +2192,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return vis.getFinish((Node) collapsedNode);
 	}
 
+	public String getName(NodeItem n){
+		return PrefuseUtils.getName(n);
+	}
 
 
 }
