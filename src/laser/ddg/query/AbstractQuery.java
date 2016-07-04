@@ -23,9 +23,9 @@ public abstract class AbstractQuery implements Query {
 	}
 
 	protected void notifyQueryFinished(String name, JComponent panel) {
-		for (QueryListener l: listeners) {
-			l.queryFinished(name, panel);
-		}
+            listeners.stream().forEach((l) -> {
+                l.queryFinished(name, panel);
+            });
 	}
 
 }

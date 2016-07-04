@@ -1,7 +1,6 @@
 package laser.ddg.persist;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -200,7 +199,7 @@ public class JenaLoader {
 	 * @return the list of strings returned by the query.  Returns an empty list if there is no match.
 	 */
 	private List<String> getStringListResult(String queryVar, String queryString) {
-		ArrayList<String> resultList = new ArrayList<String>();
+		ArrayList<String> resultList = new ArrayList<>();
 		ResultSet resultSet = performQuery(queryString);
 		while (resultSet.hasNext()) {
 			QuerySolution nextResult = resultSet.next();
@@ -235,15 +234,16 @@ public class JenaLoader {
 		// DDG so that the events can be sent to the visualization tool to do the 
 		// incremental visualizations.
 		SortedSet<Resource> sortedResources = getAllStepInstanceNodes(queryPrefix);
-		for (Resource res : sortedResources) {
-			// Add the next pin
-			ProcedureInstanceNode pin = addProcResourceToProvenance(res, pd);
-			
-			// Connect the pin to its predecessors, inputs and outputs.
-			setPredecessors(queryPrefix, pin);
-			getAllInputs(pin);
-			getAllOutputs(pin);
-		}
+                sortedResources.stream().map((res) -> addProcResourceToProvenance(res, pd)).map((pin) -> {
+                        // Connect the pin to its predecessors, inputs and outputs.
+                        setPredecessors(queryPrefix, pin);
+                        return pin;
+                    }).map((pin) -> {
+                        getAllInputs(pin);
+                        return pin;
+                    }).forEach((pin) -> {
+                        getAllOutputs(pin);
+                });
 		System.out.println("All nodes loaded from DB.");
 		pd.notifyProcessFinished();
 		System.out.println("Done with notifyProcessFinished");
@@ -346,15 +346,8 @@ public class JenaLoader {
 
 		ResultSet stepResultSet = performQuery(selectStepsQueryString);
 		
-		SortedSet<Resource> sortedResources = new TreeSet<Resource>(new Comparator<Resource>() {
-
-			@Override
-			// Allows sorting of pin resources by id.
-			public int compare(Resource r0, Resource r1) {
-				return retrieveSinId(r0) - retrieveSinId(r1);
-			}
-			
-		});
+		SortedSet<Resource> sortedResources = new TreeSet<>((Resource r0, Resource r1) -> retrieveSinId(r0) - retrieveSinId(r1) // Allows sorting of pin resources by id.
+                );
 		
 		// Go through the result set putting them into a sorted set.
 		while (stepResultSet.hasNext()) {
@@ -379,7 +372,7 @@ public class JenaLoader {
 
 		ResultSet dataResultSet = performQuery(selectStepsQueryString);
 		
-		Set<Resource> resources = new HashSet<Resource>();
+		Set<Resource> resources = new HashSet<>();
 		
 		// Go through the result set putting them into a sorted set.
 		while (dataResultSet.hasNext()) {
@@ -406,21 +399,16 @@ public class JenaLoader {
 
 		ResultSet nameResultSet = performQuery(selectDinNamesQueryString);
 		
-		SortedSet<String> sortedNames= new TreeSet<String>(new Comparator<String>() {
-
-			@Override
-			public int compare(String s1, String s2) {
-				try {
-					int number1 = Integer.parseInt(s1.substring(0, s1.indexOf("-")));
-					int number2 = Integer.parseInt(s2.substring(0, s2.indexOf("-")));
-					return number1 - number2;
-				} catch (NumberFormatException e) {
-					// In case the names do not follow the syntax of "number-string"
-					return s1.compareTo(s2);
-				}
-			}
-			
-		});
+		SortedSet<String> sortedNames= new TreeSet<>((String s1, String s2) -> {
+                    try {
+                        int number1 = Integer.parseInt(s1.substring(0, s1.indexOf("-")));
+                        int number2 = Integer.parseInt(s2.substring(0, s2.indexOf("-")));
+                        return number1 - number2;
+                    } catch (NumberFormatException e) {
+                        // In case the names do not follow the syntax of "number-string"
+                        return s1.compareTo(s2);
+                    }
+                });
 		
 		// Go through the result set putting them into a sorted set.
 		while (nameResultSet.hasNext()) {
@@ -564,7 +552,7 @@ public class JenaLoader {
 		//printDBContents();
 		ResultSet nameResultSet = performQuery(selectFileNamesQueryString);
 		
-		SortedSet<FileInfo> sortedFiles= new TreeSet<FileInfo>();
+		SortedSet<FileInfo> sortedFiles= new TreeSet<>();
 		
 		System.out.println("Files found:");
 		
@@ -781,15 +769,8 @@ public class JenaLoader {
 
 		ResultSet dinResultSet = performQuery(selectDinQueryString);
 		
-		SortedSet<Resource> sortedResources = new TreeSet<Resource>(new Comparator<Resource>() {
-
-			@Override
-			// Allows sorting of din resources by id.
-			public int compare(Resource r0, Resource r1) {
-				return retrieveDinId(r0) - retrieveDinId(r1);
-			}
-			
-		});
+		SortedSet<Resource> sortedResources = new TreeSet<>((Resource r0, Resource r1) -> retrieveDinId(r0) - retrieveDinId(r1) // Allows sorting of din resources by id.
+                );
 		
 		// Go through the result set putting them into a sorted set.
 		while (dinResultSet.hasNext()) {
@@ -851,7 +832,7 @@ public class JenaLoader {
 				+ "\n " + getDDGClause(queryVar) + "}";
 
 		ResultSet stepResultSet = performQuery(selectStepsQueryString);
-		ArrayList<Resource> consumers = new ArrayList<Resource>();
+		ArrayList<Resource> consumers = new ArrayList<>();
 		
 		while (stepResultSet.hasNext()) {
 			QuerySolution nextStepResult = stepResultSet.next();
@@ -926,6 +907,7 @@ public class JenaLoader {
 	 * @param type the type of node
 	 * @param id the id of the procedure node
 	 * @param procDef the definition of the procedure that was executed
+         * @param elapsedTime
 	 * @param lineNumber the line in the script that generated the node
 	 * @return the node created
 	 */
@@ -1123,13 +1105,13 @@ public class JenaLoader {
 		try {
 			Model model = dataset.getDefaultModel();
 		
-			for (Resource res : pinResources) {
-				deleteResource(model, res);
-			}
+                        pinResources.stream().forEach((res) -> {
+                            deleteResource(model, res);
+                    });
 			
-			for (Resource res : dataResources) {
-				deleteResource(model, res);
-			}
+                        dataResources.stream().forEach((res) -> {
+                            deleteResource(model, res);
+                    });
 			
 			deleteResource(model, headerResource);
 			

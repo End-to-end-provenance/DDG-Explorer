@@ -829,9 +829,9 @@ public class Parser {
 	 * Add all the edges to the graph.
 	 */
 	private void addEdges() {
-		for (ArrayList<String> nextEdge : savedEdges) {
-			parseEdge(nextEdge);
-		}
+            savedEdges.stream().forEach((nextEdge) -> {
+                parseEdge(nextEdge);
+            });
 	}
 
 	/**
@@ -861,11 +861,11 @@ public class Parser {
 			}
 
 			builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
-		} catch (NoSuchDataNodeException e) {
+		} catch (NoSuchDataNodeException | NoSuchProcNodeException e) {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
-		} catch (NoSuchProcNodeException e) {
-			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
-		} catch (ReportErrorException e) {
+		}
+                // Nothing to do.  The error message is produced inside parseDataFlowEdge.
+                catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace(System.err);
 		}

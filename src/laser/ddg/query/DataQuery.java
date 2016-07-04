@@ -108,9 +108,9 @@ public abstract class DataQuery extends AbstractQuery {
 		SortedSet<String> dinNames = dbLoader.getAllDinNames(processName, timestamp);
 		
 		Vector<String> names = new Vector<>();
-		for (String dinName : dinNames) {
-			names.add(dinName);
-		}
+                dinNames.stream().forEach((dinName) -> {
+                    names.add(dinName);
+                });
 		
 		queryFrame = new JFrame (getFrameTitle());
 		final JPanel varQueryPanel = new JPanel();
@@ -127,34 +127,24 @@ public abstract class DataQuery extends AbstractQuery {
 			
 		});
 		
-		okButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				allDinsToShow.clear();
-				allPinsToShow.clear();
-				try {
-					doQuery (selectedResource);
-				} catch (HeadlessException e1) {
-					JOptionPane.showMessageDialog(queryFrame, 
-							"Unable to complete the query: " + e1.getMessage(), 
-							"Error completing the query", JOptionPane.ERROR_MESSAGE);
-				}
-				queryFrame.dispose();
-			}
-
-		});
+		okButton.addActionListener((ActionEvent e) -> {
+                    allDinsToShow.clear();
+                    allPinsToShow.clear();
+                    try {
+                        doQuery (selectedResource);
+                    } catch (HeadlessException e1) {
+                        JOptionPane.showMessageDialog(queryFrame,
+                                "Unable to complete the query: " + e1.getMessage(),
+                                "Error completing the query", JOptionPane.ERROR_MESSAGE);
+                    }
+                    queryFrame.dispose();
+                });
 		okButton.setEnabled(false);
 		
 		JButton cancelButton = new JButton ("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				queryFrame.setVisible(false);
-			}
-			
-		});
+		cancelButton.addActionListener((ActionEvent arg0) -> {
+                    queryFrame.setVisible(false);
+                });
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(okButton);
 		buttonPanel.add(cancelButton);
@@ -248,20 +238,13 @@ public abstract class DataQuery extends AbstractQuery {
 	 * @param rootResource the root of the ddg
 	 */
 	protected void loadQueryResult(ProvenanceData pd, Resource rootResource) {
-		Collections.sort(allPinsToShow, new Comparator<Resource>() {
-
-			@Override
-			public int compare(Resource res0, Resource res1) {
-				return dbLoader.retrieveSinId(res0) - dbLoader.retrieveSinId(res1);
-			}
-			
-		});
-		
-		for (Resource res : allPinsToShow) {
-			ProcedureInstanceNode pin = dbLoader.addProcResourceToProvenance(res, pd);
-			loadInputs(pd, rootResource, pin);
-			loadOutputs(pd, pin);
-		}
+            Collections.sort(allPinsToShow, (Resource res0, Resource res1) -> dbLoader.retrieveSinId(res0) - dbLoader.retrieveSinId(res1));
+                allPinsToShow.stream().map((res) -> dbLoader.addProcResourceToProvenance(res, pd)).map((pin) -> {
+                    loadInputs(pd, rootResource, pin);
+                return pin;
+            }).forEach((pin) -> {
+                loadOutputs(pd, pin);
+            });
 		
 		// If graph contains no procedure nodes, display a message.  It might contain
 		// one or more data nodes.

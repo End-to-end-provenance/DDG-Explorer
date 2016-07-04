@@ -169,11 +169,9 @@ public class RDDGBuilder extends DDGBuilder {
 		
 		// Print out any extra ones, deliberately skipping the one named "processName"
 		List<String> attrNameList = Arrays.asList(dbAttrNames);
-		for (String attrName : attributes.names()) {
-			if (!attrName.equals("processName") && !attrNameList.contains(attrName)) {
-				attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
-			}
-		}
+                attributes.names().stream().filter((attrName) -> (!attrName.equals("processName") && !attrNameList.contains(attrName))).forEach((attrName) -> {
+                    attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
+                });
 
 		return attrText.toString();
 	}

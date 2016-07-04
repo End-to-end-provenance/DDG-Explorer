@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,6 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import laser.ddg.persist.JenaLoader;
 
@@ -61,14 +59,7 @@ public abstract class DBBrowser extends JPanel{
 	 */
 	public DBBrowser(final JenaLoader jenaLoader) {
 		processNames = new ArrayList<>(jenaLoader.getAllProcessNames());
-		Collections.sort(processNames, new Comparator<String>() {
-
-			@Override
-			public int compare(String s1, String s2) {
-	            return s1.toLowerCase().compareTo(s2.toLowerCase());
-			}
-			
-		});
+		Collections.sort(processNames, (String s1, String s2) -> s1.toLowerCase().compareTo(s2.toLowerCase()));
 		final JList<String> processNameList = new JList<>(processNames.toArray(new String[1]));
 		processNameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
@@ -77,38 +68,27 @@ public abstract class DBBrowser extends JPanel{
 		timestampList = new JList<>(timestampVector);
 		timestampList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		
-		processNameList.addListSelectionListener(new ListSelectionListener() {
-
-			/**
-			 * When the user selects a ddg name, update the timestamp list.
-			 */
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedProcessName = processNameList.getSelectedValue();
-				if (selectedProcessName == null) {
-					return;
-				}
-				
-				updateTimestampList(jenaLoader);
-				notifyScriptSelected();
-			}
-		});
+		processNameList.addListSelectionListener((ListSelectionEvent e) -> {
+                    selectedProcessName = processNameList.getSelectedValue();
+                    if (selectedProcessName == null) {
+                        return;
+                    }
+                    
+                    updateTimestampList(jenaLoader);
+                    notifyScriptSelected();
+                } /**
+                 * When the user selects a ddg name, update the timestamp list.
+                 */ );
 		
-		timestampList.addListSelectionListener(new ListSelectionListener() {
-
-			/**
-			 * When the user selects a timestamp, enable the appropriate buttons.
-			 */
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selectedTimestamp = timestampList.getSelectedValue();
-				if (selectedTimestamp == null) {
-					return;
-				}
-				notifyTimestampSelected();
-			}
-			
-		});
+		timestampList.addListSelectionListener((ListSelectionEvent e) -> {
+                    selectedTimestamp = timestampList.getSelectedValue();
+                    if (selectedTimestamp == null) {
+                        return;
+                    }
+                    notifyTimestampSelected();
+                } /**
+                 * When the user selects a timestamp, enable the appropriate buttons.
+                 */ );
 				
 		// Build the GUI layout
 		JPanel processPanel = new JPanel();
@@ -142,9 +122,9 @@ public abstract class DBBrowser extends JPanel{
 	private void updateTimestampList(JenaLoader jenaLoader) {
 		DefaultListModel<String> timestampData = new DefaultListModel<>();
 		List<String> timestamps = jenaLoader.getTimestamps(selectedProcessName);
-		for (String timestamp : timestamps) {
-			timestampData.addElement(timestamp);
-		}
+                timestamps.stream().forEach((timestamp) -> {
+                    timestampData.addElement(timestamp);
+                });
 		timestampList.setModel(timestampData);
 	}
 	
@@ -189,18 +169,18 @@ public abstract class DBBrowser extends JPanel{
 	 * Tells the listeners which process/script the user just selected.
 	 */
 	private void notifyScriptSelected() {
-		for (DBBrowserListener l : listeners) {
-			l.scriptSelected(selectedProcessName);
-		}
+            listeners.stream().forEach((l) -> {
+                l.scriptSelected(selectedProcessName);
+            });
 	}
 
 	/**
 	 * Tells the listeners which timestamp the user just selected.
 	 */
 	private void notifyTimestampSelected() {
-		for (DBBrowserListener l : listeners) {
-			l.timestampSelected(selectedTimestamp);
-		}
+            listeners.stream().forEach((l) -> {
+                l.timestampSelected(selectedTimestamp);
+            });
 	}
 
 	/**
