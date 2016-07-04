@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
@@ -190,34 +189,30 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		};
 		tabbedPane.setOpaque(true);
 		
-		tabbedPane.addChangeListener(new ChangeListener () {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				Component openTab = getCurrentDDGPanel();
-				if (openTab instanceof laser.ddg.gui.DDGPanel) {
-					DDGPanel openDDGPanel = (DDGPanel) openTab;
-					enableDDGCommands();
-					SearchPanel.enableSearch();
-					if (preferences.isArrowDirectionDown()) {
-						openDDGPanel.setArrowDirectionDown();
-					}
-					else {
-						openDDGPanel.setArrowDirectionUp();
-					}
-					if (preferences.isShowLegend()) {
-						openDDGPanel.addLegend();
-					}
-					else {
-						openDDGPanel.removeLegend();
-					}
-					openDDGPanel.showLineNumbers(preferences.isShowLineNumbers());
-				} else {
-					disableDDGCommands();
-					SearchPanel.disableSearch();
-				}
-			}
-
-		});
+		tabbedPane.addChangeListener((ChangeEvent e) -> {
+                    Component openTab = getCurrentDDGPanel();
+                    if (openTab instanceof laser.ddg.gui.DDGPanel) {
+                        DDGPanel openDDGPanel = (DDGPanel) openTab;
+                        enableDDGCommands();
+                        SearchPanel.enableSearch();
+                        if (preferences.isArrowDirectionDown()) {
+                            openDDGPanel.setArrowDirectionDown();
+                        }
+                        else {
+                            openDDGPanel.setArrowDirectionUp();
+                        }
+                        if (preferences.isShowLegend()) {
+                            openDDGPanel.addLegend();
+                        }
+                        else {
+                            openDDGPanel.removeLegend();
+                        }
+                        openDDGPanel.showLineNumbers(preferences.isShowLineNumbers());
+                    } else {
+                        disableDDGCommands();
+                        SearchPanel.disableSearch();
+                    }
+                });
 		
 		return tabbedPane;
 	}
