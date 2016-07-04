@@ -72,9 +72,9 @@ public abstract class DDGBuilder {
 	 *            the id of the successor node
 	 */
 	public void addPredSuccLink(int predId, int succId) {
-		ProvenanceData provObject = getProvObject();
-		ProcedureInstanceNode predNode = provObject.findPin(predId);
-		ProcedureInstanceNode succNode = provObject.findPin(succId);
+		ProvenanceData prov = getProvObject();
+		ProcedureInstanceNode predNode = prov.findPin(predId);
+		ProcedureInstanceNode succNode = prov.findPin(succId);
 		succNode.addPredecessor(predNode);
 		predNode.addSuccessor(succNode);
 	}
