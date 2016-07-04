@@ -4,13 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Properties;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -30,19 +27,25 @@ import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareScriptsCommand;
-import laser.ddg.commands.DBBrowserFrame;
 import laser.ddg.commands.FindFilesCommand;
+import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
 import laser.ddg.commands.ManageDatabaseCommand;
+import laser.ddg.commands.QuitCommand;
+import laser.ddg.commands.SaveToDBCommand;
+import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
-import laser.ddg.persist.JenaWriter;
+import laser.ddg.commands.ShowComputedFromValueCommand;
+import laser.ddg.commands.ShowLegendMenuItem;
+import laser.ddg.commands.ShowLineNumbersCommand;
+import laser.ddg.commands.ShowScriptCommand;
+import laser.ddg.commands.ShowValueDerivationCommand;
+import laser.ddg.commands.SystemLookAndFeelCommand;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
 import laser.ddg.query.ResultsQuery;
-import laser.ddg.search.OperationSearchElement;
-import laser.ddg.visualizer.FileViewer;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -276,11 +279,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		openDB.addActionListener(new LoadFromDBCommand());
 
 		saveDB = new JMenuItem("Save to Database");
-		saveDB.addActionListener((ActionEvent e) -> {
-                    JenaWriter jenaWriter = JenaWriter.getInstance();
-                    DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-                    jenaWriter.persistDDG (ddgExplorer.getCurrentDDG());
-                });
+		saveDB.addActionListener(new SaveToDBCommand());
 		saveDB.setEnabled(false);
 
 		// allow the user to compare two R scripts
@@ -293,9 +292,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 		// allow the user to quit ddg explorer
 		JMenuItem quit = new JMenuItem("Quit");
-		quit.addActionListener((ActionEvent e) -> {
-                    System.exit (0);
-                });
+		quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
 		fileMenu.add(openDB);
@@ -321,13 +318,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		DDGMenu.add(attributesItem);
 		
 		showScriptItem = new JMenuItem("Show R script");
-		showScriptItem.addActionListener((ActionEvent e) -> {
-                    DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-                    ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
-                    String scriptFileName = curDDG.getScript();
-                    FileViewer fileViewer = new FileViewer(scriptFileName, "");
-                    fileViewer.displayFile();
-                });
+		showScriptItem.addActionListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
@@ -355,39 +346,17 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		queryMenu.add(findFilesItem);
 		
 		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
-		timeItem.addActionListener((ActionEvent e) -> {
-                    DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
-                    ArrayList<OperationSearchElement> nodeList = 
-                                    (ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
-
-                    // order nodelist and show in GUI.
-                    Collections.sort(nodeList, (OperationSearchElement p1, OperationSearchElement p2) -> {
-                        if (p2.getTimeTaken() < p1.getTimeTaken()) {
-                            return -1;
-                        } else if (p2.getTimeTaken() > p2.getTimeTaken()) {
-                            return 1;
-                        }
-                        return 0;
-                    });
-
-                    panel.showSearchResults(nodeList);
-                });
+		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
 		
 		final Query derivationQuery = new DerivationQuery();
 		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
-		showValueDerivationItem.addActionListener((ActionEvent e) -> {
-                    final Query query = new DerivationQuery();
-                    new DBBrowserFrame (query);
-                });
+		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
 		queryMenu.add(showValueDerivationItem);
 		
 		final Query computedFromQuery = new ResultsQuery();
 		JMenuItem computedFromItem = new JMenuItem(computedFromQuery.getMenuItem());
-		computedFromItem.addActionListener((ActionEvent e) -> {
-                    final Query query = new ResultsQuery();
-                    new DBBrowserFrame (query);
-                });
+		computedFromItem.addActionListener(new ShowComputedFromValueCommand());
 		queryMenu.add(computedFromItem);
 		
 		return queryMenu;
@@ -398,51 +367,29 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * @return 
 	 */
 	private JMenu createPreferencesMenu() {
-            JMenu prefMenu = new JMenu("Preferences");
-            prefMenu.setBackground(MENU_COLOR);
-
-            final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
-                            preferences.isArrowDirectionDown());
-            arrowsDirectionMenuItem.addActionListener((ActionEvent e) -> {
-                DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-                if (((JCheckBoxMenuItem) e.getSource()).isSelected()) {
-			ddgExplorer.setArrowDirectionDown();
-		} else {
-			ddgExplorer.setArrowDirectionUp();
-		}
-            });
-            prefMenu.add(arrowsDirectionMenuItem);
-
-            showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
-                            preferences.isShowLegend());
-            showLegendMenuItem.addActionListener((ActionEvent e) -> {
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-
-		if (((JCheckBoxMenuItem)e.getSource()).isSelected()) {
-			ddgExplorer.addLegend();
-		}
-		else {
-			ddgExplorer.removeLegend();
-		}
-            });
-            prefMenu.add(showLegendMenuItem);
-
-            final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
-                            preferences.isShowLineNumbers());
-            showLineNumbersMenuItem.addActionListener((ActionEvent e) -> {
-                DDGExplorer ddgExplorer = DDGExplorer.getInstance();		
-		ddgExplorer.showLineNumbers(((JCheckBoxMenuItem)e.getSource()).isSelected());
-            });
-            prefMenu.add(showLineNumbersMenuItem);
-
-            final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
-                            preferences.isSystemLookAnFeel());
-            useSystemLAFMenuItem.addActionListener((ActionEvent e) -> {
-                DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-                ddgExplorer.useSystemLookAndFeel(((JCheckBoxMenuItem)e.getSource()).isSelected());
-            });
-            prefMenu.add(useSystemLAFMenuItem);
-            return prefMenu;
+		JMenu prefMenu = new JMenu("Preferences");
+		prefMenu.setBackground(MENU_COLOR);
+		
+		final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
+				preferences.isArrowDirectionDown());
+		arrowsDirectionMenuItem.addActionListener(new SetArrowDirectionCommand());
+		prefMenu.add(arrowsDirectionMenuItem);
+		
+		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
+				preferences.isShowLegend());
+		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
+		prefMenu.add(showLegendMenuItem);
+		
+		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
+				preferences.isShowLineNumbers());
+		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
+		prefMenu.add(showLineNumbersMenuItem);
+		
+		final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
+				preferences.isSystemLookAnFeel());
+		useSystemLAFMenuItem.addActionListener(new SystemLookAndFeelCommand());
+        prefMenu.add(useSystemLAFMenuItem);
+		return prefMenu;
 	}
 
 	/**
