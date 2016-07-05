@@ -105,7 +105,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	// Used for nodes introduced by the interpreter rather than the program
 	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
-	public ColorAction fill = new ColorAction(GRAPH_NODES,
+	private ColorAction fill = new ColorAction(GRAPH_NODES,
 				VisualItem.FILLCOLOR);
 
 	// The parts of the graph

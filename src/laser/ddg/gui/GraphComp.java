@@ -31,6 +31,9 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.util.Vector;
 import java.util.ArrayList;
@@ -291,7 +294,7 @@ public class GraphComp extends JPanel {
    * selected, the file contents are displayed and the diff is executed, with
    * the results displayed.
    * @param button the button clicked.  We need this to determine if we
-   * 		are setting the left or right file
+   *    are setting the left or right file
    */
   private void selectFile(Object button) {
     if (chooser == null) {
@@ -346,7 +349,7 @@ public class GraphComp extends JPanel {
    * selected, the file contents are displayed and the diff is executed, with
    * the results displayed.
    * @param button the button clicked.  We need this to determine if we
-   * 		are setting the left or right file
+   *    are setting the left or right file
    */
   private void selectFromDB(final Object button) {
     final JDialog selectFrame = new JDialog(frame, "Select from Database", true);
@@ -445,21 +448,9 @@ public class GraphComp extends JPanel {
       //System.out.println("Exceptions caught" + e.getMessage());
     }
 
-    //System.out.println("Left DDG Build Complete");
-    //System.out.println("Right DDG Build Complete");
+    createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
 
-    // int totalLeftNodes = builderLeft.getDataNodeCount() + parserLeft.numPins;
-    // int totalRightNodes = builderRight.getDataNodeCount() + parserRight.numPins;
-
-    // NodeItem rootLeft = builderLeft.getNode(1);
-    // String rootNameLeft = builderLeft.getName(rootLeft);
-    // System.out.println("LeftGraphRoot: "+rootNameLeft);
-
-    // NodeItem rootRight = builderRight.getNode(1);
-    // String rootNameRight = builderRight.getName(rootRight);
-    // System.out.println("RightGraphRoot: "+rootNameRight);
-
-    createDiffFiles();
+    createDiffFiles("rightTemp.txt", parserRight, builderRight);
 
     computeDiffResult();
 
@@ -467,73 +458,72 @@ public class GraphComp extends JPanel {
 
     builderRight.processFinished();
 
-    initializeDisplay();
+    display_left = builderLeft.getDisplay();
+    displayOverview_left = builderLeft.getOverview();
 
-    populateDisplay();
+    display_right = builderRight.getDisplay();
+    displayOverview_right = builderRight.getOverview();
 
-    diffOutput = new ExecuteShellCommand().executeCommand("rm leftTemp.txt rightTemp.txt").trim();
+    PanMyControl panning = new PanMyControl(display_left, display_right);
+    vfListener vfL =
+        new vfListener(display_left, displayOverview_left, display_right, displayOverview_right);
+
+    initializeDisplay(panning, display_left, displayOverview_left, vfL, builderLeft);
+    initializeDisplay(panning, display_right, displayOverview_right, vfL, builderRight);
+
+    JPanel newPanel_left = populateDisplay(display_left, displayOverview_left);
+    JPanel newPanel_right = populateDisplay(display_right, displayOverview_right);
+
+    ToolbarCompare toolbar = new ToolbarCompare(display_left, display_right);
+
+    JPanel finalContent = new JPanel();
+    finalContent.setLayout(new GridLayout(1, 2));
+    add(toolbar, BorderLayout.NORTH);
+    finalContent.add(newPanel_left, BorderLayout.WEST);
+    finalContent.add(newPanel_right, BorderLayout.EAST);
+    add(finalContent);
+
+    deleteTempFile("leftTemp.txt");
+    deleteTempFile("rightTemp.txt");
   }
 
   /**
-   * Writes the nodes from left ddg snf the right ddg to temporary text files to generate diff result
+   * Creates a temporary file to store the list of all nodes(formatted) of the DDG
+   * @param name of the temporary file
+   * @param parser
+   * @param builder corresponding to the graph
    */
-  private void createDiffFiles() {
-    Writer writerLeft = null, writerRight = null;
+  private void createDiffFiles(String filename, Parser parser, PrefuseGraphBuilder builder) {
+    Writer writer = null;
     try {
-      writerLeft =
+      writer =
           new BufferedWriter(
-              new OutputStreamWriter(new FileOutputStream("leftTemp.txt"), StandardCharsets.UTF_8));
-      writerRight =
-          new BufferedWriter(
-              new OutputStreamWriter(
-                  new FileOutputStream("rightTemp.txt"), StandardCharsets.UTF_8));
+              new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8));
     } catch (Exception e) {
       //System.out.println("File creation exception raised" + e.getMessage());
     }
 
-    for (int i = 1; i <= parserLeft.numPins; i++) {
+    for (int i = 1; i <= parser.getNumPins(); i++) {
       String extractLineNum = "";
       int position = Integer.MAX_VALUE;
       boolean isPresent = false;
-      String curNodeName = builderLeft.getName(builderLeft.getNode(i));
-     // System.out.println(curNodeName.replaceAll("\\s+", ""));
+      String curNodeName = builder.getName(builder.getNode(i));
+      // System.out.println(curNodeName.replaceAll("\\s+", ""));
       try {
         String dummy = curNodeName.replaceAll("\\s+", "");
         if (dummy.indexOf("[") < 0) {
           String add = dummy.substring(dummy.indexOf('-') + 1);
-          writerLeft.write(add + "\n");
+          writer.write(add + "\n");
         } else {
           String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
-          writerLeft.write(add + "\n");
+          writer.write(add + "\n");
         }
       } catch (IOException e) {
-       // System.out.println("writing to left file error"+e.getMessage());
+        // System.out.println("writing to left file error"+e.getMessage());
       }
     }
-
-    for (int i = 1; i <= parserRight.numPins; i++) {
-      String extractLineNum = "";
-      int position = Integer.MAX_VALUE;
-      boolean isPresent = false;
-      String curNodeName = builderRight.getName(builderRight.getNode(i));
-      //System.out.println(curNodeName.replaceAll("\\s+", ""));
-      try {
-        String dummy = curNodeName.replaceAll("\\s+", "");
-        if (dummy.indexOf("[") < 0) {
-          String add = dummy.substring(dummy.indexOf('-') + 1);
-          writerRight.write(add + "\n");
-        } else {
-          String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
-          writerRight.write(add + "\n");
-        }
-      } catch (IOException e) {
-        //System.out.println("writing to right file error" + e.getMessage());
-      }
-    }
-
     try {
-      writerLeft.close();
-      writerRight.close();
+      writer.close();
     } catch (IOException e) {
       //System.out.println("Exception caught in write close" + e.getMessage());
     }
@@ -543,12 +533,12 @@ public class GraphComp extends JPanel {
    * Computes the Unix diff result on the left and right DDGs and groups them.
    * Groups are populated to color the nodes on the graph accordingly.
    * Left Group consists of nodes which are uniquely present in the left DDG and colored in Red
-   * Right Group consists of nodes which are uniquely present in the right DDG and colored in Green 
+   * Right Group consists of nodes which are uniquely present in the right DDG and colored in Green
    */
   private void computeDiffResult() {
     diffOutput =
         new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
-   // System.out.println(diffOutput);
+    // System.out.println(diffOutput);
     String[] diffOutputArray = diffOutput.split("\n");
     int leftnode = 1, rightnode = 1;
     for (int i = 0; i < diffOutputArray.length; i++) {
@@ -582,94 +572,70 @@ public class GraphComp extends JPanel {
     }
   }
   /**
-   * Retrives the Graph displays and corresponding GraphOverview displays and adds Action Listeners to these displays.
+   * Add action listeners to the display and the corresponding overview using its own graph builder.
+   * @param panning
+   * @param display
+   * @param displayOverview
+   * @param vfL listener object
+   * @param builder
    */
-  private void initializeDisplay() {
-    display_left = builderLeft.getDisplay();
-    display_right = builderRight.getDisplay();
-
-    displayOverview_left = builderLeft.getOverview();
-    displayOverview_right = builderRight.getOverview();
-    PanMyControl panning = new PanMyControl(display_left, display_right);
-
-    display_left.addControlListener(new DragControl());
-    display_left.addControlListener(panning);
-    display_left.addControlListener(new ZoomControl());
-    display_left.addControlListener(new ExpandCollapseControl(builderLeft));
-    display_left.addPaintListener(new updateOverview(displayOverview_left));
-
-    display_right.addControlListener(new DragControl());
-    display_right.addControlListener(panning);
-    display_right.addControlListener(new ZoomControl());
-    display_right.addControlListener(new ExpandCollapseControl(builderRight));
-    display_right.addPaintListener(new updateOverview(displayOverview_right));
-
-    displayOverview_left.addItemBoundsListener(new FitOverviewListener());
-    displayOverview_left.addPaintListener(new vfBorders(display_left, displayOverview_left));
-
-    displayOverview_right.addItemBoundsListener(new FitOverviewListener());
-    displayOverview_right.addPaintListener(new vfBorders(display_right, displayOverview_right));
-
-    vfListener vfL =
-        new vfListener(display_left, displayOverview_left, display_right, displayOverview_right);
-    displayOverview_left.addMouseMotionListener(vfL);
-    displayOverview_left.addMouseListener(vfL);
-
-    displayOverview_right.addMouseMotionListener(vfL);
-    displayOverview_right.addMouseListener(vfL);
-
-    display_left.repaint();
-    display_right.repaint();
+  private void initializeDisplay(
+      PanMyControl panning,
+      DDGDisplay display,
+      DDGDisplay displayOverview,
+      vfListener vfL,
+      PrefuseGraphBuilder builder) {
+    display.addControlListener(new DragControl());
+    display.addControlListener(panning);
+    display.addControlListener(new ZoomControl());
+    display.addControlListener(new ExpandCollapseControl(builder));
+    display.addPaintListener(new updateOverview(displayOverview));
+    displayOverview.addItemBoundsListener(new FitOverviewListener());
+    displayOverview.addPaintListener(new vfBorders(display, displayOverview));
+    displayOverview.addMouseMotionListener(vfL);
+    displayOverview.addMouseListener(vfL);
+    display.repaint();
   }
   /**
-   * Populates the JPanel with the Graph displays and GraphOverview displays.
+   * Populate the panel with the graph display and its corresponding overview display
+   * @param display
+   * @param displayOverview
+   * @return the panel constructed
    */
-  private void populateDisplay() {
-    JPanel newPanel_left = new JPanel(new BorderLayout());
-    newPanel_left.setBackground(Color.WHITE);
-    newPanel_left.add(display_left, BorderLayout.CENTER);
+  private JPanel populateDisplay(DDGDisplay display, DDGDisplay displayOverview) {
+    JPanel newPanel = new JPanel(new BorderLayout());
+    newPanel.setBackground(Color.WHITE);
+    newPanel.add(display, BorderLayout.CENTER);
 
-    displayOverview_left.setBorder(BorderFactory.createTitledBorder("Overview"));
-    newPanel_left.add(displayOverview_left, BorderLayout.EAST);
-    newPanel_left.addComponentListener(
+    displayOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
+    newPanel.add(displayOverview, BorderLayout.EAST);
+    newPanel.addComponentListener(
         new ComponentAdapter() {
 
           @Override
           public void componentResized(ComponentEvent e) {
-            int panelHeight = newPanel_left.getHeight();
-            Rectangle prevBounds = displayOverview_left.getBounds();
-            displayOverview_left.setBounds(
+            int panelHeight = newPanel.getHeight();
+            Rectangle prevBounds = displayOverview.getBounds();
+            displayOverview.setBounds(
                 prevBounds.x, prevBounds.y, prevBounds.width, panelHeight - 16);
           }
         });
-
-    JPanel newPanel_right = new JPanel(new BorderLayout());
-    newPanel_right.setBackground(Color.WHITE);
-    newPanel_right.add(display_right, BorderLayout.CENTER);
-
-    displayOverview_right.setBorder(BorderFactory.createTitledBorder("Overview"));
-
-    ToolbarCompare toolbar = new ToolbarCompare(display_left, display_right);
-    newPanel_right.add(displayOverview_right, BorderLayout.EAST);
-    newPanel_right.addComponentListener(
-        new ComponentAdapter() {
-
-          @Override
-          public void componentResized(ComponentEvent e) {
-            int panelHeight = newPanel_right.getHeight();
-            Rectangle prevBounds = displayOverview_right.getBounds();
-            displayOverview_right.setBounds(
-                prevBounds.x, prevBounds.y, prevBounds.width, panelHeight - 16);
-          }
-        });
-    JPanel finalContent = new JPanel();
-    finalContent.setLayout(new GridLayout(1, 2));
-    add(toolbar, BorderLayout.NORTH);
-    finalContent.add(newPanel_left, BorderLayout.WEST);
-    finalContent.add(newPanel_right, BorderLayout.EAST);
-    add(finalContent);
+    return newPanel;
+  }
+  /**
+   * Delete the temporary files which were created to perform diff operation.
+   * @param filenames of the files to be deleted
+   */
+  private void deleteTempFile(String filename) {
+    try {
+      Path path = Paths.get(filename);
+      Files.delete(path);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
   }
 }
+
 /**
  * Toolbar to allow for zooming a graph.
  * Zooming is unified for both the left and right ddgs.
@@ -771,7 +737,7 @@ class ToolbarCompare extends JToolBar implements ActionListener {
   /**
    * creates a PropertyChangeListener that will listen for a change
    * in the toolbar's orientation and set the slider to that direction
-   * @return	propertyChangeListener
+   * @return  propertyChangeListener
    */
   private PropertyChangeListener createListener() {
     PropertyChangeListener propListener =
@@ -790,7 +756,7 @@ class ToolbarCompare extends JToolBar implements ActionListener {
         };
     return propListener;
   }
-  
+
   public static class ZoomListener implements PaintListener {
     private JSlider slider;
 

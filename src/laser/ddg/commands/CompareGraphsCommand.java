@@ -12,30 +12,22 @@ import laser.ddg.gui.GraphComp;
 import laser.ddg.persist.JenaLoader;
 
 /**
- * Command to load two R scripts and do a diff on them.
+ * Command to load two DDGs and display the comparison result
  * The panel in which this is done is a tab in the DDG Explorer.
  * 
- * @author Barbara Lerner
- * @version Aug 31, 2015
+ * @author Hafeezul Rahman
+ * @version June 28, 2016
  *
  */
 public class CompareGraphsCommand implements ActionListener {
 	/**
-	 * Creates the window that allows the user to compare R scripts used
-	 * to create 2 different DDGs.
+	 * Creates the window that allows the user to compare 2 DDGs
 	 */
 	private static void execute() {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		JPanel diffPanel = new GraphComp(ddgExplorer, jenaLoader);
-		/*diffFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		diffFrame.setSize(800,600);
-		DialogUtilities.centerWindow(diffFrame, frame);	*/
-		//new tab!
 		ddgExplorer.addTab("Comparing DDGraphs", diffPanel);
-		// ProvenanceData currentDDG = ddgExplorer.getCurrentDDG();
-		// System.out.println(currentDDG.toString());
-		//DDGExplorer.doneLoadingDDG();
 	}
 
 	@Override

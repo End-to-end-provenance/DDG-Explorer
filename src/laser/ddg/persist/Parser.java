@@ -92,7 +92,7 @@ public class Parser {
 	private DDGBuilder ddgBuilder;
 	
 	// The number of step/procedure nodes.
-	public int numPins;
+	private int numPins;
 	
 	//The name of the script
 	private String scrpt;
@@ -763,7 +763,13 @@ public class Parser {
 	public Attributes getAttributes(){
 		return attributes;
 	}
-	
+
+	/**
+	 * @return the number of Procedural Nodes
+	 */
+	public int getNumPins(){
+		return numPins;
+	}
 
 	/**
 	 * Constructs the name to use for the node from the tokens
