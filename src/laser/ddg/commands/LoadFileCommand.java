@@ -37,6 +37,7 @@ public class LoadFileCommand implements ActionListener {
 			String selectedFileName = selectedFile.getName();
 			DDGExplorer.loadingDDG();
 			builder.processStarted(selectedFileName, null);
+			//System.out.println("printing here");
 			Parser parser = new Parser(selectedFile, builder);
 			parser.addNodesAndEdges();
 
