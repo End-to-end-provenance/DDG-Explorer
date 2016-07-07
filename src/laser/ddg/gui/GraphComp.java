@@ -214,7 +214,6 @@ public class GraphComp extends JPanel {
   //JPanel to hold the left and right file upload options.
   private JPanel northPanel = new JPanel();
 
-<<<<<<< HEAD
   //Boolean to find if DDG is loaded from database
   private boolean fromDDG = false;
 
@@ -224,8 +223,6 @@ public class GraphComp extends JPanel {
   //String to store the name of the script for the right ddg
   private String rightScriptName;
 
-=======
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
   /**
    * Create the window that allows the user to select files to compare and
    * to see the results of the comparison
@@ -236,11 +233,7 @@ public class GraphComp extends JPanel {
     super(new BorderLayout());
     this.frame = frame;
     this.jenaLoader = jenaLoader;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
     JPanel leftPanel = createButtonPanel(selectFile1Button, selectFromDB1Button, leftFileField);
     leftPanel.setBorder(BorderFactory.createTitledBorder("Left file"));
     JPanel rightPanel = createButtonPanel(selectFile2Button, selectFromDB2Button, rightFileField);
@@ -250,11 +243,7 @@ public class GraphComp extends JPanel {
     northPanel.add(rightPanel);
     add(northPanel, BorderLayout.NORTH);
     //add(diffPanel, BorderLayout.WEST);
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
   }
 
   /**
@@ -348,16 +337,12 @@ public class GraphComp extends JPanel {
       return;
     }
     rightFile = f;
-<<<<<<< HEAD
     if (!fromDDG) {
       rightFileField.setText(rightFile.getAbsolutePath());
     } else {
       rightFileField.setText(rightScriptName);
     }
 
-=======
-    rightFileField.setText(rightFile.getAbsolutePath());
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
     selectFile2Button.setEnabled(false);
     selectFromDB2Button.setEnabled(false);
   }
@@ -372,15 +357,11 @@ public class GraphComp extends JPanel {
       return;
     }
     leftFile = f;
-<<<<<<< HEAD
     if (!fromDDG) {
       leftFileField.setText(leftFile.getAbsolutePath());
     } else {
       leftFileField.setText(leftScriptName);
     }
-=======
-    leftFileField.setText(leftFile.getAbsolutePath());
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
     selectFile1Button.setEnabled(false);
     selectFromDB1Button.setEnabled(false);
   }
@@ -414,7 +395,6 @@ public class GraphComp extends JPanel {
 
           @Override
           public void actionPerformed(ActionEvent e) {
-<<<<<<< HEAD
             String selectedScript = browser.getSelectedFile().getName();
             String timestamp = browser.getSelectedTimestamp();
             File selectedFile =
@@ -432,15 +412,6 @@ public class GraphComp extends JPanel {
               } else {
                 fromDDG = true;
                 rightScriptName = selectedScript + " " + timestamp;
-=======
-            File selectedFile = browser.getSelectedFile();
-            selectFrame.dispose();
-
-            try {
-              if (button == selectFromDB1Button) {
-                selectLeftFile(selectedFile);
-              } else {
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
                 selectRightFile(selectedFile);
               }
               if (leftFile != null && rightFile != null) {
@@ -696,11 +667,7 @@ public class GraphComp extends JPanel {
       Path path = Paths.get(filename);
       Files.delete(path);
     } catch (Exception e) {
-<<<<<<< HEAD
-      //System.out.println(e.getMessage());
-=======
       System.out.println(e.getMessage());
->>>>>>> 427d54b157c7f8eea3f5f7386b5b54f29b5fa3fb
     }
   }
 }
