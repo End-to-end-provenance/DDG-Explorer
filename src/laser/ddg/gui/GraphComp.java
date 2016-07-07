@@ -667,7 +667,7 @@ public class GraphComp extends JPanel {
       Path path = Paths.get(filename);
       Files.delete(path);
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      //System.out.println(e.getMessage());
     }
   }
 }
