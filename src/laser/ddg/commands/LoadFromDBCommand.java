@@ -55,7 +55,6 @@ public class LoadFromDBCommand implements ActionListener {
 				try {
 					loadFromDBFrame.dispose();
 					loadDDGFromDB(selectedProcessName, selectedTimestamp);
-					System.out.println(selectedProcessName +" "+ selectedTimestamp);
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(ddgExplorer,
 							"Unable to load the DDG: " + e1.getMessage(),
