@@ -479,6 +479,8 @@ public class GraphComp extends JPanel {
 
     JPanel newPanel_left = populateDisplay(display_left, displayOverview_left);
     JPanel newPanel_right = populateDisplay(display_right, displayOverview_right);
+    newPanel_left.add(leftFileField, BorderLayout.SOUTH);
+    newPanel_right.add(rightFileField, BorderLayout.SOUTH);
 
     ToolbarCompare toolbar = new ToolbarCompare(display_left, display_right);
 
