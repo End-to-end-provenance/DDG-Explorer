@@ -211,6 +211,9 @@ public class GraphComp extends JPanel {
   //Graph builder for the right file
   private PrefuseGraphBuilder builderRight;
 
+  //JPanel to hold the left and right file upload options.
+  private JPanel northPanel = new JPanel();
+
   /**
    * Create the window that allows the user to select files to compare and
    * to see the results of the comparison
@@ -221,7 +224,7 @@ public class GraphComp extends JPanel {
     super(new BorderLayout());
     this.frame = frame;
     this.jenaLoader = jenaLoader;
-    JPanel northPanel = new JPanel();
+    
     JPanel leftPanel = createButtonPanel(selectFile1Button, selectFromDB1Button, leftFileField);
     leftPanel.setBorder(BorderFactory.createTitledBorder("Left file"));
     JPanel rightPanel = createButtonPanel(selectFile2Button, selectFromDB2Button, rightFileField);
@@ -231,6 +234,7 @@ public class GraphComp extends JPanel {
     northPanel.add(rightPanel);
     add(northPanel, BorderLayout.NORTH);
     //add(diffPanel, BorderLayout.WEST);
+    
   }
 
   /**
@@ -310,6 +314,7 @@ public class GraphComp extends JPanel {
       }
       if (leftFile != null && rightFile != null) {
         displayGraphDiff();
+        remove(northPanel);
       }
     }
   }
@@ -383,6 +388,7 @@ public class GraphComp extends JPanel {
               }
               if (leftFile != null && rightFile != null) {
                 displayGraphDiff();
+                remove(northPanel);
               }
             } catch (Exception e1) {
               JOptionPane.showMessageDialog(
