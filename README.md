@@ -7,7 +7,7 @@ DDG Explorer is a tool that allows the user to view and query Data Derivation Gr
 * Ability to compare R scripts used to generate different DDGs
 * Ability to search for where a particular data file is used or generated.
 
-## Installation Instructions
+## Installation Instructions on Ubuntu
 
 1. Install 'ant' : `sudo apt-get install ant`
 2. Install 'javac' : `sudo apt-get install default-jdk`
