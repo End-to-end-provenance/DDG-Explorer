@@ -667,9 +667,11 @@ public class Parser {
 					if (value == null) {
 						value = parseValue(nodeId);
 						if (value != null) {
-							File thefile = new File(value);
-							File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
-							value = relative.getAbsolutePath();
+							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
+								File thefile = new File(value);
+								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+								value = relative.getAbsolutePath();
+							}
 							somethingMatched = true;
 						}
 					}
@@ -706,7 +708,7 @@ public class Parser {
 				consumeRestOfLine();
 			}
 			
-			//System.out.println("name = " + name + "  value = " + value + "  timestamp = " + timestamp + "\n\n");
+			System.out.println("name = " + name + "  value = " + value + "  timestamp = " + timestamp + "\n\n");
 
 			if (ddgBuilder != null) {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
