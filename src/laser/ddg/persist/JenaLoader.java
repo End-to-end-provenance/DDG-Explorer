@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
@@ -78,6 +80,7 @@ public class JenaLoader {
 	 */
 	private JenaLoader() {
 		dataset = RdfModelFactory.getDataset();
+
 		//printDBContents();
 	}
 	
@@ -244,9 +247,9 @@ public class JenaLoader {
 			getAllInputs(pin);
 			getAllOutputs(pin);
 		}
-		System.out.println("All nodes loaded from DB.");
+		//System.out.println("All nodes loaded from DB.");
 		pd.notifyProcessFinished();
-		System.out.println("Done with notifyProcessFinished");
+		//System.out.println("Done with notifyProcessFinished");
 		return pd;
 	}
 	
@@ -307,8 +310,8 @@ public class JenaLoader {
 		int lineNumber = retrieveSinLineNumber(res);
 		ProcedureInstanceNode pin = addSinToProvData(name,
 				type, value, elapsedTime, lineNumber, res, id, provData);
-		System.out.println("Adding sin" + id + ": "
-				+ pin.toString());
+		//System.out.println("Adding sin" + id + ": "
+		//		+ pin.toString());
 		return pin;
 	}
 
@@ -508,8 +511,8 @@ public class JenaLoader {
 			else {
 				outputDin = addDataResourceToProvenance(outputResource, pd);
 			}
-			System.out.println("Adding output " + outputDin.getName()
-						+ " to " + pin.getName());
+			//System.out.println("Adding output " + outputDin.getName()
+			//			+ " to " + pin.getName());
 			pin.addOutput(outputDin.getName(), outputDin);
 			// Producere is set when the data node is created.
 		}
@@ -566,7 +569,7 @@ public class JenaLoader {
 		
 		SortedSet<FileInfo> sortedFiles= new TreeSet<FileInfo>();
 		
-		System.out.println("Files found:");
+		//System.out.println("Files found:");
 		
 		// Go through the result set, createing FileInfo objects out of the results
 		// and putting them into a sorted set.
@@ -673,7 +676,7 @@ public class JenaLoader {
 	 * @return the result set
 	 */
 	private ResultSetRewindable performQuery(String selectQueryString) {
-		System.out.println(selectQueryString);
+		//System.out.println(selectQueryString);
 		Query selectQuery = QueryFactory.create(selectQueryString);
 
 		// Execute the query and obtain results
@@ -698,7 +701,7 @@ public class JenaLoader {
 				.makeRewindable(resultSet);
 
 		// Output the result set as text
-		ResultSetFormatter.out(System.out, rewindableResultSet, selectQuery);
+		//ResultSetFormatter.out(System.out, rewindableResultSet, selectQuery);
 		rewindableResultSet.reset();
 		return rewindableResultSet;
 	}
@@ -717,7 +720,7 @@ public class JenaLoader {
 	private DataInstanceNode addDinToProvData(String currentName,
 			String currentType, Resource currentRes, String currentVal, int id, String dataTimestamp, ProvenanceData provData, String location) {
 		DataInstanceNode din = createDataInstanceNode(currentName, currentType, id, currentVal, dataTimestamp, location);
-		System.out.println("Adding Din " + id);
+		//System.out.println("Adding Din " + id);
 
 		if (!nodesToResContains(currentRes, provData)) {
 			provData.addDIN(din, currentRes.getURI());

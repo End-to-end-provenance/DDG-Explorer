@@ -37,7 +37,7 @@ public class CPLWriter implements ProvenanceListener {
 	@Override
 	public void processStarted(String processName, ProvenanceData provData,String timestamp, String language) {
 		// This creates a model that persists in a CPL database.
-		System.out.println("Attaching to CPL database");
+		//System.out.println("Attaching to CPL database");
 		// System.getProperties().list(System.out);
 		CPL.attachODBC("DSN=CPL");
 		this.provData = provData;
@@ -54,7 +54,7 @@ public class CPLWriter implements ProvenanceListener {
 	private void addProcessNameToDB(String processName, String timestamp) {
         CPLObject processObj = new CPLObject("Little-JIL", processName, "Process");
 
-		System.out.println("Adding process " + processName);
+		//System.out.println("Adding process " + processName);
 		processObj.addProperty("numExecutions", "1");
 		processObj.addProperty ("timestamp", timestamp);
 	}
@@ -77,13 +77,13 @@ public class CPLWriter implements ProvenanceListener {
 		CPLObject procNode = new CPLObject("Little-JIL", pin.getName() + " " + pin.getId(), "Process");
 		provData.bindNodeToResource(pin, procNode.toString());
 		procNode.addProperty("Node type", procNode.getType());
-		System.out.println("Adding step " + pin.getName() + " " + pin.getId());
+		//System.out.println("Adding step " + pin.getName() + " " + pin.getId());
 	}
 
 	@Override
 	public void dataNodeCreated(DataInstanceNode din) {
 		CPLObject dataNode = new CPLObject("Little-JIL", din.getName() + " " + din.getId(), "Artifact");
-		System.out.println("Adding data " + din.getName() + " " + din.getId());
+		//System.out.println("Adding data " + din.getName() + " " + din.getId());
 		provData.bindNodeToResource(din, dataNode.toString());
 		dataNode.addProperty("Node type", din.getType());
 		dataNode.addProperty("value", din.getValue().toString());

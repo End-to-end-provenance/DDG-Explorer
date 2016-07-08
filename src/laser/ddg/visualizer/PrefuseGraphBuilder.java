@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -170,6 +172,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public PrefuseGraphBuilder() {
 		ddgPanel = new DDGPanel();
 		ddgPanel.setSearchIndex (searchIndex);
+        Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
 	/**
@@ -182,7 +185,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
 		ddgPanel.setSearchIndex (searchIndex);
-	}
+        Logger.getLogger("prefuse").setLevel(Level.WARNING);
+    }
 
 	/**
 	 * Creates an object that builds a visual graph.
@@ -196,6 +200,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.dataDerivation = dataDerivation;
 		ddgPanel = new DDGPanel();
 		ddgPanel.setSearchIndex (searchIndex);
+        Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
 	/**
@@ -1363,7 +1368,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				showMembersRecursively(nextMember);
 			}
 			else {
-				System.out.println("showMembersRecursively: Making visible: " + nextMember);
+				//System.out.println("showMembersRecursively: Making visible: " + nextMember);
 				nextMember.setVisible(true);
 			}
 		}
