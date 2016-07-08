@@ -708,7 +708,7 @@ public class Parser {
 				consumeRestOfLine();
 			}
 			
-			System.out.println("name = " + name + "  value = " + value + "  timestamp = " + timestamp + "\n\n");
+			//System.out.println("name = " + name + "  value = " + value + "  timestamp = " + timestamp + "\n\n");
 
 			if (ddgBuilder != null) {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
