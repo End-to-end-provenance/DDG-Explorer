@@ -311,10 +311,10 @@ public class DDGDisplay extends Display {
 
 		String body = null;
 		if (PrefuseUtils.isLeafNode((NodeItem)leaf)) {
-			System.out.println("Looking for function " + functionName);
+			//System.out.println("Looking for function " + functionName);
 			body = builder.getFunctionBody(functionName);
 			if (body == null) {
-				System.out.println("Looking for block " + functionName);
+				//System.out.println("Looking for block " + functionName);
 				body = builder.getBlockBody(functionName);
 			}
 			if (body == null) {
@@ -326,9 +326,9 @@ public class DDGDisplay extends Display {
 		} 
 		else {
 			body = builder.getBlockBody(functionName);
-			System.out.println("Looking for block " + functionName);
+			//System.out.println("Looking for block " + functionName);
 			if (body == null) {
-				System.out.println("Looking for function " + functionName);
+				//System.out.println("Looking for function " + functionName);
 				body = builder.getFunctionBody(functionName);
 			}
 			if (body == null) {
@@ -523,7 +523,7 @@ public class DDGDisplay extends Display {
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					System.out.println("Reading script from " + fileName);
+					//System.out.println("Reading script from " + fileName);
 					File theFile = new File(fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
