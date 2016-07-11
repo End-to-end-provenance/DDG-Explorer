@@ -11,3 +11,5 @@ lib/nblibraries.properties
 nbbuild.xml
 *.jar
 /dist/
+/.DS_Store
+/eclispe-build.xml
