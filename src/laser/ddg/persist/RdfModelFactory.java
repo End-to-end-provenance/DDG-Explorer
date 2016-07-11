@@ -23,7 +23,7 @@ public class RdfModelFactory {
 	
 	// Nobody should try to create an instance of this class.
 	private RdfModelFactory() {
-		
+
 	}
 	
 	/**
@@ -61,9 +61,9 @@ public class RdfModelFactory {
     		return null;
     	}
     	
-    	System.out.println("Creating model in directory " + directory);
+    	//System.out.println("Creating model in directory " + directory);
     	
-    	System.out.println("Creating Jena directory " + directory);
+    	//System.out.println("Creating Jena directory " + directory);
     	dataset = TDBFactory.createDataset(directory);
     	datasetMap.put(directory, dataset);
     	return dataset;
