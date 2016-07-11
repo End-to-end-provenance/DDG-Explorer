@@ -419,7 +419,7 @@ public class Parser {
 		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 
-		System.out.println("Line number = " + lineNum);
+		//System.out.println("Line number = " + lineNum);
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, lineNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
@@ -667,9 +667,11 @@ public class Parser {
 					if (value == null) {
 						value = parseValue(nodeId);
 						if (value != null) {
-							File thefile = new File(value);
-							File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
-							value = relative.getAbsolutePath();
+							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
+								File thefile = new File(value);
+								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+								value = relative.getAbsolutePath();
+							}
 							somethingMatched = true;
 						}
 					}
