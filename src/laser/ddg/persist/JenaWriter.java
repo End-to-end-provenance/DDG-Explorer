@@ -45,7 +45,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	 * Open a connection to the Jena database for writing.
 	 */
 	private JenaWriter() {
-		System.out.println("Connecting to the Jena database");
+		//System.out.println("Connecting to the Jena database");
 		dataset = RdfModelFactory.getDataset();
 	}
 	
@@ -138,7 +138,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		} catch (Exception e) {
 			DDGExplorer.showErrMsg("Unable to initialize the database for the DDG.\n");
 			DDGExplorer.showErrMsg(e + "\n");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 	
@@ -176,7 +176,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		} catch (Exception e) {
 			DDGExplorer.showErrMsg("Error when trying to determine if the DDG is already in the database.\n");
 			DDGExplorer.showErrMsg(e.toString());
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return false;
 		}
 	}
@@ -222,7 +222,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			Attributes attributes, String processFileTimestamp) {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		int numProcesses = jenaLoader.getNumProcesses();
-		System.out.println("numProcesses = " + numProcesses + " (different process definitions executed");
+		//System.out.println("numProcesses = " + numProcesses + " (different process definitions executed");
 		processURI = Properties.ALL_PROCESSES_URI + numProcesses;
 		// System.out.println("JenaWriter.addProcessNameToDB requesting write lock.");
 		dataset.begin(ReadWrite.WRITE);
@@ -316,8 +316,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		getProvData().bindNodeToResource(din, newDin.getURI());
 		//	System.out.println("Adding name " + din.getName() + " to resource "
 		//	+ resourceId + " in model " + System.identityHashCode(model) + " with value " + din.getValue().toString());
-		System.out.println("Adding name " + din.getName() + " to resource "
-				+ resourceId + " in model " + System.identityHashCode(model));
+		//System.out.println("Adding name " + din.getName() + " to resource "
+		//		+ resourceId + " in model " + System.identityHashCode(model));
 		newDin.addProperty(props.getDDG(model), ddgURI);
 		newDin.addProperty(props.getDinName(model), din.getName());
 		newDin.addLiteral(props.getDinDDGId(model), din.getId());
@@ -359,8 +359,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		Resource newSin = model.createResource(props.getSinResourceId(sin));
 			
 		getProvData().bindNodeToResource(sin, newSin.getURI());
-		System.out.println("Adding name " + sin.getName()
-					+ " to resource" + newSin);
+		//System.out.println("Adding name " + sin.getName()
+		//			+ " to resource" + newSin);
 
 		newSin.addProperty(props.getDDG(model), ddgURI);
 		newSin.addProperty(props.getSinName(model), sin.getName());

@@ -5,3 +5,11 @@
 /.settings/
 /.DS_Store
 /eclispe-build.xml
+/nbproject
+/build/
+manifest.mf
+/lib/CopyLibs/*
+lib/nblibraries.properties
+nbbuild.xml
+*.jar
+/dist/

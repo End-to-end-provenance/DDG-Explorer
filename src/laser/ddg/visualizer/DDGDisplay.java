@@ -109,7 +109,7 @@ public class DDGDisplay extends Display {
 
 		//Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
-		String valueExt = "";
+		String valueExt;
 		if(value != null){
 			int index = value.lastIndexOf(".");
 			valueExt = value.substring(index);
@@ -244,7 +244,7 @@ public class DDGDisplay extends Display {
 			}
 		} catch (ParseException e) {
 			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 		}
 	}
@@ -311,10 +311,10 @@ public class DDGDisplay extends Display {
 
 		String body = null;
 		if (PrefuseUtils.isLeafNode((NodeItem)leaf)) {
-			System.out.println("Looking for function " + functionName);
+			//System.out.println("Looking for function " + functionName);
 			body = builder.getFunctionBody(functionName);
 			if (body == null) {
-				System.out.println("Looking for block " + functionName);
+				//System.out.println("Looking for block " + functionName);
 				body = builder.getBlockBody(functionName);
 			}
 			if (body == null) {
@@ -326,9 +326,9 @@ public class DDGDisplay extends Display {
 		} 
 		else {
 			body = builder.getBlockBody(functionName);
-			System.out.println("Looking for block " + functionName);
+			//System.out.println("Looking for block " + functionName);
 			if (body == null) {
-				System.out.println("Looking for function " + functionName);
+				//System.out.println("Looking for function " + functionName);
 				body = builder.getFunctionBody(functionName);
 			}
 			if (body == null) {
@@ -523,11 +523,11 @@ public class DDGDisplay extends Display {
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					System.out.println("Reading script from " + fileName);
+					//System.out.println("Reading script from " + fileName);
 					File theFile = new File(fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
-			    	lineStarts = new ArrayList<Integer>();
+			    	lineStarts = new ArrayList<>();
 	
 					try {
 						readFile = new Scanner(theFile);
@@ -578,7 +578,7 @@ public class DDGDisplay extends Display {
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e.printStackTrace(System.err);
 					}
 
 				}

@@ -3,6 +3,7 @@ package laser.ddg.commands;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -71,9 +72,9 @@ public class ShowAttributesCommand implements ActionListener {
 		try {
 			String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attrs);
 			return text;
-		} catch (Exception e) {
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			System.out.println("Can't create attribute text");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return null;
 		}
 	}

@@ -59,8 +59,6 @@ public class Legend extends Box {
 			return;
 		}
 
-		int numEntries = 0;
-
 		JPanel legend = new JPanel();
 		legend.setLayout(new GridLayout(0, 1));
 
@@ -82,7 +80,7 @@ public class Legend extends Box {
 		});
 		headerPanel.add(closeLegendButton);
 		legend.add(headerPanel);
-		numEntries = 1;
+		int numEntries = 1;
 
 		if (nodeColors != null) {
 			addNodesToLegend(nodeColors, legend);

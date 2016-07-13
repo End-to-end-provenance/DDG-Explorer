@@ -109,7 +109,7 @@ public class Parser {
 	// Edges are saved and processed after all the nodes have been added
 	// to the graph.  That way there can be no references to edges that
 	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<ArrayList<String>>();
+	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
 	
 	private File fileBeingParsed;
 	
@@ -179,7 +179,7 @@ public class Parser {
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		
 		int nextToken = skipBlankLines();
@@ -308,7 +308,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private void saveEdgeDeclaration() throws IOException {
-		ArrayList<String> decl = new ArrayList<String>();
+		ArrayList<String> decl = new ArrayList<>();
 		decl.add(in.sval);
 		
 		try {
@@ -419,7 +419,7 @@ public class Parser {
 		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 
-		System.out.println("Line number = " + lineNum);
+		//System.out.println("Line number = " + lineNum);
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, lineNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
@@ -667,6 +667,11 @@ public class Parser {
 					if (value == null) {
 						value = parseValue(nodeId);
 						if (value != null) {
+							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
+								File thefile = new File(value);
+								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+								value = relative.getAbsolutePath();
+							}
 							somethingMatched = true;
 						}
 					}
@@ -864,7 +869,7 @@ public class Parser {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		} catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -897,7 +902,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 		}
 		//if target is function node
@@ -921,7 +926,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
 				DDGExplorer.showErrMsg(e.getMessage());
