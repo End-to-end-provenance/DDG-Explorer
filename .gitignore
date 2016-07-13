@@ -3,3 +3,5 @@
 /.project
 /ddgbuilder.jar
 /.settings/
+/.DS_Store
+/eclispe-build.xml
