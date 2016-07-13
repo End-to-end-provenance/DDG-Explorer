@@ -498,24 +498,11 @@ public class DDGDisplay extends Display {
 					// Get the last member & its line number
 					NodeItem lastMember = builder.getLastMember(item);
 					int lastLine = PrefuseUtils.getLineNumber(lastMember);
-					
-					// display source code between those lines
-					if (firstLine != -1 && lastLine != -1) {
-						displaySourceCode (firstLine, lastLine);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
-					}
+					displaySourceCode (firstLine, lastLine);
 				}
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					if (lineNumber != -1){
-						//JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
-						displaySourceCode(lineNumber);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
-					}
+					displaySourceCode(lineNumber);
 				}
 			}
 
@@ -523,8 +510,23 @@ public class DDGDisplay extends Display {
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					//System.out.println("Reading script from " + fileName);
+					if (fileName == null) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
 					File theFile = new File(fileName);
+					if (!theFile.exists()) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
+
+					// display source code between those lines
+					if (firstLine == -1 || lastLine == -1) {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
+						return;
+					}
+					
+					//System.out.println("Reading script from " + fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
 			    	lineStarts = new ArrayList<>();
@@ -541,7 +543,7 @@ public class DDGDisplay extends Display {
 						fileContents = contentsBuilder.toString();
 	
 					} catch (FileNotFoundException e) {
-						DDGExplorer.showErrMsg("Cannot find script file: " + fileName + "\n\n");
+						DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
 					} finally {
 						if (readFile != null) {
 							readFile.close();

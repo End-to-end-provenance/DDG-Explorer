@@ -1,5 +1,6 @@
 package laser.ddg.persist;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -8,16 +9,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.FileInfo;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -28,7 +19,6 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.ResultSetRewindable;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -36,6 +26,14 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.DataInstanceNode;
+import laser.ddg.FileInfo;
+import laser.ddg.LanguageConfigurator;
+import laser.ddg.ProcedureInstanceNode;
+import laser.ddg.ProvenanceData;
 
 /**
  * This class reads provenance data from a Jena database.
@@ -290,7 +288,10 @@ public class JenaLoader {
 		// Find the file that contains the script used to create the DDG being loaded
 		String processFileTimestamp = getStringValue(processName, timestamp, Properties.PROCESS_FILE_TIMESTAMP_URI, null);
 		String savedFileName = FileUtil.getSavedFileName(processName, processFileTimestamp);
-		pd.createFunctionTable(savedFileName);
+		File savedFile = new File (savedFileName);
+		if (savedFile.exists()) {
+			pd.createFunctionTable(savedFileName);	
+		}
 		
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);
 	}

@@ -2071,6 +2071,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return provData.getScript();
 	}
 
+	public String getProcessName() {
+		return provData.getProcessName();
+	}
+
 	public NodeItem getFirstMember(VisualItem collapsedNode) {
 		return vis.getStart((Node) collapsedNode);
 	}

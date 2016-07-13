@@ -87,10 +87,10 @@ public class ProvenanceData {
 	private List<ProvenanceListener> provListeners = new LinkedList<>();
 
 	// Table mapping function names to function bodies
-	private Map<String, String> functionTable;
+	private Map<String, String> functionTable = new HashMap<>();
 	
 	// Table mapping named blocks to the code within those blocks.
-	private Map<String, String> blockTable;
+	private Map<String, String> blockTable = new HashMap<>();
 	
 	// The query that this provenance data represents.
 	private String query;
@@ -790,10 +790,6 @@ public class ProvenanceData {
 		if (scriptParser != null) {
 			functionTable = scriptParser.buildFunctionTable(fileName);
 			blockTable = scriptParser.buildBlockTable(fileName);
-		}
-		else {
-			functionTable = new HashMap<>();
-			blockTable = new HashMap<>();
 		}
 	}
 
