@@ -82,6 +82,9 @@ public class Parser {
 
 	private static final String LINE_NUMBER = "Line";
 
+	// Attribute associated with a procedure node to identify the script number.
+	private static final Object SCRIPT_NUMBER = "Script";
+
 	// The input stream
 	private StreamTokenizer in;
 	
@@ -371,6 +374,7 @@ public class Parser {
 		
 		double elapsedTime = 0;
 		int lineNum = -1;
+		int scriptNum = 0;
 		
 		// The remaining attributes are optional
 		while (true) {
@@ -410,9 +414,13 @@ public class Parser {
 				}
 			
 				else if (in.sval.equals(LINE_NUMBER)) {
-					lineNum = parseLineNumber();
+					lineNum = parseNumber();
 				}
-			}
+
+				else if (in.sval.equals(SCRIPT_NUMBER)) {
+					scriptNum = parseNumber();
+				}
+}
 		}
 			
 
@@ -421,18 +429,18 @@ public class Parser {
 
 		//System.out.println("Line number = " + lineNum);
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, elapsedTime, null, lineNum);
+					constructName(nodeType, name), value, elapsedTime, null, lineNum, scriptNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum, scriptNum);
 	}
 
 	/** 
-	 * Parse the line number attribute
-	 * @return the line number value of the attribute, or -1 if there is no line number attribute 
+	 * Parse the line or script number attribute
+	 * @return the number value of the attribute, or -1 if there is no number attribute 
 	 * 
 	 **/
-	private int parseLineNumber() throws IOException {
+	private int parseNumber() throws IOException {
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
 			in.pushBack();
@@ -444,7 +452,7 @@ public class Parser {
 			try {
 				return Integer.parseInt(in.sval);
 			} catch (NumberFormatException e) {
-				// ddg.txt uses "NA" for a missing line number
+				// ddg.txt uses "NA" for a missing number
 				return -1;
 			}
 		}
@@ -714,7 +722,7 @@ public class Parser {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
 			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location, -1);
+					constructName(nodeType, name), value, timestamp, location, -1, -1);
 
 			
 		} catch (IllegalStateException e) {
