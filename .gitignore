@@ -13,3 +13,8 @@ lib/nblibraries.properties
 nbbuild.xml
 *.jar
 /dist/
+<<<<<<< HEAD
+=======
+/.DS_Store
+/eclispe-build.xml
+>>>>>>> refs/heads/MissingScript
