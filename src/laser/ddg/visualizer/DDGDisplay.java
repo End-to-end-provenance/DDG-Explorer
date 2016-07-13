@@ -498,15 +498,25 @@ public class DDGDisplay extends Display {
 					// Get the last member & its line number
 					NodeItem lastMember = builder.getLastMember(item);
 					int lastLine = PrefuseUtils.getLineNumber(lastMember);
-					displaySourceCode (firstLine, lastLine);
+					
+					// Get the script number.  The first and last lines should come from the same script
+					int scriptNum = PrefuseUtils.getScriptNumber(firstMember);
+					displaySourceCode (firstLine, lastLine, scriptNum);
 				}
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					displaySourceCode(lineNumber);
+					int scriptNum = PrefuseUtils.getScriptNumber((NodeItem) item);
+					displaySourceCode(lineNumber, scriptNum);
 				}
 			}
 
-			private void displaySourceCode(int firstLine, int lastLine) {
+			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+				if (scriptNum > 0) {
+					// Currently, we only save the main script file!!!
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no copy of the sourced script available.");
+					return;
+				}
+				
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
@@ -587,8 +597,8 @@ public class DDGDisplay extends Display {
 
 			}
 
-			private void displaySourceCode(int lineNumber) {
-				displaySourceCode (lineNumber, lineNumber);
+			private void displaySourceCode(int lineNumber, int scriptNumber) {
+				displaySourceCode (lineNumber, lineNumber, scriptNumber);
 			}
 
 			
