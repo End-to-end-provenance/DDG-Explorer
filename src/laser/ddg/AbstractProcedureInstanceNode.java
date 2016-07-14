@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import laser.ddg.gui.DDGExplorer;
+
 /**
  * A Procedure Instance Node represents a transformation of the data whose
  * provenance is being recorded. It allows for a bidirectional traversal of the
@@ -564,4 +566,45 @@ public abstract class AbstractProcedureInstanceNode implements
 		return lineNumber;
 	}
 	
+	/**
+	 * Constructs the name to use for the node from the tokens
+	 * @param tokens the tokens from the declaration
+	 * @return the name to use
+	 */
+	public static String constructName(String nodeType, String nodeName) {
+		if(nodeName == null){
+			DDGExplorer.showErrMsg("Invalid node construct. No name given.");
+			return null;
+		}
+		StringBuilder str = new StringBuilder();
+		str.append(nodeName);
+
+		// Concatenate node name and type for non-leaf nodes to distinguish
+		// start, finish, etc. nodes
+		if (isMultipleNodePIN(nodeType)){
+			str.append(" " + nodeType);
+		}
+		return str.toString();
+	}
+	
+	/**
+	 * Returns true if this type of node corresponds to part of the execution of 
+	 * a step.
+	 * @param type the type of the node
+	 * @return true if this type of node corresponds to part of the execution of 
+	 * a step.
+	 */
+	private static boolean isMultipleNodePIN(String type) {
+		// Parts of a non-leaf step
+		if (type.equals("Start") || type.equals("Interm") || type.equals("Finish")) {
+			return true;
+		}
+
+		// Parts of a virtual step
+		if (type.equals("VStart") || type.equals("VInterm") || type.equals("VFinish")) {
+			return true;
+		}
+
+		return false;
+	}
 }
