@@ -481,23 +481,20 @@ public class GraphComp extends JPanel {
     } catch (Exception e) {
       //System.out.println("Exceptions caught" + e.getMessage());
     }
-
     createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
 
     createDiffFiles("rightTemp.txt", parserRight, builderRight);
-
     computeDiffResult();
-
-    builderLeft.processFinished();
-
-    builderRight.processFinished();
-
+    try {
+      builderLeft.processFinished();
+      builderRight.processFinished();
+    } catch (Exception e) {
+    }
     display_left = builderLeft.getDisplay();
     displayOverview_left = builderLeft.getOverview();
 
     display_right = builderRight.getDisplay();
     displayOverview_right = builderRight.getOverview();
-
     PanMyControl panning = new PanMyControl(display_left, display_right);
     vfListener vfL =
         new vfListener(display_left, displayOverview_left, display_right, displayOverview_right);
@@ -574,13 +571,14 @@ public class GraphComp extends JPanel {
   private void computeDiffResult() {
     diffOutput =
         new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
-    // System.out.println(diffOutput);
+    //System.out.println(diffOutput);
     String[] diffOutputArray = diffOutput.split("\n");
     int leftnode = 1, rightnode = 1;
     for (int i = 0; i < diffOutputArray.length; i++) {
 
       String currString = diffOutputArray[i].trim();
       String[] dummyString = currString.split("\\s+");
+      // System.out.println(dummyString.length);
       if (dummyString.length == 3) {
         if (dummyString[1].equals("|")) ;
         {
@@ -592,6 +590,7 @@ public class GraphComp extends JPanel {
         }
       }
       if (dummyString.length == 2) {
+        // System.out.println("length = 2");
         if (dummyString[0].equals(">")) {
           //System.out.println("added right node "+"rightnode:"+rightnode);
           builderRight.updateCopiedGroup(rightnode, "right_group");
