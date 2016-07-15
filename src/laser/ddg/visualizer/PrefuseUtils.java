@@ -42,6 +42,9 @@ public class PrefuseUtils {
 	/** The field name to identify the line number in the script */
 	static final String LINE = "Line";
 
+	/** The field name to identify the script number  */
+	static final String SCRIPT = "Script";
+
 	/** The field name to identify the source of an edge */
 	static final String SOURCE = "source";
 
@@ -521,6 +524,14 @@ public class PrefuseUtils {
 	 */
 	public static int getLineNumber(Node n) {
 		return n.getInt(LINE);
+	}
+
+	/**
+	 * @param n
+	 * @return the script number associated with a node
+	 */
+	public static int getScriptNumber(Node n) {
+		return n.getInt(SCRIPT);
 	}
 
 	/**

@@ -361,6 +361,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		newSin.addLiteral (props.getSinDDGId(model), sin.getId());
 		newSin.addLiteral (props.getSinElapsedTime(model), sin.getElapsedTime());
 		newSin.addLiteral (props.getSinLineNumber(model), sin.getLineNumber());
+		newSin.addLiteral (props.getSinScriptNumber(model), sin.getScriptNumber());
 			
 		Object procDef = sin.getProcedureDefinition();
 		if (procDef == null) {

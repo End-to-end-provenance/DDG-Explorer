@@ -44,6 +44,9 @@ public abstract class AbstractProcedureInstanceNode implements
 	// The line number where the code is that corresponds to this node. */
 	private int lineNumber;
 	
+	// The script number for this node
+	private int scriptNumber;
+	
 	/**
 	 * @return inputs map of names of input parameters to DIN values of those
 	 *         parameters
@@ -125,9 +128,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @param provData the provenance data that this node belongs to
 	 * @param elapsedTime 
          * @param lineNum 
+         * @param scriptNum
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, int lineNum) {
+			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
@@ -138,6 +142,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		this.provData = provData;
 		this.elapsedTime = elapsedTime;
 		this.lineNumber = lineNum;
+		this.scriptNumber = scriptNum;
 	}
 	
 	/**
@@ -561,4 +566,12 @@ public abstract class AbstractProcedureInstanceNode implements
 		return lineNumber;
 	}
 	
+	/**
+	 * @return the script number in the script that corresponds to this node.
+	 */
+        @Override
+	public int getScriptNumber() {
+		return scriptNumber;
+	}
+    	
 }

@@ -499,32 +499,44 @@ public class DDGDisplay extends Display {
 					NodeItem lastMember = builder.getLastMember(item);
 					int lastLine = PrefuseUtils.getLineNumber(lastMember);
 					
-					// display source code between those lines
-					if (firstLine != -1 && lastLine != -1) {
-						displaySourceCode (firstLine, lastLine);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
-					}
+					// Get the script number.  The first and last lines should come from the same script
+					int scriptNum = PrefuseUtils.getScriptNumber(firstMember);
+					displaySourceCode (firstLine, lastLine, scriptNum);
 				}
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					if (lineNumber != -1){
-						//JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
-						displaySourceCode(lineNumber);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
-					}
+					int scriptNum = PrefuseUtils.getScriptNumber((NodeItem) item);
+					displaySourceCode(lineNumber, scriptNum);
 				}
 			}
 
-			private void displaySourceCode(int firstLine, int lastLine) {
+			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+				if (scriptNum > 0) {
+					// Currently, we only save the main script file!!!
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no copy of the sourced script available.");
+					return;
+				}
+				
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					//System.out.println("Reading script from " + fileName);
+					if (fileName == null) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
 					File theFile = new File(fileName);
+					if (!theFile.exists()) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
+
+					// display source code between those lines
+					if (firstLine == -1 || lastLine == -1) {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
+						return;
+					}
+					
+					//System.out.println("Reading script from " + fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
 			    	lineStarts = new ArrayList<>();
@@ -541,7 +553,7 @@ public class DDGDisplay extends Display {
 						fileContents = contentsBuilder.toString();
 	
 					} catch (FileNotFoundException e) {
-						DDGExplorer.showErrMsg("Cannot find script file: " + fileName + "\n\n");
+						DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
 					} finally {
 						if (readFile != null) {
 							readFile.close();
@@ -585,8 +597,8 @@ public class DDGDisplay extends Display {
 
 			}
 
-			private void displaySourceCode(int lineNumber) {
-				displaySourceCode (lineNumber, lineNumber);
+			private void displaySourceCode(int lineNumber, int scriptNumber) {
+				displaySourceCode (lineNumber, lineNumber, scriptNumber);
 			}
 
 			

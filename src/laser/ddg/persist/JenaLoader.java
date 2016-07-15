@@ -1,5 +1,6 @@
 package laser.ddg.persist;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,16 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.FileInfo;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -27,7 +18,6 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.ResultSetRewindable;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -35,6 +25,14 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.DataInstanceNode;
+import laser.ddg.FileInfo;
+import laser.ddg.LanguageConfigurator;
+import laser.ddg.ProcedureInstanceNode;
+import laser.ddg.ProvenanceData;
 
 /**
  * This class reads provenance data from a Jena database.
@@ -290,7 +288,10 @@ public class JenaLoader {
 		// Find the file that contains the script used to create the DDG being loaded
 		String processFileTimestamp = getStringValue(processName, timestamp, Properties.PROCESS_FILE_TIMESTAMP_URI, null);
 		String savedFileName = FileUtil.getSavedFileName(processName, processFileTimestamp);
-		pd.createFunctionTable(savedFileName);
+		File savedFile = new File (savedFileName);
+		if (savedFile.exists()) {
+			pd.createFunctionTable(savedFileName);	
+		}
 		
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);
 	}
@@ -308,8 +309,9 @@ public class JenaLoader {
 		String value = retrieveSinValue(res);
 		Double elapsedTime = retrieveSinElapsedTime(res);
 		int lineNumber = retrieveSinLineNumber(res);
+		int scriptNumber = retrieveSinScriptNumber(res);
 		ProcedureInstanceNode pin = addSinToProvData(name,
-				type, value, elapsedTime, lineNumber, res, id, provData);
+				type, value, elapsedTime, lineNumber, scriptNumber, res, id, provData);
 		//System.out.println("Adding sin" + id + ": "
 		//		+ pin.toString());
 		return pin;
@@ -742,10 +744,10 @@ public class JenaLoader {
 	 * @param id The node's id
 	 * @return the procedure instance node that has been added to the provenance data
 	 */
-	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber,
+	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber, int scriptNumber,
 			Resource res, int id, ProvenanceData provData) {
 		if (!nodesToResContains(res, provData)) {
-			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber);
+			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber, scriptNumber);
 			provData.addPIN(pin, res.getURI());
 			return pin;
 		}
@@ -912,10 +914,12 @@ public class JenaLoader {
 	 * @param procDef the definition of the procedure that was executed
          * @param elapsedTime
 	 * @param lineNumber the line in the script that generated the node
+	 * @param scriptNumber the script number for this node
 	 * @return the node created
 	 */
-	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber) {
-		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber);
+	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber,
+			int scriptNumber) {
+		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber, scriptNumber);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {
@@ -974,6 +978,18 @@ public class JenaLoader {
 		} catch (NullPointerException e) {
 			// No line number in the database.  Happens for ddgs saved before
 			// we started recording line numbers.
+			return -1;
+		}
+	}
+
+	private int retrieveSinScriptNumber (Resource res) {
+		Property sinScriptNumberProperty = prop.getSinScriptNumber(res.getModel());
+		try {
+			int sinScriptNumber = retrieveIntProperty(res, sinScriptNumberProperty);
+			return sinScriptNumber;
+		} catch (NullPointerException e) {
+			// No script number in the database.  Happens for ddgs saved before
+			// we started recording script numbers.
 			return -1;
 		}
 	}
