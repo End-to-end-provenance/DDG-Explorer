@@ -388,6 +388,14 @@ public class DDGPanel extends JPanel {
 		builder.setHighlighted(id, value);
 	}
 
+	public void createCopiedGroup(String groupName){
+		builder.createCopiedGroup(groupName);
+	}
+
+	public void updateCopiedGroup(int id, String groupname){
+		builder.updateCopiedGroup(id, groupname);
+	}
+
 	public void focusOn(String name) {
 		builder.focusOn(name);
 	}

@@ -330,6 +330,7 @@ public class Parser {
 	 */
 	private void parseNode() throws IOException {
 		String nodeType = in.sval;
+//		System.out.println("Node Type:"+nodeType);
 		
 		if (in.nextToken() != StreamTokenizer.TT_WORD) {
 			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected data or procedure node identifier:  " + nodeType + "\n\n");
@@ -370,7 +371,8 @@ public class Parser {
 		String value = null;
 
 		value = parseValue(nodeId);
-		//System.out.println("name = " + name + "  value = " + value);
+//		System.out.println("name = " + name + "  value = " + value);
+//		System.out.println("nodeid="+nodeId);
 		
 		double elapsedTime = 0;
 		int lineNum = -1;
@@ -426,8 +428,8 @@ public class Parser {
 
 		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
-
 		//System.out.println("Line number = " + lineNum);
+		
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, lineNum, scriptNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
@@ -774,7 +776,13 @@ public class Parser {
 	public Attributes getAttributes(){
 		return attributes;
 	}
-	
+
+	/**
+	 * @return the number of Procedural Nodes
+	 */
+	public int getNumPins(){
+		return numPins;
+	}
 
 	/**
 	 * Constructs the name to use for the node from the tokens
