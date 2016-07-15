@@ -2,7 +2,6 @@ package laser.ddg;
 
 import java.util.ArrayList;
 
-import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;
@@ -42,9 +41,11 @@ public abstract class DDGBuilder {
 	 * @param id the id number of the node
 	 * @param name the name of the node
 	 * @param elapsedTime 
+         * @param lineNum 
+         * @param scriptNum
 	 * @return the new procedure instance node
 	 */
-	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime, int lineNum);
+	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime, int lineNum, int scriptNum);
 
 	/**
 	 * Determines what kind of procedure node to create and adds it
@@ -54,10 +55,12 @@ public abstract class DDGBuilder {
 	 * @param name the name of the node
 	 * @param value the definition of the procedure
 	 * @param elapsedTime 
+         * @param lineNum 
+         * @param scriptNum
 	 * @return the new procedure instance node
 	 */
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime, int lineNum) {
-		ProcedureInstanceNode pin = addProceduralNode(type, id, name, elapsedTime, lineNum);
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime, int lineNum, int scriptNum) {
+		ProcedureInstanceNode pin = addProceduralNode(type, id, name, elapsedTime, lineNum, scriptNum);
 		pin.setProcedureDefinition(value);
 		return pin;
 	}
@@ -71,9 +74,9 @@ public abstract class DDGBuilder {
 	 *            the id of the successor node
 	 */
 	public void addPredSuccLink(int predId, int succId) {
-		ProvenanceData provObject = getProvObject();
-		ProcedureInstanceNode predNode = provObject.findPin(predId);
-		ProcedureInstanceNode succNode = provObject.findPin(succId);
+		ProvenanceData prov = getProvObject();
+		ProcedureInstanceNode predNode = prov.findPin(predId);
+		ProcedureInstanceNode succNode = prov.findPin(succId);
 		succNode.addPredecessor(predNode);
 		predNode.addSuccessor(succNode);
 	}

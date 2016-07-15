@@ -236,13 +236,20 @@ public class DDGVisualization extends Visualization {
 			super (PrefuseUtils.NAME);
 		}
 		
+                @Override
 		protected String getText(VisualItem item) {
 			int lineNum = PrefuseUtils.getLineNumber((Node)item);
 			if (lineNum <= 0) {
 				return super.getText(item);
 			}
 			else {
-				return super.getText(item) + " [" + lineNum + "]";
+				int scriptNum = PrefuseUtils.getScriptNumber((Node) item);
+				if (scriptNum < 0) { 
+					return super.getText(item) + " [" + lineNum + "]";
+				}
+				else {
+					return super.getText(item) + " [" + scriptNum + ":" + lineNum + "]";
+				}
 			}
 		}
 	}

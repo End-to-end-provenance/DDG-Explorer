@@ -17,9 +17,11 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * @param procDefinition the code the node represents
 	 * @param provData the ddg
 	 * @param elapsedTime 
+         * @param lineNum 
+         * @param scriptNum
 	 */
-	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, int lineNum) {
-		super(name, procDefinition, provData, elapsedTime, lineNum);
+	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
+		super(name, procDefinition, provData, elapsedTime, lineNum, scriptNum);
 		assert provData != null;
 	}
 
@@ -27,6 +29,7 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * States if node is potentially a root
 	 * @return true - A start node can be a root
 	 */
+        @Override
 	public boolean canBeRoot() {
 		return true;
 	}
@@ -35,6 +38,7 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * Returns the type of the node
 	 * @return "Start"
 	 */
+        @Override
 	public String getType() {
 		return "Start";
 	}

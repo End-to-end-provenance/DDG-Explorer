@@ -100,7 +100,8 @@ public class TextLineNumber extends JPanel
 		setCurrentLineForeground( Color.RED );
 		setDigitAlignment( RIGHT );
 		setMinimumDisplayDigits( minimumDisplayDigits );
-
+                
+                /* Thomas : TODO should avoid passing this from constructor */
 		component.getDocument().addDocumentListener(this);
 		component.addCaretListener( this );
 		component.addPropertyChangeListener("font", this);
@@ -192,7 +193,7 @@ public class TextLineNumber extends JPanel
 	 *  <li>TextLineNumber.CENTER
 	 *  <li>TextLineNumber.RIGHT (default)
 	 *	</ul>
-	 *  @param currentLineForeground  the Color used to render the current line
+         * @param digitAlignment
 	 */
 	public void setDigitAlignment(float digitAlignment)
 	{
@@ -357,7 +358,7 @@ public class TextLineNumber extends JPanel
 		else  // We need to check all the attributes for font changes
 		{
 			if (fonts == null)
-				fonts = new HashMap<String, FontMetrics>();
+				fonts = new HashMap<>();
 
 			Element root = component.getDocument().getDefaultRootElement();
 			int index = root.getElementIndex( rowStartOffset );
@@ -438,26 +439,21 @@ public class TextLineNumber extends JPanel
 		//  View of the component has not been updated at the time
 		//  the DocumentEvent is fired
 
-		SwingUtilities.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				try
-				{
-					int endPos = component.getDocument().getLength();
-					Rectangle rect = component.modelToView(endPos);
-
-					if (rect != null && rect.y != lastHeight)
-					{
-						setPreferredWidth();
-						repaint();
-						lastHeight = rect.y;
-					}
-				}
-				catch (BadLocationException ex) { /* nothing to do */ }
-			}
-		});
+		SwingUtilities.invokeLater(() -> {
+                    try
+                    {
+                        int endPos = component.getDocument().getLength();
+                        Rectangle rect = component.modelToView(endPos);
+                        
+                        if (rect != null && rect.y != lastHeight)
+                        {
+                            setPreferredWidth();
+                            repaint();
+                            lastHeight = rect.y;
+                        }
+                    }
+                    catch (BadLocationException ex) { /* nothing to do */ }
+                });
 	}
 
 //

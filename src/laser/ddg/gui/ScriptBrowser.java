@@ -2,8 +2,6 @@ package laser.ddg.gui;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
-
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaLoader;
 
@@ -50,7 +48,7 @@ public class ScriptBrowser extends DBBrowser {
 			return scriptFile;
 		}
 		
-		DDGExplorer.showErrMsg("Could not find " + script + " in " + scriptDir);
+		DDGExplorer.showErrMsg("There is no script available for " + script);
 		return null;
 		
 	}

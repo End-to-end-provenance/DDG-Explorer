@@ -90,7 +90,7 @@ public class FileUseQuery extends AbstractQuery {
 	private static final DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 	
 	/**
-	 * Return the command name for the query
+	 * @return the command name for the query
 	 */
 	@Override
 	public String getMenuItem() {
@@ -101,6 +101,10 @@ public class FileUseQuery extends AbstractQuery {
 	 * Execute the query.  This will create a panel (in a tab) allowing the user to select options.
 	 * Hitting ok in the panel causes the query to run.
 	 *
+         * @param dbLoader
+         * @param processName
+         * @param timestamp
+         * @param visualization
 	 */
 	@Override
 	public void performQuery(final JenaLoader dbLoader, String processName, String timestamp, Component visualization) {
@@ -109,13 +113,9 @@ public class FileUseQuery extends AbstractQuery {
 		JPanel searchPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		
-		ActionListener dimResultsListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				disableFileTable();
-			}
-		};
+		ActionListener dimResultsListener = (ActionEvent e) -> {
+                    disableFileTable();
+                };
 
 		// Allows user to select input, output, or both types of files
 		JLabel ioLabel = new JLabel("File use as:  ", JLabel.RIGHT);
@@ -165,37 +165,28 @@ public class FileUseQuery extends AbstractQuery {
 		final JCheckBox allBox = new JCheckBox("all");
 		allBox.setSelected(true);
 		
-		ItemListener deselectAllListener = new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					allBox.setSelected(false);
-					disableFileTable();
-				}
-			}
-
-		};
+		ItemListener deselectAllListener = (ItemEvent e) -> {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        allBox.setSelected(false);
+                        disableFileTable();
+                    }
+                };
 		csvBox.addItemListener(deselectAllListener);
 		jpegBox.addItemListener(deselectAllListener);
 		txtBox.addItemListener(deselectAllListener);
 		pdfBox.addItemListener(deselectAllListener);
 		htmlBox.addItemListener(deselectAllListener);
 		
-		allBox.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED) {
-					csvBox.setSelected(false);
-					jpegBox.setSelected(false);
-					txtBox.setSelected(false);
-					pdfBox.setSelected(false);
-					htmlBox.setSelected(false);
-					disableFileTable();
-				}
-			}
-			
-		});
+		allBox.addItemListener((ItemEvent e) -> {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        csvBox.setSelected(false);
+                        jpegBox.setSelected(false);
+                        txtBox.setSelected(false);
+                        pdfBox.setSelected(false);
+                        htmlBox.setSelected(false);
+                        disableFileTable();
+                    }
+                });
 
 		fileTypePanel.add(csvBox);
 		fileTypePanel.add(jpegBox);
@@ -221,33 +212,23 @@ public class FileUseQuery extends AbstractQuery {
 		searchScopePanel.setLayout (new GridBagLayout());
 		dbButton = new JRadioButton("Entire database");
 		dbButton.setSelected(true);
-		dbButton.addActionListener (new ActionListener() {
-
-			// Sets to search entire db
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ddgField.setText("");
-				selectedScript = null;
-				selectedTimestamp = null;
-				disableFileTable();
-			}
-			
-		});
+		dbButton.addActionListener ((ActionEvent e) -> {
+                    ddgField.setText("");
+                    selectedScript = null;
+                    selectedTimestamp = null;
+                    disableFileTable();
+                } // Sets to search entire db
+                );
 
 		ddgButton = new JRadioButton("Select script or ddg");
 		ddgField = new JTextField(30);
 		ddgField.setEditable(false);
-		ddgButton.addActionListener(new ActionListener() {
-
-			// Popus up a window so the user can select a script or ddg to search
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// Modal dialog.  selectedDDG will be set on return.
-				selectDDG(ddgExplorer, dbLoader);
-				disableFileTable();
-			}
-			
-		});
+		ddgButton.addActionListener((ActionEvent e) -> {
+                    // Modal dialog.  selectedDDG will be set on return.
+                    selectDDG(ddgExplorer, dbLoader);
+                    disableFileTable();
+                } // Popus up a window so the user can select a script or ddg to search
+                );
 		ButtonGroup searchScopeGroup = new ButtonGroup();
 		searchScopeGroup.add(dbButton);
 		searchScopeGroup.add(ddgButton);
@@ -271,52 +252,47 @@ public class FileUseQuery extends AbstractQuery {
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		JButton searchButton = new JButton ("Search");
-		searchButton.addActionListener(new ActionListener() {
-
-			// Look up the options the user set and execute the query
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					int selectedIO;
-					if (inputButton.isSelected()) {
-						selectedIO = INPUT;
-					}
-					else if (outputButton.isSelected()) {
-						selectedIO = OUTPUT;
-					}
-					else {
-						selectedIO = IO;
-					}
-					
-					ArrayList<String> selectedExtensions = new ArrayList<String>();
-					if (!allBox.isSelected()) {
-						if (csvBox.isSelected()) {
-							selectedExtensions.add(".csv");
-						}
-						if (jpegBox.isSelected()) {
-							selectedExtensions.add(".jpg");
-							selectedExtensions.add(".jpeg");
-						}
-						if (txtBox.isSelected()) {
-							selectedExtensions.add(".txt");
-						}
-						if (pdfBox.isSelected()) {
-							selectedExtensions.add(".pdf");
-						}
-						if (htmlBox.isSelected()) {
-							selectedExtensions.add(".htm");
-							selectedExtensions.add(".html");
-						}
-					}
-					displayFilenames(dbLoader, selectedIO, selectedExtensions);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to search for file uses.\n");
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
-					//e1.printStackTrace();
-				}
-			}
-			
-		});
+		searchButton.addActionListener((ActionEvent e) -> {
+                    try {
+                        int selectedIO;
+                        if (inputButton.isSelected()) {
+                            selectedIO = INPUT;
+                        }
+                        else if (outputButton.isSelected()) {
+                            selectedIO = OUTPUT;
+                        }
+                        else {
+                            selectedIO = IO;
+                        }
+                        
+                        ArrayList<String> selectedExtensions = new ArrayList<>();
+                        if (!allBox.isSelected()) {
+                            if (csvBox.isSelected()) {
+                                selectedExtensions.add(".csv");
+                            }
+                            if (jpegBox.isSelected()) {
+                                selectedExtensions.add(".jpg");
+                                selectedExtensions.add(".jpeg");
+                            }
+                            if (txtBox.isSelected()) {
+                                selectedExtensions.add(".txt");
+                            }
+                            if (pdfBox.isSelected()) {
+                                selectedExtensions.add(".pdf");
+                            }
+                            if (htmlBox.isSelected()) {
+                                selectedExtensions.add(".htm");
+                                selectedExtensions.add(".html");
+                            }
+                        }
+                        displayFilenames(dbLoader, selectedIO, selectedExtensions);
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Unable to search for file uses.\n");
+                        JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1 + "\n");
+                        //e1.printStackTrace();
+                    }
+                } // Look up the options the user set and execute the query
+                );
 		
 		buttonPanel.add(Box.createGlue());
 		buttonPanel.add(searchButton);
@@ -352,39 +328,28 @@ public class FileUseQuery extends AbstractQuery {
 		Border padding = BorderFactory.createEmptyBorder(0, 8, 8, 8);
 		buttonPanel.setBorder(padding);
 		JButton openButton = new JButton ("Open");
-		openButton.addActionListener(new ActionListener() {
-
-			// Sets the script and timestamp selected by the user
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectedScript = browser.getSelectedProcessName();
-				selectedTimestamp = browser.getSelectedTimestamp();
-				String selectedDDG;
-				if (selectedTimestamp == null) {
-					selectedDDG = selectedScript;
-				}
-				else {
-					selectedDDG = selectedScript + File.separator + selectedTimestamp;
-				}
-				ddgField.setText(selectedDDG);
-				dbButton.setSelected(false);
-				f.dispose();
-			}
-			
-		});
+		openButton.addActionListener((ActionEvent e) -> {
+                    selectedScript = browser.getSelectedProcessName();
+                    selectedTimestamp = browser.getSelectedTimestamp();
+                    String selectedDDG;
+                    if (selectedTimestamp == null) {
+                        selectedDDG = selectedScript;
+                    }
+                    else {
+                        selectedDDG = selectedScript + File.separator + selectedTimestamp;
+                    }
+                    ddgField.setText(selectedDDG);
+                    dbButton.setSelected(false);
+                    f.dispose();
+                } // Sets the script and timestamp selected by the user
+                );
 		
 		JButton cancelButton = new JButton ("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-
-			// Reverts to searching entire db
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dbButton.setSelected(true);
-				f.dispose();
-			}
-			
-			
-		});
+		cancelButton.addActionListener((ActionEvent e) -> {
+                    dbButton.setSelected(true);
+                    f.dispose();
+                } // Reverts to searching entire db
+                );
 		buttonPanel.add(openButton);
 		buttonPanel.add(cancelButton);
 		f.add(buttonPanel, BorderLayout.SOUTH);
@@ -483,78 +448,59 @@ public class FileUseQuery extends AbstractQuery {
 			buttonPanel.add(showDdgButton);
 			//buttonPanel.add(compareFilesButton);
 			
-			fileTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-
-				@Override
-				public void valueChanged(ListSelectionEvent e) {
-					int numSelected = fileTable.getSelectedRowCount();
-					if (numSelected == 0) {
-						showFileButton.setEnabled(false);
-						showDdgButton.setEnabled(false);
-						//compareFilesButton.setEnabled(false);
-					}
-					else if (numSelected >= 1){
-						showFileButton.setEnabled(true);
-						showDdgButton.setEnabled(true);
+			fileTable.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+                            int numSelected = fileTable.getSelectedRowCount();
+                            if (numSelected == 0) {
+                                showFileButton.setEnabled(false);
+                                showDdgButton.setEnabled(false);
+                                //compareFilesButton.setEnabled(false);
+                            }
+                            else if (numSelected >= 1){
+                                showFileButton.setEnabled(true);
+                                showDdgButton.setEnabled(true);
 //						if (numSelected == 2) {
 //							compareFilesButton.setEnabled(true);
 //						}
 //						else {
 //							compareFilesButton.setEnabled(false);
 //						}
-					}
-				}
-				
-			});
+                            }
+                        });
 			
-			showFileButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					int[] selectedRows = fileTable.getSelectedRows();
-					FileTableModel data = (FileTableModel) fileTable.getModel();
-					
-					for (int row : selectedRows) {
-						int modelRow = fileTable.convertRowIndexToModel(row);
-						FileViewer viewer = new FileViewer (data.getFileAt(modelRow), data.getTimeAt(modelRow));
-						viewer.displayFile();
-					}
-				}
-				
-			});
+			showFileButton.addActionListener((ActionEvent e) -> {
+                            int[] selectedRows = fileTable.getSelectedRows();
+                            FileTableModel data1 = (FileTableModel) fileTable.getModel();
+                            for (int row1 : selectedRows) {
+                                int modelRow = fileTable.convertRowIndexToModel(row1);
+                                FileViewer viewer = new FileViewer(data1.getFileAt(modelRow), data1.getTimeAt(modelRow));
+                                viewer.displayFile();
+                            }
+                        });
 			
-			showDdgButton.addActionListener(new ActionListener() {
-
-				/**
-				 * Opens a window displaying the DDG that uses the selected file.
-				 * The display centers on the file node.  If more than 1 file is selected,
-				 * it opens multiple windows.
-				 */
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					try {
-						int[] selectedRows = fileTable.getSelectedRows();
-						FileTableModel data = (FileTableModel) fileTable.getModel();
-						
-						for (int row : selectedRows) {
-							int modelRow = fileTable.convertRowIndexToModel(row);
-							//ErrorLog.showErrMsg("Selected script = " + data.getScriptAt(modelRow) + "\n");
-							//ErrorLog.showErrMsg("Selected timestamp = " + data.getTimeAt(modelRow) + "\n");
-							PrefuseGraphBuilder graphBuilder = new LoadFromDBCommand().loadDDGFromDB (data.getScriptAt(modelRow), data.getTimeAt(modelRow));
-							graphBuilder.drawFullGraph();
-							// ErrorLog.showErrMsg("Focusing on " + data.getNodeNameAt(modelRow));
-							graphBuilder.focusOn(data.getNodeNameAt(modelRow));
-						}
-					} catch (Exception e1) {
-						String msg = "Unable to show where the file is used.\n";
-						msg = msg + e1;
-						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
-						//e1.printStackTrace();
-					}
-					
-				}
-				
-			});
+			showDdgButton.addActionListener((ActionEvent e) -> {
+                            try {
+                                int[] selectedRows = fileTable.getSelectedRows();
+                                FileTableModel data1 = (FileTableModel) fileTable.getModel();
+                                for (int row1 : selectedRows) {
+                                    int modelRow = fileTable.convertRowIndexToModel(row1);
+                                    //ErrorLog.showErrMsg("Selected script = " + data.getScriptAt(modelRow) + "\n");
+                                    //ErrorLog.showErrMsg("Selected timestamp = " + data.getTimeAt(modelRow) + "\n");
+                                    PrefuseGraphBuilder graphBuilder = new LoadFromDBCommand().loadDDGFromDB(data1.getScriptAt(modelRow), data1.getTimeAt(modelRow));
+                                    graphBuilder.drawFullGraph();
+                                    // ErrorLog.showErrMsg("Focusing on " + data.getNodeNameAt(modelRow));
+                                    graphBuilder.focusOn(data1.getNodeNameAt(modelRow));
+                                }
+                            }catch (Exception e1) {
+                                String msg = "Unable to show where the file is used.\n";
+                                msg = msg + e1;
+                                JOptionPane.showMessageDialog(DDGExplorer.getInstance(), msg);
+                                //e1.printStackTrace();
+                            }
+                        } /**
+                         * Opens a window displaying the DDG that uses the selected file.
+                         * The display centers on the file node.  If more than 1 file is selected,
+                         * it opens multiple windows.
+                         */ );
 			
 			resultsPanel.add(fileScroller, BorderLayout.CENTER);
 			resultsPanel.add(buttonPanel, BorderLayout.SOUTH);

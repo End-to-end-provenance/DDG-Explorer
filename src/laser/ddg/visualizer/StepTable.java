@@ -16,16 +16,16 @@ import prefuse.visual.NodeItem;
  */
 public class StepTable {
 	// Maps from a step node to its start node
-	private Map<Node, NodeItem> startTable = new HashMap<Node, NodeItem>();
+	private Map<Node, NodeItem> startTable = new HashMap<>();
 
 	// Maps from a step node to its finish node
-	private Map<Node, NodeItem> finishTable = new HashMap<Node, NodeItem>();
+	private Map<Node, NodeItem> finishTable = new HashMap<>();
 
 	// Maps from a node to the collapsed node that it belongs to
-	private Map<Node, NodeItem> startFinishTable = new HashMap<Node, NodeItem>();
+	private Map<Node, NodeItem> startFinishTable = new HashMap<>();
 
 	// Maps from collapsed node to the member steps.
-	private Map<Node, Set<NodeItem>> memberTable = new HashMap<Node, Set<NodeItem>> ();
+	private Map<Node, Set<NodeItem>> memberTable = new HashMap<> ();
 	
 	/**
 	 * Adds information about a new collapsed node
@@ -45,10 +45,10 @@ public class StepTable {
 		// Make sure it is not a checkpoint / restore pair
 		if (PrefuseUtils.isStartNode(startNode)) {
 		
-			for (Node member : memberNodes) {
-				//System.out.println("StepTable.add: Putting " + PrefuseUtils.getName(member) + " as member of " + PrefuseUtils.getName(collapsedNode));
-				startFinishTable.put(member, collapsedNode);
-			}
+                    memberNodes.stream().forEach((member) -> {
+                        //System.out.println("StepTable.add: Putting " + PrefuseUtils.getName(member) + " as member of " + PrefuseUtils.getName(collapsedNode));
+                        startFinishTable.put(member, collapsedNode);
+                    });
 		}
 	}
 

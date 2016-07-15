@@ -185,8 +185,12 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 
 	/**
 	 * @return the line number in the script that corresponds to this node.
-	 * @return
 	 */
 	public int getLineNumber();
+
+	/**
+	 * @return the script number that corresponds to this node.
+	 */
+	public int getScriptNumber();
 
 }

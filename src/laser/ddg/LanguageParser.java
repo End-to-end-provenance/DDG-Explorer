@@ -24,7 +24,7 @@ public interface LanguageParser {
 	/**
 	 * Parse the script and create a table where the keys are block names
 	 * and the values are the block bodies
-	 * @param script file containing the program text
+         * @param fileName
 	 * @return the table
 	 */
 	public Map<String, String> buildBlockTable(String fileName);

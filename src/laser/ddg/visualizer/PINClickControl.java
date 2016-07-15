@@ -23,7 +23,7 @@ public class PINClickControl extends ControlAdapter {
 
 	@Override
 	public void itemClicked(VisualItem item, MouseEvent e) {
-		System.out.println(item.getString(PrefuseUtils.TYPE));
+		//System.out.println(item.getString(PrefuseUtils.TYPE));
 		if (!item.getString(PrefuseUtils.TYPE).equals(
 				PrefuseUtils.DATA_NODE)) {
 			if (item.getFillColor() == PrefuseGraphBuilder.NONLEAF_COLOR) {
@@ -41,10 +41,10 @@ public class PINClickControl extends ControlAdapter {
 				item.setFillColor(PrefuseGraphBuilder.LEAF_COLOR);
 				p.setSelectedProcedureNodeID(-1);
 			}
-			System.out.println("Clicked: "
-					+ item.getInt(PrefuseUtils.ID) + " "
-					+ item.getString(PrefuseUtils.TYPE) + " "
-					+ item.getString(PrefuseUtils.NAME));
+//			System.out.println("Clicked: "
+//					+ item.getInt(PrefuseUtils.ID) + " "
+//					+ item.getString(PrefuseUtils.TYPE) + " "
+//					+ item.getString(PrefuseUtils.NAME));
 			item.getVisualization().repaint();
 		}
 		super.itemClicked(item, e);

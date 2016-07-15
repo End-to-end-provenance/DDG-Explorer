@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -59,8 +58,6 @@ public class Legend extends Box {
 			return;
 		}
 
-		int numEntries = 0;
-
 		JPanel legend = new JPanel();
 		legend.setLayout(new GridLayout(0, 1));
 
@@ -71,18 +68,13 @@ public class Legend extends Box {
 		closeLegendButton
 				.setBorder(BorderFactory.createRaisedSoftBevelBorder());
 		closeLegendButton.setToolTipText("Hide legend.");
-		closeLegendButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// System.out.println("Close button clicked");
-				DDGExplorer.getInstance().removeLegend();
-			}
-
-		});
+		closeLegendButton.addActionListener((ActionEvent e) -> {
+                    // System.out.println("Close button clicked");
+                    DDGExplorer.getInstance().removeLegend();
+                });
 		headerPanel.add(closeLegendButton);
 		legend.add(headerPanel);
-		numEntries = 1;
+		int numEntries = 1;
 
 		if (nodeColors != null) {
 			addNodesToLegend(nodeColors, legend);
@@ -124,14 +116,16 @@ public class Legend extends Box {
 	private static void addEdgesToLegend(ArrayList<LegendEntry> edgeColors,
 			JPanel legend) {
 		legend.add(new JLabel("Edges"));
-		// System.out.println("Adding edges header");
-		for (LegendEntry entry : edgeColors) {
-			JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
-			next.setFont(LEGEND_FONT);
-			next.setForeground(entry.getColor());
-			legend.add(next);
-			// System.out.println("Adding " + entry.getLabel());
-		}
+            // System.out.println("Adding edges header");
+                edgeColors.stream().map((entry) -> {
+                    JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
+                    next.setFont(LEGEND_FONT);
+                    next.setForeground(entry.getColor());
+                return next;
+            }).forEach((next) -> {
+                legend.add(next);
+                // System.out.println("Adding " + entry.getLabel());
+            });
 	}
 
 	/**
@@ -145,15 +139,17 @@ public class Legend extends Box {
 	private static void addNodesToLegend(ArrayList<LegendEntry> nodeColors,
 			JPanel legend) {
 		legend.add(new JLabel("Nodes"));
-		// System.out.println("Adding node header");
-		for (LegendEntry entry : nodeColors) {
-			JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
-			next.setFont(LEGEND_FONT);
-			next.setOpaque(true);
-			next.setBackground(entry.getColor());
-			legend.add(next);
-			// System.out.println("Adding " + entry.getLabel());
-		}
+            // System.out.println("Adding node header");
+                nodeColors.stream().map((entry) -> {
+                    JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
+                    next.setFont(LEGEND_FONT);
+                    next.setOpaque(true);
+                    next.setBackground(entry.getColor());
+                return next;
+                }).forEach((next) -> {
+                    legend.add(next);
+                    // System.out.println("Adding " + entry.getLabel());
+            });
 	}
 
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
-	<property name="version" value="2.06"/>
+	<property name="version" value="2.7.0"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -79,8 +79,8 @@
   		  		value="laser.ddg.gui.DDGExplorer"/>
   		</manifest>
   		
-  		<!-- The properties file containing build information -->
-  		<fileset dir="bin" includes=".properties" />
+  		<!-- The properties files containing build information and log4j properties -->
+  		<fileset dir="bin" includes=".properties, log4j.properties" />
   		
   		<!-- The code within the project -->
   		<fileset dir="bin" includes="**/*.class" />  		
@@ -106,11 +106,6 @@
   		<zipfileset includes="**/*" src="lib/httpclient-4.2.3.jar"/>
   		<zipfileset includes="**/*" src="lib/httpcore-4.2.2.jar"/>
   		<zipfileset includes="**/*" src="lib/jena-iri-0.9.6.jar"/>
-
-      <!--zipfileset includes="**/*" src="lib/evaluation.jar"/>
-      <zipfileset excludes="META-INF/TEAMDEV-.RSA,META-INF/TEAMDEV-.SF" src="lib/jxbrowser-6.0.jar"/>
-      <zipfileset excludes="META-INF/TEAMDEV-.RSA,META-INF/TEAMDEV-.SF" src="lib/jxbrowser-linux64-6.0.jar"/-->
-
   		
   		<!-- Using Harvard's Core Provenance Library -->
   		<!-- <zipfileset includes="**/*" src="${cpl}/CPL.jar" /> -->

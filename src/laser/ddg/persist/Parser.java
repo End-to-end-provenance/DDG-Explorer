@@ -82,6 +82,9 @@ public class Parser {
 
 	private static final String LINE_NUMBER = "Line";
 
+	// Attribute associated with a procedure node to identify the script number.
+	private static final Object SCRIPT_NUMBER = "Script";
+
 	// The input stream
 	private StreamTokenizer in;
 	
@@ -109,7 +112,7 @@ public class Parser {
 	// Edges are saved and processed after all the nodes have been added
 	// to the graph.  That way there can be no references to edges that
 	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<ArrayList<String>>();
+	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
 	
 	private File fileBeingParsed;
 	
@@ -179,7 +182,7 @@ public class Parser {
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 		
 		int nextToken = skipBlankLines();
@@ -308,7 +311,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private void saveEdgeDeclaration() throws IOException {
-		ArrayList<String> decl = new ArrayList<String>();
+		ArrayList<String> decl = new ArrayList<>();
 		decl.add(in.sval);
 		
 		try {
@@ -373,6 +376,7 @@ public class Parser {
 		
 		double elapsedTime = 0;
 		int lineNum = -1;
+		int scriptNum = 0;
 		
 		// The remaining attributes are optional
 		while (true) {
@@ -412,29 +416,33 @@ public class Parser {
 				}
 			
 				else if (in.sval.equals(LINE_NUMBER)) {
-					lineNum = parseLineNumber();
+					lineNum = parseNumber();
 				}
-			}
+
+				else if (in.sval.equals(SCRIPT_NUMBER)) {
+					scriptNum = parseNumber();
+				}
+}
 		}
 			
 
 		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
-
-//		System.out.println("Line number = " + lineNum);
+		//System.out.println("Line number = " + lineNum);
+		
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, elapsedTime, null, lineNum);
+					constructName(nodeType, name), value, elapsedTime, null, lineNum, scriptNum);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum, scriptNum);
 	}
 
 	/** 
-	 * Parse the line number attribute
-	 * @return the line number value of the attribute, or -1 if there is no line number attribute 
+	 * Parse the line or script number attribute
+	 * @return the number value of the attribute, or -1 if there is no number attribute 
 	 * 
 	 **/
-	private int parseLineNumber() throws IOException {
+	private int parseNumber() throws IOException {
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
 			in.pushBack();
@@ -446,7 +454,7 @@ public class Parser {
 			try {
 				return Integer.parseInt(in.sval);
 			} catch (NumberFormatException e) {
-				// ddg.txt uses "NA" for a missing line number
+				// ddg.txt uses "NA" for a missing number
 				return -1;
 			}
 		}
@@ -669,6 +677,11 @@ public class Parser {
 					if (value == null) {
 						value = parseValue(nodeId);
 						if (value != null) {
+							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
+								File thefile = new File(value);
+								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+								value = relative.getAbsolutePath();
+							}
 							somethingMatched = true;
 						}
 					}
@@ -711,7 +724,7 @@ public class Parser {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
 			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location, -1);
+					constructName(nodeType, name), value, timestamp, location, -1, -1);
 
 			
 		} catch (IllegalStateException e) {
@@ -834,9 +847,9 @@ public class Parser {
 	 * Add all the edges to the graph.
 	 */
 	private void addEdges() {
-		for (ArrayList<String> nextEdge : savedEdges) {
-			parseEdge(nextEdge);
-		}
+            savedEdges.stream().forEach((nextEdge) -> {
+                parseEdge(nextEdge);
+            });
 	}
 
 	/**
@@ -866,13 +879,13 @@ public class Parser {
 			}
 
 			builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
-		} catch (NoSuchDataNodeException e) {
+		} catch (NoSuchDataNodeException | NoSuchProcNodeException e) {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
-		} catch (NoSuchProcNodeException e) {
-			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
-		} catch (ReportErrorException e) {
+		}
+                // Nothing to do.  The error message is produced inside parseDataFlowEdge.
+                catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 		}
 	}
 
@@ -905,7 +918,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			}
 		}
 		//if target is function node
@@ -929,7 +942,7 @@ public class Parser {
 				throw e;
 			} catch (NoSuchNodeException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e.printStackTrace(System.err);
 			} catch (ReportErrorException e) {
 				// TODO Auto-generated catch block
 				DDGExplorer.showErrMsg(e.getMessage());

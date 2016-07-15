@@ -46,32 +46,24 @@ public class LoadFromDBCommand implements ActionListener {
 
 		// Create the buttons used to pick an action
 		final JButton openButton = new JButton("Open");
-		openButton.addActionListener(new ActionListener() {
-			/**
-			 * Loads an entire DDG
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					loadFromDBFrame.dispose();
-					loadDDGFromDB(selectedProcessName, selectedTimestamp);
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(ddgExplorer,
-							"Unable to load the DDG: " + e1.getMessage(),
-							"Error loading DDG", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
+		openButton.addActionListener((ActionEvent e) -> {
+                    try {
+                        loadFromDBFrame.dispose();
+                        loadDDGFromDB(selectedProcessName, selectedTimestamp);
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(ddgExplorer,
+                                "Unable to load the DDG: " + e1.getMessage(),
+                                "Error loading DDG", JOptionPane.ERROR_MESSAGE);
+                    }
+                } /**
+                 * Loads an entire DDG
+                 */ );
 		final JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-			/**
-			 * Remove the window on cancel.
-			 */
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				loadFromDBFrame.dispose();
-			}
-		});
+		cancelButton.addActionListener((ActionEvent e) -> {
+                    loadFromDBFrame.dispose();
+                } /**
+                 * Remove the window on cancel.
+                 */ );
 
 		// Build the GUI layout
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -100,34 +99,26 @@ public class DiffTab extends JPanel {
 		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		JPanel topRow = new JPanel();
-		selectFileButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					selectFile(e.getSource());
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(buttonPanel, 
-							"Unable to load file: " + e1.getMessage(), 
-							"Error loading file", JOptionPane.ERROR_MESSAGE);
-				}				
-			}
-		});
+		selectFileButton.addActionListener((ActionEvent e) -> {
+                   try {
+                        selectFile(e.getSource());
+                   } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(buttonPanel,
+                                "Unable to load file: " + e1.getMessage(),
+                                "Error loading file", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
 		topRow.add(selectFileButton);
 		
-		selectFromDBButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					selectFromDB(e.getSource());
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(buttonPanel, 
-							"Unable to load file from the database: " + e1.getMessage(), 
-							"Error loading file from the database", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
+		selectFromDBButton.addActionListener((ActionEvent e) -> {
+                    try {
+                        selectFromDB(e.getSource());
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(buttonPanel,
+                                "Unable to load file from the database: " + e1.getMessage(),
+                                "Error loading file from the database", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
 		topRow.add(selectFromDBButton);
 		buttonPanel.add(topRow);
 
@@ -207,40 +198,33 @@ public class DiffTab extends JPanel {
 		final DBBrowser browser = new ScriptBrowser(jenaLoader);
 		
 		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectFrame.dispose();
-			}
-			
-		});
+		cancelButton.addActionListener((ActionEvent e) -> {
+                    selectFrame.dispose();
+                });
 		
 		JButton openButton = new JButton("Open");
-		openButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				File selectedFile = browser.getSelectedFile();
-				selectFrame.dispose();
-				
-				try {
-					if (button == selectFromDB1Button) {
-						selectLeftFile(selectedFile);
-					}
-					else {
-						selectRightFile(selectedFile);
-					}
-					
-					displayDiff();
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(selectFrame, 
-							"Unable to compare files: " + e1.getMessage(), 
-							"Error comparing files", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-			
-		});
+		openButton.addActionListener((ActionEvent e) -> {
+                    File selectedFile = browser.getSelectedFile();
+                    selectFrame.dispose();
+                    if (selectedFile == null) {
+						return;
+                    }
+                    
+                    try {
+                        if (button == selectFromDB1Button) {
+                            selectLeftFile(selectedFile);
+                        }
+                        else {
+                            selectRightFile(selectedFile);
+                        }
+                        
+                        displayDiff();
+                    } catch (Exception e1) {
+                        JOptionPane.showMessageDialog(selectFrame,
+                                "Unable to compare files: " + e1.getMessage(),
+                                "Error comparing files", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
 
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		Border padding = BorderFactory.createEmptyBorder(0, 8, 8, 8);

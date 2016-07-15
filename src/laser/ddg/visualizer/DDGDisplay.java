@@ -109,7 +109,7 @@ public class DDGDisplay extends Display {
 
 		//Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
-		String valueExt = "";
+		String valueExt;
 		if(value != null){
 			int index = value.lastIndexOf(".");
 			valueExt = value.substring(index);
@@ -244,7 +244,7 @@ public class DDGDisplay extends Display {
 			}
 		} catch (ParseException e) {
 			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. "+ e.getMessage());
-			e.printStackTrace();
+			e.printStackTrace(System.err);
 			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
 		}
 	}
@@ -311,10 +311,10 @@ public class DDGDisplay extends Display {
 
 		String body = null;
 		if (PrefuseUtils.isLeafNode((NodeItem)leaf)) {
-			System.out.println("Looking for function " + functionName);
+			//System.out.println("Looking for function " + functionName);
 			body = builder.getFunctionBody(functionName);
 			if (body == null) {
-				System.out.println("Looking for block " + functionName);
+				//System.out.println("Looking for block " + functionName);
 				body = builder.getBlockBody(functionName);
 			}
 			if (body == null) {
@@ -326,9 +326,9 @@ public class DDGDisplay extends Display {
 		} 
 		else {
 			body = builder.getBlockBody(functionName);
-			System.out.println("Looking for block " + functionName);
+			//System.out.println("Looking for block " + functionName);
 			if (body == null) {
-				System.out.println("Looking for function " + functionName);
+				//System.out.println("Looking for function " + functionName);
 				body = builder.getFunctionBody(functionName);
 			}
 			if (body == null) {
@@ -499,35 +499,47 @@ public class DDGDisplay extends Display {
 					NodeItem lastMember = builder.getLastMember(item);
 					int lastLine = PrefuseUtils.getLineNumber(lastMember);
 					
-					// display source code between those lines
-					if (firstLine != -1 && lastLine != -1) {
-						displaySourceCode (firstLine, lastLine);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
-					}
+					// Get the script number.  The first and last lines should come from the same script
+					int scriptNum = PrefuseUtils.getScriptNumber(firstMember);
+					displaySourceCode (firstLine, lastLine, scriptNum);
 				}
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					if (lineNumber != -1){
-						//JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
-						displaySourceCode(lineNumber);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
-					}
+					int scriptNum = PrefuseUtils.getScriptNumber((NodeItem) item);
+					displaySourceCode(lineNumber, scriptNum);
 				}
 			}
 
-			private void displaySourceCode(int firstLine, int lastLine) {
+			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+				if (scriptNum > 0) {
+					// Currently, we only save the main script file!!!
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no copy of the sourced script available.");
+					return;
+				}
+				
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					System.out.println("Reading script from " + fileName);
+					if (fileName == null) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
 					File theFile = new File(fileName);
+					if (!theFile.exists()) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
+
+					// display source code between those lines
+					if (firstLine == -1 || lastLine == -1) {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
+						return;
+					}
+					
+					//System.out.println("Reading script from " + fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
-			    	lineStarts = new ArrayList<Integer>();
+			    	lineStarts = new ArrayList<>();
 	
 					try {
 						readFile = new Scanner(theFile);
@@ -541,7 +553,7 @@ public class DDGDisplay extends Display {
 						fileContents = contentsBuilder.toString();
 	
 					} catch (FileNotFoundException e) {
-						DDGExplorer.showErrMsg("Cannot find script file: " + fileName + "\n\n");
+						DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
 					} finally {
 						if (readFile != null) {
 							readFile.close();
@@ -578,15 +590,15 @@ public class DDGDisplay extends Display {
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						e.printStackTrace(System.err);
 					}
 
 				}
 
 			}
 
-			private void displaySourceCode(int lineNumber) {
-				displaySourceCode (lineNumber, lineNumber);
+			private void displaySourceCode(int lineNumber, int scriptNumber) {
+				displaySourceCode (lineNumber, lineNumber, scriptNumber);
 			}
 
 			

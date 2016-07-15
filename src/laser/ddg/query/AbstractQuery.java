@@ -11,7 +11,7 @@ import javax.swing.JComponent;
  */
 public abstract class AbstractQuery implements Query {
 
-	private List<QueryListener> listeners = new ArrayList<QueryListener>();
+	private List<QueryListener> listeners = new ArrayList<>();
 
 	public AbstractQuery() {
 		super();
@@ -23,9 +23,9 @@ public abstract class AbstractQuery implements Query {
 	}
 
 	protected void notifyQueryFinished(String name, JComponent panel) {
-		for (QueryListener l: listeners) {
-			l.queryFinished(name, panel);
-		}
+            listeners.stream().forEach((l) -> {
+                l.queryFinished(name, panel);
+            });
 	}
 
 }

@@ -1,21 +1,13 @@
 package laser.ddg.persist;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.DataInstanceNode;
-import laser.ddg.FileInfo;
-import laser.ddg.LanguageConfigurator;
-import laser.ddg.ProcedureInstanceNode;
-import laser.ddg.ProvenanceData;
 
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.Query;
@@ -26,7 +18,6 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ReadWrite;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.query.ResultSetFactory;
-import com.hp.hpl.jena.query.ResultSetFormatter;
 import com.hp.hpl.jena.query.ResultSetRewindable;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Property;
@@ -34,6 +25,14 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
+
+import laser.ddg.Attributes;
+import laser.ddg.DDGBuilder;
+import laser.ddg.DataInstanceNode;
+import laser.ddg.FileInfo;
+import laser.ddg.LanguageConfigurator;
+import laser.ddg.ProcedureInstanceNode;
+import laser.ddg.ProvenanceData;
 
 /**
  * This class reads provenance data from a Jena database.
@@ -78,6 +77,7 @@ public class JenaLoader {
 	 */
 	private JenaLoader() {
 		dataset = RdfModelFactory.getDataset();
+
 		//printDBContents();
 	}
 	
@@ -200,7 +200,7 @@ public class JenaLoader {
 	 * @return the list of strings returned by the query.  Returns an empty list if there is no match.
 	 */
 	private List<String> getStringListResult(String queryVar, String queryString) {
-		ArrayList<String> resultList = new ArrayList<String>();
+		ArrayList<String> resultList = new ArrayList<>();
 		ResultSet resultSet = performQuery(queryString);
 		while (resultSet.hasNext()) {
 			QuerySolution nextResult = resultSet.next();
@@ -235,18 +235,19 @@ public class JenaLoader {
 		// DDG so that the events can be sent to the visualization tool to do the 
 		// incremental visualizations.
 		SortedSet<Resource> sortedResources = getAllStepInstanceNodes(queryPrefix);
-		for (Resource res : sortedResources) {
-			// Add the next pin
-			ProcedureInstanceNode pin = addProcResourceToProvenance(res, pd);
-			
-			// Connect the pin to its predecessors, inputs and outputs.
-			setPredecessors(queryPrefix, pin);
-			getAllInputs(pin);
-			getAllOutputs(pin);
-		}
-		System.out.println("All nodes loaded from DB.");
+                sortedResources.stream().map((res) -> addProcResourceToProvenance(res, pd)).map((pin) -> {
+                        // Connect the pin to its predecessors, inputs and outputs.
+                        setPredecessors(queryPrefix, pin);
+                        return pin;
+                    }).map((pin) -> {
+                        getAllInputs(pin);
+                        return pin;
+                    }).forEach((pin) -> {
+                        getAllOutputs(pin);
+                });
+		//System.out.println("All nodes loaded from DB.");
 		pd.notifyProcessFinished();
-		System.out.println("Done with notifyProcessFinished");
+		//System.out.println("Done with notifyProcessFinished");
 		return pd;
 	}
 	
@@ -287,7 +288,10 @@ public class JenaLoader {
 		// Find the file that contains the script used to create the DDG being loaded
 		String processFileTimestamp = getStringValue(processName, timestamp, Properties.PROCESS_FILE_TIMESTAMP_URI, null);
 		String savedFileName = FileUtil.getSavedFileName(processName, processFileTimestamp);
-		pd.createFunctionTable(savedFileName);
+		File savedFile = new File (savedFileName);
+		if (savedFile.exists()) {
+			pd.createFunctionTable(savedFileName);	
+		}
 		
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);
 	}
@@ -305,10 +309,11 @@ public class JenaLoader {
 		String value = retrieveSinValue(res);
 		Double elapsedTime = retrieveSinElapsedTime(res);
 		int lineNumber = retrieveSinLineNumber(res);
+		int scriptNumber = retrieveSinScriptNumber(res);
 		ProcedureInstanceNode pin = addSinToProvData(name,
-				type, value, elapsedTime, lineNumber, res, id, provData);
-		System.out.println("Adding sin" + id + ": "
-				+ pin.toString());
+				type, value, elapsedTime, lineNumber, scriptNumber, res, id, provData);
+		//System.out.println("Adding sin" + id + ": "
+		//		+ pin.toString());
 		return pin;
 	}
 
@@ -346,15 +351,8 @@ public class JenaLoader {
 
 		ResultSet stepResultSet = performQuery(selectStepsQueryString);
 		
-		SortedSet<Resource> sortedResources = new TreeSet<Resource>(new Comparator<Resource>() {
-
-			@Override
-			// Allows sorting of pin resources by id.
-			public int compare(Resource r0, Resource r1) {
-				return retrieveSinId(r0) - retrieveSinId(r1);
-			}
-			
-		});
+		SortedSet<Resource> sortedResources = new TreeSet<>((Resource r0, Resource r1) -> retrieveSinId(r0) - retrieveSinId(r1) // Allows sorting of pin resources by id.
+                );
 		
 		// Go through the result set putting them into a sorted set.
 		while (stepResultSet.hasNext()) {
@@ -379,7 +377,7 @@ public class JenaLoader {
 
 		ResultSet dataResultSet = performQuery(selectStepsQueryString);
 		
-		Set<Resource> resources = new HashSet<Resource>();
+		Set<Resource> resources = new HashSet<>();
 		
 		// Go through the result set putting them into a sorted set.
 		while (dataResultSet.hasNext()) {
@@ -406,21 +404,16 @@ public class JenaLoader {
 
 		ResultSet nameResultSet = performQuery(selectDinNamesQueryString);
 		
-		SortedSet<String> sortedNames= new TreeSet<String>(new Comparator<String>() {
-
-			@Override
-			public int compare(String s1, String s2) {
-				try {
-					int number1 = Integer.parseInt(s1.substring(0, s1.indexOf("-")));
-					int number2 = Integer.parseInt(s2.substring(0, s2.indexOf("-")));
-					return number1 - number2;
-				} catch (NumberFormatException e) {
-					// In case the names do not follow the syntax of "number-string"
-					return s1.compareTo(s2);
-				}
-			}
-			
-		});
+		SortedSet<String> sortedNames= new TreeSet<>((String s1, String s2) -> {
+                    try {
+                        int number1 = Integer.parseInt(s1.substring(0, s1.indexOf("-")));
+                        int number2 = Integer.parseInt(s2.substring(0, s2.indexOf("-")));
+                        return number1 - number2;
+                    } catch (NumberFormatException e) {
+                        // In case the names do not follow the syntax of "number-string"
+                        return s1.compareTo(s2);
+                    }
+                });
 		
 		// Go through the result set putting them into a sorted set.
 		while (nameResultSet.hasNext()) {
@@ -508,8 +501,8 @@ public class JenaLoader {
 			else {
 				outputDin = addDataResourceToProvenance(outputResource, pd);
 			}
-			System.out.println("Adding output " + outputDin.getName()
-						+ " to " + pin.getName());
+			//System.out.println("Adding output " + outputDin.getName()
+			//			+ " to " + pin.getName());
 			pin.addOutput(outputDin.getName(), outputDin);
 			// Producere is set when the data node is created.
 		}
@@ -564,9 +557,9 @@ public class JenaLoader {
 		//printDBContents();
 		ResultSet nameResultSet = performQuery(selectFileNamesQueryString);
 		
-		SortedSet<FileInfo> sortedFiles= new TreeSet<FileInfo>();
+		SortedSet<FileInfo> sortedFiles= new TreeSet<>();
 		
-		System.out.println("Files found:");
+		//System.out.println("Files found:");
 		
 		// Go through the result set, createing FileInfo objects out of the results
 		// and putting them into a sorted set.
@@ -673,7 +666,7 @@ public class JenaLoader {
 	 * @return the result set
 	 */
 	private ResultSetRewindable performQuery(String selectQueryString) {
-		System.out.println(selectQueryString);
+		//System.out.println(selectQueryString);
 		Query selectQuery = QueryFactory.create(selectQueryString);
 
 		// Execute the query and obtain results
@@ -698,7 +691,7 @@ public class JenaLoader {
 				.makeRewindable(resultSet);
 
 		// Output the result set as text
-		ResultSetFormatter.out(System.out, rewindableResultSet, selectQuery);
+		//ResultSetFormatter.out(System.out, rewindableResultSet, selectQuery);
 		rewindableResultSet.reset();
 		return rewindableResultSet;
 	}
@@ -717,7 +710,7 @@ public class JenaLoader {
 	private DataInstanceNode addDinToProvData(String currentName,
 			String currentType, Resource currentRes, String currentVal, int id, String dataTimestamp, ProvenanceData provData, String location) {
 		DataInstanceNode din = createDataInstanceNode(currentName, currentType, id, currentVal, dataTimestamp, location);
-		System.out.println("Adding Din " + id);
+		//System.out.println("Adding Din " + id);
 
 		if (!nodesToResContains(currentRes, provData)) {
 			provData.addDIN(din, currentRes.getURI());
@@ -751,10 +744,10 @@ public class JenaLoader {
 	 * @param id The node's id
 	 * @return the procedure instance node that has been added to the provenance data
 	 */
-	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber,
+	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber, int scriptNumber,
 			Resource res, int id, ProvenanceData provData) {
 		if (!nodesToResContains(res, provData)) {
-			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber);
+			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber, scriptNumber);
 			provData.addPIN(pin, res.getURI());
 			return pin;
 		}
@@ -781,15 +774,8 @@ public class JenaLoader {
 
 		ResultSet dinResultSet = performQuery(selectDinQueryString);
 		
-		SortedSet<Resource> sortedResources = new TreeSet<Resource>(new Comparator<Resource>() {
-
-			@Override
-			// Allows sorting of din resources by id.
-			public int compare(Resource r0, Resource r1) {
-				return retrieveDinId(r0) - retrieveDinId(r1);
-			}
-			
-		});
+		SortedSet<Resource> sortedResources = new TreeSet<>((Resource r0, Resource r1) -> retrieveDinId(r0) - retrieveDinId(r1) // Allows sorting of din resources by id.
+                );
 		
 		// Go through the result set putting them into a sorted set.
 		while (dinResultSet.hasNext()) {
@@ -851,7 +837,7 @@ public class JenaLoader {
 				+ "\n " + getDDGClause(queryVar) + "}";
 
 		ResultSet stepResultSet = performQuery(selectStepsQueryString);
-		ArrayList<Resource> consumers = new ArrayList<Resource>();
+		ArrayList<Resource> consumers = new ArrayList<>();
 		
 		while (stepResultSet.hasNext()) {
 			QuerySolution nextStepResult = stepResultSet.next();
@@ -926,11 +912,14 @@ public class JenaLoader {
 	 * @param type the type of node
 	 * @param id the id of the procedure node
 	 * @param procDef the definition of the procedure that was executed
+         * @param elapsedTime
 	 * @param lineNumber the line in the script that generated the node
+	 * @param scriptNumber the script number for this node
 	 * @return the node created
 	 */
-	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber) {
-		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber);
+	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber,
+			int scriptNumber) {
+		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber, scriptNumber);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {
@@ -989,6 +978,18 @@ public class JenaLoader {
 		} catch (NullPointerException e) {
 			// No line number in the database.  Happens for ddgs saved before
 			// we started recording line numbers.
+			return -1;
+		}
+	}
+
+	private int retrieveSinScriptNumber (Resource res) {
+		Property sinScriptNumberProperty = prop.getSinScriptNumber(res.getModel());
+		try {
+			int sinScriptNumber = retrieveIntProperty(res, sinScriptNumberProperty);
+			return sinScriptNumber;
+		} catch (NullPointerException e) {
+			// No script number in the database.  Happens for ddgs saved before
+			// we started recording script numbers.
 			return -1;
 		}
 	}
@@ -1123,13 +1124,13 @@ public class JenaLoader {
 		try {
 			Model model = dataset.getDefaultModel();
 		
-			for (Resource res : pinResources) {
-				deleteResource(model, res);
-			}
+                        pinResources.stream().forEach((res) -> {
+                            deleteResource(model, res);
+                    });
 			
-			for (Resource res : dataResources) {
-				deleteResource(model, res);
-			}
+                        dataResources.stream().forEach((res) -> {
+                            deleteResource(model, res);
+                    });
 			
 			deleteResource(model, headerResource);
 			
