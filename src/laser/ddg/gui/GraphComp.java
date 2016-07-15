@@ -93,6 +93,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
+
 import javax.swing.SwingUtilities;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
@@ -484,7 +485,10 @@ public class GraphComp extends JPanel {
     createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
 
     createDiffFiles("rightTemp.txt", parserRight, builderRight);
+    
     computeDiffResult();
+  
+  
     try {
       builderLeft.processFinished();
       builderRight.processFinished();
@@ -568,9 +572,9 @@ public class GraphComp extends JPanel {
    * Left Group consists of nodes which are uniquely present in the left DDG and colored in Red
    * Right Group consists of nodes which are uniquely present in the right DDG and colored in Green
    */
-  private void computeDiffResult() {
-    diffOutput =
-        new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
+  private void computeDiffResult() {       
+      diffOutput =
+        new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();         
     //System.out.println(diffOutput);
     String[] diffOutputArray = diffOutput.split("\n");
     int leftnode = 1, rightnode = 1;
@@ -1151,7 +1155,7 @@ class updateOverview implements PaintListener {
  * To execute a shell level command in the Java Runtime.
  */
 class ExecuteShellCommand {
-
+  final JPanel errorPanel = new JPanel();
   public String executeCommand(String command) {
 
     StringBuffer output = new StringBuffer();
@@ -1168,7 +1172,11 @@ class ExecuteShellCommand {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      JOptionPane.showMessageDialog(
+                  errorPanel,
+                  "Unable to compare ddgs: Cygwin missing" ,
+                  "Error loading file",
+                  JOptionPane.ERROR_MESSAGE);
     }
 
     return output.toString();
