@@ -16,7 +16,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class DerivationQuery extends DataQuery {
 	/**
 	 * The value to display in the query menu
-         * @return 
+     * @return 
 	 */
 	@Override
 	public String getMenuItem() {

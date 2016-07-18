@@ -43,10 +43,10 @@ public class CheckpointTable {
 			checkpointRestoreNodes.add(n);
 		}
 		
-                checkpointFollowers.keySet().stream().map((checkpoint) -> checkpointFollowers.get(checkpoint)).forEach((followers) -> {
-                    followers.add(n);
-                    // System.out.println("Added " + n + " to checkpoint follower");
-                });
+        checkpointFollowers.keySet().stream().map((checkpoint) -> checkpointFollowers.get(checkpoint)).forEach((followers) -> {
+        	followers.add(n);
+            // System.out.println("Added " + n + " to checkpoint follower");
+        });
 
 		if (PrefuseUtils.isRestoreNode(n)) {
 			checkpointRestoreNodes.add(n);
@@ -67,10 +67,10 @@ public class CheckpointTable {
 					
 					// Record these as the nodes belonging to this restore node.
 					Set<NodeItem> nodesForRestore = new HashSet<>();
-                                        followers.stream().forEach((f) -> {
-                                            nodesForRestore.add(f);
-                                            // System.out.println("Added " + f + " to nodes for restore");
-                                        });
+                    followers.stream().forEach((f) -> {
+                    	nodesForRestore.add(f);
+                        // System.out.println("Added " + f + " to nodes for restore");
+                    });
 					restoreMembers.put(n, nodesForRestore);
 				}
 			}

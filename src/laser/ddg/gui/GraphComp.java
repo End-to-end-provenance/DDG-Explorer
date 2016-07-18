@@ -530,41 +530,42 @@ public class GraphComp extends JPanel {
    * @param parser
    * @param builder corresponding to the graph
    */
-  private void createDiffFiles(String filename, Parser parser, PrefuseGraphBuilder builder) {
-    Writer writer = null;
-    try {
-      writer =
-          new BufferedWriter(
-              new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8));
-    } catch (Exception e) {
-      //System.out.println("File creation exception raised" + e.getMessage());
-    }
+	private void createDiffFiles(String filename, Parser parser, PrefuseGraphBuilder builder) {
+		Writer writer = null;
+		try {
+			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8));
 
-    for (int i = 1; i <= parser.getNumPins(); i++) {
-      String extractLineNum = "";
-      int position = Integer.MAX_VALUE;
-      boolean isPresent = false;
-      String curNodeName = builder.getName(builder.getNode(i));
-      // System.out.println(curNodeName.replaceAll("\\s+", ""));
-      try {
-        String dummy = curNodeName.replaceAll("\\s+", "");
-        if (dummy.indexOf("[") < 0) {
-          String add = dummy.substring(dummy.indexOf('-') + 1);
-          writer.write(add + "\n");
-        } else {
-          String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
-          writer.write(add + "\n");
-        }
-      } catch (IOException e) {
-        // System.out.println("writing to left file error"+e.getMessage());
-      }
-    }
-    try {
-      writer.close();
-    } catch (IOException e) {
-      //System.out.println("Exception caught in write close" + e.getMessage());
-    }
-  }
+			for (int i = 1; i <= parser.getNumPins(); i++) {
+				String extractLineNum = "";
+				int position = Integer.MAX_VALUE;
+				boolean isPresent = false;
+				String curNodeName = builder.getName(builder.getNode(i));
+				// System.out.println(curNodeName.replaceAll("\\s+", ""));
+				try {
+					String dummy = curNodeName.replaceAll("\\s+", "");
+					if (dummy.indexOf("[") < 0) {
+						String add = dummy.substring(dummy.indexOf('-') + 1);
+						writer.write(add + "\n");
+					} else {
+						String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
+						writer.write(add + "\n");
+					}
+				} catch (IOException e) {
+					// System.out.println("writing to left file
+					// error"+e.getMessage());
+				}
+			}
+			try {
+				writer.close();
+			} catch (IOException e) {
+				// System.out.println("Exception caught in write close" +
+				// e.getMessage());
+			}
+		} catch (Exception e) {
+			// System.out.println("File creation exception raised" +
+			// e.getMessage());
+		}
+	}
 
   /**
    * Computes the Unix diff result on the left and right DDGs and groups them.

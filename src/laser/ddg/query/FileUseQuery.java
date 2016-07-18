@@ -114,8 +114,8 @@ public class FileUseQuery extends AbstractQuery {
 		GridBagConstraints constraints = new GridBagConstraints();
 		
 		ActionListener dimResultsListener = (ActionEvent e) -> {
-                    disableFileTable();
-                };
+        	disableFileTable();
+        };
 
 		// Allows user to select input, output, or both types of files
 		JLabel ioLabel = new JLabel("File use as:  ", JLabel.RIGHT);
@@ -166,11 +166,11 @@ public class FileUseQuery extends AbstractQuery {
 		allBox.setSelected(true);
 		
 		ItemListener deselectAllListener = (ItemEvent e) -> {
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        allBox.setSelected(false);
-                        disableFileTable();
-                    }
-                };
+        	if (e.getStateChange() == ItemEvent.SELECTED) {
+            	allBox.setSelected(false);
+                disableFileTable();
+            }
+        };
 		csvBox.addItemListener(deselectAllListener);
 		jpegBox.addItemListener(deselectAllListener);
 		txtBox.addItemListener(deselectAllListener);
@@ -178,15 +178,15 @@ public class FileUseQuery extends AbstractQuery {
 		htmlBox.addItemListener(deselectAllListener);
 		
 		allBox.addItemListener((ItemEvent e) -> {
-                    if (e.getStateChange() == ItemEvent.SELECTED) {
-                        csvBox.setSelected(false);
-                        jpegBox.setSelected(false);
-                        txtBox.setSelected(false);
-                        pdfBox.setSelected(false);
-                        htmlBox.setSelected(false);
-                        disableFileTable();
-                    }
-                });
+        	if (e.getStateChange() == ItemEvent.SELECTED) {
+            	csvBox.setSelected(false);
+                jpegBox.setSelected(false);
+                txtBox.setSelected(false);
+                pdfBox.setSelected(false);
+                htmlBox.setSelected(false);
+                disableFileTable();
+            }
+        });
 
 		fileTypePanel.add(csvBox);
 		fileTypePanel.add(jpegBox);
@@ -213,22 +213,22 @@ public class FileUseQuery extends AbstractQuery {
 		dbButton = new JRadioButton("Entire database");
 		dbButton.setSelected(true);
 		dbButton.addActionListener ((ActionEvent e) -> {
-                    ddgField.setText("");
-                    selectedScript = null;
-                    selectedTimestamp = null;
-                    disableFileTable();
-                } // Sets to search entire db
-                );
+        	ddgField.setText("");
+            selectedScript = null;
+            selectedTimestamp = null;
+            disableFileTable();
+        } // Sets to search entire db
+        );
 
 		ddgButton = new JRadioButton("Select script or ddg");
 		ddgField = new JTextField(30);
 		ddgField.setEditable(false);
 		ddgButton.addActionListener((ActionEvent e) -> {
-                    // Modal dialog.  selectedDDG will be set on return.
-                    selectDDG(ddgExplorer, dbLoader);
-                    disableFileTable();
-                } // Popus up a window so the user can select a script or ddg to search
-                );
+			// Modal dialog.  selectedDDG will be set on return.
+            selectDDG(ddgExplorer, dbLoader);
+            disableFileTable();
+        } // Popus up a window so the user can select a script or ddg to search
+        );
 		ButtonGroup searchScopeGroup = new ButtonGroup();
 		searchScopeGroup.add(dbButton);
 		searchScopeGroup.add(ddgButton);
@@ -253,21 +253,21 @@ public class FileUseQuery extends AbstractQuery {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		JButton searchButton = new JButton ("Search");
 		searchButton.addActionListener((ActionEvent e) -> {
-                    try {
-                        int selectedIO;
-                        if (inputButton.isSelected()) {
-                            selectedIO = INPUT;
-                        }
-                        else if (outputButton.isSelected()) {
-                            selectedIO = OUTPUT;
-                        }
-                        else {
-                            selectedIO = IO;
-                        }
+        	try {
+            	int selectedIO;
+                if (inputButton.isSelected()) {
+                	selectedIO = INPUT;
+                }
+                else if (outputButton.isSelected()) {
+                 	selectedIO = OUTPUT;
+                }
+                else {
+                	selectedIO = IO;
+                }
                         
-                        ArrayList<String> selectedExtensions = new ArrayList<>();
-                        if (!allBox.isSelected()) {
-                            if (csvBox.isSelected()) {
+                ArrayList<String> selectedExtensions = new ArrayList<>();
+                if (!allBox.isSelected()) {
+                	if (csvBox.isSelected()) {
                                 selectedExtensions.add(".csv");
                             }
                             if (jpegBox.isSelected()) {

@@ -40,9 +40,9 @@ public class SearchResultsGUI extends JScrollPane {
 	public SearchResultsGUI(ArrayList<? extends SearchElement> resultList) {
 
 		model = new DefaultListModel<>();
-                resultList.stream().forEach((entry) -> {
-                    model.addElement(entry);
-                });
+        resultList.stream().forEach((entry) -> {
+        	model.addElement(entry);
+        });
 
 		final JList<SearchElement> searchList;
 		searchList = new JList<>(model);
@@ -77,9 +77,9 @@ public class SearchResultsGUI extends JScrollPane {
 	public void updateSearchList(ArrayList<? extends SearchElement> resultList) {
 		model.clear();
 
-                resultList.stream().forEach((entry) -> {
-                    model.addElement(entry);
-                });
+        resultList.stream().forEach((entry) -> {
+        	model.addElement(entry);
+        });
 	}
 
 	/**

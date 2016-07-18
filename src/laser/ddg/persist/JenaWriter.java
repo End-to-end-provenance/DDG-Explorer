@@ -270,11 +270,11 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 			Property languageProperty = props.getLanguage(model);
 			newExecution.addProperty(languageProperty, language);
 		}
-                attributes.names().stream().forEach((name) -> {
-                    String value = attributes.get(name);
-                    Property prop = props.getProperty(model, name);
-                    newExecution.addProperty(prop, value);
-                });
+        attributes.names().stream().forEach((name) -> {
+        	String value = attributes.get(name);
+            Property prop = props.getProperty(model, name);
+            newExecution.addProperty(prop, value);
+        });
 		if(processFileTimestamp != null){
 			Property processFileTimestampProperty = props.getProcessFileTimestamp(model);
 			newExecution.addProperty(processFileTimestampProperty, processFileTimestamp);
@@ -396,8 +396,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	/**
 	 * Saves a control flow edge to a Jena database.  Assumes that it is called
 	 * from within a transaction.
-         * @param predecessor
-         * @param successor
+     * @param predecessor
+     * @param successor
 	 */
 	@Override
 	public void persistSuccessorEdge(ProcedureInstanceNode predecessor,
@@ -440,8 +440,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	/**
 	 * Saves an input edge to a Jena database.  Assumes that it is called
 	 * from within a transaction.
-         * @param pin
-         * @param din
+     * @param pin
+     * @param din
 	 */
 	@Override
 	public void persistInputEdge(ProcedureInstanceNode pin, DataInstanceNode din) {
@@ -456,8 +456,8 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	/**
 	 * Saves an output edge to a Jena database.  Assumes that it is called
 	 * from within a transaction.
-         * @param pin
-         * @param din
+     * @param pin
+     * @param din
 	 */
 	@Override
 	public void persistOutputEdge(ProcedureInstanceNode pin, DataInstanceNode din) {

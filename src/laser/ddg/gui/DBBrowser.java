@@ -122,9 +122,9 @@ public abstract class DBBrowser extends JPanel{
 	private void updateTimestampList(JenaLoader jenaLoader) {
 		DefaultListModel<String> timestampData = new DefaultListModel<>();
 		List<String> timestamps = jenaLoader.getTimestamps(selectedProcessName);
-                timestamps.stream().forEach((timestamp) -> {
-                    timestampData.addElement(timestamp);
-                });
+        timestamps.stream().forEach((timestamp) -> {
+        	timestampData.addElement(timestamp);
+        });
 		timestampList.setModel(timestampData);
 	}
 	
@@ -169,18 +169,18 @@ public abstract class DBBrowser extends JPanel{
 	 * Tells the listeners which process/script the user just selected.
 	 */
 	private void notifyScriptSelected() {
-            listeners.stream().forEach((l) -> {
-                l.scriptSelected(selectedProcessName);
-            });
+		listeners.stream().forEach((l) -> {
+			l.scriptSelected(selectedProcessName);
+        });
 	}
 
 	/**
 	 * Tells the listeners which timestamp the user just selected.
 	 */
 	private void notifyTimestampSelected() {
-            listeners.stream().forEach((l) -> {
-                l.timestampSelected(selectedTimestamp);
-            });
+        listeners.stream().forEach((l) -> {
+        	l.timestampSelected(selectedTimestamp);
+        });
 	}
 
 	/**

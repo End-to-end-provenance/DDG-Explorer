@@ -69,9 +69,9 @@ public class Legend extends Box {
 				.setBorder(BorderFactory.createRaisedSoftBevelBorder());
 		closeLegendButton.setToolTipText("Hide legend.");
 		closeLegendButton.addActionListener((ActionEvent e) -> {
-                    // System.out.println("Close button clicked");
-                    DDGExplorer.getInstance().removeLegend();
-                });
+        	// System.out.println("Close button clicked");
+            DDGExplorer.getInstance().removeLegend();
+        });
 		headerPanel.add(closeLegendButton);
 		legend.add(headerPanel);
 		int numEntries = 1;
@@ -116,16 +116,16 @@ public class Legend extends Box {
 	private static void addEdgesToLegend(ArrayList<LegendEntry> edgeColors,
 			JPanel legend) {
 		legend.add(new JLabel("Edges"));
-            // System.out.println("Adding edges header");
-                edgeColors.stream().map((entry) -> {
-                    JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
-                    next.setFont(LEGEND_FONT);
-                    next.setForeground(entry.getColor());
-                return next;
-            }).forEach((next) -> {
-                legend.add(next);
-                // System.out.println("Adding " + entry.getLabel());
-            });
+        // System.out.println("Adding edges header");
+        edgeColors.stream().map((entry) -> {
+        	JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
+            next.setFont(LEGEND_FONT);
+            next.setForeground(entry.getColor());
+            return next;
+        }).forEach((next) -> {
+            legend.add(next);
+            // System.out.println("Adding " + entry.getLabel());
+        });
 	}
 
 	/**
@@ -139,17 +139,17 @@ public class Legend extends Box {
 	private static void addNodesToLegend(ArrayList<LegendEntry> nodeColors,
 			JPanel legend) {
 		legend.add(new JLabel("Nodes"));
-            // System.out.println("Adding node header");
-                nodeColors.stream().map((entry) -> {
-                    JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
-                    next.setFont(LEGEND_FONT);
-                    next.setOpaque(true);
-                    next.setBackground(entry.getColor());
-                return next;
-                }).forEach((next) -> {
-                    legend.add(next);
-                    // System.out.println("Adding " + entry.getLabel());
-            });
+        // System.out.println("Adding node header");
+        nodeColors.stream().map((entry) -> {
+        	JLabel next = new JLabel(entry.getLabel(), SwingConstants.CENTER);
+            next.setFont(LEGEND_FONT);
+            next.setOpaque(true);
+            next.setBackground(entry.getColor());
+            return next;
+         }).forEach((next) -> {
+         	legend.add(next);
+             // System.out.println("Adding " + entry.getLabel());
+         });
 	}
 
 

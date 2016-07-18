@@ -709,13 +709,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		displayOverview.setSize(175, 500);
 		if(!compareDDG)
 		{
-		displayOverview.addItemBoundsListener(new FitOverviewListener());
+			//To force overview's shape and zoom when bounds change
+			displayOverview.addItemBoundsListener(new FitOverviewListener());
 		
-		displayOverview.addPaintListener(new vfBorders(display));
+			//keep track of the display's view and draw Overview's square accordingly
+			displayOverview.addPaintListener(new vfBorders(display));
 		
-		vfListener vfL = new vfListener(display, displayOverview);
-		displayOverview.addMouseMotionListener(vfL);
-		displayOverview.addMouseListener(vfL);	
+			//keep track of mouse clicks to move the grey rectangle
+			vfListener vfL = new vfListener(display, displayOverview);
+			displayOverview.addMouseMotionListener(vfL);
+			displayOverview.addMouseListener(vfL);	
 		}
 		
 		

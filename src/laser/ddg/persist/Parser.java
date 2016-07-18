@@ -847,9 +847,9 @@ public class Parser {
 	 * Add all the edges to the graph.
 	 */
 	private void addEdges() {
-            savedEdges.stream().forEach((nextEdge) -> {
-                parseEdge(nextEdge);
-            });
+    	savedEdges.stream().forEach((nextEdge) -> {
+        	parseEdge(nextEdge);
+        });
 	}
 
 	/**
@@ -883,7 +883,7 @@ public class Parser {
 			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
 		}
                 // Nothing to do.  The error message is produced inside parseDataFlowEdge.
-                catch (ReportErrorException e) {
+        catch (ReportErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace(System.err);
 		}
