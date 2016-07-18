@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import laser.ddg.ProvenanceData;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.GraphComp;
 import laser.ddg.persist.JenaLoader;
