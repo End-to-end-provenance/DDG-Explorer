@@ -1,24 +1,17 @@
-package laser.ddg.gui;
+package laser.ddg.diff;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,31 +29,25 @@ import java.nio.file.Paths;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
+import laser.ddg.gui.DBBrowser;
+import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.ScriptBrowser;
 import laser.ddg.persist.JenaLoader;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.Parser;
 import laser.ddg.visualizer.DDGDisplay;
-import laser.ddg.visualizer.ExpandCollapseControl;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
-import prefuse.controls.DragControl;
-import prefuse.controls.ZoomControl;
 import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
 import prefuse.util.display.ItemBoundsListener;
@@ -84,6 +71,9 @@ public class GraphComp extends JPanel {
 	// The object used to load R scripts that are not in the database
 	private static JFileChooser chooser;
 
+	// The panel that shows the side-by-side files and their differences
+	private DDGDiffPanel diffPanel = new DDGDiffPanel();
+
 	// The file shown on the left side
 	private File leftFile;
 
@@ -103,31 +93,16 @@ public class GraphComp extends JPanel {
 	private JButton selectFromDB2Button = new JButton("Select from database");
 
 	// The field to display the left file name
-	private JTextField leftFileField = new JTextField();
+	JTextField leftFileField = new JTextField();
 
 	// The field to display the right file name
-	private JTextField rightFileField = new JTextField();
+	JTextField rightFileField = new JTextField();
 
 	// references for pop-ups
 	private JFrame frame;
 
-	// Graph builder for the left file
-	private PrefuseGraphBuilder builderLeft;
-
-	// Graph builder for the right file
-	private PrefuseGraphBuilder builderRight;
-
 	// JPanel to hold the left and right file upload options.
 	private JPanel northPanel = new JPanel();
-
-	// Boolean to find if DDG is loaded from database
-	private boolean fromDDG = false;
-
-	// String to store the name of the script for the left ddg
-	private String leftScriptName;
-
-	// String to store the name of the script for the right ddg
-	private String rightScriptName;
 
 	/**
 	 * Create the window that allows the user to select files to compare and to
@@ -142,14 +117,14 @@ public class GraphComp extends JPanel {
 		this.frame = frame;
 		this.jenaLoader = jenaLoader;
 
-		JPanel leftPanel = createButtonPanel(selectFile1Button, selectFromDB1Button, leftFileField);
-		leftPanel.setBorder(BorderFactory.createTitledBorder("Left file"));
-		JPanel rightPanel = createButtonPanel(selectFile2Button, selectFromDB2Button, rightFileField);
-		rightPanel.setBorder(BorderFactory.createTitledBorder("Right file"));
+		JPanel leftPanel = createButtonPanel(selectFile1Button, selectFromDB1Button, leftFileField, "Left file");
+		JPanel rightPanel = createButtonPanel(selectFile2Button, selectFromDB2Button, rightFileField, "Right file");
+
 		northPanel.setLayout(new GridLayout(1, 2, 8, 0));
 		northPanel.add(leftPanel);
 		northPanel.add(rightPanel);
 		add(northPanel, BorderLayout.NORTH);
+		add(diffPanel, BorderLayout.CENTER);
 	}
 
 	/**
@@ -160,37 +135,30 @@ public class GraphComp extends JPanel {
 	 * @param selectFileButton
 	 * @param selectDdgButton
 	 * @param fileField
+	 * @param panelLabel
 	 * @return the panel constructed
 	 */
-	private JPanel createButtonPanel(JButton selectFileButton, JButton selectFromDBButton, JTextField fileField) {
+	private JPanel createButtonPanel(JButton selectFileButton, JButton selectFromDBButton, JTextField fileField,
+			String panelLabel) {
 		final JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		JPanel topRow = new JPanel();
-		selectFileButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					selectFile(e.getSource());
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(buttonPanel, "Unable to load file: " + e1.getMessage(),
-							"Error loading file", JOptionPane.ERROR_MESSAGE);
-				}
+		selectFileButton.addActionListener((ActionEvent e) -> {
+			try {
+				selectFile(e.getSource());
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(buttonPanel, "Unable to load file: " + e1.getMessage(),
+						"Error loading file", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		topRow.add(selectFileButton);
 
-		selectFromDBButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				try {
-					selectFromDB(e.getSource());
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(buttonPanel,
-							"Unable to load file from the database: " + e1.getMessage(),
-							"Error loading file from the database", JOptionPane.ERROR_MESSAGE);
-				}
+		selectFromDBButton.addActionListener((ActionEvent e) -> {
+			try {
+				selectFromDB(e.getSource());
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(buttonPanel, "Unable to load file from the database: " + e1.getMessage(),
+						"Error loading file from the database", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		topRow.add(selectFromDBButton);
@@ -199,6 +167,7 @@ public class GraphComp extends JPanel {
 		fileField.setEditable(false);
 		buttonPanel.add(fileField);
 
+		buttonPanel.setBorder(BorderFactory.createTitledBorder(panelLabel));
 		return buttonPanel;
 	}
 
@@ -219,13 +188,13 @@ public class GraphComp extends JPanel {
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File selectedFile = chooser.getSelectedFile();
 			if (button == selectFile1Button) {
-				selectLeftFile(selectedFile);
+				selectLeftFile(selectedFile, selectedFile.getAbsolutePath());
 			} else {
-				selectRightFile(selectedFile);
+				selectRightFile(selectedFile, selectedFile.getAbsolutePath());
 			}
 			if (leftFile != null && rightFile != null) {
-				displayGraphDiff();
-				remove(northPanel);
+				doDiff();
+				// remove(northPanel);
 			}
 		}
 	}
@@ -236,17 +205,13 @@ public class GraphComp extends JPanel {
 	 * @param f
 	 *            the file selected.
 	 */
-	private void selectRightFile(File f) {
+	private void selectRightFile(File f, String nameToDisplay) {
 		if (f == null) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not open " + f);
 			return;
 		}
 		rightFile = f;
-		if (!fromDDG) {
-			rightFileField.setText(rightFile.getAbsolutePath());
-		} else {
-			rightFileField.setText(rightScriptName);
-		}
+		rightFileField.setText(nameToDisplay);
 
 		selectFile2Button.setEnabled(false);
 		selectFromDB2Button.setEnabled(false);
@@ -258,17 +223,14 @@ public class GraphComp extends JPanel {
 	 * @param f
 	 *            the file selected
 	 */
-	private void selectLeftFile(File f) {
+	private void selectLeftFile(File f, String nameToDisplay) {
 		if (f == null) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not open " + f);
 			return;
 		}
 		leftFile = f;
-		if (!fromDDG) {
-			leftFileField.setText(leftFile.getAbsolutePath());
-		} else {
-			leftFileField.setText(leftScriptName);
-		}
+		leftFileField.setText(nameToDisplay);
+
 		selectFile1Button.setEnabled(false);
 		selectFromDB1Button.setEnabled(false);
 	}
@@ -289,42 +251,30 @@ public class GraphComp extends JPanel {
 		final DBBrowser browser = new ScriptBrowser(jenaLoader);
 
 		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				selectFrame.dispose();
-			}
+		cancelButton.addActionListener((ActionEvent e) -> {
+			selectFrame.dispose();
 		});
 
 		JButton openButton = new JButton("Open");
-		openButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				String selectedScript = browser.getSelectedFile().getName();
-				String timestamp = browser.getSelectedTimestamp();
-				File selectedFile = new File(
-						browser.getSelectedFile().getParent() + "/" + browser.getSelectedTimestamp() + "/ddg.txt");
-				selectFrame.dispose();
-				try {
-					if (button == selectFromDB1Button) {
-						fromDDG = true;
-						leftScriptName = selectedScript + " " + timestamp;
-						selectLeftFile(selectedFile);
-					} else {
-						fromDDG = true;
-						rightScriptName = selectedScript + " " + timestamp;
-						selectRightFile(selectedFile);
-					}
-					if (leftFile != null && rightFile != null) {
-						displayGraphDiff();
-						remove(northPanel);
-					}
-				} catch (Exception e1) {
-					JOptionPane.showMessageDialog(selectFrame, "Unable to compare files: " + e1.getMessage(),
-							"Error comparing files", JOptionPane.ERROR_MESSAGE);
+		openButton.addActionListener((ActionEvent e) -> {
+			String selectedScript = browser.getSelectedFile().getName();
+			String timestamp = browser.getSelectedTimestamp();
+			File selectedFile = new File(
+					browser.getSelectedFile().getParent() + "/" + browser.getSelectedTimestamp() + "/ddg.txt");
+			selectFrame.dispose();
+			try {
+				if (button == selectFromDB1Button) {
+					selectLeftFile(selectedFile, selectedScript + " " + timestamp);
+				} else {
+					selectRightFile(selectedFile, selectedScript + " " + timestamp);
 				}
+				if (leftFile != null && rightFile != null) {
+					doDiff();
+					remove(northPanel);
+				}
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(selectFrame, "Unable to compare files: " + e1.getMessage(),
+						"Error comparing files", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 
@@ -348,65 +298,14 @@ public class GraphComp extends JPanel {
 	 * left ddg, it appears in Green. The rest of the nodes in the left and
 	 * right ddgs are colored white.
 	 */
-	private void displayGraphDiff() {
-
-		JenaWriter jenaWriterLeft = JenaWriter.getInstance();
-		JenaWriter jenaWriterRight = JenaWriter.getInstance();
-
-		builderLeft = new PrefuseGraphBuilder(false, jenaWriterLeft);
-		builderRight = new PrefuseGraphBuilder(false, jenaWriterRight);
-
-		DDGExplorer.loadingDDG();
-
-		builderLeft.createCopiedGroup("left_group");
-		builderRight.createCopiedGroup("right_group");
-
-		File selectedFileLeft = leftFile;
-		String selectedFileNameLeft = leftFile.getName();
-		builderLeft.processStarted(selectedFileNameLeft, true);
-
-		File selectedFileRight = rightFile;
-		String selectedFileNameRight = rightFile.getName();
-		builderRight.processStarted(selectedFileNameRight, true);
-
+	private void doDiff() {
 		try {
-			Parser parserLeft = new Parser(selectedFileLeft, builderLeft);
-			parserLeft.addNodesAndEdges();
+			PrefuseGraphBuilder builderLeft = prepareForDiff("left_group", leftFile, "leftTemp.txt");
+			PrefuseGraphBuilder builderRight = prepareForDiff("right_group", rightFile, "rightTemp.txt");
 
-			Parser parserRight = new Parser(selectedFileRight, builderRight);
-			parserRight.addNodesAndEdges();
+			computeDiffResult(builderLeft, builderRight);
 
-			createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
-			createDiffFiles("rightTemp.txt", parserRight, builderRight);
-			computeDiffResult();
-			
-			builderLeft.processFinished();
-			builderRight.processFinished();
-			
-			DDGDisplay displayLeft = builderLeft.getDisplay();
-			DDGDisplay displayOverviewLeft = builderLeft.getOverview();
-
-			DDGDisplay displayRight = builderRight.getDisplay();
-			DDGDisplay displayOverviewRight = builderRight.getOverview();
-			PanMyControl panning = new PanMyControl(displayLeft, displayRight);
-			VfListener vfL = new VfListener(displayLeft, displayOverviewLeft, displayRight, displayOverviewRight);
-
-			initializeDisplay(panning, displayLeft, displayOverviewLeft, vfL, builderLeft);
-			initializeDisplay(panning, displayRight, displayOverviewRight, vfL, builderRight);
-
-			JPanel newPanelLeft = populateDisplay(displayLeft, displayOverviewLeft);
-			JPanel newPanelRight = populateDisplay(displayRight, displayOverviewRight);
-			newPanelLeft.add(leftFileField, BorderLayout.SOUTH);
-			newPanelRight.add(rightFileField, BorderLayout.SOUTH);
-
-			ToolbarCompare toolbar = new ToolbarCompare(displayLeft, displayRight);
-
-			JPanel finalContent = new JPanel();
-			finalContent.setLayout(new GridLayout(1, 2));
-			add(toolbar, BorderLayout.NORTH);
-			finalContent.add(newPanelLeft, BorderLayout.WEST);
-			finalContent.add(newPanelRight, BorderLayout.EAST);
-			add(finalContent);
+			diffPanel.displayDiffResults(builderLeft, builderRight);
 
 			deleteTempFile("leftTemp.txt");
 			deleteTempFile("rightTemp.txt");
@@ -416,9 +315,31 @@ public class GraphComp extends JPanel {
 
 	}
 
+	private static PrefuseGraphBuilder prepareForDiff(String copyGroupName, File selectedFile, String tempFileName)
+			throws IOException {
+		JenaWriter jenaWriter = JenaWriter.getInstance();
+
+		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
+
+		DDGExplorer.loadingDDG();
+
+		builder.createCopiedGroup(copyGroupName);
+
+		String selectedFileName = selectedFile.getName();
+		builder.processStarted(selectedFileName, true);
+
+		Parser parser = new Parser(selectedFile, builder);
+		parser.addNodesAndEdges();
+
+		createFilesToDiff(tempFileName, parser, builder);
+
+		return builder;
+	}
+
 	/**
 	 * Creates a temporary file to store the list of all nodes(formatted) of the
-	 * DDG
+	 * DDG. The file contains the procedural node names in order, with the node
+	 * numbers removed and anything following a [ removed.
 	 * 
 	 * @param name
 	 *            of the temporary file
@@ -426,7 +347,7 @@ public class GraphComp extends JPanel {
 	 * @param builder
 	 *            corresponding to the graph
 	 */
-	private static void createDiffFiles(String filename, Parser parser, PrefuseGraphBuilder builder) {
+	private static void createFilesToDiff(String filename, Parser parser, PrefuseGraphBuilder builder) {
 		Writer writer = null;
 		try {
 			writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8));
@@ -434,21 +355,19 @@ public class GraphComp extends JPanel {
 			for (int i = 1; i <= parser.getNumPins(); i++) {
 				String curNodeName = builder.getName(builder.getNode(i));
 				// System.out.println(curNodeName.replaceAll("\\s+", ""));
-				try {
-					String dummy = curNodeName.replaceAll("\\s+", "");
-					if (dummy.indexOf("[") < 0) {
-						String add = dummy.substring(dummy.indexOf('-') + 1);
-						writer.write(add + "\n");
-					} else {
-						String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
-						writer.write(add + "\n");
-					}
-				} catch (IOException e) {
-					// System.out.println("writing to left file
-					// error"+e.getMessage());
+				// Remove whitespace
+				String dummy = curNodeName.replaceAll("\\s+", "");
+
+				// Remove the node number and any part of the name following a [
+				if (dummy.indexOf("[") < 0) {
+					String add = dummy.substring(dummy.indexOf('-') + 1);
+					writer.write(add + "\n");
+				} else {
+					String add = dummy.substring(dummy.indexOf('-') + 1, dummy.indexOf('['));
+					writer.write(add + "\n");
 				}
 			}
-		} catch (FileNotFoundException e1) {
+		} catch (IOException e1) {
 			System.err.println(e1.getStackTrace());
 		} finally {
 			if (writer != null) {
@@ -471,7 +390,10 @@ public class GraphComp extends JPanel {
 	 * colored in Red Right Group consists of nodes which are uniquely present
 	 * in the right DDG and colored in Green
 	 */
-	private void computeDiffResult() {
+	private static void computeDiffResult(PrefuseGraphBuilder builderLeft, PrefuseGraphBuilder builderRight) {
+		// TODO:  Look for ways to do this without a Unix command
+		// https://code.google.com/p/google-diff-match-patch/wiki/API
+		// http://introcs.cs.princeton.edu/java/96optimization/Diff.java.html
 		String diffOutput = new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
 		// System.out.println(diffOutput);
 		String[] diffOutputArray = diffOutput.split("\n");
@@ -482,8 +404,7 @@ public class GraphComp extends JPanel {
 			String[] dummyString = currString.split("\\s+");
 			// System.out.println(dummyString.length);
 			if (dummyString.length == 3) {
-				if (dummyString[1].equals("|"))
-				{
+				if (dummyString[1].equals("|")) {
 					// System.out.println("added left and right
 					// "+"leftnode:"+leftnode+" rightnode:"+rightnode);
 					builderLeft.updateCopiedGroup(leftnode, "left_group");
@@ -513,58 +434,6 @@ public class GraphComp extends JPanel {
 	}
 
 	/**
-	 * Add action listeners to the display and the corresponding overview using
-	 * its own graph builder.
-	 * 
-	 * @param panning
-	 * @param display
-	 * @param displayOverview
-	 * @param vfL
-	 *            listener object
-	 * @param builder
-	 */
-	private static void initializeDisplay(PanMyControl panning, DDGDisplay display, DDGDisplay displayOverview, VfListener vfL,
-			PrefuseGraphBuilder builder) {
-		display.addControlListener(new DragControl());
-		display.addControlListener(panning);
-		display.addControlListener(new ZoomControl());
-		display.addControlListener(new ExpandCollapseControl(builder));
-		display.addPaintListener(new UpdateOverview(displayOverview));
-		displayOverview.addItemBoundsListener(new FitOverviewListener());
-		displayOverview.addPaintListener(new VfBorders(display));
-		displayOverview.addMouseMotionListener(vfL);
-		displayOverview.addMouseListener(vfL);
-		display.repaint();
-	}
-
-	/**
-	 * Populate the panel with the graph display and its corresponding overview
-	 * display
-	 * 
-	 * @param display
-	 * @param displayOverview
-	 * @return the panel constructed
-	 */
-	private static JPanel populateDisplay(DDGDisplay display, DDGDisplay displayOverview) {
-		JPanel newPanel = new JPanel(new BorderLayout());
-		newPanel.setBackground(Color.WHITE);
-		newPanel.add(display, BorderLayout.CENTER);
-
-		displayOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		newPanel.add(displayOverview, BorderLayout.EAST);
-		newPanel.addComponentListener(new ComponentAdapter() {
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				int panelHeight = newPanel.getHeight();
-				Rectangle prevBounds = displayOverview.getBounds();
-				displayOverview.setBounds(prevBounds.x, prevBounds.y, prevBounds.width, panelHeight - 16);
-			}
-		});
-		return newPanel;
-	}
-
-	/**
 	 * Delete the temporary files which were created to perform diff operation.
 	 * 
 	 * @param filenames
@@ -577,153 +446,6 @@ public class GraphComp extends JPanel {
 		} catch (Exception e) {
 			// System.out.println(e.getMessage());
 		}
-	}
-}
-
-/**
- * Toolbar to allow for zooming a graph. Zooming is unified for both the left
- * and right ddgs.
- */
-class ToolbarCompare extends JToolBar implements ActionListener {
-	private DDGDisplay ddgDisplayLeft;
-	private DDGDisplay ddgDisplayRight;
-	private JComponent[] tools;
-	private JSlider zoomSetting;
-	private static final int SLIDER_SETTING = 10;
-
-	public ToolbarCompare(DDGDisplay ddgDisplay) {
-		super("DDG Tools", SwingConstants.HORIZONTAL);
-		this.ddgDisplayLeft = ddgDisplay;
-		populateTools();
-		addTools();
-
-		ddgDisplay.addPaintListener(new ZoomListener(zoomSetting));
-		this.addPropertyChangeListener(createListener());
-	}
-
-	public ToolbarCompare(DDGDisplay ddgDisplayLeft, DDGDisplay ddgDisplayRight) {
-		super("DDG Tools", SwingConstants.HORIZONTAL);
-		this.ddgDisplayLeft = ddgDisplayLeft;
-		this.ddgDisplayRight = ddgDisplayRight;
-		populateTools();
-		addTools();
-		ZoomListener listener = new ZoomListener(zoomSetting);
-		ddgDisplayLeft.addPaintListener(listener);
-		ddgDisplayRight.addPaintListener(listener);
-		this.addPropertyChangeListener(createListener());
-	}
-
-	private void populateTools() {
-
-		zoomSetting = new JSlider(JSlider.HORIZONTAL, 1, 50, SLIDER_SETTING);
-		zoomSetting.setPreferredSize(new Dimension(10, 20));
-		zoomSetting.setMinorTickSpacing(10);
-		zoomSetting.setPaintTicks(true);
-		zoomSetting.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				double zoomedScaleLeft = zoomSetting.getValue();
-
-				zoomedScaleLeft = zoomedScaleLeft / 10;
-				double currentScaleLeft = ddgDisplayLeft.getScale();
-
-				if (currentScaleLeft != zoomedScaleLeft) {
-					double scaleFactorLeft = (zoomedScaleLeft / currentScaleLeft);
-					Rectangle frameBoundsLeft = ddgDisplayLeft.getBounds();
-					int xMiddleLeft = (int) (frameBoundsLeft.getWidth() - frameBoundsLeft.getX()) / 2;
-					int yMiddleLeft = (int) (frameBoundsLeft.getHeight() - frameBoundsLeft.getY()) / 2;
-					Point2D centerScreenLeft = new Point(xMiddleLeft, yMiddleLeft);
-					// call zoom!
-					ddgDisplayLeft.zoom(centerScreenLeft, scaleFactorLeft);
-					ddgDisplayLeft.repaint();
-				}
-
-				double zoomedScaleRight = zoomSetting.getValue();
-				zoomedScaleRight = zoomedScaleRight / 10;
-				double currentScaleRight = currentScaleLeft;
-
-				if (currentScaleRight != zoomedScaleRight) {
-					double scaleFactorRight = (zoomedScaleRight / currentScaleRight);
-					Rectangle frameBoundsRight = ddgDisplayRight.getBounds();
-					int xMiddleRight = (int) (frameBoundsRight.getWidth() - frameBoundsRight.getX()) / 2;
-					int yMiddleRight = (int) (frameBoundsRight.getHeight() - frameBoundsRight.getY()) / 2;
-					Point2D centerScreenRight = new Point(xMiddleRight, yMiddleRight);
-					ddgDisplayRight.zoom(centerScreenRight, scaleFactorRight);
-					ddgDisplayRight.repaint();
-				}
-			}
-		});
-
-		JButton refocuser = new JButton("Zoom");
-		refocuser.setOpaque(false);
-		refocuser.setEnabled(false);
-		tools = new JComponent[2];
-		tools[0] = zoomSetting;
-		tools[1] = refocuser;
-	}
-
-	/**
-	 * adds components from array to the JToolBar
-	 */
-	private void addTools() {
-		for (int i = 0; i < tools.length; i++) {
-			JComponent current = tools[i];
-			if (current != null) {
-				this.add(current);
-			}
-		}
-	}
-
-	/**
-	 * creates a PropertyChangeListener that will listen for a change in the
-	 * toolbar's orientation and set the slider to that direction
-	 * 
-	 * @return propertyChangeListener
-	 */
-	private PropertyChangeListener createListener() {
-		PropertyChangeListener propListener = new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent e) {
-				String propName = e.getPropertyName();
-				if ("orientation".equals(propName)) {
-					if ((Integer) e.getNewValue() == JToolBar.VERTICAL) {
-						zoomSetting.setOrientation(JSlider.VERTICAL);
-					} else {
-						zoomSetting.setOrientation(JSlider.HORIZONTAL);
-					}
-				}
-			}
-		};
-		return propListener;
-	}
-
-	public static class ZoomListener implements PaintListener {
-		private JSlider slider;
-
-		public ZoomListener(JSlider slider) {
-			super();
-			this.slider = slider;
-		}
-
-		@Override
-		public void prePaint(Display displayGiven, Graphics2D g) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void postPaint(Display displayGiven, Graphics2D g) {
-			int zoom = (int) Math.round((displayGiven.getScale() * 10));
-			// System.out.println("zoomListener resetting slider to value " +
-			// zoom);
-			if (slider.getValue() != zoom) {
-				slider.setValue(zoom);
-			}
-		}
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 	}
 }
 

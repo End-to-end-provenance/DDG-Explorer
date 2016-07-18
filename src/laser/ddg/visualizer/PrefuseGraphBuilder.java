@@ -726,9 +726,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// set up the display's overview
 		// (no drag, pan, or zoom control needed)
 		displayOverview.setVisualization(vis);
-		// display size
-		displayOverview.setSize(175, 500);
 		if (!compareDDG) {
+			// display size
+			displayOverview.setSize(175, 500);
 			// To force overview's shape and zoom when bounds change
 			displayOverview.addItemBoundsListener(new FitOverviewListener());
 
