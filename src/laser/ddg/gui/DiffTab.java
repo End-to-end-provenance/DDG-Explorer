@@ -36,7 +36,7 @@ public class DiffTab extends JPanel {
 	private DiffPanel diffPanel = new DiffPanel("");
 	
 	// The object used to load R scripts that are not in the database
-	private JFileChooser chooser;
+	private static JFileChooser chooser;
 	
 	// The file shown on the left side
 	private File leftFile;

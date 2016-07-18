@@ -51,8 +51,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
-import com.qarks.util.files.diff.ui.DiffPanel;
-
 import laser.ddg.persist.JenaLoader;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.Parser;
@@ -83,29 +81,14 @@ public class GraphComp extends JPanel {
 	// Object that can load information from the database
 	private JenaLoader jenaLoader;
 
-	// The panel that shows the side-by-side files and their differences
-	private DiffPanel diffPanel = new DiffPanel("");
-
 	// The object used to load R scripts that are not in the database
-	private JFileChooser chooser;
+	private static JFileChooser chooser;
 
 	// The file shown on the left side
 	private File leftFile;
 
 	// The file shown on the right side
 	private File rightFile;
-
-	// Display for the left graph
-	private DDGDisplay displayLeft;
-
-	// Display for the right graph
-	private DDGDisplay displayRight;
-
-	// The overview of the left graph
-	private DDGDisplay displayOverviewLeft;
-
-	// The overview of the right graph
-	private DDGDisplay displayOverviewRight;
 
 	// The button used to select the left file from the file system
 	private JButton selectFile1Button = new JButton("Select from file");
@@ -127,15 +110,6 @@ public class GraphComp extends JPanel {
 
 	// references for pop-ups
 	private JFrame frame;
-
-	// The parser to parse the left file
-	private Parser parserLeft;
-
-	// The parser to parse the right file
-	private Parser parserRight;
-
-	// The string to store the diff result of two files
-	private String diffOutput;
 
 	// Graph builder for the left file
 	private PrefuseGraphBuilder builderLeft;
@@ -176,8 +150,6 @@ public class GraphComp extends JPanel {
 		northPanel.add(leftPanel);
 		northPanel.add(rightPanel);
 		add(northPanel, BorderLayout.NORTH);
-		// add(diffPanel, BorderLayout.WEST);
-
 	}
 
 	/**
@@ -266,7 +238,7 @@ public class GraphComp extends JPanel {
 	 */
 	private void selectRightFile(File f) {
 		if (f == null) {
-			JOptionPane.showMessageDialog(diffPanel, "Could not open " + f);
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not open " + f);
 			return;
 		}
 		rightFile = f;
@@ -288,7 +260,7 @@ public class GraphComp extends JPanel {
 	 */
 	private void selectLeftFile(File f) {
 		if (f == null) {
-			JOptionPane.showMessageDialog(diffPanel, "Could not open " + f);
+			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not open " + f);
 			return;
 		}
 		leftFile = f;
@@ -398,52 +370,50 @@ public class GraphComp extends JPanel {
 		builderRight.processStarted(selectedFileNameRight, true);
 
 		try {
-			parserLeft = new Parser(selectedFileLeft, builderLeft);
+			Parser parserLeft = new Parser(selectedFileLeft, builderLeft);
 			parserLeft.addNodesAndEdges();
 
-			parserRight = new Parser(selectedFileRight, builderRight);
+			Parser parserRight = new Parser(selectedFileRight, builderRight);
 			parserRight.addNodesAndEdges();
+
+			createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
+			createDiffFiles("rightTemp.txt", parserRight, builderRight);
+			computeDiffResult();
+			
+			builderLeft.processFinished();
+			builderRight.processFinished();
+			
+			DDGDisplay displayLeft = builderLeft.getDisplay();
+			DDGDisplay displayOverviewLeft = builderLeft.getOverview();
+
+			DDGDisplay displayRight = builderRight.getDisplay();
+			DDGDisplay displayOverviewRight = builderRight.getOverview();
+			PanMyControl panning = new PanMyControl(displayLeft, displayRight);
+			VfListener vfL = new VfListener(displayLeft, displayOverviewLeft, displayRight, displayOverviewRight);
+
+			initializeDisplay(panning, displayLeft, displayOverviewLeft, vfL, builderLeft);
+			initializeDisplay(panning, displayRight, displayOverviewRight, vfL, builderRight);
+
+			JPanel newPanelLeft = populateDisplay(displayLeft, displayOverviewLeft);
+			JPanel newPanelRight = populateDisplay(displayRight, displayOverviewRight);
+			newPanelLeft.add(leftFileField, BorderLayout.SOUTH);
+			newPanelRight.add(rightFileField, BorderLayout.SOUTH);
+
+			ToolbarCompare toolbar = new ToolbarCompare(displayLeft, displayRight);
+
+			JPanel finalContent = new JPanel();
+			finalContent.setLayout(new GridLayout(1, 2));
+			add(toolbar, BorderLayout.NORTH);
+			finalContent.add(newPanelLeft, BorderLayout.WEST);
+			finalContent.add(newPanelRight, BorderLayout.EAST);
+			add(finalContent);
+
+			deleteTempFile("leftTemp.txt");
+			deleteTempFile("rightTemp.txt");
 		} catch (Exception e) {
 			// System.out.println("Exceptions caught" + e.getMessage());
 		}
-		createDiffFiles("leftTemp.txt", parserLeft, builderLeft);
 
-		createDiffFiles("rightTemp.txt", parserRight, builderRight);
-
-		computeDiffResult();
-
-		try {
-			builderLeft.processFinished();
-			builderRight.processFinished();
-		} catch (Exception e) {
-		}
-		displayLeft = builderLeft.getDisplay();
-		displayOverviewLeft = builderLeft.getOverview();
-
-		displayRight = builderRight.getDisplay();
-		displayOverviewRight = builderRight.getOverview();
-		PanMyControl panning = new PanMyControl(displayLeft, displayRight);
-		VfListener vfL = new VfListener(displayLeft, displayOverviewLeft, displayRight, displayOverviewRight);
-
-		initializeDisplay(panning, displayLeft, displayOverviewLeft, vfL, builderLeft);
-		initializeDisplay(panning, displayRight, displayOverviewRight, vfL, builderRight);
-
-		JPanel newPanelLeft = populateDisplay(displayLeft, displayOverviewLeft);
-		JPanel newPanelRight = populateDisplay(displayRight, displayOverviewRight);
-		newPanelLeft.add(leftFileField, BorderLayout.SOUTH);
-		newPanelRight.add(rightFileField, BorderLayout.SOUTH);
-
-		ToolbarCompare toolbar = new ToolbarCompare(displayLeft, displayRight);
-
-		JPanel finalContent = new JPanel();
-		finalContent.setLayout(new GridLayout(1, 2));
-		add(toolbar, BorderLayout.NORTH);
-		finalContent.add(newPanelLeft, BorderLayout.WEST);
-		finalContent.add(newPanelRight, BorderLayout.EAST);
-		add(finalContent);
-
-		deleteTempFile("leftTemp.txt");
-		deleteTempFile("rightTemp.txt");
 	}
 
 	/**
@@ -502,7 +472,7 @@ public class GraphComp extends JPanel {
 	 * in the right DDG and colored in Green
 	 */
 	private void computeDiffResult() {
-		diffOutput = new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
+		String diffOutput = new ExecuteShellCommand().executeCommand("diff -y -w -b leftTemp.txt rightTemp.txt").trim();
 		// System.out.println(diffOutput);
 		String[] diffOutputArray = diffOutput.split("\n");
 		int leftnode = 1, rightnode = 1;
