@@ -85,9 +85,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	static final String GRAPH_NODES = GRAPH + ".nodes";
 	private static final String GRAPH_EDGES = GRAPH + ".edges";
 
-	/*  Colors used in drawing the graph */
+	/* Colors used in drawing the graph */
 	public static final int DATA_FLOW_COLOR = ColorLib.rgb(255, 0, 0);
-	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148);  // ColorLib.rgb(0, 255, 0);
+	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
+																			// 255,
+																			// 0);
 	private static final int SIMPLE_HANDLER_COLOR = ColorLib.rgb(140, 209, 207);
 	private static final int VIRTUAL_COLOR = ColorLib.rgb(217, 132, 181);
 	public static final int EXCEPTION_COLOR = ColorLib.rgb(209, 114, 110);
@@ -96,28 +98,23 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public static final int FILE_COLOR = ColorLib.rgb(255, 204, 153);
 	public static final int URL_COLOR = ColorLib.rgb(255, 204, 229);
 	public static final int NONLEAF_COLOR = ColorLib.rgb(175, 217, 123);
-	public static final int NONLEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(190,
-			190, 190);
-	public static final int LEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(176, 196,
-			222);
+	public static final int NONLEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(190, 190, 190);
+	public static final int LEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(176, 196, 222);
 	public static final int CHECKPOINT_COLOR = ColorLib.rgb(204, 255, 229);
 	public static final int RESTORE_COLOR = ColorLib.rgb(102, 255, 255);
 
 	// Colors for collapsed steps
 	public static final int STEP_COLOR = ColorLib.rgb(176, 226, 255);
-	//private static final int STEP_EDGE_COLOR = ColorLib.rgb(0, 0, 0);
+	// private static final int STEP_EDGE_COLOR = ColorLib.rgb(0, 0, 0);
 
 	// Used for nodes introduced by the interpreter rather than the program
 	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
-	private ColorAction fill = new ColorAction(GRAPH_NODES,
-				VisualItem.FILLCOLOR);
+	private ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
 
 	// The parts of the graph
 	private Table nodes = new Table();
 	private Table edges = new Table();
 	private Graph graph;
-
-
 
 	// True if the root has been drawn
 	private boolean rootDrawn = false;
@@ -125,13 +122,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// True if the builder is being used for comparing 2 DDGs
 	private boolean compareDDG = false;
 
-	
-
 	// visualization and display tools
 	private final DDGVisualization vis = new DDGVisualization();
-	private BufferedReader in = new BufferedReader(new InputStreamReader(
-			System.in));
-	//private PINClickControl pinClickControl = new PINClickControl(this);
+	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	// private PINClickControl pinClickControl = new PINClickControl(this);
 
 	// display
 	private DDGDisplay display = new DDGDisplay(this);
@@ -139,17 +133,18 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private String group = Visualization.FOCUS_ITEMS;
 	private int pinID;
 
-	//display overview
+	// display overview
 	private DDGDisplay displayOverview = new DDGDisplay(this);
 
-	//private Object lock = new Object();
+	// private Object lock = new Object();
 	DDGPanel ddgPanel;
 	private DDGLayout ddgLayout;
 
 	// The root of the provenance graph, where layout begins
 	private NodeItem root;
 
-	// If true, execution pauses after each node is connected to the graph so the user
+	// If true, execution pauses after each node is connected to the graph so
+	// the user
 	// can see the updates
 	private boolean incremental = true;
 
@@ -158,10 +153,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// layout is done.
 	private boolean dataDerivation = false;
 
-	// Choices are prefuse.Constants.EDGE_ARROW_FORWARD and prefuse.Constants.EDGE_ARROW_REVERSE
-	// FORWARD draws arrows from outputs to inputs.  REVERSE draws from inputs to outputs.
-	// This is historical.  DDGs are data *derivation* graphs, so the arrows go from derived data
-	// to what they are derived from.  Many users find pointing from inputs to outputs more
+	// Choices are prefuse.Constants.EDGE_ARROW_FORWARD and
+	// prefuse.Constants.EDGE_ARROW_REVERSE
+	// FORWARD draws arrows from outputs to inputs. REVERSE draws from inputs to
+	// outputs.
+	// This is historical. DDGs are data *derivation* graphs, so the arrows go
+	// from derived data
+	// to what they are derived from. Many users find pointing from inputs to
+	// outputs more
 	// natural.
 	private static final int DEFAULT_ARROW_DIRECTION = prefuse.Constants.EDGE_ARROW_REVERSE;
 
@@ -171,95 +170,105 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private ProvenanceData provData;
 
 	private int numPins;
-	
+
 	private SearchIndex searchIndex = new SearchIndex();
 
 	/**
-	 * Creates an object that builds a visual graph.  Creates a window in which
+	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
 	 */
 	public PrefuseGraphBuilder() {
 		ddgPanel = new DDGPanel();
-		ddgPanel.setSearchIndex (searchIndex);
-        Logger.getLogger("prefuse").setLevel(Level.WARNING);
+		ddgPanel.setSearchIndex(searchIndex);
+		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
 	/**
 	 * Creates an object that builds a visual graph.
-	 * @param incremental if true, pauses after adding each node to the graph so
-	 * 		that the user can see the updates
-	 * @param jenaWriter the object used to write to the DB
+	 * 
+	 * @param incremental
+	 *            if true, pauses after adding each node to the graph so that
+	 *            the user can see the updates
+	 * @param jenaWriter
+	 *            the object used to write to the DB
 	 */
-	public PrefuseGraphBuilder (boolean incremental, DBWriter jenaWriter) {
+	public PrefuseGraphBuilder(boolean incremental, DBWriter jenaWriter) {
 		this.incremental = incremental;
 		ddgPanel = new DDGPanel(jenaWriter);
-		ddgPanel.setSearchIndex (searchIndex);
-        Logger.getLogger("prefuse").setLevel(Level.WARNING);
-    }
+		ddgPanel.setSearchIndex(searchIndex);
+		Logger.getLogger("prefuse").setLevel(Level.WARNING);
+	}
 
 	/**
 	 * Creates an object that builds a visual graph.
-	 * @param incremental if true, pauses after adding each node to the graph so
-	 * 		that the user can see the updates
-	 * @param dataDerivation if true, indicates that the graph being drawn represents
-	 * 		a data derivation, not a full DDG.
+	 * 
+	 * @param incremental
+	 *            if true, pauses after adding each node to the graph so that
+	 *            the user can see the updates
+	 * @param dataDerivation
+	 *            if true, indicates that the graph being drawn represents a
+	 *            data derivation, not a full DDG.
 	 */
-	public PrefuseGraphBuilder (boolean incremental, boolean dataDerivation) {
+	public PrefuseGraphBuilder(boolean incremental, boolean dataDerivation) {
 		this.incremental = incremental;
 		this.dataDerivation = dataDerivation;
 		ddgPanel = new DDGPanel();
-		ddgPanel.setSearchIndex (searchIndex);
-        Logger.getLogger("prefuse").setLevel(Level.WARNING);
+		ddgPanel.setSearchIndex(searchIndex);
+		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
 	/**
-	 * return the DDGPanel to place into the
-	 * DDGExplorer's tabbed pane
+	 * return the DDGPanel to place into the DDGExplorer's tabbed pane
+	 * 
 	 * @return ddgPanel
 	 */
-	public DDGPanel getPanel(){
+	public DDGPanel getPanel() {
 		return ddgPanel;
 	}
-	/**
-	* return the graph display to place it into the
-	* DDGExplorer's tabbed pane
-	* @return display
-	*/
 
-	public DDGDisplay getDisplay(){
+	/**
+	 * return the graph display to place it into the DDGExplorer's tabbed pane
+	 * 
+	 * @return display
+	 */
+
+	public DDGDisplay getDisplay() {
 		return display;
 	}
 
 	/**
-	* return the overview graph display to place it into the
-	* DDGExplorer's tabbed pane
-	* @return displayOverview
-	*/
-	public DDGDisplay getOverview(){
+	 * return the overview graph display to place it into the DDGExplorer's
+	 * tabbed pane
+	 * 
+	 * @return displayOverview
+	 */
+	public DDGDisplay getOverview() {
 		return displayOverview;
 	}
 
 	/**
-	 * save DDG to the database
-	 * (method called in DDGTab)
+	 * save DDG to the database (method called in DDGTab)
 	 */
-	public void saveToDB(){
+	public void saveToDB() {
 		ddgPanel.saveToDB();
 	}
 
 	/**
-	 * check if DDG is already in the database
-	 * (needed for DDGTab)
+	 * check if DDG is already in the database (needed for DDGTab)
+	 * 
 	 * @return boolean inside DB
 	 */
-	public boolean alreadyInDB(){
+	public boolean alreadyInDB() {
 		return ddgPanel.alreadyInDB();
 	}
 
 	/**
 	 * Sets the title displayed in the window
-	 * @param name The name of the program that created the DDG
-	 * @param timestamp the timestamp when the DDG was created
+	 * 
+	 * @param name
+	 *            The name of the program that created the DDG
+	 * @param timestamp
+	 *            the timestamp when the DDG was created
 	 */
 	public void setTitle(String name, String timestamp) {
 		ddgPanel.setTitle(name, timestamp);
@@ -273,8 +282,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	private static String getStepNameFromFinishNode(String nodeFinishName) {
-		return nodeFinishName.substring(0,
-				nodeFinishName.lastIndexOf("Finish"));
+		return nodeFinishName.substring(0, nodeFinishName.lastIndexOf("Finish"));
 	}
 
 	private String getStepNameFromFinishNode(Node finishNode) {
@@ -285,7 +293,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return nodeStartName.substring(0, nodeStartName.lastIndexOf("Start"));
 	}
 
-	private String getStepNameFromStartNode(Node startNode){
+	private String getStepNameFromStartNode(Node startNode) {
 		return getStepNameFromStartNode(PrefuseUtils.getName(startNode));
 	}
 
@@ -293,7 +301,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * adds a step node to the graph
 	 *
 	 * @param name
-	 * @param string 
+	 * @param string
 	 * @return the id of the node just added
 	 */
 	private NodeItem addCollapsedNode(String name, String value, String time) {
@@ -324,7 +332,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	private void updateFocus(TableNodeItem item) {
-		//System.out.println("Setting focus to " + item);
+		// System.out.println("Setting focus to " + item);
 		TupleSet ts = vis.getFocusGroup(group);
 		ts.setTuple(item);
 		vis.run("animate");
@@ -345,7 +353,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Finds the node that has the given name
-	 * @param nodeName the name of the node to search for
+	 * 
+	 * @param nodeName
+	 *            the name of the node to search for
 	 * @return the node with that name or null if no node is found
 	 */
 	private TableNodeItem getTableNodeItem(String nodeName) {
@@ -362,24 +372,29 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Changes the focus of the current ddg to be a particular node.  If the node
-	 * is currently visible, it scrolls so the node is in the center.  If the node
-	 * is not currently visible, it expands the entire ddg and then scrolls to
-	 * the desired node.
-	 * @param nodeName the name of the node to focus on
+	 * Changes the focus of the current ddg to be a particular node. If the node
+	 * is currently visible, it scrolls so the node is in the center. If the
+	 * node is not currently visible, it expands the entire ddg and then scrolls
+	 * to the desired node.
+	 * 
+	 * @param nodeName
+	 *            the name of the node to focus on
 	 */
 	public void focusOn(String nodeName) {
 		TableNodeItem focusNode = getTableNodeItem(nodeName);
 		assert focusNode != null;
 		TableNodeItem tableNode = focusNode;
 		if (!tableNode.isVisible()) {
-			//System.out.println("In focusOn if statement (Collapse)");
+			// System.out.println("In focusOn if statement (Collapse)");
 			collapse(root);
 			NodeItem expandedRoot = expandRecursively(vis.getCollapsedStartFinish(root));
 			layout(expandedRoot);
 		}
 		updateFocus(focusNode);
-		//System.out.println("Node name: " + nodeName + "\n" + "XStart: " + focusNode.getStartX() + " XEnd: " + focusNode.getEndX() + "\n" + "YStart: " + focusNode.getStartY() + " YEnd: " + focusNode.getEndY() + "\n");
+		// System.out.println("Node name: " + nodeName + "\n" + "XStart: " +
+		// focusNode.getStartX() + " XEnd: " + focusNode.getEndX() + "\n" +
+		// "YStart: " + focusNode.getStartY() + " YEnd: " + focusNode.getEndY()
+		// + "\n");
 		repaint();
 	}
 
@@ -388,7 +403,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		Object item = null;
 		while (items.hasNext()) {
 			item = items.next();
-			if (item instanceof Node && PrefuseUtils.getId((Node)item) == nodeId) {
+			if (item instanceof Node && PrefuseUtils.getId((Node) item) == nodeId) {
 				return (NodeItem) item;
 			}
 		}
@@ -450,33 +465,30 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
-		addNode(pin.getType(), pin.getId(),
-				pin.getNameAndType(), null, pin.getElapsedTime(), null, pin.getLineNumber(), pin.getScriptNumber());
+		addNode(pin.getType(), pin.getId(), pin.getNameAndType(), null, pin.getElapsedTime(), null, pin.getLineNumber(),
+				pin.getScriptNumber());
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
 
 	@Override
 	public void visitDin(DataInstanceNode din) {
-		addNode(din.getType(), din.getId() + numPins,
-				din.getName(), din.getValue().toString(),din.getCreatedTime(), din.getLocation(), -1, -1);
+		addNode(din.getType(), din.getId() + numPins, din.getName(), din.getValue().toString(), din.getCreatedTime(),
+				din.getLocation(), -1, -1);
 	}
 
 	@Override
-	public void visitControlFlowEdge(ProcedureInstanceNode predecessor,
-			ProcedureInstanceNode successor) {
+	public void visitControlFlowEdge(ProcedureInstanceNode predecessor, ProcedureInstanceNode successor) {
 		addEdge(PrefuseUtils.CONTROL_FLOW, successor.getId(), predecessor.getId());
 	}
 
 	@Override
-	public void visitInputEdge(DataInstanceNode input,
-			ProcedureInstanceNode consumer) {
+	public void visitInputEdge(DataInstanceNode input, ProcedureInstanceNode consumer) {
 		addEdge(PrefuseUtils.DATA_FLOW, consumer.getId(), input.getId() + numPins);
 	}
 
 	@Override
-	public void visitOutputEdge(ProcedureInstanceNode producer,
-			DataInstanceNode output) {
+	public void visitOutputEdge(ProcedureInstanceNode producer, DataInstanceNode output) {
 		addEdge(PrefuseUtils.DATA_FLOW, output.getId() + numPins, producer.getId());
 	}
 
@@ -490,20 +502,24 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name
 	 *            the node's name
 	 * @param value
-	 * 			value of the node (could be null)
+	 *            value of the node (could be null)
 	 * @param time
-	 * 			timestamp of the node (could be null)
-	 * @param location if this is a file node, this will be the full path to the
-	 * 		original file.  If it is not a file node, it will be null
-	 * @param lineNum the line number in the script where the node is derived from
-	 * @param scriptNum the script number identifying the script that the line is from
+	 *            timestamp of the node (could be null)
+	 * @param location
+	 *            if this is a file node, this will be the full path to the
+	 *            original file. If it is not a file node, it will be null
+	 * @param lineNum
+	 *            the line number in the script where the node is derived from
+	 * @param scriptNum
+	 *            the script number identifying the script that the line is from
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, double time, String location, int lineNum, int scriptNum) {
+	public int addNode(String type, int id, String name, String value, double time, String location, int lineNum,
+			int scriptNum) {
 		String formattedTime = PrefuseUtils.elapsedTimeFormat.format(time);
-		return addNode (type, id, name, value, formattedTime, location, lineNum, scriptNum);
+		return addNode(type, id, name, value, formattedTime, location, lineNum, scriptNum);
 	}
-	
+
 	/**
 	 * Adds a node to the prefuse graph
 	 *
@@ -514,16 +530,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name
 	 *            the node's name
 	 * @param value
-	 * 			value of the node (could be null)
+	 *            value of the node (could be null)
 	 * @param time
-	 * 			timestamp of the node (could be null)
-	 * @param location if this is a file node, this will be the full path to the
-	 * 		original file.  If it is not a file node, it will be null
-	 * @param lineNum the line number in the script where the node is derived from
-	 * @param scriptNum the script number identifying which script the code is from
+	 *            timestamp of the node (could be null)
+	 * @param location
+	 *            if this is a file node, this will be the full path to the
+	 *            original file. If it is not a file node, it will be null
+	 * @param lineNum
+	 *            the line number in the script where the node is derived from
+	 * @param scriptNum
+	 *            the script number identifying which script the code is from
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, String time, String location, int lineNum, int scriptNum) {
+	public int addNode(String type, int id, String name, String value, String time, String location, int lineNum,
+			int scriptNum) {
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -535,7 +555,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
-				//System.out.println(type);
+				// System.out.println(type);
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
 				nodes.setInt(rowNum, PrefuseUtils.ID, id);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
@@ -568,17 +588,19 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param name
 	 *            the node's name
 	 * @param value
-	 * 			value of the node (could be null)
+	 *            value of the node (could be null)
 	 * @param location
-	 * 			original location of the file (could be null)
+	 *            original location of the file (could be null)
 	 * @param lineNum
-	 * 		    line number that the corresponding code is on in the script.  Is -1 if not recorded.
+	 *            line number that the corresponding code is on in the script.
+	 *            Is -1 if not recorded.
 	 * @param scriptNum
-	 * 		    script number that the corresponding code is from.  Is -1 if not recorded.
+	 *            script number that the corresponding code is from. Is -1 if
+	 *            not recorded.
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String location, int lineNum, int scriptNum) {
-		return addNode (type, id, name, value, null, location, lineNum, scriptNum);
+		return addNode(type, id, name, value, null, location, lineNum, scriptNum);
 	}
 
 	/**
@@ -608,13 +630,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				edges.setInt(rowNum, PrefuseUtils.TARGET, target);
 				// write to a file
 
-//				if(type.equals("CF")) {
-//					System.out.println("Adding control flow edge from " + source+" to "+target);
-//				}
-//
-//				else if(type.equals("DF")) {
-//				   System.out.println("Adding data flow edge from " + source+ " to "+ target);
-//				}
+				// if(type.equals("CF")) {
+				// System.out.println("Adding control flow edge from " +
+				// source+" to "+target);
+				// }
+				//
+				// else if(type.equals("DF")) {
+				// System.out.println("Adding data flow edge from " + source+ "
+				// to "+ target);
+				// }
 
 			}
 		} catch (Exception e) {
@@ -633,17 +657,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public void drawGraph(ProvenanceData ddg) {
 
-
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			//System.out.println("Building node and edge tables.");
+			// System.out.println("Building node and edge tables.");
 			buildNodeAndEdgeTables();
 
-			//System.out.println("Building graph");
+			// System.out.println("Building graph");
 			buildGraph(ddg);
 
-			//System.out.println("Drawing graph");
+			// System.out.println("Drawing graph");
 			initializeDisplay();
 
 			// assign the colors
@@ -658,7 +681,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private void initializeDisplay() {
 		// -- 2. the visualization --------------------------------------------
-		
+
 		vis.add(GRAPH, graph);
 		vis.setInteractive(GRAPH_EDGES, null, false);
 
@@ -688,40 +711,36 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		display.setVisualization(vis);
 		// display size
 		display.setSize(720, 500);
-		if(!compareDDG){
+		if (!compareDDG) {
 			display.addControlListener(new DragControl());
 			display.addControlListener(new PanControl());
 			display.addControlListener(new ZoomControl());
 			// zoom with mouse wheel
 			display.addControlListener(new WheelZoomControl(true, true));
 			// make node and incident edges invisible
-			//d.addControlListener(mControl);
+			// d.addControlListener(mControl);
 			display.addControlListener(new ExpandCollapseControl(this));
 			display.addPaintListener(new updateOverview(displayOverview));
 		}
-		
 
-
-		//set up the display's overview
-		//(no drag, pan, or zoom control needed)
+		// set up the display's overview
+		// (no drag, pan, or zoom control needed)
 		displayOverview.setVisualization(vis);
 		// display size
 		displayOverview.setSize(175, 500);
-		if(!compareDDG)
-		{
-			//To force overview's shape and zoom when bounds change
+		if (!compareDDG) {
+			// To force overview's shape and zoom when bounds change
 			displayOverview.addItemBoundsListener(new FitOverviewListener());
-		
-			//keep track of the display's view and draw Overview's square accordingly
+
+			// keep track of the display's view and draw Overview's square
+			// accordingly
 			displayOverview.addPaintListener(new vfBorders(display));
-		
-			//keep track of mouse clicks to move the grey rectangle
+
+			// keep track of mouse clicks to move the grey rectangle
 			vfListener vfL = new vfListener(display, displayOverview);
 			displayOverview.addMouseMotionListener(vfL);
-			displayOverview.addMouseListener(vfL);	
+			displayOverview.addMouseListener(vfL);
 		}
-		
-		
 
 		// focus action
 		ActionList animate = new ActionList();
@@ -731,7 +750,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// -- 6. launch the visualization -------------------------------------
 		// if(root!=null)
 		// {
-		// 	root.setFillColor(ColorLib.rgb(255,51,255));
+		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// }
 		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
 
@@ -741,81 +760,58 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	private ActionList assignColors() {
-		ColorAction stroke = new ColorAction(GRAPH_NODES,
-				VisualItem.STROKECOLOR);
+		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
-		
-		//root.setFillColor(ColorLib.rgb(255,51,255));
-		// highlight node if selected from search results
-		if(compareDDG){
-			fillDDGPallette();			
-		}
-		else{
-		fill.add("_highlight", ColorLib.rgb(193,253,51));
 
-		//fill.add("ingroup('copied')", ColorLib.rgb(225, 51, 255));
-		
-		fill.add(ExpressionParser.predicate("Type = 'Binding'"),
-				INTERPRETER_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Start'"),
-				NONLEAF_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Finish'"),
-				NONLEAF_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Interm'"),
-				NONLEAF_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), LEAF_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Operation'"), LEAF_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Data'"), DATA_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Exception'"),
-				EXCEPTION_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"),
-				SIMPLE_HANDLER_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'VStart'"),
-				VIRTUAL_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'VFinish'"),
-				VIRTUAL_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'VInterm'"),
-				VIRTUAL_COLOR);
-		// color for Steps
-		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
+		// root.setFillColor(ColorLib.rgb(255,51,255));
+		// highlight node if selected from search results
+		if (compareDDG) {
+			fillDDGPallette();
+		} else {
+			fill.add("_highlight", ColorLib.rgb(193, 253, 51));
+
+			// fill.add("ingroup('copied')", ColorLib.rgb(225, 51, 255));
+
+			fill.add(ExpressionParser.predicate("Type = 'Binding'"), INTERPRETER_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Start'"), NONLEAF_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Finish'"), NONLEAF_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Interm'"), NONLEAF_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Leaf'"), LEAF_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Operation'"), LEAF_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Data'"), DATA_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), SIMPLE_HANDLER_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'VStart'"), VIRTUAL_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'VFinish'"), VIRTUAL_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'VInterm'"), VIRTUAL_COLOR);
+			// color for Steps
+			fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
+			fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
 		}
 		// use black for node text
-		ColorAction text = new ColorAction(GRAPH_NODES,
-				VisualItem.TEXTCOLOR, ColorLib.gray(0));
-		// set text of highlighted node to black (or other color if you change your mind) 
-		text.add("_highlight", ColorLib.rgb(0,0,0));
-		
-		ColorAction edgeColors = new ColorAction(GRAPH_EDGES,
-				VisualItem.STROKECOLOR, ColorLib.gray(0));
-		edgeColors.add(ExpressionParser.predicate("Type = 'CF'"),
-				CONTROL_FLOW_COLOR);
-		edgeColors.add(ExpressionParser.predicate("Type = 'DF'"),
-				DATA_FLOW_COLOR);
-		edgeColors.add(ExpressionParser.predicate("Type = 'StepCF'"),
-				CONTROL_FLOW_COLOR);
-		edgeColors.add(ExpressionParser.predicate("Type = 'StepDF'"),
-				DATA_FLOW_COLOR);
+		ColorAction text = new ColorAction(GRAPH_NODES, VisualItem.TEXTCOLOR, ColorLib.gray(0));
+		// set text of highlighted node to black (or other color if you change
+		// your mind)
+		text.add("_highlight", ColorLib.rgb(0, 0, 0));
 
-		ColorAction arrowColors = new ColorAction(GRAPH_EDGES,
-			VisualItem.FILLCOLOR, ColorLib.gray(200));
-		arrowColors.add(ExpressionParser.predicate("Type = 'CF'"),
-						CONTROL_FLOW_COLOR);
-		arrowColors.add(ExpressionParser.predicate("Type = 'DF'"),
-					DATA_FLOW_COLOR);
-		arrowColors.add(ExpressionParser.predicate("Type = 'Step'"),
-				CONTROL_FLOW_COLOR);
-		arrowColors.add(ExpressionParser.predicate("Type = 'StepDF'"),
-				DATA_FLOW_COLOR);
-		arrowColors.add(ExpressionParser.predicate("Type = 'StepCF'"),
-				CONTROL_FLOW_COLOR);
+		ColorAction edgeColors = new ColorAction(GRAPH_EDGES, VisualItem.STROKECOLOR, ColorLib.gray(0));
+		edgeColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
 
+		ColorAction arrowColors = new ColorAction(GRAPH_EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200));
+		arrowColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'Step'"), CONTROL_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);
 
 		// create an action list containing all color assignments
 		ActionList color = new ActionList();
@@ -827,67 +823,64 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return color;
 	}
 
-	public void fillDDGPallette(){
-		
-		fill.add("ingroup('left_group')", ColorLib.rgb(255,0,0));
+	public void fillDDGPallette() {
+
+		fill.add("ingroup('left_group')", ColorLib.rgb(255, 0, 0));
 		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
-		
-		fill.add("_highlight", ColorLib.rgb(193,253,51));
-			fill.add(ExpressionParser.predicate("Type = 'Binding'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Start'"),
-				ColorLib.rgb(160,160,160));
-			fill.add(ExpressionParser.predicate("Type = 'Finish'"),
-				ColorLib.rgb(160,160,160));
-			fill.add(ExpressionParser.predicate("Type = 'Interm'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Leaf'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Operation'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Data'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'File'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'URL'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Exception'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'VStart'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'VFinish'"),
-				ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'VInterm'"),
-				ColorLib.rgb(255,255,255));
+
+		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
+		fill.add(ExpressionParser.predicate("Type = 'Binding'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Start'"), ColorLib.rgb(160, 160, 160));
+		fill.add(ExpressionParser.predicate("Type = 'Finish'"), ColorLib.rgb(160, 160, 160));
+		fill.add(ExpressionParser.predicate("Type = 'Interm'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Operation'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Data'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'File'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'URL'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Exception'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'VStart'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), ColorLib.rgb(255, 255, 255));
 		// color for Steps
-			fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255,255,255));
-			fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255,255,255));
+		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255, 255, 255));
 
 	}
 
 	/**
-	* Sets the boolean compareDDG.
-	* Used if the builder is being used to compare DDGs.
-	*/
-	public void setCompareDDG(boolean b)
-	{
+	 * Sets the boolean compareDDG. Used if the builder is being used to compare
+	 * DDGs.
+	 */
+	public void setCompareDDG(boolean b) {
 		compareDDG = b;
 	}
+
 	/**
 	 * Adds a legend to the display for the given language.
-	 * @param language the language to add the legend for
+	 * 
+	 * @param language
+	 *            the language to add the legend for
 	 */
 	public void createLegend(String language) {
 		Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(language);
 		try {
-			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createNodeLegend").invoke(null);
-			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend").invoke(null);
+			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createNodeLegend")
+					.invoke(null);
+			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend")
+					.invoke(null);
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
 			System.out.println("Can't create legend");
 			e.printStackTrace(System.err);
 		}
 	}
+
 	public DDGVisualization getVisualization()
 
 	{
@@ -902,13 +895,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// initialize file
 		/* initFile(); */
 
-		// Do not synchronize on vis in this method.  It results in deadlock.
-		// We are just initializing the display here, not actually drawing a graph.
+		// Do not synchronize on vis in this method. It results in deadlock.
+		// We are just initializing the display here, not actually drawing a
+		// graph.
 
 		this.provData = provData;
 		buildNodeAndEdgeTables();
-		graph = new Graph(nodes, edges, true, PrefuseUtils.ID,
-				PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
+		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
 		initializeDisplay();
 	}
 
@@ -918,8 +911,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void processStarted(String processName, ProvenanceData provData, String timestamp, String language) {
 
-		// Do not synchronize on vis in this method.  It results in deadlock.
-		// We are just initializing the display here, not actually drawing a graph.
+		// Do not synchronize on vis in this method. It results in deadlock.
+		// We are just initializing the display here, not actually drawing a
+		// graph.
 
 		processStarted(processName, provData);
 	}
@@ -930,11 +924,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void processFinished() {
 
-
 		// close file
 		/* outFile.close(); */
 
-		//System.out.println("Drawing DDG");
+		// System.out.println("Drawing DDG");
 		processFinished = true;
 		display.stopRefocusing();
 		displayOverview.stopRefocusing();
@@ -942,7 +935,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			drawFullGraph();
 		}
 		repaint();
-		//setCopiedColors(root);
+		// setCopiedColors(root);
 	}
 
 	/**
@@ -950,7 +943,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void procedureNodeCreated(ProcedureInstanceNode pin) {
-		//System.out.println("Adding procedure node " + pin.getName());
+		// System.out.println("Adding procedure node " + pin.getName());
 		synchronized (vis) {
 			int pinId = pin.getId();
 			if (pinId >= MIN_DATA_ID) {
@@ -963,21 +956,26 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				procName = (String) procDef;
 			}
 
-			//add the procedure node passing in null value since pin's do not have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(),procName, pin.getElapsedTime(), "", pin.getLineNumber(), pin.getScriptNumber());
+			// add the procedure node passing in null value since pin's do not
+			// have values
+			addNode(pin.getType(), pinId, pin.getNameAndType(), procName, pin.getElapsedTime(), "", pin.getLineNumber(),
+					pin.getScriptNumber());
 			if (root == null) {
 				root = getNode(pinId);
-				//System.out.println("procedureNodeCreated:  root set to " + root);
+				// System.out.println("procedureNodeCreated: root set to " +
+				// root);
 			}
 
 			// Draw the root node immediately, but delay drawing the other nodes
 			// until
-			// there is an edge connecting them. Otherwise, they just go in the top
+			// there is an edge connecting them. Otherwise, they just go in the
+			// top
 			// left
 			// corner of the window.
 			if (incremental && !rootDrawn) {
 				vis.run("layout");
-				//System.out.println("Updating focus from procedureNodeCreated");
+				// System.out.println("Updating focus from
+				// procedureNodeCreated");
 				updateFocusGroup(pinId);
 				repaint();
 				rootDrawn = true;
@@ -993,7 +991,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			vis.run("color");
 			vis.run("repaint");
 
-			
 		}
 
 		try {
@@ -1008,29 +1005,27 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	public int getDataNodeCount(){
-			int count = 0;
-			Iterator graphNodes = vis.items();
+	public int getDataNodeCount() {
+		int count = 0;
+		Iterator graphNodes = vis.items();
 
-			// Walk all the items (nodes and edges)
-		//Iterator graphNodes = vis.items();
+		// Walk all the items (nodes and edges)
+		// Iterator graphNodes = vis.items();
 		while (graphNodes.hasNext()) {
 			Object next = graphNodes.next();
-			//System.out.println(next);
+			// System.out.println(next);
 
 			// Skip the edges
-			if (next instanceof NodeItem ){
-			 NodeItem node = (NodeItem) next;
-			 if(PrefuseUtils.isAnyDataNode((NodeItem) next))  {
-				count = count+1;			
+			if (next instanceof NodeItem) {
+				NodeItem node = (NodeItem) next;
+				if (PrefuseUtils.isAnyDataNode((NodeItem) next)) {
+					count = count + 1;
+				}
 			}
-		}
-		
 
 		}
 		return count;
 	}
-
 
 	/**
 	 * Draw the complete graph at once instead of incrementally.
@@ -1049,6 +1044,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Draw the complete graph at once instead of incrementally.
+	 * 
 	 * @param attrList
 	 */
 	public void drawFullGraph(Attributes attrList) {
@@ -1059,8 +1055,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Re-display the graph.  Change the focus to the node passed in.
-	 * @param focusNode the node to focus on
+	 * Re-display the graph. Change the focus to the node passed in.
+	 * 
+	 * @param focusNode
+	 *            the node to focus on
 	 */
 	void layout(Node focusNode) {
 		synchronized (vis) {
@@ -1075,12 +1073,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		laser.ddg.Node rootNode = provData.getRoot();
 		if (rootNode == null) {
 			root = getTableNodeItem(1);
-			//System.out.println("setRoot: Root set to " + root);
+			// System.out.println("setRoot: Root set to " + root);
 		}
 		ddgLayout.setLayoutRoot(root);
 	}
 
-	public NodeItem getRoot(){
+	public NodeItem getRoot() {
 		return root;
 	}
 
@@ -1092,11 +1090,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public void rootSet(laser.ddg.Node rootNode) {
 		if (rootNode instanceof ProcedureInstanceNode) {
 			root = getTableNodeItem(rootNode.getId());
+		} else {
+			root = getTableNodeItem(MIN_DATA_ID + rootNode.getId());
 		}
-		else {
-			root = getTableNodeItem (MIN_DATA_ID + rootNode.getId());
-		}
-		//System.out.println("rootSet:  root set to " + rootNode);
+		// System.out.println("rootSet: root set to " + rootNode);
 		ddgLayout.setLayoutRoot(root);
 	}
 
@@ -1105,8 +1102,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Walks the graph to find all the finish and restore nodes.  Creates the collapsed nodes and
-	 * displays those in place of the expanded versions.
+	 * Walks the graph to find all the finish and restore nodes. Creates the
+	 * collapsed nodes and displays those in place of the expanded versions.
 	 */
 	private void addCollapsedNodes() {
 		Set<NodeItem> rootMembers = new HashSet<>();
@@ -1120,8 +1117,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			if (rootFinish != null) {
 				NodeItem collapsedRoot = addCollapsedNode(nextRoot, rootFinish, rootMembers);
 
-				// If the root being collapsed is the overall root of the layout, then
-				// remember which node to use as the layout root when the root node
+				// If the root being collapsed is the overall root of the
+				// layout, then
+				// remember which node to use as the layout root when the root
+				// node
 				// is collapsed.
 				if (nextRoot == root) {
 					setCollapsedRoot(collapsedRoot);
@@ -1144,9 +1143,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds a collapsed node for each restore node.  It collapses everything between
-	 * the checkpoint and restore into a single node that the user can expand to
-	 * see the details.
+	 * Adds a collapsed node for each restore node. It collapses everything
+	 * between the checkpoint and restore into a single node that the user can
+	 * expand to see the details.
 	 */
 	private void addCheckpointRestoreCollapsedNodes() {
 		NodeItem restoreNode = vis.getLastRestore();
@@ -1159,12 +1158,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Find all the nodes rooted at startNode that should belong to the
-	 * same collapsed node
-	 * @param startNode the start node we are searching for
+	 * Find all the nodes rooted at startNode that should belong to the same
+	 * collapsed node
+	 * 
+	 * @param startNode
+	 *            the start node we are searching for
 	 * @return the matching finish node
 	 */
-	private NodeItem addStartFinishCollapsedNodes(NodeItem startNode, Set<NodeItem> memberNodes, double totalElapsedTime) {
+	private NodeItem addStartFinishCollapsedNodes(NodeItem startNode, Set<NodeItem> memberNodes,
+			double totalElapsedTime) {
 		Queue<NodeItem> nodesReached = new LinkedList<>();
 		addSuccessorsToQueue(startNode, nodesReached);
 		NodeItem finishNode = null;
@@ -1189,8 +1191,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					memberNodes.add(collapsedNode);
 					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
 				}
-			}
-			else {
+			} else {
 				memberNodes.add(next);
 				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
 
@@ -1199,13 +1200,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					finishNode = next;
 
 					String finishName = PrefuseUtils.getName(finishNode);
-					finishName = finishName.substring(finishName.indexOf('-')+1, finishName.indexOf(" Finish"));
+					finishName = finishName.substring(finishName.indexOf('-') + 1, finishName.indexOf(" Finish"));
 
 					String startName = PrefuseUtils.getName(startNode);
 					int startStarts = startName.indexOf(" Start");
 					if (startStarts != -1) {
-						startName = startName.substring(startName.indexOf('-')+1, startStarts);
-						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp (finishNode));
+						startName = startName.substring(startName.indexOf('-') + 1, startStarts);
+						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(finishNode));
 						PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
 						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
 					}
@@ -1216,7 +1217,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					}
 				}
 
-				// Neither a start nor a finish node.  Add its successors to
+				// Neither a start nor a finish node. Add its successors to
 				// the nodes walked.
 				else {
 					addSuccessorsToQueue(next, nodesReached);
@@ -1224,18 +1225,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 
-		//System.out.println(PrefuseUtils.getName(startNode) + " member:");
-		//for (Node member : memberNodes) {
-		//	System.out.println("    " + PrefuseUtils.getName(member));
-		//}
+		// System.out.println(PrefuseUtils.getName(startNode) + " member:");
+		// for (Node member : memberNodes) {
+		// System.out.println(" " + PrefuseUtils.getName(member));
+		// }
 
 		return finishNode;
 	}
 
 	/**
-	 * Add a collapsed node encapsulating the nodes between startNode and finishNode
-	 * @param startNode A start node or a checkpoint node
-	 * @param finshNode The corresponding finish or restore node
+	 * Add a collapsed node encapsulating the nodes between startNode and
+	 * finishNode
+	 * 
+	 * @param startNode
+	 *            A start node or a checkpoint node
+	 * @param finshNode
+	 *            The corresponding finish or restore node
 	 */
 	private NodeItem addCollapsedNode(NodeItem startNode, NodeItem finishNode, Set<NodeItem> memberNodes) {
 		NodeItem collapsedNode = vis.getCollapsed(startNode, finishNode);
@@ -1244,25 +1249,23 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			return collapsedNode;
 		}
 
-		//System.out.println("Adding collapsed node for " + startNode);
+		// System.out.println("Adding collapsed node for " + startNode);
 
 		// Adds the node
 		int collapsedNodeId;
 		if (PrefuseUtils.isStartNode(startNode)) {
-			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode),
-				PrefuseUtils.getValue(startNode), PrefuseUtils.getTimestamp(startNode));
+			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode), PrefuseUtils.getValue(startNode),
+					PrefuseUtils.getTimestamp(startNode));
 
-		// 	collapsedNode = addCollapsedNode(
-		// 		getStepNameFromFinishNode(finishNode), 
-		// 		PrefuseUtils.getValue(finishNode), 
-		// 			PrefuseUtils.getTimestamp(finishNode));
+			// collapsedNode = addCollapsedNode(
+			// getStepNameFromFinishNode(finishNode),
+			// PrefuseUtils.getValue(finishNode),
+			// PrefuseUtils.getTimestamp(finishNode));
 		}
 
-
-
 		else if (PrefuseUtils.isCheckpointNode(startNode)) {
-			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode),
-				PrefuseUtils.getValue(startNode), PrefuseUtils.getTimestamp(startNode));
+			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode), PrefuseUtils.getValue(startNode),
+					PrefuseUtils.getTimestamp(startNode));
 
 		}
 
@@ -1281,18 +1284,19 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return collapsedNode;
 	}
 
-
 	/**
-	 * Add data edges to the collapsed node.  One for each data
-	 * edge to a member node if other endpoint is not also a member, or a
-	 * member of a member recursively.  Be careful to not add duplicate edges
-	 * between same pair of nodes.
+	 * Add data edges to the collapsed node. One for each data edge to a member
+	 * node if other endpoint is not also a member, or a member of a member
+	 * recursively. Be careful to not add duplicate edges between same pair of
+	 * nodes.
 	 *
-	 * @param memberNodes the members of the collapsed node
-	 * @param collapsedNode the collapsed node we are adding edges on
+	 * @param memberNodes
+	 *            the members of the collapsed node
+	 * @param collapsedNode
+	 *            the collapsed node we are adding edges on
 	 */
 	private void addDataEdgesToCollapsedNode(Set<NodeItem> memberNodes, NodeItem collapsedNode) {
-		//System.out.println("Adding step data edges");
+		// System.out.println("Adding step data edges");
 
 		for (Node member : memberNodes) {
 			addIncomingDataEdgesToCollapsedNode(collapsedNode, member);
@@ -1301,12 +1305,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds an edge from a collapsed node to a data node if there is a consumer of
-	 * the data inside the collapsed node, but its producer is outside the collapsed
-	 * node.
-	 * @param collapsedNode the node we are adding edges to
-	 * @param member The member of the collapsed node whose outgoing edges we are
-	 * 		searching
+	 * Adds an edge from a collapsed node to a data node if there is a consumer
+	 * of the data inside the collapsed node, but its producer is outside the
+	 * collapsed node.
+	 * 
+	 * @param collapsedNode
+	 *            the node we are adding edges to
+	 * @param member
+	 *            The member of the collapsed node whose outgoing edges we are
+	 *            searching
 	 */
 	private void addOutgoingDataEdgesFromCollapsedNode(Node collapsedNode, Node member) {
 		int collapsedNodeId = PrefuseUtils.getId(collapsedNode);
@@ -1325,10 +1332,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				if (dataProducers.hasNext()) {
 					Node producer = dataProducers.next();
 
-					// If the producer is outside the collapsed node, and we do not already have
-					// an edge between the data node and this member, add an edge.
-					if (!vis.nestedContains(collapsedNode,producer) && !edgesAddedTo.contains(neighbor)) {
-						// System.out.println("Adding step edge to producer " + collapsedNode + " to " + neighbor);
+					// If the producer is outside the collapsed node, and we do
+					// not already have
+					// an edge between the data node and this member, add an
+					// edge.
+					if (!vis.nestedContains(collapsedNode, producer) && !edgesAddedTo.contains(neighbor)) {
+						// System.out.println("Adding step edge to producer " +
+						// collapsedNode + " to " + neighbor);
 						addEdge(PrefuseUtils.STEPDF, collapsedNodeId, PrefuseUtils.getId(neighbor));
 						edgesAddedTo.add(neighbor);
 					}
@@ -1338,12 +1348,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds an edge from a data node to a collapsed node if there is a consumer of
-	 * the data outside the collapsed node, but its producer is inside the collapsed
-	 * node.
-	 * @param collapsedNode the node we are adding edges to
-	 * @param member The member of the collapsed node whose incoming edges we are
-	 * 		searching
+	 * Adds an edge from a data node to a collapsed node if there is a consumer
+	 * of the data outside the collapsed node, but its producer is inside the
+	 * collapsed node.
+	 * 
+	 * @param collapsedNode
+	 *            the node we are adding edges to
+	 * @param member
+	 *            The member of the collapsed node whose incoming edges we are
+	 *            searching
 	 */
 	private void addIncomingDataEdgesToCollapsedNode(Node collapsedNode, Node member) {
 		int collapsedNodeId = PrefuseUtils.getId(collapsedNode);
@@ -1362,10 +1375,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				while (dataConsumers.hasNext()) {
 					Node nextConsumer = dataConsumers.next();
 
-					// If any consumer is outside the collapsed node and we do not already have an
+					// If any consumer is outside the collapsed node and we do
+					// not already have an
 					// edge from this data node to the collapsed node, add it.
-					if (!vis.nestedContains(collapsedNode,nextConsumer) && !edgesAddedFrom.contains(neighbor)) {
-						// System.out.println("Adding step edge from consumer " + neighbor + " to " + collapsedNode);
+					if (!vis.nestedContains(collapsedNode, nextConsumer) && !edgesAddedFrom.contains(neighbor)) {
+						// System.out.println("Adding step edge from consumer "
+						// + neighbor + " to " + collapsedNode);
 						addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
 						edgesAddedFrom.add(neighbor);
 						break;
@@ -1376,11 +1391,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Find the predecessors of a start node and add edges from the new collapsed node to
-	 * each of the predecessors
-	 * @param startNode the start node whose predecessors we are searching for
-	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
-	 *    be the collapsed node that corresponds to the collapsing of startNode
+	 * Find the predecessors of a start node and add edges from the new
+	 * collapsed node to each of the predecessors
+	 * 
+	 * @param startNode
+	 *            the start node whose predecessors we are searching for
+	 * @param collapsedNodeId
+	 *            the id of the node to add the new edges to. This must be the
+	 *            collapsed node that corresponds to the collapsing of startNode
 	 */
 	private void addPredecessorEdgesToCollapsedNode(Node startNode, int collapsedNodeId) {
 		Iterator<Node> predecessorIter = startNode.outNeighbors();
@@ -1395,9 +1413,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Find the successors of a finish node and add edges from each successor to
 	 * the new collapsed node
-	 * @param finishNode the finish node whose successors we are searching for
-	 * @param collapsedNodeId the id of the node to add the new edges to.  This must
-	 *    be the collapsed node that corresponds to the collapsing of finishNode
+	 * 
+	 * @param finishNode
+	 *            the finish node whose successors we are searching for
+	 * @param collapsedNodeId
+	 *            the id of the node to add the new edges to. This must be the
+	 *            collapsed node that corresponds to the collapsing of
+	 *            finishNode
 	 */
 	private void addSuccessorEdgesToCollapsedNode(Node finshNode, int collapsedNodeId) {
 		Iterator<Node> successorIter = finshNode.inNeighbors();
@@ -1411,8 +1433,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Add the successors of node that are procedural nodes to the queue
-	 * @param node the node whose successors are checked
-	 * @param reachedNodes the queue to add the nodes to
+	 * 
+	 * @param node
+	 *            the node whose successors are checked
+	 * @param reachedNodes
+	 *            the queue to add the nodes to
 	 */
 	private static void addSuccessorsToQueue(Node node, Queue<NodeItem> reachedNodes) {
 		Iterator<NodeItem> successorIter = node.inNeighbors();
@@ -1426,36 +1451,39 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Expand one level, rooted at the given node.
-	 * @param root the node to expand
+	 * 
+	 * @param root
+	 *            the node to expand
 	 * @return the start node associated with the root
 	 */
 	NodeItem expand(NodeItem root) {
-		// Expanding a collapsed node.  In this case, the members are currently
+		// Expanding a collapsed node. In this case, the members are currently
 		// not displayed, so we just need to hide the collapsed node and
 		// show the members instead.
 		if (PrefuseUtils.isCollapsed(root)) {
-			//System.out.println("expand: Making root invisible: " + root);
+			// System.out.println("expand: Making root invisible: " + root);
 			root.setVisible(false);
 			showMembers(root);
 			setAllDataNodeVisibility();
 			return vis.getStart(root);
 		}
 
-		//System.out.println("expand:  Making root visible: " + root);
+		// System.out.println("expand: Making root visible: " + root);
 		root.setVisible(true);
 		NodeItem collapsedRoot = null;
 		if (PrefuseUtils.isStartNode(root) && processFinished) {
 			collapsedRoot = vis.getCollapsedStartFinish(root);
 			if (collapsedRoot == null) {
 				String rootName = PrefuseUtils.getName(root);
-				DDGExplorer.showErrMsg("Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start"))+"\n\n");
-			}
-			else {
-				//System.out.println("expand: Making collapsed node invisible: " + collapsedRoot);
+				DDGExplorer.showErrMsg(
+						"Finish node missing for " + rootName.substring(0, rootName.indexOf(" Start")) + "\n\n");
+			} else {
+				// System.out.println("expand: Making collapsed node invisible:
+				// " + collapsedRoot);
 				collapsedRoot.setVisible(false);
 			}
 		}
-		//System.out.println("expand: Making visible: " + root);
+		// System.out.println("expand: Making visible: " + root);
 		Iterator<NodeItem> successors = root.inNeighbors();
 		collapse(successors);
 		if (collapsedRoot != null) {
@@ -1468,16 +1496,18 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Expand this item and all of its members recursively.
-	 * @param item the node to expand
+	 * 
+	 * @param item
+	 *            the node to expand
 	 * @return the start node for the node we expanded
 	 */
 	NodeItem expandRecursively(NodeItem item) {
-		//assert PrefuseUtils.isCollapsed(item);
+		// assert PrefuseUtils.isCollapsed(item);
 		if (!PrefuseUtils.isCollapsed(item)) {
 			collapse(item);
 			item = vis.getCollapsedStartFinish(item);
 		}
-		//System.out.println("expandRecursively: Making Invisible: " + item);
+		// System.out.println("expandRecursively: Making Invisible: " + item);
 		item.setVisible(false);
 		showMembersRecursively(item);
 		setAllDataNodeVisibility();
@@ -1486,8 +1516,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Display the members of a collapsed node to complete depth
-	 * @param collapsedNode the node whose (recursive) members
-	 *    should be shown
+	 * 
+	 * @param collapsedNode
+	 *            the node whose (recursive) members should be shown
 	 */
 	private void showMembersRecursively(NodeItem collapsedNode) {
 		assert PrefuseUtils.isCollapsed(collapsedNode);
@@ -1496,9 +1527,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			NodeItem nextMember = memberIter.next();
 			if (PrefuseUtils.isCollapsedNode(nextMember)) {
 				showMembersRecursively(nextMember);
-			}
-			else {
-				//System.out.println("showMembersRecursively: Making visible: " + nextMember);
+			} else {
+				// System.out.println("showMembersRecursively: Making visible: "
+				// + nextMember);
 				nextMember.setVisible(true);
 			}
 		}
@@ -1506,13 +1537,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Show the next level of nodes
-	 * @param collapsedNode the node being expanded
+	 * 
+	 * @param collapsedNode
+	 *            the node being expanded
 	 */
 	private void showMembers(NodeItem collapsedNode) {
 		Iterator<NodeItem> memberIter = vis.getMembers(collapsedNode);
 		while (memberIter.hasNext()) {
 			NodeItem nextMember = memberIter.next();
-			//System.out.println("showMembers: Making visible: " + nextMember);
+			// System.out.println("showMembers: Making visible: " + nextMember);
 			nextMember.setVisible(true);
 		}
 
@@ -1520,55 +1553,69 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Collapses the checkpoint/restore nodes that have become visible because of
-	 * expanding the collapsed node.
+	 * Collapses the checkpoint/restore nodes that have become visible because
+	 * of expanding the collapsed node.
+	 * 
 	 * @param collapsedNode
 	 */
 	private void collapseCheckpoints(NodeItem collapsedNode) {
-		// Start the search for restore nodes at the finish node that corresponds to the collapsed node
+		// Start the search for restore nodes at the finish node that
+		// corresponds to the collapsed node
 		NodeItem finishNode = vis.getFinish(collapsedNode);
 		if (PrefuseUtils.isRestoreNode(finishNode)) {
 			collapsedNode = vis.getCollapsedStartFinish(finishNode);
-			//System.out.println("collapseCheckpoints: Searching start-finish collapsed node: " + collapsedNode);
+			// System.out.println("collapseCheckpoints: Searching start-finish
+			// collapsed node: " + collapsedNode);
 		}
 
-		//System.out.println("collapseCheckpoints: Got finish node of collapsed node: " + finishNode);
+		// System.out.println("collapseCheckpoints: Got finish node of collapsed
+		// node: " + finishNode);
 
 		// Find the first restore node that precedes the finished node
 		NodeItem restoreNode = vis.getLastRestoreBefore(finishNode);
-//		if (restoreNode == null) {
-//			System.out.println("collapseCheckpoints: No restore node before finish node");
-//		}
-//		else {
-//			System.out.println("collapseCheckpoints: Found restore node before finish node: " + restoreNode);
-//		}
+		// if (restoreNode == null) {
+		// System.out.println("collapseCheckpoints: No restore node before
+		// finish node");
+		// }
+		// else {
+		// System.out.println("collapseCheckpoints: Found restore node before
+		// finish node: " + restoreNode);
+		// }
 
-		// If the restore node is inside the collapsed node, find its checkpoint counterpart.
-		// If they are both inside this node, show the collapsed node.  Then search for the
+		// If the restore node is inside the collapsed node, find its checkpoint
+		// counterpart.
+		// If they are both inside this node, show the collapsed node. Then
+		// search for the
 		// preceding restore.
 		while (restoreNode != null && vis.nestedContains(collapsedNode, restoreNode)) {
-			//System.out.println("collapseCheckpoints: Found a contained restore node");
+			// System.out.println("collapseCheckpoints: Found a contained
+			// restore node");
 			NodeItem checkpointNode = vis.getCheckpoint(restoreNode);
-			//System.out.println("collapseCheckpoints: Found checkpoint node: " + checkpointNode);
+			// System.out.println("collapseCheckpoints: Found checkpoint node: "
+			// + checkpointNode);
 
 			// Do the collapse and look for preceding restore.
-			if (vis.contains(collapsedNode, restoreNode) && vis.contains(collapsedNode,checkpointNode)) {
-				//System.out.println("collapseCheckpoints: Found a contained checkpoint-restore pair");
+			if (vis.contains(collapsedNode, restoreNode) && vis.contains(collapsedNode, checkpointNode)) {
+				// System.out.println("collapseCheckpoints: Found a contained
+				// checkpoint-restore pair");
 				collapse(vis.getCollapsedCheckpoint(restoreNode));
 				restoreNode = vis.getLastRestoreBefore(checkpointNode);
 			}
 
-			// No collapse.  Look for the restore that precedes the current restore.
+			// No collapse. Look for the restore that precedes the current
+			// restore.
 			else {
-				//System.out.println("collapseCheckpoints: Did not find a contained checkpoint-restore pair");
+				// System.out.println("collapseCheckpoints: Did not find a
+				// contained checkpoint-restore pair");
 				restoreNode = vis.getLastRestoreBefore(restoreNode);
 			}
 		}
 	}
 
 	/**
-	 * Show the collapsed and other nodes at this level, but hide members of
-	 * the collapsed nodes
+	 * Show the collapsed and other nodes at this level, but hide members of the
+	 * collapsed nodes
+	 * 
 	 * @param successors
 	 */
 	private void collapse(Iterator<NodeItem> successors) {
@@ -1576,8 +1623,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			NodeItem successor = successors.next();
 			if (PrefuseUtils.isStartNode(successor)) {
 				collapse(successor);
-			}
-			else if (PrefuseUtils.isProcNode(successor)){
+			} else if (PrefuseUtils.isProcNode(successor)) {
 				collapse(successor.inNeighbors());
 			}
 		}
@@ -1585,11 +1631,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Show the collapsed version of this node
-	 * @param item the node whose collapsed version should be displayed
+	 * 
+	 * @param item
+	 *            the node whose collapsed version should be displayed
 	 */
 	private void collapse(NodeItem item) {
 		if (PrefuseUtils.isCollapsedNode(item)) {
-			//System.out.println("collapse: Making item visible: " + item);
+			// System.out.println("collapse: Making item visible: " + item);
 			item.setVisible(true);
 			hideCollapsedMembers(item);
 			if (PrefuseUtils.isStartNode(vis.getStart(item))) {
@@ -1602,14 +1650,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		else if (PrefuseUtils.isStartNode(item)) {
 			NodeItem collapsedNode = vis.getCollapsedStartFinish(item);
 			if (collapsedNode != null) {
-				//System.out.println("collapse: Making collapsed node visible: " + collapsedNode);
+				// System.out.println("collapse: Making collapsed node visible:
+				// " + collapsedNode);
 				collapsedNode.setVisible(true);
 				hideCollapsedMembers(collapsedNode);
 			}
 		}
 
-		else if (PrefuseUtils.isProcNode(item)){
-			//System.out.println("collapse: Making proc node visible: " + item);
+		else if (PrefuseUtils.isProcNode(item)) {
+			// System.out.println("collapse: Making proc node visible: " +
+			// item);
 			item.setVisible(true);
 			collapse(item.inNeighbors());
 		}
@@ -1617,7 +1667,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Show the collapsed version of a node
-	 * @param item the node to collapse
+	 * 
+	 * @param item
+	 *            the node to collapse
 	 */
 	void collapseStartNode(NodeItem item) {
 		if (PrefuseUtils.isStart(item)) {
@@ -1628,6 +1680,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Recursively hide all the members of this node
+	 * 
 	 * @param collapsedNode
 	 */
 	private void hideCollapsedMembers(NodeItem collapsedNode) {
@@ -1635,31 +1688,34 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		while (members.hasNext()) {
 			NodeItem next = members.next();
 			assert next != collapsedNode;
-			//System.out.println("hideCollapsedMembers: Hiding member: " + next);
+			// System.out.println("hideCollapsedMembers: Hiding member: " +
+			// next);
 			next.setVisible(false);
 			if (PrefuseUtils.isCollapsedNode(next)) {
 				hideCollapsedMembers(next);
-			}
-			else if (PrefuseUtils.isRestoreNode(next) && vis.getCollapsedCheckpoint(next) != collapsedNode) {
+			} else if (PrefuseUtils.isRestoreNode(next) && vis.getCollapsedCheckpoint(next) != collapsedNode) {
 				NodeItem checkpointRestore = vis.getCollapsedCheckpoint(next);
 
-				// It's possible that the checkpoint/restore collapsed nodes have
+				// It's possible that the checkpoint/restore collapsed nodes
+				// have
 				// not been created yet.
 				if (checkpointRestore != null) {
-					//System.out.println("hideCollapsedMembers: Hiding checkpoint/restore: " + checkpointRestore);
+					// System.out.println("hideCollapsedMembers: Hiding
+					// checkpoint/restore: " + checkpointRestore);
 					checkpointRestore.setVisible(false);
 				}
 
-//				else {
-//					System.out.println("hideCollapsedMembers: Did not find checkpoint/restore for: " + next);
-//				}
+				// else {
+				// System.out.println("hideCollapsedMembers: Did not find
+				// checkpoint/restore for: " + next);
+				// }
 			}
 		}
 	}
 
 	/**
-	 * Make a data node visible if either its producer is visible or
-	 * one of its consumers is visible
+	 * Make a data node visible if either its producer is visible or one of its
+	 * consumers is visible
 	 */
 	private void setAllDataNodeVisibility() {
 		// Walk all the items (nodes and edges)
@@ -1682,7 +1738,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// Iterate again looking for data nodes connected with StepDF edges.
 		// We are looking for data nodes where both the source and target
-		// are collapsed nodes.  The earlier code would leave those invisible.
+		// are collapsed nodes. The earlier code would leave those invisible.
 		graphNodes = vis.items();
 		while (graphNodes.hasNext()) {
 			Object next = graphNodes.next();
@@ -1691,20 +1747,25 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// the data node visible
 			if (PrefuseUtils.isStepDFEdge((VisualItem) next)) {
 				EdgeItem edge = (EdgeItem) next;
-				//System.out.println ("Found a DF edge.  Want to make data it points to visible!");
-				//System.out.println ("How do I get the data node it points to???");
-				//System.out.println ("Source: " + edge.getSourceItem());
-				//System.out.println ("Target: " + edge.getTargetItem());
+				// System.out.println ("Found a DF edge. Want to make data it
+				// points to visible!");
+				// System.out.println ("How do I get the data node it points
+				// to???");
+				// System.out.println ("Source: " + edge.getSourceItem());
+				// System.out.println ("Target: " + edge.getTargetItem());
 
 				NodeItem source = edge.getSourceItem();
 				NodeItem target = edge.getTargetItem();
 				if (PrefuseUtils.isAnyDataNode(source) && target.isVisible()) {
-					//System.out.println ("setAllDataNodeVisibility: Setting StepDF source visible " + source.getString(PrefuseUtils.NAME));
+					// System.out.println ("setAllDataNodeVisibility: Setting
+					// StepDF source visible " +
+					// source.getString(PrefuseUtils.NAME));
 					source.setVisible(true);
-				}
-				else {
+				} else {
 					if (PrefuseUtils.isAnyDataNode(target) && source.isVisible()) {
-						//System.out.println ("setAllDataNodeVisibility: Setting StepDF target visible " +  target.getString(PrefuseUtils.NAME));
+						// System.out.println ("setAllDataNodeVisibility:
+						// Setting StepDF target visible " +
+						// target.getString(PrefuseUtils.NAME));
 						target.setVisible(true);
 					}
 				}
@@ -1714,9 +1775,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Makes this data node visible if either its producer or any of
-	 * its consumers is visible.  If none are, the data node is invisible.
-	 * @param node the node whose visibility is checked.  This must be a data node.
+	 * Makes this data node visible if either its producer or any of its
+	 * consumers is visible. If none are, the data node is invisible.
+	 * 
+	 * @param node
+	 *            the node whose visibility is checked. This must be a data
+	 *            node.
 	 */
 	private static void setDataNodeVisibility(NodeItem node) {
 		// Find the producer and the consumers of the data node
@@ -1732,12 +1796,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				break;
 			}
 		}
-//		if (visible) {
-//			System.out.println("setDataNodeVisibility: Making data visible: " + PrefuseUtils.getName(node));
-//		}
-//		else {
-//			System.out.println("Making data INvisible: " + PrefuseUtils.getName(node));
-//		}
+		// if (visible) {
+		// System.out.println("setDataNodeVisibility: Making data visible: " +
+		// PrefuseUtils.getName(node));
+		// }
+		// else {
+		// System.out.println("Making data INvisible: " +
+		// PrefuseUtils.getName(node));
+		// }
 		node.setVisible(visible);
 	}
 
@@ -1748,21 +1814,21 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void dataNodeCreated(DataInstanceNode din) {
-		synchronized(vis) {
+		synchronized (vis) {
 			int dinId = din.getId() + MIN_DATA_ID;
-			//add the data node, passing in the optional associated value and timestamp
+			// add the data node, passing in the optional associated value and
+			// timestamp
 			Object value = din.getValue();
 			if (value == null) {
 				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime(), -1, -1);
-			}
-			else {
+			} else {
 				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime(), -1, -1);
 			}
 			NodeItem dataNode = getNode(dinId);
 
 			if (dataDerivation && (root == null)) {
 				root = dataNode;
-				//System.out.println("dataNodeCreated:  root set to " + root);
+				// System.out.println("dataNodeCreated: root set to " + root);
 			}
 		}
 	}
@@ -1771,12 +1837,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * Add a control flow edge to the visualization and redraw the graph
 	 */
 	@Override
-	public void successorEdgeCreated(
-			ProcedureInstanceNode predecessor, ProcedureInstanceNode successor) {
+	public void successorEdgeCreated(ProcedureInstanceNode predecessor, ProcedureInstanceNode successor) {
 		synchronized (vis) {
 			int successorId = successor.getId();
 			int predecessorId = predecessor.getId();
-			//System.out.println("Creating successor edge from " + successor.getNameAndType() + " to " + predecessor.getNameAndType());
+			// System.out.println("Creating successor edge from " +
+			// successor.getNameAndType() + " to " +
+			// predecessor.getNameAndType());
 			addEdge(PrefuseUtils.CONTROL_FLOW, successorId, predecessorId);
 			if (!incremental) {
 				return;
@@ -1789,13 +1856,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 				// If the predecessor has not been collapsed yet, do so now.
 				if (collapsedPredecessor == null) {
-					//System.out.println("Trying to collapse...");
-					//System.out.println("Predecessor = " + getNode(predecessorId));
-					//System.out.println("Successor = " + getNode(successorId));
+					// System.out.println("Trying to collapse...");
+					// System.out.println("Predecessor = " +
+					// getNode(predecessorId));
+					// System.out.println("Successor = " +
+					// getNode(successorId));
 					addCollapsedNodes();
 				}
 
-				// The predecessor was already collapsed.  Add an edge to the collapsed node
+				// The predecessor was already collapsed. Add an edge to the
+				// collapsed node
 				else {
 					addEdge(PrefuseUtils.STEPCF, successorId, PrefuseUtils.getId(collapsedPredecessor));
 				}
@@ -1803,10 +1873,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			// change the focus to recently added node
 			vis.run("layout");
-			//System.out.println("Updating focus from successorEdgeCreated");
+			// System.out.println("Updating focus from successorEdgeCreated");
 			NodeItem collapsedSuccessor = vis.getCollapsedStartFinish(getNode(successorId));
 
-			// The successor is not collapsed, so focus on the expanded successor
+			// The successor is not collapsed, so focus on the expanded
+			// successor
 			if (collapsedSuccessor == null || !collapsedSuccessor.isVisible()) {
 				updateFocusGroup(successorId);
 			}
@@ -1841,7 +1912,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					// There should be just one!
 					NodeItem producerNode = producers.next();
 
-					// If the producer is buried several levels deep, add an edge
+					// If the producer is buried several levels deep, add an
+					// edge
 					// to each of its enclosing collapsed steps.
 					NodeItem collapsedNode = vis.getCollapsedStartFinish(producerNode);
 					while (collapsedNode != null) {
@@ -1865,12 +1937,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 		repaint();
 
-
 	}
 
 	/**
 	 * Handles clicking on a node
-	 * @param nodeItem the node that was clicked on
+	 * 
+	 * @param nodeItem
+	 *            the node that was clicked on
 	 */
 	public void handleNodeClick(NodeItem nodeItem) {
 		if (PrefuseUtils.isStart(nodeItem)) {
@@ -1878,7 +1951,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			Node collapsedNode = vis.getCollapsedStartFinish(nodeItem);
 
 			// The collapsed node can be null if the execution was aborted
-			// due to an exception.  In that case, we may have start nodes, but
+			// due to an exception. In that case, we may have start nodes, but
 			// not the corresponding finish nodes.
 			if (collapsedNode != null) {
 				layout(collapsedNode);
@@ -1899,13 +1972,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			handleNodeClick(vis.getStart(collapsedNode));
 		}
 
- 		else if (PrefuseUtils.isCollapsedNode(nodeItem)) {
+		else if (PrefuseUtils.isCollapsedNode(nodeItem)) {
 			expand(nodeItem);
 			NodeItem start = vis.getStart(nodeItem);
 			if (start.isVisible()) {
 				layout(start);
-			}
-			else {
+			} else {
 				layout(vis.getFinish(nodeItem));
 			}
 		}
@@ -1913,9 +1985,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Returns the definition of a function.  Returns an error string if there is
-	 * no function with that name, or there is more than one function with that name
-	 * @param functionName the name of the function
+	 * Returns the definition of a function. Returns an error string if there is
+	 * no function with that name, or there is more than one function with that
+	 * name
+	 * 
+	 * @param functionName
+	 *            the name of the function
 	 * @return the definition
 	 */
 	public String getFunctionBody(String functionName) {
@@ -1924,19 +1999,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		if (blankIndex != -1) {
 			functionName = functionName.substring(0, blankIndex);
 		}
-		
+
 		int parenIndex = functionName.indexOf("(");
 		if (parenIndex != -1) {
 			functionName = functionName.substring(0, parenIndex);
 		}
-		
+
 		return provData.getFunctionBody(functionName);
 	}
 
 	/**
-	 * Returns the definition of a block.  Returns an error string if there is
-	 * no function with that name, or there is more than one function with that name
-	 * @param blockName the name of the block
+	 * Returns the definition of a block. Returns an error string if there is no
+	 * function with that name, or there is more than one function with that
+	 * name
+	 * 
+	 * @param blockName
+	 *            the name of the block
 	 * @return the block
 	 */
 	public String getBlockBody(String blockName) {
@@ -1950,17 +2028,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * calculate viewFinder's bounds
-	 * @param userDisplay larger, maleable user display
-	 * @param overview corner overview of DDG
+	 * 
+	 * @param userDisplay
+	 *            larger, maleable user display
+	 * @param overview
+	 *            corner overview of DDG
 	 * @return rectangle transformed to place directly onto overview
 	 */
-	public static Rectangle calcViewFinder(Display userDisplay, Display overview){
-		//retrieve width and height of the userDisplay's window on the screen
+	public static Rectangle calcViewFinder(Display userDisplay, Display overview) {
+		// retrieve width and height of the userDisplay's window on the screen
 		Rectangle compBounds = userDisplay.getBounds();
-		Point topLeft = new Point(0, (int)compBounds.getMinY()); //(int)compBounds.getMinX(), (int)compBounds.getMinY());
-		Point bottomRight = new Point ((int)(compBounds.getMaxX()-compBounds.getMinX()), (int)compBounds.getMaxY());
+		Point topLeft = new Point(0, (int) compBounds.getMinY()); // (int)compBounds.getMinX(),
+																	// (int)compBounds.getMinY());
+		Point bottomRight = new Point((int) (compBounds.getMaxX() - compBounds.getMinX()), (int) compBounds.getMaxY());
 
-		//transform point off of the user's display and onto the overview's transformation
+		// transform point off of the user's display and onto the overview's
+		// transformation
 		AffineTransform userTransI = userDisplay.getInverseTransform();
 		userTransI.transform(topLeft, topLeft);
 		userTransI.transform(bottomRight, bottomRight);
@@ -1970,71 +2053,76 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		int x = topLeft.x;
 		int y = topLeft.y;
-		int width = bottomRight.x-x;
-		int height = bottomRight.y-y;
+		int width = bottomRight.x - x;
+		int height = bottomRight.y - y;
 
-		return new Rectangle(x,  y,  width,  height);
+		return new Rectangle(x, y, width, height);
 	}
 
 	/**
 	 * Keeps track of bounds of DDG so that Overview will accommodate changes
+	 * 
 	 * @author Nicole
 	 */
-	 public static class FitOverviewListener implements ItemBoundsListener {
-			private Rectangle2D m_bounds = new Rectangle2D.Double();
-			private Rectangle2D m_temp = new Rectangle2D.Double();
-			private double m_d = 15;
+	public static class FitOverviewListener implements ItemBoundsListener {
+		private Rectangle2D m_bounds = new Rectangle2D.Double();
+		private Rectangle2D m_temp = new Rectangle2D.Double();
+		private double m_d = 15;
 
-			public FitOverviewListener() {
-				super();
+		public FitOverviewListener() {
+			super();
+		}
+
+		@Override
+		public void itemBoundsChanged(Display displayGiven) {
+			displayGiven.getItemBounds(m_temp);
+			// expand a rectangle by the given amount
+			GraphicsLib.expand(m_temp, 25 / displayGiven.getScale());
+
+			double dd = m_d / displayGiven.getScale();
+			// difference between past and present bounds in x, y, width, or
+			// height
+			double xd = Math.abs(m_temp.getMinX() - m_bounds.getMinX());
+			double yd = Math.abs(m_temp.getMinY() - m_bounds.getMinY());
+			double wd = Math.abs(m_temp.getWidth() - m_bounds.getWidth());
+			double hd = Math.abs(m_temp.getHeight() - m_bounds.getHeight());
+			if (xd > dd || yd > dd || wd > dd || hd > dd) {
+				m_bounds.setFrame(m_temp);
+				DisplayLib.fitViewToBounds(displayGiven, m_bounds, 0);
 			}
-			
+		}
+	}
 
-			@Override
-			public void itemBoundsChanged(Display displayGiven) {
-			    displayGiven.getItemBounds(m_temp);
-			    //expand a rectangle by the given amount
-			    GraphicsLib.expand(m_temp, 25/displayGiven.getScale());
-
-			    double dd = m_d/displayGiven.getScale();
-			    //difference between past and present bounds in x, y, width, or height
-			    double xd = Math.abs(m_temp.getMinX()-m_bounds.getMinX());
-			    double yd = Math.abs(m_temp.getMinY()-m_bounds.getMinY());
-			    double wd = Math.abs(m_temp.getWidth()-m_bounds.getWidth());
-			    double hd = Math.abs(m_temp.getHeight()-m_bounds.getHeight());
-			    if ( xd>dd || yd>dd || wd>dd || hd>dd ) {
-			    	m_bounds.setFrame(m_temp);
-			    	DisplayLib.fitViewToBounds(displayGiven, m_bounds, 0);
-			    }
-			}
-	 }
-
-	 public static class updateOverview implements PaintListener{
+	public static class updateOverview implements PaintListener {
 		private DDGDisplay overview;
-		public updateOverview(DDGDisplay overview){
+
+		public updateOverview(DDGDisplay overview) {
 			super();
 			this.overview = overview;
 		}
+
 		@Override
 		public void prePaint(Display d, Graphics2D g) {
 		}
+
 		@Override
 		public void postPaint(Display d, Graphics2D g) {
 			overview.repaint();
 		}
-	 }
+	}
 
 	/**
 	 * Draws viewFinder's borders onto the overview after paint is called
+	 * 
 	 * @author Nicole
 	 */
-	public static class vfBorders implements PaintListener{
-    	private DDGDisplay userDisplay;
+	public static class vfBorders implements PaintListener {
+		private DDGDisplay userDisplay;
 
-    	public vfBorders(DDGDisplay userDisplay){
-    		super();
-    		this.userDisplay = userDisplay;
-    	}
+		public vfBorders(DDGDisplay userDisplay) {
+			super();
+			this.userDisplay = userDisplay;
+		}
 
 		@Override
 		public void prePaint(Display overview, Graphics2D g) {
@@ -2042,14 +2130,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		@Override
 		/**
-		 * after both ddg displays have been drawn, create a rectangle
-		 * in the overview that represents the regular display's view.
+		 * after both ddg displays have been drawn, create a rectangle in the
+		 * overview that represents the regular display's view.
 		 */
 		public void postPaint(Display overview, Graphics2D g) {
-			//retrieve rectangle for viewFinder
+			// retrieve rectangle for viewFinder
 			Rectangle rect = calcViewFinder(userDisplay, overview);
 
-			//draw the rectangle
+			// draw the rectangle
 			int x = rect.x;
 			int y = rect.y;
 			int width = rect.width;
@@ -2059,30 +2147,29 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			g.setColor(new Color(150, 150, 200, 50));
 			g.fillRoundRect(x, y, width, height, 10, 10);
 		}
-		
+
 	}
 
-
 	/**
-	 * Listen for clicks or drags in the overview, move
-	 * the viewFinder accordingly
+	 * Listen for clicks or drags in the overview, move the viewFinder
+	 * accordingly
 	 */
-	 public static class vfListener implements MouseInputListener{
-		 private DDGDisplay userDisplay;
-		 private DDGDisplay overview;
-		 private boolean draggingRect;
-		 private Point prev;
+	public static class vfListener implements MouseInputListener {
+		private DDGDisplay userDisplay;
+		private DDGDisplay overview;
+		private boolean draggingRect;
+		private Point prev;
 
-	    public vfListener(DDGDisplay userDisplay, DDGDisplay overview){
-	    	super();
-	    	this.userDisplay = userDisplay;
-	    	this.overview = overview;
-	    }
+		public vfListener(DDGDisplay userDisplay, DDGDisplay overview) {
+			super();
+			this.userDisplay = userDisplay;
+			this.overview = overview;
+		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			Rectangle viewFinder = calcViewFinder(userDisplay, overview);
-			if (viewFinder.contains(e.getPoint())){ //inside rectangle
+			if (viewFinder.contains(e.getPoint())) { // inside rectangle
 				prev = e.getPoint();
 				draggingRect = true;
 			}
@@ -2090,34 +2177,38 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			//find where mouse was clicked on the Overview, transform it
-			//out of the overview and onto the userDisplay. Then pan to that location
-			if (!draggingRect){
+			// find where mouse was clicked on the Overview, transform it
+			// out of the overview and onto the userDisplay. Then pan to that
+			// location
+			if (!draggingRect) {
 				Point p = transPoint(e.getPoint());
 				userDisplay.animatePanTo(p, 1000);
-			}else{
-				draggingRect = false;	//reset draggingRect for next time.
+			} else {
+				draggingRect = false; // reset draggingRect for next time.
 			}
 		}
 
 		/**
 		 * translate point from overview coordinates to userDisplay coordinates
-		 * @param p Point in question
+		 * 
+		 * @param p
+		 *            Point in question
 		 * @return transformed point
 		 */
-		private Point transPoint(Point p){
-			//System.out.println(p.x + ", " + p.y + " absolute point");
+		private Point transPoint(Point p) {
+			// System.out.println(p.x + ", " + p.y + " absolute point");
 			AffineTransform overTransI = overview.getInverseTransform();
 			overTransI.transform(p, p);
 			AffineTransform userTrans = userDisplay.getTransform();
 			userTrans.transform(p, p);
-			//System.out.println(p.getX() + ", " + p.getY() + " transformed point");
+			// System.out.println(p.getX() + ", " + p.getY() + " transformed
+			// point");
 			return p;
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (draggingRect){
+			if (draggingRect) {
 				Point p = transPoint(e.getPoint());
 				prev = transPoint(prev);
 
@@ -2126,7 +2217,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				userDisplay.animatePan(xMovement, yMovement, 1);
 
 				prev = e.getPoint();
-				//System.out.println("x movement: " + xMovement + " and y movement: " + yMovement);
+				// System.out.println("x movement: " + xMovement + " and y
+				// movement: " + yMovement);
 			}
 		}
 
@@ -2146,10 +2238,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		public void mouseMoved(MouseEvent arg0) {
 		}
 
-	 }
-
-
-
+	}
 
 	/**
 	 * Displays a file chooser for textual DDGs and displays the result
@@ -2164,8 +2253,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 1. load the data ------------------------------------------------
 		if (args.length == 0) {
-			JFileChooser fileChooser = new JFileChooser(
-					System.getProperty("user.dir"));
+			JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
 			try {
 				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();
@@ -2194,25 +2282,24 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		getNode(id).setHighlighted(value);
 	}
 
-	public void createCopiedGroup(String groupName){
+	public void createCopiedGroup(String groupName) {
 		vis.addFocusGroup(groupName);
-		//TupleSet focusgroup = vis.getGroup(groupName);
-		//focusgroup.setTuple(getTableNodeItem(id));
+		// TupleSet focusgroup = vis.getGroup(groupName);
+		// focusgroup.setTuple(getTableNodeItem(id));
 	}
 
-	public void updateCopiedGroup(int id, String groupName)
-	{
+	public void updateCopiedGroup(int id, String groupName) {
 		TupleSet focusgroup = vis.getGroup(groupName);
 		focusgroup.addTuple(getTableNodeItem(id));
-		// focusGroup.addTupleSetListener(new TupleSetListener() 
-  //       {
-  //           public void tupleSetChanged(TupleSet ts, Tuple[] add, Tuple[] rem)
-  //           {
-  //               // You can access the group here whenever it changes.
-  //               System.out.println("ch ch ch ch changes");
-  //           }
-  //       });
-        
+		// focusGroup.addTupleSetListener(new TupleSetListener()
+		// {
+		// public void tupleSetChanged(TupleSet ts, Tuple[] add, Tuple[] rem)
+		// {
+		// // You can access the group here whenever it changes.
+		// System.out.println("ch ch ch ch changes");
+		// }
+		// });
+
 	}
 
 	public String getScriptPath() {
@@ -2231,11 +2318,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return vis.getFinish((Node) collapsedNode);
 	}
 
-	public File getSourceDDGDirectory(){
+	public File getSourceDDGDirectory() {
 		return provData.getSourceDDGDirectory();
 	}
 
-	public String getName(NodeItem n){
+	public String getName(NodeItem n) {
 		return PrefuseUtils.getName(n);
 	}
 }
