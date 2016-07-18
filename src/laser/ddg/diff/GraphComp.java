@@ -270,7 +270,7 @@ public class GraphComp extends JPanel {
 				}
 				if (leftFile != null && rightFile != null) {
 					doDiff();
-					remove(northPanel);
+					//remove(northPanel);
 				}
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(selectFrame, "Unable to compare files: " + e1.getMessage(),
