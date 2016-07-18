@@ -104,7 +104,9 @@ public class RDDGBuilder extends DDGBuilder {
 		else if (type.equals("Restore")) {
 			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
 		}
-		provObject.addPIN(newFuncNode, id);
+		if (newFuncNode != null) {
+			provObject.addPIN(newFuncNode, id);
+		}
 		return newFuncNode;
 	}
 	

@@ -1960,9 +1960,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		else if (PrefuseUtils.isRestoreNode(nodeItem)) {
 			NodeItem collapsedNode = vis.getCollapsedCheckpoint(nodeItem);
-			collapse(collapsedNode);
-			setAllDataNodeVisibility();
 			if (collapsedNode != null) {
+				collapse(collapsedNode);
+				setAllDataNodeVisibility();
 				layout(collapsedNode);
 			}
 		}
