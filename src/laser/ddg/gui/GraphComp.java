@@ -464,14 +464,11 @@ public class GraphComp extends JPanel {
 
     DDGExplorer.loadingDDG();
 
-    builderLeft.setCompareDDG(true);
-    builderRight.setCompareDDG(true);
-
     builderLeft.createCopiedGroup("left_group");
     builderRight.createCopiedGroup("right_group");
 
-    builderLeft.processStarted(selectedFileNameLeft, null);
-    builderRight.processStarted(selectedFileNameRight, null);
+    builderLeft.processStarted(selectedFileNameLeft, true);
+    builderRight.processStarted(selectedFileNameRight, true);
 
     try {
       parserLeft = new Parser(selectedFileLeft, builderLeft);

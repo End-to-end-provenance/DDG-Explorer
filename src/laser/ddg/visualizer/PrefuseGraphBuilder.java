@@ -118,9 +118,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// True if the root has been drawn
 	private boolean rootDrawn = false;
 
-	// True if the builder is being used for comparing 2 DDGs
-	private boolean compareDDG = false;
-
 	// visualization and display tools
 	private final DDGVisualization vis = new DDGVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -666,7 +663,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			buildGraph(ddg);
 
 			// System.out.println("Drawing graph");
-			initializeDisplay();
+			initializeDisplay(false);
 
 			// assign the colors
 			vis.run("color");
@@ -678,7 +675,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	private void initializeDisplay() {
+	/**
+	 * 
+	 * @param compareDDG true when drawing side-by-side graphs for comparison, otherwise false
+	 */
+	private void initializeDisplay(boolean compareDDG) {
 		// -- 2. the visualization --------------------------------------------
 
 		vis.add(GRAPH, graph);
@@ -690,7 +691,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 4. the processing actions ---------------------------------------
 
-		ActionList color = assignColors();
+		ActionList color = assignColors(compareDDG);
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
@@ -758,7 +759,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		options.createPopupMenu();
 	}
 
-	private ActionList assignColors() {
+	/**
+	 * Set the colors to use when drawing the graphs
+	 * @param compareDDG true if we are drawing side-by-side graphs for comparison, otherwise false
+	 * @return
+	 */
+	private ActionList assignColors(boolean compareDDG) {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -804,7 +810,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * Fills the color palette for normal ddg display
 	 * @return the palette to use
 	 */
-	private ColorAction fillDisplayPalette() {
+	private static ColorAction fillDisplayPalette() {
 		ColorAction fill;
 		fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
 		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
@@ -838,7 +844,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * Fills the palette with colors to use when comparing 2 ddgs
 	 * @return the palette to use
 	 */
-	private ColorAction fillComparisonPallette() {
+	private static ColorAction fillComparisonPallette() {
 		ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
 		fill.add("ingroup('left_group')", ColorLib.rgb(255, 175, 175));
 		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
@@ -868,14 +874,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Sets the boolean compareDDG. Used if the builder is being used to compare
-	 * DDGs.
-	 */
-	public void setCompareDDG(boolean b) {
-		compareDDG = b;
-	}
-
-	/**
 	 * Adds a legend to the display for the given language.
 	 * 
 	 * @param language
@@ -896,17 +894,25 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 	}
 
-	public DDGVisualization getVisualization()
-
-	{
-		return vis;
-	}
-
 	/**
 	 * Initializes the prefuse tables.
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
+		processStarted(processName, provData, false);
+	}
+
+	/**
+	 * Initializes the prefuse tables.
+	 */
+	public void processStarted(String processName, boolean compareDDG) {
+		processStarted(processName, null, true);
+	}
+
+	/**
+	 * Initializes the prefuse tables.
+	 */
+	private void processStarted(String processName, ProvenanceData provData, boolean compareDDG) {
 		// initialize file
 		/* initFile(); */
 
@@ -917,7 +923,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.provData = provData;
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-		initializeDisplay();
+		initializeDisplay(compareDDG);
 	}
 
 	/**
@@ -1020,28 +1026,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	public int getDataNodeCount() {
-		int count = 0;
-		Iterator graphNodes = vis.items();
-
-		// Walk all the items (nodes and edges)
-		// Iterator graphNodes = vis.items();
-		while (graphNodes.hasNext()) {
-			Object next = graphNodes.next();
-			// System.out.println(next);
-
-			// Skip the edges
-			if (next instanceof NodeItem) {
-				NodeItem node = (NodeItem) next;
-				if (PrefuseUtils.isAnyDataNode((NodeItem) next)) {
-					count = count + 1;
-				}
-			}
-
-		}
-		return count;
-	}
-
 	/**
 	 * Draw the complete graph at once instead of incrementally.
 	 */
@@ -1091,10 +1075,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// System.out.println("setRoot: Root set to " + root);
 		}
 		ddgLayout.setLayoutRoot(root);
-	}
-
-	public NodeItem getRoot() {
-		return root;
 	}
 
 	private void setCollapsedRoot(NodeItem collapsedRoot) {
@@ -1960,7 +1940,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param nodeItem
 	 *            the node that was clicked on
 	 */
-	public void handleNodeClick(NodeItem nodeItem) {
+	void handleNodeClick(NodeItem nodeItem) {
 		if (PrefuseUtils.isStart(nodeItem)) {
 			collapseStartNode(nodeItem);
 			Node collapsedNode = vis.getCollapsedStartFinish(nodeItem);
@@ -2275,7 +2255,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					builder.setTitle(selectedFile.getName(), "");
 					builder.buildGraph(selectedFile);
 				}
-				builder.initializeDisplay();
+				builder.initializeDisplay(false);
 			} catch (HeadlessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace(System.err);
@@ -2285,7 +2265,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		} else {
 			try {
 				builder.buildGraph(new File(args[0]));
-				builder.initializeDisplay();
+				builder.initializeDisplay(false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace(System.err);
