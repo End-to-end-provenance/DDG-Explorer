@@ -271,7 +271,7 @@ public class DDGDisplay extends Display {
 	 * 
 	 * @return funcName a String representing the function name associated with the NodeItem
 	 */
- 	public static String funcFromNode(NodeItem node){
+ 	private static String funcFromNode(NodeItem node){
  		String funName = PrefuseUtils.getValue(node);
  		
  		// Value indicates this is a function node, look in node name for function name

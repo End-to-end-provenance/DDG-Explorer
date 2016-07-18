@@ -109,7 +109,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	// Used for nodes introduced by the interpreter rather than the program
 	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
-	private ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
 
 	// The parts of the graph
 	private Table nodes = new Table();
@@ -763,36 +762,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
+		ColorAction fill;
 
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// highlight node if selected from search results
 		if (compareDDG) {
-			fillDDGPallette();
+			fill = fillComparisonPallette();
 		} else {
-			fill.add("_highlight", ColorLib.rgb(193, 253, 51));
-
-			// fill.add("ingroup('copied')", ColorLib.rgb(225, 51, 255));
-
-			fill.add(ExpressionParser.predicate("Type = 'Binding'"), INTERPRETER_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Start'"), NONLEAF_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Finish'"), NONLEAF_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Interm'"), NONLEAF_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Leaf'"), LEAF_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Operation'"), LEAF_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Data'"), DATA_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), SIMPLE_HANDLER_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'VStart'"), VIRTUAL_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'VFinish'"), VIRTUAL_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'VInterm'"), VIRTUAL_COLOR);
-			// color for Steps
-			fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
-			fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
+			fill = fillDisplayPalette();
 		}
 		// use black for node text
 		ColorAction text = new ColorAction(GRAPH_NODES, VisualItem.TEXTCOLOR, ColorLib.gray(0));
@@ -823,9 +800,47 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return color;
 	}
 
-	public void fillDDGPallette() {
+	/**
+	 * Fills the color palette for normal ddg display
+	 * @return the palette to use
+	 */
+	private ColorAction fillDisplayPalette() {
+		ColorAction fill;
+		fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
+		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
 
-		fill.add("ingroup('left_group')", ColorLib.rgb(255, 0, 0));
+		// fill.add("ingroup('copied')", ColorLib.rgb(225, 51, 255));
+
+		fill.add(ExpressionParser.predicate("Type = 'Binding'"), INTERPRETER_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Start'"), NONLEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Finish'"), NONLEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Interm'"), NONLEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), LEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Operation'"), LEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Data'"), DATA_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), SIMPLE_HANDLER_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'VStart'"), VIRTUAL_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), VIRTUAL_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), VIRTUAL_COLOR);
+		// color for Steps
+		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
+		return fill;
+	}
+
+	/**
+	 * Fills the palette with colors to use when comparing 2 ddgs
+	 * @return the palette to use
+	 */
+	private ColorAction fillComparisonPallette() {
+		ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
+		fill.add("ingroup('left_group')", ColorLib.rgb(255, 175, 175));
 		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
 
 		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
@@ -849,7 +864,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255, 255, 255));
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255, 255, 255));
-
+		return fill;
 	}
 
 	/**
