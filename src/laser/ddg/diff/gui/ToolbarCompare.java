@@ -29,13 +29,11 @@ import prefuse.util.display.PaintListener;
 class ToolbarCompare extends JToolBar implements ActionListener {
 	private DDGDisplay ddgDisplayLeft;
 	private DDGDisplay ddgDisplayRight;
-	private JComponent[] tools;
 	private JSlider zoomSetting;
 	private static final int SLIDER_SETTING = 10;
 	
 	public ToolbarCompare () {
 		super("DDG Tools", SwingConstants.HORIZONTAL);
-		populateTools();
 		addTools();
 		this.addPropertyChangeListener(createListener());
 	}
@@ -43,7 +41,6 @@ class ToolbarCompare extends JToolBar implements ActionListener {
 	public ToolbarCompare(DDGDisplay ddgDisplay) {
 		super("DDG Tools", SwingConstants.HORIZONTAL);
 		this.ddgDisplayLeft = ddgDisplay;
-		populateTools();
 		addTools();
 
 		ddgDisplay.addPaintListener(new ZoomListener(zoomSetting));
@@ -54,7 +51,6 @@ class ToolbarCompare extends JToolBar implements ActionListener {
 		super("DDG Tools", SwingConstants.HORIZONTAL);
 		this.ddgDisplayLeft = ddgDisplayLeft;
 		this.ddgDisplayRight = ddgDisplayRight;
-		populateTools();
 		addTools();
 		ZoomListener listener = new ZoomListener(zoomSetting);
 		ddgDisplayLeft.addPaintListener(listener);
@@ -62,7 +58,7 @@ class ToolbarCompare extends JToolBar implements ActionListener {
 		this.addPropertyChangeListener(createListener());
 	}
 
-	private void populateTools() {
+	private void addTools() {
 
 		zoomSetting = new JSlider(JSlider.HORIZONTAL, 1, 50, SLIDER_SETTING);
 		zoomSetting.setPreferredSize(new Dimension(10, 20));
@@ -107,21 +103,9 @@ class ToolbarCompare extends JToolBar implements ActionListener {
 		JButton refocuser = new JButton("Zoom");
 		refocuser.setOpaque(false);
 		refocuser.setEnabled(false);
-		tools = new JComponent[2];
-		tools[0] = zoomSetting;
-		tools[1] = refocuser;
-	}
 
-	/**
-	 * adds components from array to the JToolBar
-	 */
-	private void addTools() {
-		for (int i = 0; i < tools.length; i++) {
-			JComponent current = tools[i];
-			if (current != null) {
-				this.add(current);
-			}
-		}
+		add(zoomSetting);
+		add(refocuser);
 	}
 
 	/**

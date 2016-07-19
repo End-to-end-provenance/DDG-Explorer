@@ -10,29 +10,32 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.ExpandCollapseControl;
+import laser.ddg.visualizer.FitOverviewListener;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
+import laser.ddg.visualizer.ViewFinderBorders;
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
 import prefuse.controls.ZoomControl;
-import prefuse.util.GraphicsLib;
-import prefuse.util.display.DisplayLib;
-import prefuse.util.display.ItemBoundsListener;
 import prefuse.util.display.PaintListener;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 
+/**
+ * The panel to display two ddgs that are being compared side-by-side.
+ * Scrolling one of the ddgs also scrolls the other one.
+ * 
+ * @author Barbara Lerner
+ * @version Jul 19, 2016
+ *
+ */
 public class DDGDiffPanel extends JPanel {
 	private JPanel leftPanel;
 	private JPanel rightPanel;
@@ -114,9 +117,18 @@ public class DDGDiffPanel extends JPanel {
 		display.addControlListener(panning);
 		display.addControlListener(new ZoomControl());
 		display.addControlListener(new ExpandCollapseControl(builder));
-		display.addPaintListener(new UpdateOverview(displayOverview));
+		display.addPaintListener(new PaintListener() {
+			@Override
+			public void prePaint(Display d, Graphics2D g) {
+			}
+
+			@Override
+			public void postPaint(Display d, Graphics2D g) {
+				displayOverview.repaint();
+			}
+		});
 		displayOverview.addItemBoundsListener(new FitOverviewListener());
-		displayOverview.addPaintListener(new VfBorders(display));
+		displayOverview.addPaintListener(new ViewFinderBorders(display));
 		displayOverview.addMouseMotionListener(vfL);
 		displayOverview.addMouseListener(vfL);
 		display.repaint();
@@ -372,110 +384,4 @@ class PanMyControl extends ControlAdapter {
 	}
 } // end of class PanMyControl
 
-/**
- * Keeps track of bounds of left DDG and right DDG so that the corresponding
- * overviews will accommodate changes
- */
-class FitOverviewListener implements ItemBoundsListener {
-	private Rectangle2D mBounds = new Rectangle2D.Double();
-	private Rectangle2D mTemp = new Rectangle2D.Double();
-	private static final double M_D = 15;
-
-	public FitOverviewListener() {
-		super();
-	}
-
-	@Override
-	public void itemBoundsChanged(Display displayGiven) {
-		displayGiven.getItemBounds(mTemp);
-		GraphicsLib.expand(mTemp, 25 / displayGiven.getScale());
-		double dd = M_D / displayGiven.getScale();
-		double xd = Math.abs(mTemp.getMinX() - mBounds.getMinX());
-		double yd = Math.abs(mTemp.getMinY() - mBounds.getMinY());
-		double wd = Math.abs(mTemp.getWidth() - mBounds.getWidth());
-		double hd = Math.abs(mTemp.getHeight() - mBounds.getHeight());
-		if (xd > dd || yd > dd || wd > dd || hd > dd) {
-			mBounds.setFrame(mTemp);
-			DisplayLib.fitViewToBounds(displayGiven, mBounds, 0);
-		}
-	}
-}
-
-/**
- * Draws viewFinder's borders onto the overview after paint is called for both
- * left and right ddgs.
- */
-class VfBorders implements PaintListener {
-	private DDGDisplay userDisplay;
-
-	public VfBorders(DDGDisplay userDisplay) {
-		super();
-		this.userDisplay = userDisplay;
-	}
-
-	@Override
-	public void prePaint(Display overview, Graphics2D g) {
-	}
-
-	@Override
-	/**
-	 * after both ddg displays have been drawn, create a rectangle in the
-	 * overview that represents the regular display's view.
-	 */
-	public void postPaint(Display overview, Graphics2D g) {
-		// retrieve rectangle for viewFinder
-		Rectangle rect = calcViewFinder(userDisplay, overview);
-
-		// draw the rectangle
-		int x = rect.x;
-		int y = rect.y;
-		int width = rect.width;
-		int height = rect.height;
-		g.setColor(Color.LIGHT_GRAY);
-		g.drawRoundRect(x, y, width, height, 10, 10);
-		g.setColor(new Color(150, 150, 200, 50));
-		g.fillRoundRect(x, y, width, height, 10, 10);
-	}
-
-	public static Rectangle calcViewFinder(Display userDisplay, Display overview) {
-		Rectangle compBounds = userDisplay.getBounds();
-		Point topLeft = new Point(0, (int) compBounds.getMinY()); // (int)compBounds.getMinX(),
-																	// (int)compBounds.getMinY());
-		Point bottomRight = new Point((int) (compBounds.getMaxX() - compBounds.getMinX()), (int) compBounds.getMaxY());
-		AffineTransform userTransI = userDisplay.getInverseTransform();
-		userTransI.transform(topLeft, topLeft);
-		userTransI.transform(bottomRight, bottomRight);
-		AffineTransform overTrans = overview.getTransform();
-		overTrans.transform(topLeft, topLeft);
-		overTrans.transform(bottomRight, bottomRight);
-
-		int x = topLeft.x;
-		int y = topLeft.y;
-		int width = bottomRight.x - x;
-		int height = bottomRight.y - y;
-
-		return new Rectangle(x, y, width, height);
-	}
-}
-
-/**
- * To update the display overview
- */
-class UpdateOverview implements PaintListener {
-	private DDGDisplay overview;
-
-	public UpdateOverview(DDGDisplay overview) {
-		super();
-		this.overview = overview;
-	}
-
-	@Override
-	public void prePaint(Display d, Graphics2D g) {
-	}
-
-	@Override
-	public void postPaint(Display d, Graphics2D g) {
-		overview.repaint();
-	}
-}
 

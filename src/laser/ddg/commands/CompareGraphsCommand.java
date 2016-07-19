@@ -26,7 +26,7 @@ public class CompareGraphsCommand implements ActionListener {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		JPanel diffPanel = new DDGDiffTab(ddgExplorer, jenaLoader);
-		ddgExplorer.addTab("Comparing DDG Graphs", diffPanel);
+		ddgExplorer.addTab("Comparing DDGs", diffPanel);
 	}
 
 	@Override

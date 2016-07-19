@@ -28,6 +28,7 @@ import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
 
@@ -115,8 +116,7 @@ public class DDGPanel extends JPanel {
 	 * @param provData
 	 *            the ddg data being displayed
 	 */
-	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, final Display ddgDisplay,
-			final Display ddgOverview, ProvenanceData provData) {
+	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, DisplayWithOverview dispPlusOver, ProvenanceData provData) {
 		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;
@@ -125,9 +125,9 @@ public class DDGPanel extends JPanel {
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
-		createMainPanel(ddgDisplay, ddgOverview);
+		createMainPanel(dispPlusOver);
 		
-		toolbar = new Toolbar((DDGDisplay) ddgDisplay);
+		toolbar = new Toolbar(dispPlusOver.getDisplay());
 
 		// hold toolbarPanel and everything inside
 		add(toolbar, BorderLayout.NORTH);
@@ -164,11 +164,13 @@ public class DDGPanel extends JPanel {
 		return logPanel;
 	}
 
-	private void createMainPanel(Display ddgDisplay, final Display ddgOverview) {
+	private void createMainPanel(DisplayWithOverview dispPlusOver) {
 		ddgMain = new JPanel(new BorderLayout());
 		ddgMain.setBackground(Color.WHITE);
 		ddgMain.add(createDescriptionPanel(), BorderLayout.NORTH);
-		ddgMain.add(ddgDisplay, BorderLayout.CENTER);
+		ddgMain.add(dispPlusOver.getDisplay(), BorderLayout.CENTER);
+		
+		DDGDisplay ddgOverview = dispPlusOver.getOverview();
 		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
 		ddgMain.add(ddgOverview, BorderLayout.EAST);
 		// legend added to WEST through preferences
@@ -399,6 +401,7 @@ public class DDGPanel extends JPanel {
 	public void focusOn(String name) {
 		builder.focusOn(name);
 	}
+
 
 
 }

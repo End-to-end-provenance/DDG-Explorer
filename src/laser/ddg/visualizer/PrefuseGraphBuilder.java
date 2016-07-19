@@ -1,13 +1,11 @@
 package laser.ddg.visualizer;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -59,9 +57,6 @@ import prefuse.data.Table;
 import prefuse.data.expression.parser.ExpressionParser;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.ColorLib;
-import prefuse.util.GraphicsLib;
-import prefuse.util.display.DisplayLib;
-import prefuse.util.display.ItemBoundsListener;
 import prefuse.util.display.PaintListener;
 import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
@@ -124,13 +119,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 
 	// display
-	private DDGDisplay display = new DDGDisplay(this);
-	private AutoPanAction autoPan = display.new AutoPanAction();
+	private DisplayWithOverview dispPlusOver = new DisplayWithOverview(this);
 	private String group = Visualization.FOCUS_ITEMS;
 	private int pinID;
 
-	// display overview
-	private DDGDisplay displayOverview = new DDGDisplay(this);
 
 	// private Object lock = new Object();
 	DDGPanel ddgPanel;
@@ -229,7 +221,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 
 	public DDGDisplay getDisplay() {
-		return display;
+		return dispPlusOver.getDisplay();
 	}
 
 	/**
@@ -239,7 +231,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return displayOverview
 	 */
 	public DDGDisplay getOverview() {
-		return displayOverview;
+		return dispPlusOver.getOverview();
 	}
 
 	/**
@@ -708,43 +700,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 5. the display and interactive controls -------------------------
 		// DDGDisplay
-		display.setVisualization(vis);
-		// display size
-		display.setSize(720, 500);
-		if (!compareDDG) {
-			display.addControlListener(new DragControl());
-			display.addControlListener(new PanControl());
-			display.addControlListener(new ZoomControl());
-			// zoom with mouse wheel
-			display.addControlListener(new WheelZoomControl(true, true));
-			// make node and incident edges invisible
-			// d.addControlListener(mControl);
-			display.addControlListener(new ExpandCollapseControl(this));
-			display.addPaintListener(new updateOverview(displayOverview));
-		}
-
-		// set up the display's overview
-		// (no drag, pan, or zoom control needed)
-		displayOverview.setVisualization(vis);
-		if (!compareDDG) {
-			// display size
-			displayOverview.setSize(175, 500);
-			// To force overview's shape and zoom when bounds change
-			displayOverview.addItemBoundsListener(new FitOverviewListener());
-
-			// keep track of the display's view and draw Overview's square
-			// accordingly
-			displayOverview.addPaintListener(new vfBorders(display));
-
-			// keep track of mouse clicks to move the grey rectangle
-			vfListener vfL = new vfListener(display, displayOverview);
-			displayOverview.addMouseMotionListener(vfL);
-			displayOverview.addMouseListener(vfL);
-		}
+		dispPlusOver.initialize(vis, compareDDG);
 
 		// focus action
 		ActionList animate = new ActionList();
-		animate.add(autoPan);
+		animate.add(dispPlusOver.getPanner());
 		vis.putAction("animate", animate);
 
 		// -- 6. launch the visualization -------------------------------------
@@ -752,11 +712,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// {
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// }
-		ddgPanel.displayDDG(this, vis, display, displayOverview, provData);
-
-		// new code
-		PopupMenu options = display.new PopupMenu();
-		options.createPopupMenu();
+		ddgPanel.displayDDG(this, vis, dispPlusOver, provData);
+		
+		dispPlusOver.createPopupMenu();
 	}
 
 	/**
@@ -950,8 +908,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// System.out.println("Drawing DDG");
 		processFinished = true;
-		display.stopRefocusing();
-		displayOverview.stopRefocusing();
+		dispPlusOver.stopRefocusing();
 		if (!incremental) {
 			drawFullGraph();
 		}
@@ -1035,8 +992,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				setRoot();
 			}
 			addCollapsedNodes();
-			display.stopRefocusing();
-			displayOverview.stopRefocusing();
+			dispPlusOver.stopRefocusing();
 			layout(root);
 		}
 	}
@@ -2054,96 +2010,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return new Rectangle(x, y, width, height);
 	}
 
-	/**
-	 * Keeps track of bounds of DDG so that Overview will accommodate changes
-	 * 
-	 * @author Nicole
-	 */
-	public static class FitOverviewListener implements ItemBoundsListener {
-		private Rectangle2D m_bounds = new Rectangle2D.Double();
-		private Rectangle2D m_temp = new Rectangle2D.Double();
-		private double m_d = 15;
-
-		public FitOverviewListener() {
-			super();
-		}
-
-		@Override
-		public void itemBoundsChanged(Display displayGiven) {
-			displayGiven.getItemBounds(m_temp);
-			// expand a rectangle by the given amount
-			GraphicsLib.expand(m_temp, 25 / displayGiven.getScale());
-
-			double dd = m_d / displayGiven.getScale();
-			// difference between past and present bounds in x, y, width, or
-			// height
-			double xd = Math.abs(m_temp.getMinX() - m_bounds.getMinX());
-			double yd = Math.abs(m_temp.getMinY() - m_bounds.getMinY());
-			double wd = Math.abs(m_temp.getWidth() - m_bounds.getWidth());
-			double hd = Math.abs(m_temp.getHeight() - m_bounds.getHeight());
-			if (xd > dd || yd > dd || wd > dd || hd > dd) {
-				m_bounds.setFrame(m_temp);
-				DisplayLib.fitViewToBounds(displayGiven, m_bounds, 0);
-			}
-		}
-	}
-
-	public static class updateOverview implements PaintListener {
-		private DDGDisplay overview;
-
-		public updateOverview(DDGDisplay overview) {
-			super();
-			this.overview = overview;
-		}
-
-		@Override
-		public void prePaint(Display d, Graphics2D g) {
-		}
-
-		@Override
-		public void postPaint(Display d, Graphics2D g) {
-			overview.repaint();
-		}
-	}
-
-	/**
-	 * Draws viewFinder's borders onto the overview after paint is called
-	 * 
-	 * @author Nicole
-	 */
-	public static class vfBorders implements PaintListener {
-		private DDGDisplay userDisplay;
-
-		public vfBorders(DDGDisplay userDisplay) {
-			super();
-			this.userDisplay = userDisplay;
-		}
-
-		@Override
-		public void prePaint(Display overview, Graphics2D g) {
-		}
-
-		@Override
-		/**
-		 * after both ddg displays have been drawn, create a rectangle in the
-		 * overview that represents the regular display's view.
-		 */
-		public void postPaint(Display overview, Graphics2D g) {
-			// retrieve rectangle for viewFinder
-			Rectangle rect = calcViewFinder(userDisplay, overview);
-
-			// draw the rectangle
-			int x = rect.x;
-			int y = rect.y;
-			int width = rect.width;
-			int height = rect.height;
-			g.setColor(Color.LIGHT_GRAY);
-			g.drawRoundRect(x, y, width, height, 10, 10);
-			g.setColor(new Color(150, 150, 200, 50));
-			g.fillRoundRect(x, y, width, height, 10, 10);
-		}
-
-	}
 
 	/**
 	 * Listen for clicks or drags in the overview, move the viewFinder

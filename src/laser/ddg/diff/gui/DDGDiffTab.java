@@ -1,21 +1,11 @@
 package laser.ddg.diff.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,22 +17,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-import javax.swing.event.MouseInputListener;
 
 import laser.ddg.diff.GraphComp;
 import laser.ddg.gui.DBBrowser;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.ScriptBrowser;
 import laser.ddg.persist.JenaLoader;
-import laser.ddg.visualizer.DDGDisplay;
-import prefuse.Display;
-import prefuse.controls.ControlAdapter;
-import prefuse.util.GraphicsLib;
-import prefuse.util.display.DisplayLib;
-import prefuse.util.display.ItemBoundsListener;
-import prefuse.util.display.PaintListener;
-import prefuse.util.ui.UILib;
-import prefuse.visual.VisualItem;
 
 /**
  * The panel used for the Explorer tabs that show differences between 2 DDGs
@@ -90,9 +70,6 @@ public class DDGDiffTab extends JPanel {
 	// references for pop-ups
 	private JFrame frame;
 
-	// JPanel to hold the left and right file upload options.
-	private JPanel northPanel = new JPanel();
-
 	/**
 	 * Create the window that allows the user to select files to compare and to
 	 * see the results of the comparison
@@ -109,6 +86,7 @@ public class DDGDiffTab extends JPanel {
 		JPanel leftPanel = createButtonPanel(selectFile1Button, selectFromDB1Button, leftFileField, "Left file");
 		JPanel rightPanel = createButtonPanel(selectFile2Button, selectFromDB2Button, rightFileField, "Right file");
 
+		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new GridLayout(1, 2, 8, 0));
 		northPanel.add(leftPanel);
 		northPanel.add(rightPanel);
