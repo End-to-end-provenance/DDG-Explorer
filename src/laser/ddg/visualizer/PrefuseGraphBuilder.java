@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +21,6 @@ import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.event.MouseInputListener;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
@@ -232,6 +230,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public DDGDisplay getOverview() {
 		return dispPlusOver.getOverview();
+	}
+	
+	public DisplayWithOverview getDispPlusOver() {
+		return dispPlusOver;
 	}
 
 	/**
@@ -1975,130 +1977,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public void setProvData(ProvenanceData provData) {
 		this.provData = provData;
 		ddgPanel.setProvData(provData);
-	}
-
-	/**
-	 * calculate viewFinder's bounds
-	 * 
-	 * @param userDisplay
-	 *            larger, maleable user display
-	 * @param overview
-	 *            corner overview of DDG
-	 * @return rectangle transformed to place directly onto overview
-	 */
-	public static Rectangle calcViewFinder(Display userDisplay, Display overview) {
-		// retrieve width and height of the userDisplay's window on the screen
-		Rectangle compBounds = userDisplay.getBounds();
-		Point topLeft = new Point(0, (int) compBounds.getMinY()); // (int)compBounds.getMinX(),
-																	// (int)compBounds.getMinY());
-		Point bottomRight = new Point((int) (compBounds.getMaxX() - compBounds.getMinX()), (int) compBounds.getMaxY());
-
-		// transform point off of the user's display and onto the overview's
-		// transformation
-		AffineTransform userTransI = userDisplay.getInverseTransform();
-		userTransI.transform(topLeft, topLeft);
-		userTransI.transform(bottomRight, bottomRight);
-		AffineTransform overTrans = overview.getTransform();
-		overTrans.transform(topLeft, topLeft);
-		overTrans.transform(bottomRight, bottomRight);
-
-		int x = topLeft.x;
-		int y = topLeft.y;
-		int width = bottomRight.x - x;
-		int height = bottomRight.y - y;
-
-		return new Rectangle(x, y, width, height);
-	}
-
-
-	/**
-	 * Listen for clicks or drags in the overview, move the viewFinder
-	 * accordingly
-	 */
-	public static class vfListener implements MouseInputListener {
-		private DDGDisplay userDisplay;
-		private DDGDisplay overview;
-		private boolean draggingRect;
-		private Point prev;
-
-		public vfListener(DDGDisplay userDisplay, DDGDisplay overview) {
-			super();
-			this.userDisplay = userDisplay;
-			this.overview = overview;
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			Rectangle viewFinder = calcViewFinder(userDisplay, overview);
-			if (viewFinder.contains(e.getPoint())) { // inside rectangle
-				prev = e.getPoint();
-				draggingRect = true;
-			}
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// find where mouse was clicked on the Overview, transform it
-			// out of the overview and onto the userDisplay. Then pan to that
-			// location
-			if (!draggingRect) {
-				Point p = transPoint(e.getPoint());
-				userDisplay.animatePanTo(p, 1000);
-			} else {
-				draggingRect = false; // reset draggingRect for next time.
-			}
-		}
-
-		/**
-		 * translate point from overview coordinates to userDisplay coordinates
-		 * 
-		 * @param p
-		 *            Point in question
-		 * @return transformed point
-		 */
-		private Point transPoint(Point p) {
-			// System.out.println(p.x + ", " + p.y + " absolute point");
-			AffineTransform overTransI = overview.getInverseTransform();
-			overTransI.transform(p, p);
-			AffineTransform userTrans = userDisplay.getTransform();
-			userTrans.transform(p, p);
-			// System.out.println(p.getX() + ", " + p.getY() + " transformed
-			// point");
-			return p;
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			if (draggingRect) {
-				Point p = transPoint(e.getPoint());
-				prev = transPoint(prev);
-
-				int xMovement = prev.x - p.x;
-				int yMovement = prev.y - p.y;
-				userDisplay.animatePan(xMovement, yMovement, 1);
-
-				prev = e.getPoint();
-				// System.out.println("x movement: " + xMovement + " and y
-				// movement: " + yMovement);
-			}
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseExited(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent arg0) {
-		}
-
 	}
 
 	/**

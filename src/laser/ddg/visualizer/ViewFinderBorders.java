@@ -13,11 +13,11 @@ import prefuse.util.display.PaintListener;
  * @author Nicole
  */
 public class ViewFinderBorders implements PaintListener {
-	private DDGDisplay userDisplay;
+	private DisplayWithOverview dispPlusOver;
 
-	public ViewFinderBorders(DDGDisplay userDisplay) {
+	public ViewFinderBorders(DisplayWithOverview dispPlusOver) {
 		super();
-		this.userDisplay = userDisplay;
+		this.dispPlusOver = dispPlusOver;
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class ViewFinderBorders implements PaintListener {
 	 */
 	public void postPaint(Display overview, Graphics2D g) {
 		// retrieve rectangle for viewFinder
-		Rectangle rect = PrefuseGraphBuilder.calcViewFinder(userDisplay, overview);
+		Rectangle rect = dispPlusOver.calcViewFinder();
 
 		// draw the rectangle
 		int x = rect.x;

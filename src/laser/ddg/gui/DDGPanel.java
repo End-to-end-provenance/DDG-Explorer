@@ -125,7 +125,7 @@ public class DDGPanel extends JPanel {
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
-		createMainPanel(dispPlusOver);
+		ddgMain = dispPlusOver.createPanel(createDescription());
 		
 		toolbar = new Toolbar(dispPlusOver.getDisplay());
 
@@ -164,36 +164,13 @@ public class DDGPanel extends JPanel {
 		return logPanel;
 	}
 
-	private void createMainPanel(DisplayWithOverview dispPlusOver) {
-		ddgMain = new JPanel(new BorderLayout());
-		ddgMain.setBackground(Color.WHITE);
-		ddgMain.add(createDescriptionPanel(), BorderLayout.NORTH);
-		ddgMain.add(dispPlusOver.getDisplay(), BorderLayout.CENTER);
-		
-		DDGDisplay ddgOverview = dispPlusOver.getOverview();
-		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		ddgMain.add(ddgOverview, BorderLayout.EAST);
-		// legend added to WEST through preferences
-		// TODO searchbar added to SOUTH! (through button press?)
-
-		// resize components within layers
-		ddgMain.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				int panelHeight = ddgMain.getHeight();
-				Rectangle prevBounds = ddgOverview.getBounds();
-				ddgOverview.setBounds(prevBounds.x, prevBounds.y,
-						prevBounds.width, panelHeight - 16);
-			}
-		});
-	}
 
 	/**
 	 * Creates the panel that holds the main attributes
 	 * 
 	 * @return the panel
 	 */
-	private Component createDescriptionPanel() {
+	private Component createDescription() {
 		descriptionArea = new JLabel("", SwingConstants.CENTER);
 
 		if (provData != null) {
