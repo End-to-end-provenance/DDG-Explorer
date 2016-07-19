@@ -1,9 +1,7 @@
 package laser.ddg.diff.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
@@ -79,27 +77,6 @@ public class DDGDiffPanel extends JPanel {
 	}
 
 	/**
-	 * Populate the panel with the graph display and its corresponding overview
-	 * display
-	 * 
-	 * @param display
-	 * @param displayOverview
-	 * @return the panel constructed
-	 */
-	private static void populateDisplay(JPanel outerPanel, DDGDisplay display, DDGDisplay displayOverview) {
-		JPanel newPanel = new JPanel(new BorderLayout());
-		newPanel.setBackground(Color.WHITE);
-		newPanel.add(display, BorderLayout.CENTER);
-	
-		displayOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-
-		newPanel.add(displayOverview, BorderLayout.EAST);
-		displayOverview.setMaximumSize(new Dimension (90, 400));
-		
-		outerPanel.add(newPanel);
-	}
-
-	/**
 	 * This is a modification of Prefuse's PanControl that will
 	 * simultaneously pan two displays.  Unfortunately, PanControl
 	 * is not written with subclassing in mind so it could not
@@ -120,30 +97,6 @@ public class DDGDiffPanel extends JPanel {
 			this(LEFT_MOUSE_BUTTON, false);
 			this.displayLeft = displayLeft;
 			this.displayRight = displayRight;
-		}
-
-		/**
-		 * Create a new PanControl.
-		 * 
-		 * @param panOverItem
-		 *            if true, the panning control will work even while the
-		 *            mouse is over a visual item.
-		 */
-		public DualPanControl(boolean panOverItem) {
-			this(LEFT_MOUSE_BUTTON, panOverItem);
-		}
-
-		/**
-		 * Create a new PanControl.
-		 * 
-		 * @param mouseButton
-		 *            the mouse button that should initiate a pan. One of
-		 *            {@link Control#LEFT_MOUSE_BUTTON},
-		 *            {@link Control#MIDDLE_MOUSE_BUTTON}, or
-		 *            {@link Control#RIGHT_MOUSE_BUTTON}.
-		 */
-		public DualPanControl(int mouseButton) {
-			this(mouseButton, false);
 		}
 
 		/**
@@ -242,117 +195,6 @@ public class DDGDiffPanel extends JPanel {
 	} // end of class DualPanControl
 }
 
-/**
- * Listen for clicks or drags in the overview, move the viewFinder accordingly
- */
-//class VfListener implements MouseInputListener {
-//	private DDGDisplay userDisplayLeft;
-//	private DDGDisplay overviewLeft;
-//	private DDGDisplay userDisplayRight;
-//	private DDGDisplay overviewRight;
-//	private boolean draggingRect;
-//	private Point prev;
-//
-//	public VfListener(DDGDisplay userDisplayLeft, DDGDisplay overviewLeft, DDGDisplay userDisplayRight,
-//			DDGDisplay overviewRight) {
-//		super();
-//		this.userDisplayLeft = userDisplayLeft;
-//		this.overviewLeft = overviewLeft;
-//		this.userDisplayRight = userDisplayRight;
-//		this.overviewRight = overviewRight;
-//	}
-//
-//	@Override
-//	public void mousePressed(MouseEvent e) {
-//		Rectangle viewFinderLeft = calcViewFinder(userDisplayLeft, overviewLeft);
-//		Rectangle viewFinderRight = calcViewFinder(userDisplayRight, overviewRight);
-//		if (viewFinderLeft.contains(e.getPoint()) || viewFinderRight.contains(e.getPoint())) {
-//			prev = e.getPoint();
-//			draggingRect = true;
-//		}
-//	}
-//
-//	@Override
-//	public void mouseReleased(MouseEvent e) {
-//		// find where mouse was clicked on the Overview, transform it
-//		// out of the overview and onto the userDisplay. Then pan to that
-//		// location
-//		if (!draggingRect) {
-//			Point p = transPoint(e.getPoint());
-//			userDisplayLeft.animatePanTo(p, 1000);
-//			userDisplayRight.animatePanTo(p, 1000);
-//		} else {
-//			draggingRect = false; // reset draggingRect for next time.
-//		}
-//	}
-//
-//	/**
-//	 * translate point from overview coordinates to userDisplay coordinates
-//	 * 
-//	 * @param p
-//	 *            Point in question
-//	 * @return transformed point
-//	 */
-//	private Point transPoint(Point p) {
-//		AffineTransform overTransI = overviewLeft.getInverseTransform();
-//		overTransI.transform(p, p);
-//		AffineTransform userTrans = userDisplayLeft.getTransform();
-//		userTrans.transform(p, p);
-//		return p;
-//	}
-//
-//	@Override
-//	public void mouseDragged(MouseEvent e) {
-//		if (draggingRect) {
-//			Point p = transPoint(e.getPoint());
-//			prev = transPoint(prev);
-//
-//			int xMovement = prev.x - p.x;
-//			int yMovement = prev.y - p.y;
-//			userDisplayLeft.animatePan(xMovement, yMovement, 1);
-//			userDisplayRight.animatePan(xMovement, yMovement, 1);
-//			prev = e.getPoint();
-//		}
-//	}
-//
-//	public static Rectangle calcViewFinder(Display userDisplay, Display overview) {
-//		// retrieve width and height of the userDisplay's window on the screen
-//		Rectangle compBounds = userDisplay.getBounds();
-//		Point topLeft = new Point(0, (int) compBounds.getMinY());
-//		Point bottomRight = new Point((int) (compBounds.getMaxX() - compBounds.getMinX()), (int) compBounds.getMaxY());
-//		AffineTransform userTransI = userDisplay.getInverseTransform();
-//		userTransI.transform(topLeft, topLeft);
-//		userTransI.transform(bottomRight, bottomRight);
-//		AffineTransform overTrans = overview.getTransform();
-//		overTrans.transform(topLeft, topLeft);
-//		overTrans.transform(bottomRight, bottomRight);
-//
-//		int x = topLeft.x;
-//		int y = topLeft.y;
-//		int width = bottomRight.x - x;
-//		int height = bottomRight.y - y;
-//
-//		return new Rectangle(x, y, width, height);
-//	}
-//
-//	@Override
-//	public void mouseClicked(MouseEvent e) {
-//	}
-//
-//	@Override
-//	public void mouseEntered(MouseEvent arg0) {
-//	}
-//
-//	@Override
-//	public void mouseExited(MouseEvent arg0) {
-//	}
-//
-//	@Override
-//	public void mouseMoved(MouseEvent arg0) {
-//	}
-	
-
-//}
 
 
 

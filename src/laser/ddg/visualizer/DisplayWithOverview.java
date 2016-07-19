@@ -3,13 +3,11 @@ package laser.ddg.visualizer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.BorderFactory;
@@ -20,14 +18,11 @@ import laser.ddg.visualizer.DDGDisplay.PopupMenu;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
-import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.util.display.PaintListener;
-import prefuse.util.ui.UILib;
-import prefuse.visual.VisualItem;
 
 public class DisplayWithOverview {
 	private PrefuseGraphBuilder builder;

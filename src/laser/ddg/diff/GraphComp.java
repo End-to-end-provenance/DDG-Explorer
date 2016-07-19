@@ -92,6 +92,7 @@ public class GraphComp extends JPanel {
 
 	// Code adapted from
 	// http://introcs.cs.princeton.edu/java/96optimization/Diff.java.html
+	// From Section 9.6 of Introduction to Programming in Java by Robert Sedgewick and Kevin Wayne
 	// Note that this identifies new lines and deleted lines.  Changed lines are treated as
 	// an addition + a deletion.
 	// Rahman's original code checked for changed lines, but then colored them as additions
@@ -101,19 +102,21 @@ public class GraphComp extends JPanel {
 		// System.out.println("\nIn computeTextDiffResult");
 
 		// number of lines of each file
-		int M = leftText.length;
-		int N = rightText.length;
+		int leftNumLines = leftText.length;
+		int rightNumLines = rightText.length;
 
 		// opt[i][j] = length of LCS of x[i..M] and y[j..N]
-		int[][] opt = new int[M + 1][N + 1];
+		int[][] opt = new int[leftNumLines + 1][rightNumLines + 1];
 
 		// compute length of LCS and all subproblems via dynamic programming
-		for (int i = M - 1; i >= 0; i--) {
-			for (int j = N - 1; j >= 0; j--) {
-				if (leftText[i].equals(rightText[j]))
+		for (int i = leftNumLines - 1; i >= 0; i--) {
+			for (int j = rightNumLines - 1; j >= 0; j--) {
+				if (leftText[i].equals(rightText[j])) {
 					opt[i][j] = opt[i + 1][j + 1] + 1;
-				else
+				}
+				else {
 					opt[i][j] = Math.max(opt[i + 1][j], opt[i][j + 1]);
+				}
 			}
 		}
 
@@ -121,7 +124,7 @@ public class GraphComp extends JPanel {
 		// output
 		int i = 0, j = 0;
 		ArrayList<String> diffResult = new ArrayList<>();
-		while (i < M && j < N) {
+		while (i < leftNumLines && j < rightNumLines) {
 			//System.out.println("Left line = " + leftText[i]);
 			//System.out.println("Right line = " + rightText[j]);
 			if (leftText[i].equals(rightText[j])) {
@@ -142,12 +145,12 @@ public class GraphComp extends JPanel {
 
 		// dump out one remainder of one string if the other is exhausted
 		//System.out.println("Extra lines");
-		while (i < M || j < N) {
-			if (i == M) {
+		while (i < leftNumLines || j < rightNumLines) {
+			if (i == leftNumLines) {
 				//System.out.println("> " + rightText[j]);
 				diffResult.add("> " + rightText[j]);
 				j++;
-			} else if (j == N) {
+			} else if (j == rightNumLines) {
 				//System.out.println("< " + leftText[i]);
 				diffResult.add("< " + leftText[i]);
 				i++;

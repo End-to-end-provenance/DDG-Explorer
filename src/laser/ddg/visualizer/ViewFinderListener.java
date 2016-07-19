@@ -8,8 +8,6 @@ import java.util.ArrayList;
 
 import javax.swing.event.MouseInputListener;
 
-import prefuse.Display;
-
 /**
  * Listen for clicks or drags in the overview, move the viewFinder
  * accordingly
