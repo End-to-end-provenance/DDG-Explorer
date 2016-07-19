@@ -4,25 +4,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
+import laser.ddg.gui.Toolbar;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DisplayWithOverview;
-import laser.ddg.visualizer.ExpandCollapseControl;
-import laser.ddg.visualizer.FitOverviewListener;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
-import laser.ddg.visualizer.ViewFinderBorders;
 import laser.ddg.visualizer.ViewFinderListener;
 import prefuse.Display;
 import prefuse.controls.ControlAdapter;
-import prefuse.controls.DragControl;
-import prefuse.controls.ZoomControl;
-import prefuse.util.display.PaintListener;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 
@@ -37,12 +31,12 @@ import prefuse.visual.VisualItem;
 public class DDGDiffPanel extends JPanel {
 	private JPanel leftPanel;
 	private JPanel rightPanel;
-	private ToolbarCompare toolbar;
+	private Toolbar toolbar;
 
 	public DDGDiffPanel () {
 		setLayout (new BorderLayout());
 		
-		toolbar = new ToolbarCompare();
+		toolbar = new Toolbar ();
 		add(toolbar, BorderLayout.NORTH);
 	
 		JPanel comparePanel = new JPanel();
@@ -70,6 +64,7 @@ public class DDGDiffPanel extends JPanel {
 		DualPanControl panning = new DualPanControl(leftDisplay, rightDisplay);
 		leftDisplay.addControlListener(panning);
 		rightDisplay.addControlListener(panning);
+		toolbar.addDisplays(leftDisplay, rightDisplay);
 		
 		ViewFinderListener vfL = new ViewFinderListener (leftDispPlusOver, rightDispPlusOver);
 		DDGDisplay leftOverview = leftDispPlusOver.getOverview();
@@ -81,22 +76,6 @@ public class DDGDiffPanel extends JPanel {
 		
 		leftPanel.add(leftDispPlusOver.createPanel(null));
 		rightPanel.add(rightDispPlusOver.createPanel(null));
-	
-//		DDGDisplay displayLeft = builderLeft.getDisplay();
-//		DDGDisplay displayOverviewLeft = builderLeft.getOverview();
-//	
-//		DDGDisplay displayRight = builderRight.getDisplay();
-//		DDGDisplay displayOverviewRight = builderRight.getOverview();
-//		PanMyControl panning = new PanMyControl(displayLeft, displayRight);
-//		VfListener vfL = new VfListener(displayLeft, displayOverviewLeft, displayRight, displayOverviewRight);
-//	
-//		initializeDisplay(panning, displayLeft, displayOverviewLeft, vfL, builderLeft);
-//		initializeDisplay(panning, displayRight, displayOverviewRight, vfL, builderRight);
-//	
-//		populateDisplay(leftPanel, displayLeft, displayOverviewLeft);
-//		populateDisplay(rightPanel, displayRight, displayOverviewRight);
-		
-		//toolbar.setDisplays(displayLeft, displayRight);
 	}
 
 	/**
@@ -119,40 +98,6 @@ public class DDGDiffPanel extends JPanel {
 		
 		outerPanel.add(newPanel);
 	}
-
-	/**
-	 * Add action listeners to the display and the corresponding overview using
-	 * its own graph builder.
-	 * 
-	 * @param panning
-	 * @param display
-	 * @param displayOverview
-	 * @param vfL
-	 *            listener object
-	 * @param builder
-	 */
-//	private static void initializeDisplay(DualPanControl panning, DDGDisplay display, DDGDisplay displayOverview,
-//			VfListener vfL, PrefuseGraphBuilder builder) {
-//		display.addControlListener(new DragControl());
-//		display.addControlListener(panning);
-//		display.addControlListener(new ZoomControl());
-//		display.addControlListener(new ExpandCollapseControl(builder));
-//		display.addPaintListener(new PaintListener() {
-//			@Override
-//			public void prePaint(Display d, Graphics2D g) {
-//			}
-//
-//			@Override
-//			public void postPaint(Display d, Graphics2D g) {
-//				displayOverview.repaint();
-//			}
-//		});
-//		displayOverview.addItemBoundsListener(new FitOverviewListener());
-//		displayOverview.addPaintListener(new ViewFinderBorders(display));
-//		displayOverview.addMouseMotionListener(vfL);
-//		displayOverview.addMouseListener(vfL);
-//		display.repaint();
-//	}
 
 	/**
 	 * This is a modification of Prefuse's PanControl that will
