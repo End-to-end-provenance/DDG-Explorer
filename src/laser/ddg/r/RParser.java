@@ -310,7 +310,7 @@ public class RParser implements LanguageParser {
 	}
 
 	public static void main (String[] args) {
-		JFileChooser fileChooser = new JFileChooser (System.getProperty("user.dir"));
+		JFileChooser fileChooser = new JFileChooser (System.getProperty("user.home"));
 		if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			new RParser().buildFunctionTable(fileChooser.getSelectedFile().getAbsolutePath());	
 		}

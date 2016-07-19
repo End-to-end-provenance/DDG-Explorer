@@ -2248,7 +2248,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 1. load the data ------------------------------------------------
 		if (args.length == 0) {
-			JFileChooser fileChooser = new JFileChooser(System.getProperty("user.dir"));
+			JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
 			try {
 				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = fileChooser.getSelectedFile();

@@ -1,4 +1,4 @@
-package laser.ddg.diff;
+package laser.ddg.diff.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -18,7 +18,6 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import laser.ddg.diff.ToolbarCompare.ZoomListener;
 import laser.ddg.visualizer.DDGDisplay;
 import prefuse.Display;
 import prefuse.util.display.PaintListener;

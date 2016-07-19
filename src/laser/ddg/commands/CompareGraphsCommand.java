@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import laser.ddg.diff.GraphComp;
+import laser.ddg.diff.gui.DDGDiffTab;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.JenaLoader;
 
@@ -25,8 +25,8 @@ public class CompareGraphsCommand implements ActionListener {
 	private static void execute() {
 		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		JPanel diffPanel = new GraphComp(ddgExplorer, jenaLoader);
-		ddgExplorer.addTab("Comparing DDGraphs", diffPanel);
+		JPanel diffPanel = new DDGDiffTab(ddgExplorer, jenaLoader);
+		ddgExplorer.addTab("Comparing DDG Graphs", diffPanel);
 	}
 
 	@Override

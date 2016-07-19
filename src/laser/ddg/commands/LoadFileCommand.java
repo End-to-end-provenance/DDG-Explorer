@@ -22,7 +22,7 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  */
 public class LoadFileCommand implements ActionListener {
 	
-	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.dir"));
+	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
 
 	/**
 	 * Loads a ddg text file from user selection
