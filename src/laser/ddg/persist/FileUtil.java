@@ -241,16 +241,16 @@ public class FileUtil {
 	private static void createDirectory(File savedCopyDir) throws IllegalStateException {
 		if (!savedCopyDir.exists()) {
 			if (!savedCopyDir.mkdir()) {
-				System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+				System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 				throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 			}
 		}
 		else if (!savedCopyDir.isDirectory()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 		else if (!savedCopyDir.canWrite()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 	}

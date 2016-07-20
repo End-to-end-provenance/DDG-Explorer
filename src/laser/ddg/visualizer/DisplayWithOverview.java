@@ -3,6 +3,7 @@ package laser.ddg.visualizer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -11,6 +12,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.geom.AffineTransform;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import laser.ddg.visualizer.DDGDisplay.AutoPanAction;
@@ -51,15 +53,11 @@ public class DisplayWithOverview {
 
 	public void initialize(Visualization vis, boolean compareDDG) {
 		display.setVisualization(vis);
-		// display size
-		display.setSize(720, 500);
 
 		display.addControlListener(new DragControl());
 		display.addControlListener(new ZoomControl());
 		// zoom with mouse wheel
 		display.addControlListener(new WheelZoomControl(true, true));
-		// make node and incident edges invisible
-		// d.addControlListener(mControl);
 		display.addControlListener(new ExpandCollapseControl(builder));
 		display.addPaintListener(new PaintListener() {
 			@Override
@@ -74,22 +72,26 @@ public class DisplayWithOverview {
 
 		if (!compareDDG) {
 			display.addControlListener(new PanControl());
+			
+			// Pan control is set after both sides of the compare
+			// panel are ready
+
 		}
 
 		// set up the display's overview
 		// (no drag, pan, or zoom control needed)
 		displayOverview.setVisualization(vis);
-		// display size
-		displayOverview.setSize(175, 500);
-		// To force overview's shape and zoom when bounds change
-		displayOverview.addItemBoundsListener(new FitOverviewListener());
 
 		// keep track of the display's view and draw Overview's square
 		// accordingly
 		displayOverview.addPaintListener(new ViewFinderBorders(this));
 
+		displayOverview.setPreferredSize(new Dimension(175, 500));
+			
 		if (!compareDDG) {
-			// keep track of mouse clicks to move the grey rectangle
+			// keep track of mouse clicks to move the grey rectangle.
+			// When doing ddg comparisons, we do this later so that 
+			// both ddgs have the same view finder listener.
 			ViewFinderListener vfL = new ViewFinderListener(this);
 			displayOverview.addMouseMotionListener(vfL);
 			displayOverview.addMouseListener(vfL);
@@ -97,28 +99,38 @@ public class DisplayWithOverview {
 	}
 
 	public JPanel createPanel(Component description) {
-		JPanel ddgMain = new JPanel(new BorderLayout());
+		JPanel ddgMain = new JPanel();
+		ddgMain.setLayout(new BoxLayout(ddgMain, BoxLayout.X_AXIS));
 		ddgMain.setBackground(Color.WHITE);
 		if (description != null) {
-			ddgMain.add(description, BorderLayout.NORTH);
+			// Main display shows the ddg name here.
+			// When comparing ddgs, there is a panel above
+			// that shows the name.
+			JPanel bigDisp = new JPanel();
+			bigDisp.setLayout(new BorderLayout());
+			bigDisp.add(description, BorderLayout.NORTH);
+			bigDisp.add(display, BorderLayout.CENTER);
+			ddgMain.add(bigDisp);
 		}
-		ddgMain.add(display, BorderLayout.CENTER);
+		else {
+			ddgMain.add(display);
+		}
 
 		DDGDisplay ddgOverview = displayOverview;
 		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		ddgMain.add(ddgOverview, BorderLayout.EAST);
+		ddgMain.add(ddgOverview);
+		
 		// legend added to WEST through preferences
-		// TODO searchbar added to SOUTH! (through button press?)
 
-		// resize components within layers
-		ddgMain.addComponentListener(new ComponentAdapter() {
+		
+		ddgOverview.addComponentListener(new ComponentAdapter() {
+
 			@Override
 			public void componentResized(ComponentEvent e) {
-				int panelHeight = ddgMain.getHeight();
-				Rectangle prevBounds = ddgOverview.getBounds();
-				ddgOverview.setBounds(prevBounds.x, prevBounds.y, prevBounds.width, panelHeight - 16);
+				ddgOverview.zoomToExactFit();
 			}
 		});
+
 
 		return ddgMain;
 	}

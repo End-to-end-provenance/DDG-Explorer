@@ -27,8 +27,6 @@ import prefuse.visual.VisualItem;
  *
  */
 public class DDGDiffPanel extends JPanel {
-	private JPanel leftPanel;
-	private JPanel rightPanel;
 	private Toolbar toolbar;
 
 	public DDGDiffPanel () {
@@ -36,18 +34,6 @@ public class DDGDiffPanel extends JPanel {
 		
 		toolbar = new Toolbar ();
 		add(toolbar, BorderLayout.NORTH);
-	
-		JPanel comparePanel = new JPanel();
-		comparePanel.setLayout (new GridLayout (1, 2, 8, 0));
-		leftPanel = new JPanel();
-		leftPanel.setBorder(BorderFactory.createEtchedBorder());
-		comparePanel.add (leftPanel);
-		
-		rightPanel = new JPanel();
-		rightPanel.setBorder(BorderFactory.createEtchedBorder());
-		comparePanel.add (rightPanel);
-		
-		add (comparePanel, BorderLayout.CENTER);
 	}
 
 	public void displayDiffResults (PrefuseGraphBuilder builderLeft, PrefuseGraphBuilder builderRight) {
@@ -72,8 +58,19 @@ public class DDGDiffPanel extends JPanel {
 		rightOverview.addMouseMotionListener(vfL);
 		rightOverview.addMouseListener(vfL);
 		
+		JPanel comparePanel = new JPanel();
+		comparePanel.setLayout (new GridLayout (0, 2, 8, 0));
+		JPanel leftPanel = new JPanel();
+		leftPanel.setBorder(BorderFactory.createEtchedBorder());
 		leftPanel.add(leftDispPlusOver.createPanel(null));
+		comparePanel.add (leftPanel);
+		
+		JPanel rightPanel = new JPanel();
+		rightPanel.setBorder(BorderFactory.createEtchedBorder());
 		rightPanel.add(rightDispPlusOver.createPanel(null));
+		comparePanel.add (rightPanel);
+		
+		add (comparePanel, BorderLayout.CENTER);
 	}
 
 	/**

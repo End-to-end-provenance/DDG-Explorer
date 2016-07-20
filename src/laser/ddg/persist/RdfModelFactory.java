@@ -43,12 +43,12 @@ public class RdfModelFactory {
     		File ddgDir = new File(FileUtil.DDG_DIRECTORY);
     		if (!ddgDir.exists()) {
     			if (!ddgDir.mkdir()) {
-        			System.out.println ("Unable to create ddg directory");
+        			System.err.println ("Unable to create ddg directory");
         			return null;
     			}
     		}
     		if (!jenaDir.mkdir()) {
-    			System.out.println ("Unable to create jena directory");
+    			System.err.println ("Unable to create jena directory");
     			return null;
     		}
     	}

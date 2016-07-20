@@ -207,7 +207,7 @@ public class DDGPanel extends JPanel {
 			return ((JenaWriter) dbWriter).alreadyInDB(processPathName,
 					executionTimestamp, language);
 		} catch (Exception e) {
-			System.out.println("DDGPanel's alreadyInDB unsuccessful");
+			System.err.println("DDGPanel's alreadyInDB unsuccessful");
 			return false;
 		}
 	}

@@ -69,12 +69,12 @@ public class GraphComp extends JPanel {
 	 */
 	private static String[] createTextToDiff(Parser parser, PrefuseGraphBuilder builder) {
 		String[] text = new String[parser.getNumPins()];
-		System.out.println("numPins = " + parser.getNumPins());
+		//System.out.println("numPins = " + parser.getNumPins());
 
 		// Pins are numbered beginning at 1.
 		for (int i = 1; i <= text.length; i++) {
 			String curNodeName = builder.getName(builder.getNode(i));
-			System.out.println(curNodeName);
+			//System.out.println(curNodeName);
 			
 			// Remove whitespace
 			String dummy = curNodeName.replaceAll("\\s+", "");

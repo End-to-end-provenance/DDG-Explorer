@@ -78,7 +78,7 @@ public class Toolbar extends JToolBar {
 				}
             });
 	    	
-	    JButton refocuser = new JButton("Refocus");
+	    JButton refocuser = new JButton("Zoom to fit");
             refocuser.addActionListener((ActionEvent arg0) -> {
                 for (DDGDisplay ddgDisplay : ddgDisplays) {
 					ddgDisplay.zoomToFit();

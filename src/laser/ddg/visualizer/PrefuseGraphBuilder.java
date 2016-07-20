@@ -837,7 +837,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
-			System.out.println("Can't create legend");
+			System.err.println("Can't create legend");
 			e.printStackTrace(System.err);
 		}
 	}
