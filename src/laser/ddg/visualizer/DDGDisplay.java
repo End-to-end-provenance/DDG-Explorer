@@ -107,7 +107,7 @@ public class DDGDisplay extends Display {
 		if(!this.isTranformInProgress()){
 			Visualization vis = this.getVisualization();
 			synchronized(vis) {
-				System.out.println("Fitting overview");
+				//System.out.println("Fitting overview");
 				Rectangle2D bounds = vis.getBounds(Visualization.ALL_ITEMS);
 				GraphicsLib.expand(bounds, (int)(1/this.getScale()));
 				DisplayLib.fitViewToBounds(this, bounds, 0);

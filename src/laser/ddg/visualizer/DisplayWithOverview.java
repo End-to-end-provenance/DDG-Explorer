@@ -70,7 +70,7 @@ public class DisplayWithOverview {
 
 			@Override
 			public void postPaint(Display d, Graphics2D g) {
-				System.out.println("display postPaint");
+				//System.out.println("display postPaint");
 				displayOverview.repaint();
 			}
 		});
@@ -135,7 +135,7 @@ public class DisplayWithOverview {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				System.out.println("overview resized");
+				//System.out.println("overview resized");
 				ddgOverview.zoomToExactFit();
 			}
 		});
