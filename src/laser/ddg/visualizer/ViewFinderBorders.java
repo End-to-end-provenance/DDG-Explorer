@@ -22,6 +22,8 @@ public class ViewFinderBorders implements PaintListener {
 
 	@Override
 	public void prePaint(Display overview, Graphics2D g) {
+		System.out.println("overview prepaint");
+		((DDGDisplay)overview).zoomToExactFit();
 	}
 
 	@Override
@@ -30,6 +32,7 @@ public class ViewFinderBorders implements PaintListener {
 	 * overview that represents the regular display's view.
 	 */
 	public void postPaint(Display overview, Graphics2D g) {
+		System.out.println("Drawing viewfinder");
 		
 		// retrieve rectangle for viewFinder
 		Rectangle rect = dispPlusOver.calcViewFinder();
