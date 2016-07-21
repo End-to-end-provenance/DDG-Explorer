@@ -22,7 +22,6 @@ public class ViewFinderBorders implements PaintListener {
 
 	@Override
 	public void prePaint(Display overview, Graphics2D g) {
-		((DDGDisplay)overview).zoomToExactFit();
 	}
 
 	@Override

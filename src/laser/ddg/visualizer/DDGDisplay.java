@@ -106,9 +106,11 @@ public class DDGDisplay extends Display {
 	public void zoomToExactFit(){
 		if(!this.isTranformInProgress()){
 			Visualization vis = this.getVisualization();
-			Rectangle2D bounds = vis.getBounds(Visualization.ALL_ITEMS);
-			GraphicsLib.expand(bounds, (int)(1/this.getScale()));
-			DisplayLib.fitViewToBounds(this, bounds, 0);
+			synchronized(vis) {
+				Rectangle2D bounds = vis.getBounds(Visualization.ALL_ITEMS);
+				GraphicsLib.expand(bounds, (int)(1/this.getScale()));
+				DisplayLib.fitViewToBounds(this, bounds, 0);
+			}
 		}
 	}
 
