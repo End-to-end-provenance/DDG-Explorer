@@ -70,6 +70,7 @@ public class Parser {
 	private static final String EXECUTION_TIME = "DateTime";
 	private static final String SCRIPT = "Script";
 	private static final String LANGUAGE = "Language";
+	private static final String SOURCED_SCRIPTS = "SourcedScripts";
 	
 	// Codes used to identify dataflow and control flow edges
 	private static final String DATA_FLOW = "DF";
@@ -106,6 +107,11 @@ public class Parser {
 	//The language of the script
 	private String language;
 	
+	// The scripts that are used in the program.
+	// The main script is in position 0.  The others appear 
+	// in the order listed in the attributes.
+	private String[] scripts;
+
 	//String of attribute names and values
 	private Attributes attributes = new Attributes();
 	
@@ -118,6 +124,7 @@ public class Parser {
 	
 	// Time of the last procedure node encountered
 	private double lastProcElapsedTime = 0.0;
+
 	
 	/**
 	 * Initializes the parser
@@ -160,9 +167,12 @@ public class Parser {
 		
 		// If there was no script attribute, use the filename.
 		if (scrpt == null) {
-			scrpt = fileBeingParsed.getName();
+			if (scripts == null) {
+				scripts = new String[1];
+			}
+			scripts[0] = fileBeingParsed.getName();
 		}
-		ProvenanceData provData = new ProvenanceData(scrpt, timestamp, language);
+		ProvenanceData provData = new ProvenanceData(scripts, timestamp, language);
 		
 		// Store the file path to the selected file in attributes
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
@@ -762,6 +772,25 @@ public class Parser {
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
+			}
+			else if (attributeName.equals(SOURCED_SCRIPTS)) {
+				// Remember the script names so that we will be able to show
+				// the user the source code
+				if (attributeValue.indexOf(",") >= 0) {
+					String[] sourcedScripts = attributeValue.split(",");
+					scripts = new String[sourcedScripts.length + 1];
+					System.arraycopy(sourcedScripts, 0, scripts, 1, sourcedScripts.length);
+				}
+				else {
+					scripts = new String[1];
+				}
+				scripts[0] = scrpt;
+				
+				
+				System.out.println("Scripts:");
+				for (int i = 0; i < scripts.length; i++) {
+					System.out.println(scripts[i]);
+				}
 			}
 			attributes.set(attributeName, attributeValue);
 			

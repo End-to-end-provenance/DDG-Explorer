@@ -96,7 +96,10 @@ public class ProvenanceData {
 	private String query;
 	
 	// The name of the file containing the script/program executed to create this DDG.
-	private String scriptFileName;
+	private ArrayList<String> scriptFileNames = new ArrayList<>();
+
+	// The name of the scripts that were used to create this provenance.
+	private String[] scripts;
 
 	/**
 	 * Construct a default object
@@ -127,8 +130,9 @@ public class ProvenanceData {
 	 * 			the timestamp associated with the script
 	 * @param language the language that the process was written in
 	 */
-	public ProvenanceData(String processName, String timestamp, String language) {
-		this(processName);
+	public ProvenanceData(String[] scripts, String timestamp, String language) {
+		this(scripts[0]);
+		this.scripts = scripts;
 		this.timestamp = timestamp;
 		this.language = language;
 	}
@@ -786,10 +790,10 @@ public class ProvenanceData {
 	 */
 	public void createFunctionTable(String fileName) {
 		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
-		scriptFileName = fileName;
+		scriptFileNames.add(fileName);
 		if (scriptParser != null) {
-			functionTable = scriptParser.buildFunctionTable(fileName);
-			blockTable = scriptParser.buildBlockTable(fileName);
+			functionTable.putAll(scriptParser.buildFunctionTable(fileName));
+			blockTable.putAll(scriptParser.buildBlockTable(fileName));
 		}
 	}
 
@@ -807,8 +811,8 @@ public class ProvenanceData {
 		return blockTable.get(blockName);
 	}
 
-	public String getScript() {
-		return scriptFileName;
+	public String getScript(int scriptNum) {
+		return scriptFileNames.get(scriptNum);
 	}
 	
 	public String getSourcePath() {

@@ -2029,8 +2029,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	public String getScriptPath() {
-		return provData.getScript();
+	public String getScriptPath(int scriptNum) {
+		return provData.getScript(scriptNum);
 	}
 
 	public String getProcessName() {

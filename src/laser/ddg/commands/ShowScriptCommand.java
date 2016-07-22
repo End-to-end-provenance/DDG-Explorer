@@ -22,7 +22,9 @@ public class ShowScriptCommand implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
-		String scriptFileName = curDDG.getScript();
+		
+		// TODO: Put up a menu to allow the user to select which script if there is more than one sourced
+		String scriptFileName = curDDG.getScript(0);
 		//System.out.println("ShowScriptCommand: scriptFileName = " + scriptFileName);
 		if (scriptFileName == null) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());

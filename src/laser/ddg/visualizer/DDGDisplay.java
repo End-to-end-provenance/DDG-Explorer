@@ -492,7 +492,7 @@ public class DDGDisplay extends Display {
 //		private PopupCommand showLineNumberCommand = new PopupCommand("Show Line Number"){
 		private PopupCommand showFunctionCommand = new PopupCommand("Show Code"){
 			
-			private String fileContents;
+			private ArrayList<String> fileContents = new ArrayList<>();
 			private ArrayList<Integer> lineStarts;
 			private JFrame fileFrame;
 			private JTextArea fileTextArea;
@@ -523,15 +523,11 @@ public class DDGDisplay extends Display {
 			}
 
 			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
-				if (scriptNum > 0) {
-					// Currently, we only save the main script file!!!
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no copy of the sourced script available.");
-					return;
-				}
-				
 				// Just read the file in one time.
-				if (fileContents == null) {
-					String fileName = builder.getScriptPath();
+				System.out.println("scriptNum = " + scriptNum);
+				System.out.println("fileContents.size() = " + fileContents.size());
+				if ((scriptNum >= fileContents.size()) || (fileContents.get(scriptNum) == null)) {
+					String fileName = builder.getScriptPath(scriptNum);
 					if (fileName == null) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
 						return;
@@ -562,7 +558,15 @@ public class DDGDisplay extends Display {
 							lineStarts.add(contentsBuilder.length());
 							contentsBuilder.append(line + "\n");
 						}
-						fileContents = contentsBuilder.toString();
+						if (scriptNum < fileContents.size()) {
+							fileContents.set(scriptNum, contentsBuilder.toString());
+						}
+						else {
+							for (int i = fileContents.size(); i < scriptNum; i++) {
+								fileContents.add("");
+							}
+							fileContents.add(contentsBuilder.toString());
+						}
 	
 					} catch (FileNotFoundException e) {
 						DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
@@ -573,11 +577,11 @@ public class DDGDisplay extends Display {
 					}
 				}
 				
-				if (fileContents != null) {
+				if (fileContents.get(scriptNum) != null) {
 					if (fileFrame == null || !fileFrame.isDisplayable()) {
 						fileFrame = new JFrame();
 						fileTextArea = new JTextArea();
-						fileTextArea.setText(fileContents);
+						fileTextArea.setText(fileContents.get(scriptNum));
 						fileTextArea.setEditable(false);
 						JScrollPane scroller = new JScrollPane(fileTextArea);
 						fileFrame.add(scroller, BorderLayout.CENTER);
@@ -598,7 +602,7 @@ public class DDGDisplay extends Display {
 							fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine), fileHighlightPainter);
 						}
 						else {
-							fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length()-1, fileHighlightPainter);
+							fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.get(scriptNum).length()-1, fileHighlightPainter);
 						}
 					} catch (BadLocationException e) {
 						// TODO Auto-generated catch block

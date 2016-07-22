@@ -72,6 +72,7 @@ public class LoadFileCommand implements ActionListener {
 			execute();
 		} catch (Exception e) {
 			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+			e.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
