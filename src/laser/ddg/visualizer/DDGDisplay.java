@@ -1,6 +1,5 @@
 package laser.ddg.visualizer;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -13,13 +12,11 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -28,12 +25,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Highlighter;
-import javax.swing.text.Highlighter.HighlightPainter;
 
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.ScriptDisplayer;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -57,7 +51,7 @@ public class DDGDisplay extends Display {
 	private double proportionY = 0.25;
 
 	// Builds the nodes and edges that comprise the graph
-	private PrefuseGraphBuilder builder;
+	PrefuseGraphBuilder builder;
 
 	private static final int FILE_CURRENT = 0;
 	private static final int FILE_INCONSISTENT_WITH_DDG = 1;
@@ -490,7 +484,6 @@ public class DDGDisplay extends Display {
 
 		private PopupCommand showFunctionCommand = new PopupCommand("Show Code") {
 
-			private ArrayList<FileDisplayer> fileDisplayers = new ArrayList<>();
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -527,16 +520,7 @@ public class DDGDisplay extends Display {
 				//System.out.println("scriptNum = " + scriptNum);
 				//System.out.println("fileDisplayers.size() = " + fileDisplayers.size());
 
-				for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
-					fileDisplayers.add(i, null);
-				}
-
-				if (fileDisplayers.get(scriptNum) == null) {
-					fileDisplayers.set(scriptNum, new FileDisplayer(scriptNum));
-				}
-
-				fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
-
+				builder.displaySourceCode(firstLine, lastLine, scriptNum);
 			}
 
 			private void displaySourceCode(int lineNumber, int scriptNumber) {
@@ -688,112 +672,6 @@ public class DDGDisplay extends Display {
 				// System.out.println("Showing popup menu.");
 				// ((JMenuItem) (popup.getSubElements())[0]).setText(command);
 				popup.show(e.getComponent(), e.getX(), e.getY());
-			}
-
-		}
-
-		/**
-		 * This class maintains the information needed to show source
-		 * code and highlight specific lines of the source.
-		 */
-		private class FileDisplayer {
-			// The contents of the file to display
-			private String fileContents;
-			
-			// The character position where each line starts.  Needed to do the highlighting.
-			private ArrayList<Integer> lineStarts = new ArrayList<>();
-			
-			// The frame that is displaying this file
-			private JFrame fileFrame;
-			
-			// The text area that is displaying this file
-			private JTextArea fileTextArea;
-			
-			// The objects needed to highlight specific parts of the file.
-			private Highlighter fileHighlighter;
-			private HighlightPainter fileHighlightPainter;
-
-			/**
-			 * Create the display for a script
-			 * @param scriptNum the number of the script as referenced in the ddg
-			 */
-			public FileDisplayer(int scriptNum) {
-				String fileName = builder.getScriptPath(scriptNum);
-				if (fileName == null) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
-							"There is no script available for " + builder.getProcessName());
-					return;
-				}
-				File theFile = new File(fileName);
-				if (!theFile.exists()) {
-					JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
-							"There is no script available for " + builder.getProcessName());
-					return;
-				}
-
-				// System.out.println("Reading script from " + fileName);
-
-				try {
-					readFile(theFile);
-					displayFileContents();
-				} catch (FileNotFoundException e) {
-					DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
-				}
-			}
-
-			private void readFile(File theFile) throws FileNotFoundException {
-				StringBuilder contentsBuilder = new StringBuilder();
-				Scanner readFile = null;
-				try {
-					readFile = new Scanner(theFile);
-					lineStarts = new ArrayList<>();
-					// System.out.println("\n" + str);
-					// Read the file one line at a time and remember where each line starts.
-					while (readFile.hasNextLine()) {
-						String line = readFile.nextLine();
-						lineStarts.add(contentsBuilder.length());
-						contentsBuilder.append(line + "\n");
-					}
-					fileContents = contentsBuilder.toString();
-				} finally {
-					if (readFile != null) {
-						readFile.close();
-					}
-				}
-			}
-
-			private void displayFileContents() {
-				fileFrame = new JFrame();
-				fileTextArea = new JTextArea();
-				fileTextArea.setText(fileContents);
-				fileTextArea.setEditable(false);
-				JScrollPane scroller = new JScrollPane(fileTextArea);
-				fileFrame.add(scroller, BorderLayout.CENTER);
-				fileFrame.setSize(600, 800);
-				fileHighlighter = fileTextArea.getHighlighter();
-				fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
-
-				TextLineNumber tln = new TextLineNumber(fileTextArea);
-				scroller.setRowHeaderView(tln);
-			}
-
-			void highlight(int firstLine, int lastLine) {
-				try {
-					fileFrame.setVisible(true);
-					fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1));
-					fileHighlighter.removeAllHighlights();
-					if (lastLine < lineStarts.size()) {
-						fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine),
-								fileHighlightPainter);
-					} else {
-						fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length() - 1,
-								fileHighlightPainter);
-					}
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace(System.err);
-				}
-
 			}
 
 		}

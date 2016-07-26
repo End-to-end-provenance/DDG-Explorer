@@ -2044,4 +2044,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public String getName(NodeItem n) {
 		return PrefuseUtils.getName(n);
 	}
+
+	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+		ddgPanel.displaySourceCode(firstLine, lastLine, scriptNum);
+	}
 }

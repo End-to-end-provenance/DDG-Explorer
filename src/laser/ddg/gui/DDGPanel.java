@@ -85,6 +85,9 @@ public class DDGPanel extends JPanel {
 	// Remembers the direction of the arrows.  REVERSE == down
 	private int arrowDirection = prefuse.Constants.EDGE_ARROW_REVERSE;
 	
+	// The windows that are used to display and highlight scripts
+	private ArrayList<ScriptDisplayer> fileDisplayers = new ArrayList<>();
+	
 	/**
 	 * Create a frame to display the DDG graph in
 	 */
@@ -380,5 +383,16 @@ public class DDGPanel extends JPanel {
 	}
 
 
+	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+		for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
+			fileDisplayers.add(i, null);
+		}
+	
+		if (fileDisplayers.get(scriptNum) == null) {
+			fileDisplayers.set(scriptNum, new ScriptDisplayer(builder, scriptNum));
+		}
+	
+		fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
+	}
 
 }
