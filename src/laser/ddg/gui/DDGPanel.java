@@ -4,9 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -26,11 +23,9 @@ import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
-import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
-import prefuse.Display;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the

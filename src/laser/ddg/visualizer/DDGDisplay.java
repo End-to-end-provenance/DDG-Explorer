@@ -15,7 +15,6 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JFrame;
@@ -27,7 +26,6 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.ScriptDisplayer;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
