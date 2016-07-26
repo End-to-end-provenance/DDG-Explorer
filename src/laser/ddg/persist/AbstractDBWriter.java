@@ -47,79 +47,21 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 		saveDir = FileUtil.getSaveDir(processPathName);
 
 		for (ScriptInfo script : provData.scripts()) {
-			script.copyScriptFile();
+			FileUtil.copyScriptFile(script);
 		}
 		
 		this.provData = provData;
 		
 		// Copy the ddg.txt file (must take place AFTER setting provData)
-		System.out.println("Copying ddg.txt");
+		// System.out.println("Copying ddg.txt");
 		copyFileData(provData.getSourcePath());
 		
-		System.out.println("Initializing DDG in DB");
+		// System.out.println("Initializing DDG in DB");
 		initializeDDGinDB(provData, executionTimestamp, provData.getLanguage());
-		System.out.println("Saving DDG\n");
+		// System.out.println("Saving DDG\n");
 		saveDDG(provData);
 	}
 	
-//	private String copyScriptFile(String filePath, String toDir) {
-//		System.out.println("File to copy: " + filePath + "\n");
-//		File theFile = new File(filePath);
-//		//Scanner readFile;
-//
-//		try {
-//			//readFile = new Scanner(theFile);
-//			//PrintWriter writeFile = null;
-//			File savedFile = FileUtil.createSavedFile(theFile);
-//			saveDir = savedFile.getParent();
-//			System.out.println("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
-//			
-//			// It may have been copied on a previous execution.
-//			if (!savedFile.exists()) {
-//				System.out.println("Copying");
-//				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-//				if (!savedFile.exists()) {
-//					DDGExplorer.showErrMsg("Copy failed!!!\n\n");
-//				}
-//				savedFile.setReadOnly();
-//			}
-//			else {
-//				System.out.println("Not copying.  Already there.");
-//			}
-//			return savedFile.getAbsolutePath();
-//			
-//			//System.out.println(fileContents.toString());
-//		} catch (FileNotFoundException e) {
-//			DDGExplorer.showErrMsg("Cannot find file: " + filePath + "\n\n");
-//			return null;
-//		} catch (IOException e) {
-//			DDGExplorer.showErrMsg("Exception copying" + filePath + "to database: " + e);
-//			return null;
-//		}
-//	}
-
-//	private String copyFile(Scanner readFile, File savedFile)
-//			throws FileNotFoundException {
-//		PrintWriter writeFile;
-//		if (savedFile.exists()) {
-//			return savedFile.getAbsolutePath();
-//		}
-//
-//		writeFile = new PrintWriter(savedFile);
-//
-//		StringBuilder fileContents = new StringBuilder(); 
-//
-//		//System.out.println("\n" + str);
-//		while (readFile.hasNextLine()) {
-//			String line = readFile.nextLine();
-//			fileContents.append(line + '\n');
-//			writeFile.println(line);
-//		}
-//		readFile.close();
-//		writeFile.close();
-//		
-//		return savedFile.getAbsolutePath();
-//	}
 
 	/**
 	 * Return true if a ddg for the given process and timestamp is already stored in the database

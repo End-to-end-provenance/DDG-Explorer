@@ -40,7 +40,7 @@ public class RParser implements LanguageParser {
 
 		try {
 			readFile = new Scanner(theFile);
-			System.out.println("Parsing script " + theFile.getAbsolutePath());
+			//System.out.println("Parsing script " + theFile.getAbsolutePath());
 
 			//System.out.println("\n" + str);
 			while (readFile.hasNextLine()) {

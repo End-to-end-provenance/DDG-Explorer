@@ -472,23 +472,6 @@ public class DDGDisplay extends Display {
 			}
 		};
 
-		// private PopupCommand showFunctionCommand = new PopupCommand("Show
-		// Code") {
-		// @Override
-		// public void actionPerformed(ActionEvent e) {
-		// VisualItem item = findItem(p);
-		// if (PrefuseUtils.getValue((NodeItem) item) != null){
-		// //Get the name of the script file
-		// displayFunc(item);
-		// }
-		// else {
-		// showLineNumberCommand.actionPerformed(e);
-		// //JOptionPane.showMessageDialog(DDGDisplay.this,"There is no function
-		// associated with this node.");
-		// }
-		// }
-		// };
-
 		private PopupCommand showElapsedTimeCommand = new PopupCommand("Show Elapsed Execution Time") {
 
 			@Override
@@ -505,8 +488,6 @@ public class DDGDisplay extends Display {
 
 		};
 
-		// private PopupCommand showLineNumberCommand = new PopupCommand("Show
-		// Line Number"){
 		private PopupCommand showFunctionCommand = new PopupCommand("Show Code") {
 
 			private ArrayList<FileDisplayer> fileDisplayers = new ArrayList<>();
@@ -543,8 +524,8 @@ public class DDGDisplay extends Display {
 				}
 
 				// Just read the file in one time.
-				System.out.println("scriptNum = " + scriptNum);
-				System.out.println("fileDisplayers.size() = " + fileDisplayers.size());
+				//System.out.println("scriptNum = " + scriptNum);
+				//System.out.println("fileDisplayers.size() = " + fileDisplayers.size());
 
 				for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
 					fileDisplayers.add(i, null);
@@ -711,14 +692,31 @@ public class DDGDisplay extends Display {
 
 		}
 
+		/**
+		 * This class maintains the information needed to show source
+		 * code and highlight specific lines of the source.
+		 */
 		private class FileDisplayer {
+			// The contents of the file to display
 			private String fileContents;
+			
+			// The character position where each line starts.  Needed to do the highlighting.
 			private ArrayList<Integer> lineStarts = new ArrayList<>();
+			
+			// The frame that is displaying this file
 			private JFrame fileFrame;
+			
+			// The text area that is displaying this file
 			private JTextArea fileTextArea;
+			
+			// The objects needed to highlight specific parts of the file.
 			private Highlighter fileHighlighter;
 			private HighlightPainter fileHighlightPainter;
 
+			/**
+			 * Create the display for a script
+			 * @param scriptNum the number of the script as referenced in the ddg
+			 */
 			public FileDisplayer(int scriptNum) {
 				String fileName = builder.getScriptPath(scriptNum);
 				if (fileName == null) {
@@ -734,44 +732,49 @@ public class DDGDisplay extends Display {
 				}
 
 				// System.out.println("Reading script from " + fileName);
-				Scanner readFile = null;
-				StringBuilder contentsBuilder = new StringBuilder();
-				lineStarts = new ArrayList<>();
 
 				try {
-					readFile = new Scanner(theFile);
+					readFile(theFile);
+					displayFileContents();
+				} catch (FileNotFoundException e) {
+					DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
+				}
+			}
 
+			private void readFile(File theFile) throws FileNotFoundException {
+				StringBuilder contentsBuilder = new StringBuilder();
+				Scanner readFile = null;
+				try {
+					readFile = new Scanner(theFile);
+					lineStarts = new ArrayList<>();
 					// System.out.println("\n" + str);
+					// Read the file one line at a time and remember where each line starts.
 					while (readFile.hasNextLine()) {
 						String line = readFile.nextLine();
 						lineStarts.add(contentsBuilder.length());
 						contentsBuilder.append(line + "\n");
 					}
 					fileContents = contentsBuilder.toString();
-
-				} catch (FileNotFoundException e) {
-					DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
 				} finally {
 					if (readFile != null) {
 						readFile.close();
 					}
 				}
+			}
 
-				if (fileContents != null) {
-					fileFrame = new JFrame();
-					fileTextArea = new JTextArea();
-					fileTextArea.setText(fileContents);
-					fileTextArea.setEditable(false);
-					JScrollPane scroller = new JScrollPane(fileTextArea);
-					fileFrame.add(scroller, BorderLayout.CENTER);
-					fileFrame.setSize(600, 800);
-					fileHighlighter = fileTextArea.getHighlighter();
-					fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+			private void displayFileContents() {
+				fileFrame = new JFrame();
+				fileTextArea = new JTextArea();
+				fileTextArea.setText(fileContents);
+				fileTextArea.setEditable(false);
+				JScrollPane scroller = new JScrollPane(fileTextArea);
+				fileFrame.add(scroller, BorderLayout.CENTER);
+				fileFrame.setSize(600, 800);
+				fileHighlighter = fileTextArea.getHighlighter();
+				fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 
-					TextLineNumber tln = new TextLineNumber(fileTextArea);
-					scroller.setRowHeaderView(tln);
-				}
-
+				TextLineNumber tln = new TextLineNumber(fileTextArea);
+				scroller.setRowHeaderView(tln);
 			}
 
 			void highlight(int firstLine, int lastLine) {

@@ -284,25 +284,10 @@ public class JenaLoader {
 		}
 		pd.setAttributes(attributes);
 		
-//		System.out.println("Script names are ");
-//		for (String scriptName : pd.getScriptNames()) {
-//			System.out.println(scriptName);
-//		}
-		
 		// Find the file that contains the script used to create the DDG being loaded
 		
 		for (ScriptInfo script: pd.scripts()) {
-//			System.out.println("Getting time stamp for " + scriptName);
-//			String scriptFileTimestamp = getStringValue(scriptName, timestamp, Properties.PROCESS_FILE_TIMESTAMP_URI, null);
-//			System.out.println("Timestamp = " + scriptFileTimestamp);
-//			String savedFileName = FileUtil.getSavedFileName(scriptName, scriptFileTimestamp);
-			
-//			File savedFile = new File (script.getFilePath());
 			pd.createFunctionTable(script);
-//			}
-			//else {
-//				System.out.println("Could not find script " + savedFile.getAbsolutePath());
-			//}
 		}
 		
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);

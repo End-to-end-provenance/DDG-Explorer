@@ -17,11 +17,13 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 
 /**
@@ -233,6 +235,12 @@ public class FileUtil {
 		}
 	}
 				
+	/**
+	 * @param originalFilePath the full path to the script file
+	 * being copied
+	 * @return the directory where files will get saved to 
+	 * when copying this script.
+	 */
 	public static String getSaveDir(String originalFilePath) {
 		
 		File originalFile = new File(originalFilePath);
@@ -242,6 +250,45 @@ public class FileUtil {
 		return SAVED_FILE_DIRECTORY + File.separatorChar + originalFileName + File.separatorChar + timestamp;
 	}
 
+	/**
+	 * Copy a script file so the database will be able to find it
+	 * @param script the script to copy
+	 */
+	public static String copyScriptFile(ScriptInfo script) {
+		//System.out.println("File to copy: " + script.getFilepath() + "\n");
+		File theFile = new File(script.getFilepath());
+		//Scanner readFile;
+
+		try {
+			//readFile = new Scanner(theFile);
+			//PrintWriter writeFile = null;
+			File savedFile = createSavedFile(theFile);
+			// System.out.println("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
+			
+			// It may have been copied on a previous execution.
+			if (!savedFile.exists()) {
+				// System.out.println("Copying");
+				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+				if (!savedFile.exists()) {
+					DDGExplorer.showErrMsg("Copy failed!!!\n\n");
+				}
+				savedFile.setReadOnly();
+			}
+			// else {
+			//	System.out.println("Not copying.  Already there.");
+			// }
+			return savedFile.getAbsolutePath();
+			
+			//System.out.println(fileContents.toString());
+		} catch (FileNotFoundException e) {
+			DDGExplorer.showErrMsg("Cannot find file: " + script.getFilepath() + "\n\n");
+			return null;
+		} catch (IOException e) {
+			DDGExplorer.showErrMsg("Exception copying" + script.getFilepath() + "to database: " + e);
+			return null;
+		}
+	}
+	
 	/**
 	 * Creates the directory that the database uses to find saved files
 	 * @param savedCopyDir the directory to create

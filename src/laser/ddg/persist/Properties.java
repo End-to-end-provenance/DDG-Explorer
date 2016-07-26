@@ -40,7 +40,6 @@ public class Properties {
 	public static final String ELAPSED_TIME = "time";
 	public static final String LINE_NUMBER = "line";
 	public static final String SCRIPT_NUMBER = "script_num";
-	public static final String SCRIPTS = "scripts";
 	public static final String VALUE = "value";
 	static final String LANGUAGE = "Language";
 	private static final String PROCESS_FILE_TIMESTAMP = "ProcessFileTimestamp";
@@ -180,10 +179,6 @@ public class Properties {
 		return m.createProperty(ALL_PROCESSES_URI, PROCESS_FILE_TIMESTAMP);
 	}
 	
-	public Property getScripts(Model m) {
-		return m.createProperty(ALL_PROCESSES_URI, SCRIPTS);
-	}
-
 	public String getSinURI() {
 		return sinURI;
 	}

@@ -761,7 +761,7 @@ public class Parser {
 			if(attributeName.equals(Attributes.LANGUAGE)){
 				language = attributeValue;
 			}
-			else if(attributeName.equals(Attributes.SCRIPT)){
+			else if(attributeName.equals(Attributes.MAIN_SCRIPT_NAME)){
 				scrpt = attributeValue;
 			}
 			else if(attributeName.equals(Attributes.EXECUTION_TIME)){
@@ -769,7 +769,7 @@ public class Parser {
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
 			}
-			else if (attributeName.equals(Attributes.SOURCED_SCRIPTS)) {
+			else if (attributeName.equals(Attributes.SOURCED_SCRIPT_NAMES)) {
 				// Remember the script names so that we will be able to show
 				// the user the source code
 				String[] sourcedScripts = attributeValue.split(",");
@@ -783,10 +783,10 @@ public class Parser {
 				scripts[0] = scrpt;
 				
 				
-				System.out.println("Scripts:");
-				for (int i = 0; i < scripts.length; i++) {
-					System.out.println(scripts[i]);
-				}
+				// System.out.println("Scripts:");
+				// for (int i = 0; i < scripts.length; i++) {
+				// 	System.out.println(scripts[i]);
+				// }
 			}
 			attributes.set(attributeName, attributeValue);
 			

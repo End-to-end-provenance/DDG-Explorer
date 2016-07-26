@@ -96,12 +96,13 @@ public class ProvenanceData {
 	// The query that this provenance data represents.
 	private String query;
 	
-//	// The name of the file containing the script/program executed to create this DDG.
-//	private ArrayList<String> scriptFileNames = new ArrayList<>();
-//
-//	// The name of the file containing the script/program executed to create this DDG.
-//	private String[] scriptTimeStamps;
-	
+	// Information about all of the scripts that are executed
+	// to create the ddg.  The main script is in position 0.
+	// The other entries are for sourced scripts, in the order
+	// that they are listed in the attributes at the top of the
+	// ddg.  The order is important since procedure nodes refer
+	// to source & line numbers which we use to display the
+	// source code to the user.
 	private List<ScriptInfo> scripts = new ArrayList<>();
 
 	/**
@@ -920,14 +921,17 @@ public class ProvenanceData {
 	public void setAttributes(Attributes attributes) {
 		this.attributes = attributes;
 		
-		String mainScriptName = attributes.get(Attributes.SCRIPT);
+		// Use the attribute information about the main and the sourced scripts
+		// to build the list of scripts referenced so that we will be able to
+		// find the source code later.
+		String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
 		String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
 		scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
 
 		File mainScript = new File(mainScriptName);
 		File scriptDir = mainScript.getParentFile();
 		
-		String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPTS);
+		String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
 		if (sourcedScriptList == null) {
 			return;
 		}
@@ -940,10 +944,14 @@ public class ProvenanceData {
 			scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
 		}
 		
-		System.out.println(attributes.toString());
+		// System.out.println(attributes.toString());
 		
 	}
 
+	/**
+	 * 
+	 * @return the information about the scripts used to make this ddg
+	 */
 	public Collection<ScriptInfo> scripts() {
 		// TODO Auto-generated method stub
 		return scripts;
