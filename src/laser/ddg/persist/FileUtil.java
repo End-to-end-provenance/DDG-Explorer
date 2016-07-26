@@ -233,6 +233,15 @@ public class FileUtil {
 		}
 	}
 				
+	public static String getSaveDir(String originalFilePath) {
+		
+		File originalFile = new File(originalFilePath);
+		String timestamp = getTimestamp(originalFile);
+		String originalFileName = originalFile.getName();
+		
+		return SAVED_FILE_DIRECTORY + File.separatorChar + originalFileName + File.separatorChar + timestamp;
+	}
+
 	/**
 	 * Creates the directory that the database uses to find saved files
 	 * @param savedCopyDir the directory to create
@@ -413,5 +422,6 @@ public class FileUtil {
 		}
 		
 	}
+
 
 }

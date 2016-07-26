@@ -13,6 +13,14 @@ import java.util.Set;
  */
 public class Attributes {
 	private Map<String, String> attributes = new HashMap<>();
+	private static final String DDG_DIR = "DDGDirectory";
+	public static final String SOURCED_SCRIPTS = "SourcedScripts";
+	public static final String LANGUAGE = "Language";
+	public static final String SCRIPT = "Script";
+	// Attributes describing the entire DDG
+	public static final String EXECUTION_TIME = "DateTime";
+	public static final String SCRIPT_TIMESTAMPS = "SourcedScriptTimestamps";
+	public static final String MAIN_SCRIPT_TIMESTAMP = "Script Timestamp";
 
 	public String get(String attrName) {
 		return attributes.get(attrName);
@@ -30,5 +38,12 @@ public class Attributes {
 		return attributes.containsKey(name);
 	}
 	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (String key : names()) {
+			sb.append(key + " = " + attributes.get(key) + "\n");
+		}
+		return sb.toString();
+	}
 	
 }

@@ -28,6 +28,7 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
+import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -2030,7 +2031,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	public String getScriptPath(int scriptNum) {
-		return provData.getScript(scriptNum);
+		return provData.getScriptPath(scriptNum);
 	}
 
 	public String getProcessName() {

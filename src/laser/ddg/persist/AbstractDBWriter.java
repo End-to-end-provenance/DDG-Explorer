@@ -10,6 +10,7 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
+import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 
 /**
@@ -43,57 +44,60 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 			DDGExplorer.showErrMsg("Already in the database");
 			return;
 		}
+		
+		saveDir = FileUtil.getSaveDir(processPathName);
 
-		//ErrorLog.showErrMsg("Copying script files\n");
-		// Copy the script file
-		copyScriptFile(processPathName);
+		for (ScriptInfo script : provData.scripts()) {
+			script.copyScriptFile();
+		}
 		
 		this.provData = provData;
 		
 		// Copy the ddg.txt file (must take place AFTER setting provData)
+		System.out.println("Copying ddg.txt");
 		copyFileData(ddgTextPath);
 		
-		//ErrorLog.showErrMsg("Initializing DDG in DB");
+		System.out.println("Initializing DDG in DB");
 		initializeDDGinDB(provData, executionTimestamp, provData.getLanguage());
-		//ErrorLog.showErrMsg("Saving DDG\n");
+		System.out.println("Saving DDG\n");
 		saveDDG(provData);
 	}
 	
-	private String copyScriptFile(String filePath) {
-		//ErrorLog.showErrMsg("File to copy: " + script + "\n");
-		File theFile = new File(filePath);
-		//Scanner readFile;
-
-		try {
-			//readFile = new Scanner(theFile);
-			//PrintWriter writeFile = null;
-			File savedFile = FileUtil.createSavedFile(theFile);
-			saveDir = savedFile.getParent();
-			//ErrorLog.showErrMsg("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
-			
-			// It may have been copied on a previous execution.
-			if (!savedFile.exists()) {
-				//ErrorLog.showErrMsg("Copying");
-				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
-				if (!savedFile.exists()) {
-					DDGExplorer.showErrMsg("Copy failed!!!\n\n");
-				}
-				savedFile.setReadOnly();
-			}
-//			else {
-//				ErrorLog.showErrMsg("Not copying.  Already there.");
+//	private String copyScriptFile(String filePath, String toDir) {
+//		System.out.println("File to copy: " + filePath + "\n");
+//		File theFile = new File(filePath);
+//		//Scanner readFile;
+//
+//		try {
+//			//readFile = new Scanner(theFile);
+//			//PrintWriter writeFile = null;
+//			File savedFile = FileUtil.createSavedFile(theFile);
+//			saveDir = savedFile.getParent();
+//			System.out.println("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
+//			
+//			// It may have been copied on a previous execution.
+//			if (!savedFile.exists()) {
+//				System.out.println("Copying");
+//				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+//				if (!savedFile.exists()) {
+//					DDGExplorer.showErrMsg("Copy failed!!!\n\n");
+//				}
+//				savedFile.setReadOnly();
 //			}
-			return savedFile.getAbsolutePath();
-			
-			//System.out.println(fileContents.toString());
-		} catch (FileNotFoundException e) {
-			DDGExplorer.showErrMsg("Cannot find file: " + filePath + "\n\n");
-			return null;
-		} catch (IOException e) {
-			DDGExplorer.showErrMsg("Exception copying" + filePath + "to database: " + e);
-			return null;
-		}
-	}
+//			else {
+//				System.out.println("Not copying.  Already there.");
+//			}
+//			return savedFile.getAbsolutePath();
+//			
+//			//System.out.println(fileContents.toString());
+//		} catch (FileNotFoundException e) {
+//			DDGExplorer.showErrMsg("Cannot find file: " + filePath + "\n\n");
+//			return null;
+//		} catch (IOException e) {
+//			DDGExplorer.showErrMsg("Exception copying" + filePath + "to database: " + e);
+//			return null;
+//		}
+//	}
 
 //	private String copyFile(Scanner readFile, File savedFile)
 //			throws FileNotFoundException {

@@ -3,6 +3,7 @@ package laser.ddg;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,7 +36,7 @@ public class ProvenanceData {
 	// Name of the process the provenance data is for
 	private String processName;
 	
-	// The timestamp of the process the provenance data is for
+	// The execution timestamp of the ddg
 	private String timestamp;
 	
 	// The language the provenance data process was written in
@@ -95,11 +96,13 @@ public class ProvenanceData {
 	// The query that this provenance data represents.
 	private String query;
 	
-	// The name of the file containing the script/program executed to create this DDG.
-	private ArrayList<String> scriptFileNames = new ArrayList<>();
-
-	// The name of the scripts that were used to create this provenance.
-	private String[] scripts;
+//	// The name of the file containing the script/program executed to create this DDG.
+//	private ArrayList<String> scriptFileNames = new ArrayList<>();
+//
+//	// The name of the file containing the script/program executed to create this DDG.
+//	private String[] scriptTimeStamps;
+	
+	private List<ScriptInfo> scripts = new ArrayList<>();
 
 	/**
 	 * Construct a default object
@@ -130,9 +133,8 @@ public class ProvenanceData {
 	 * 			the timestamp associated with the script
 	 * @param language the language that the process was written in
 	 */
-	public ProvenanceData(String[] scripts, String timestamp, String language) {
-		this(scripts[0]);
-		this.scripts = scripts;
+	public ProvenanceData(String[] scriptNames, String timestamp, String language) {
+		this(scriptNames[0]);
 		this.timestamp = timestamp;
 		this.language = language;
 	}
@@ -609,6 +611,13 @@ public class ProvenanceData {
 	}
 	
 	/**
+	 * @return the names of the scripts used in this execution
+	 */
+//	public String[] getScriptNames() {
+//		return scripts;
+//	}
+	
+	/**
 	 * 
 	 * Return the language the process was written in to create this ddg
 	 * 
@@ -772,6 +781,10 @@ public class ProvenanceData {
 	public void addAttribute(String name, String value) {
 		attributes.set(name, value);
 	}
+	
+	public String getScriptPath(int which) {
+		return scripts.get(which).getFilepath();
+	}
 
 	/**
 	 * Parses the file that contains the source code for the program executed.
@@ -779,7 +792,10 @@ public class ProvenanceData {
 	 * function name.
 	 */
 	public void createFunctionTable() {
-		createFunctionTable(processName);
+		for (ScriptInfo script : scripts()) {
+			System.out.println("Creating function table for " + script);
+			createFunctionTable(script);
+		}
 	}
 
 	/**
@@ -788,12 +804,12 @@ public class ProvenanceData {
 	 * function name.
 	 * @param fileName the name of the file that contains the function definitions
 	 */
-	public void createFunctionTable(String fileName) {
+	public void createFunctionTable(ScriptInfo script) {
 		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
-		scriptFileNames.add(fileName);
+
 		if (scriptParser != null) {
-			functionTable.putAll(scriptParser.buildFunctionTable(fileName));
-			blockTable.putAll(scriptParser.buildBlockTable(fileName));
+			functionTable.putAll(scriptParser.buildFunctionTable(script.getFilepath()));
+			blockTable.putAll(scriptParser.buildBlockTable(script.getFilepath()));
 		}
 	}
 
@@ -811,10 +827,6 @@ public class ProvenanceData {
 		return blockTable.get(blockName);
 	}
 
-	public String getScript(int scriptNum) {
-		return scriptFileNames.get(scriptNum);
-	}
-	
 	public String getSourcePath() {
 		return sourceDDGFile;
 	}
@@ -907,6 +919,34 @@ public class ProvenanceData {
 
 	public void setAttributes(Attributes attributes) {
 		this.attributes = attributes;
+		
+		String mainScriptName = attributes.get(Attributes.SCRIPT);
+		String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
+		scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
+
+		File mainScript = new File(mainScriptName);
+		File scriptDir = mainScript.getParentFile();
+		
+		String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPTS);
+		if (sourcedScriptList == null) {
+			return;
+		}
+		String[] sourcedScriptNames = sourcedScriptList.split(",");
+
+		String[] sourcedScriptTimestamps = attributes.get(Attributes.SCRIPT_TIMESTAMPS).split(",");
+		assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
+
+		for (int i = 0; i < sourcedScriptNames.length; i++) {
+			scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
+		}
+		
+		System.out.println(attributes.toString());
+		
+	}
+
+	public Collection<ScriptInfo> scripts() {
+		// TODO Auto-generated method stub
+		return scripts;
 	}
 
 

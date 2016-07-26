@@ -66,12 +66,6 @@ public class Parser {
 	// Special characters
 	private static final char QUOTE = '\"';
 	
-	// Attributes describing the entire DDG
-	private static final String EXECUTION_TIME = "DateTime";
-	private static final String SCRIPT = "Script";
-	private static final String LANGUAGE = "Language";
-	private static final String SOURCED_SCRIPTS = "SourcedScripts";
-	
 	// Codes used to identify dataflow and control flow edges
 	private static final String DATA_FLOW = "DF";
 	private static final String CONTROL_FLOW = "CF";
@@ -125,7 +119,6 @@ public class Parser {
 	// Time of the last procedure node encountered
 	private double lastProcElapsedTime = 0.0;
 
-	
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
@@ -166,11 +159,14 @@ public class Parser {
 		parseHeader();
 		
 		// If there was no script attribute, use the filename.
+		if (scripts == null) {
+			scripts = new String[1];
+		}
 		if (scrpt == null) {
-			if (scripts == null) {
-				scripts = new String[1];
-			}
 			scripts[0] = fileBeingParsed.getName();
+		}
+		else {
+			scripts[0] = scrpt;
 		}
 		ProvenanceData provData = new ProvenanceData(scripts, timestamp, language);
 		
@@ -762,28 +758,28 @@ public class Parser {
 		try {
 			String attributeValue = convertNextTokenToString();
 			//System.out.println("Found attribute, " + attributeName + " value: " + attributeValue);
-			if(attributeName.equals(LANGUAGE)){
+			if(attributeName.equals(Attributes.LANGUAGE)){
 				language = attributeValue;
 			}
-			else if(attributeName.equals(SCRIPT)){
+			else if(attributeName.equals(Attributes.SCRIPT)){
 				scrpt = attributeValue;
 			}
-			else if(attributeName.equals(EXECUTION_TIME)){
+			else if(attributeName.equals(Attributes.EXECUTION_TIME)){
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
 			}
-			else if (attributeName.equals(SOURCED_SCRIPTS)) {
+			else if (attributeName.equals(Attributes.SOURCED_SCRIPTS)) {
 				// Remember the script names so that we will be able to show
 				// the user the source code
-				if (attributeValue.indexOf(",") >= 0) {
-					String[] sourcedScripts = attributeValue.split(",");
-					scripts = new String[sourcedScripts.length + 1];
-					System.arraycopy(sourcedScripts, 0, scripts, 1, sourcedScripts.length);
+				String[] sourcedScripts = attributeValue.split(",");
+				scripts = new String[sourcedScripts.length + 1];
+				String ddgDir = fileBeingParsed.getParent();
+					
+				for (int i = 0; i < sourcedScripts.length; i++) {
+					scripts[i+1] = ddgDir + "/scripts/" + sourcedScripts[i];
 				}
-				else {
-					scripts = new String[1];
-				}
+
 				scripts[0] = scrpt;
 				
 				
