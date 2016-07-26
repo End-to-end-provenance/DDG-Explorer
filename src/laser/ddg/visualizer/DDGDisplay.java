@@ -554,7 +554,7 @@ public class DDGDisplay extends Display {
 					fileDisplayers.set(scriptNum, new FileDisplayer(scriptNum));
 				}
 
-				fileDisplayers.get(scriptNum).highlight(firstLine, lastLine, scriptNum);
+				fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
 
 			}
 
@@ -758,26 +758,23 @@ public class DDGDisplay extends Display {
 				}
 
 				if (fileContents != null) {
-					if (fileFrame == null || !fileFrame.isDisplayable()) {
-						fileFrame = new JFrame();
-						fileTextArea = new JTextArea();
-						fileTextArea.setText(fileContents);
-						fileTextArea.setEditable(false);
-						JScrollPane scroller = new JScrollPane(fileTextArea);
-						fileFrame.add(scroller, BorderLayout.CENTER);
-						fileFrame.setSize(600, 800);
-						fileHighlighter = fileTextArea.getHighlighter();
-						fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
+					fileFrame = new JFrame();
+					fileTextArea = new JTextArea();
+					fileTextArea.setText(fileContents);
+					fileTextArea.setEditable(false);
+					JScrollPane scroller = new JScrollPane(fileTextArea);
+					fileFrame.add(scroller, BorderLayout.CENTER);
+					fileFrame.setSize(600, 800);
+					fileHighlighter = fileTextArea.getHighlighter();
+					fileHighlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.YELLOW);
 
-						TextLineNumber tln = new TextLineNumber(fileTextArea);
-						scroller.setRowHeaderView(tln);
-
-					}
+					TextLineNumber tln = new TextLineNumber(fileTextArea);
+					scroller.setRowHeaderView(tln);
 				}
 
 			}
 
-			void highlight(int firstLine, int lastLine, int scriptNum) {
+			void highlight(int firstLine, int lastLine) {
 				try {
 					fileFrame.setVisible(true);
 					fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1));

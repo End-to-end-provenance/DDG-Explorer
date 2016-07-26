@@ -37,7 +37,6 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 	public void persistDDG(ProvenanceData provData) {
 		String processPathName = provData.getProcessName();
 		String executionTimestamp = provData.getTimestamp();
-		String ddgTextPath = provData.getSourcePath();
 		
 		if (alreadyInDB(processPathName, executionTimestamp, provData.getLanguage())) {
 			//Do not put anything into the database, remove the listener
@@ -55,7 +54,7 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 		
 		// Copy the ddg.txt file (must take place AFTER setting provData)
 		System.out.println("Copying ddg.txt");
-		copyFileData(ddgTextPath);
+		copyFileData(provData.getSourcePath());
 		
 		System.out.println("Initializing DDG in DB");
 		initializeDDGinDB(provData, executionTimestamp, provData.getLanguage());

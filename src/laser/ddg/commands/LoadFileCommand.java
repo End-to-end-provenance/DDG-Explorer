@@ -53,7 +53,6 @@ public class LoadFileCommand implements ActionListener {
 	 */
 	public static void loadFile(File selectedFile) throws Exception{
 		JenaWriter jenaWriter = JenaWriter.getInstance();
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 		String selectedFileName = selectedFile.getName();
 		DDGExplorer.loadingDDG();
@@ -62,6 +61,7 @@ public class LoadFileCommand implements ActionListener {
 		parser.addNodesAndEdges();
 		
 		//new tab!
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
 	}

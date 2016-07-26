@@ -13,7 +13,6 @@ import java.util.Set;
  */
 public class Attributes {
 	private Map<String, String> attributes = new HashMap<>();
-	private static final String DDG_DIR = "DDGDirectory";
 	public static final String SOURCED_SCRIPTS = "SourcedScripts";
 	public static final String LANGUAGE = "Language";
 	public static final String SCRIPT = "Script";
@@ -38,6 +37,7 @@ public class Attributes {
 		return attributes.containsKey(name);
 	}
 	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (String key : names()) {

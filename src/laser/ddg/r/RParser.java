@@ -108,7 +108,6 @@ public class RParser implements LanguageParser {
 		Map<String, String> blockTable = new HashMap<>();
 		//ErrorLog.showErrMsg("Searching for start-finish blocks");
 		int nextStart = fileContents.indexOf("ddg.start");
-		int count = 0;
 		while (nextStart != -1) {
 			//ErrorLog.showErrMsg("Found ddg.start");
 			String blockName = getBlockName(fileContents, nextStart);
@@ -121,7 +120,6 @@ public class RParser implements LanguageParser {
 				}
 				else {
 					//ErrorLog.showErrMsg("Not previously defined");
-					count++;
 					int blockFinish = getBlockFinish(fileContents, nextStart, blockName);
 					if (blockFinish == -1) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "ddg.finish is missing for block " + blockName + "\n\n");
@@ -151,7 +149,7 @@ public class RParser implements LanguageParser {
 	 * @param nextStart the beginning of the ddg.start call
 	 * @return the name passed to ddg.start
 	 */
-	private String getBlockName(String script, int nextStart) {
+	private static String getBlockName(String script, int nextStart) {
 		int nameStart = script.indexOf("\"", nextStart) + 1;
 		int nameFinish = script.indexOf("\"", nameStart);
 		int rightParen = script.indexOf(")", nextStart) + 1;
@@ -170,7 +168,7 @@ public class RParser implements LanguageParser {
 	 * @param blockName the name of the block we are searching for
 	 * @return the location of the start of the ddg.finish call
 	 */
-	private int getBlockFinish(String script, int nextStart, String blockName) {
+	private static int getBlockFinish(String script, int nextStart, String blockName) {
 		int blockFinish = script.indexOf("ddg.finish", nextStart);
 		String finishBlockName = null;
 		while (blockFinish != -1) {
@@ -183,10 +181,9 @@ public class RParser implements LanguageParser {
 		return -1;
 	}
 
-	private Map<String, String> findFunctionDeclarations(String script) {
+	private static Map<String, String> findFunctionDeclarations(String script) {
 		Map<String, String> functionTable = new HashMap<>();
 		int nextFunctionKeyword = script.indexOf("function");
-		int count = 0;
 		while (nextFunctionKeyword != -1) {
 			int bindSymbolStart = getPrecedingTokenBindSymbol(script, nextFunctionKeyword);
 			if(bindSymbolStart != -1) {
@@ -200,7 +197,6 @@ public class RParser implements LanguageParser {
 						functionTable.put(functionName, "There is more than one definition of the function " + functionName + ".");
 					}
 					else {
-						count++;
 						String functionBody = getFunctionBody(script, nextFunctionKeyword);
 						functionTable.put(functionName, functionBody);
 						//System.out.println(functionName);
@@ -223,7 +219,7 @@ public class RParser implements LanguageParser {
 	 * @param i
 	 * @return
 	 */
-	private String getFunctionBody(String script, int startIndex) {
+	private static String getFunctionBody(String script, int startIndex) {
 		int argListEnd = script.indexOf(')', startIndex);
 		
 		// Skip over whitespace
@@ -256,7 +252,7 @@ public class RParser implements LanguageParser {
 		return script.substring(startIndex, i);
 	}
 
-	private String getBoundName(String script, int bindSymbolStart) {
+	private static String getBoundName(String script, int bindSymbolStart) {
 		String name = "";
 		
 		// Skip over white space
@@ -278,7 +274,7 @@ public class RParser implements LanguageParser {
 		return name;
 	}
 	
-	private boolean isNameChar(char c) {
+	private static boolean isNameChar(char c) {
 		if (Character.isAlphabetic(c)) {
 			return true;
 		}
@@ -294,7 +290,7 @@ public class RParser implements LanguageParser {
 		return false;
 	}
 
-	private int getPrecedingTokenBindSymbol(String script, int startingPos) {
+	private static int getPrecedingTokenBindSymbol(String script, int startingPos) {
 		int bindStart = script.lastIndexOf("<-", startingPos);
 		if (bindStart == -1) {
 			return -1;

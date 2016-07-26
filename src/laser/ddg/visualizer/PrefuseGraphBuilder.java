@@ -28,7 +28,6 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
-import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -260,19 +259,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return pinID;
 	}
 
-	private static String getStepNameFromFinishNode(String nodeFinishName) {
-		return nodeFinishName.substring(0, nodeFinishName.lastIndexOf("Finish"));
-	}
-
-	private String getStepNameFromFinishNode(Node finishNode) {
-		return getStepNameFromFinishNode(PrefuseUtils.getName(finishNode));
-	}
-
 	private static String getStepNameFromStartNode(String nodeStartName) {
 		return nodeStartName.substring(0, nodeStartName.lastIndexOf("Start"));
 	}
 
-	private String getStepNameFromStartNode(Node startNode) {
+	private static String getStepNameFromStartNode(Node startNode) {
 		return getStepNameFromStartNode(PrefuseUtils.getName(startNode));
 	}
 
@@ -713,7 +704,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param compareDDG true if we are drawing side-by-side graphs for comparison, otherwise false
 	 * @return
 	 */
-	private ActionList assignColors(boolean compareDDG) {
+	private static ActionList assignColors(boolean compareDDG) {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -848,20 +839,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
-		processStarted(processName, provData, false);
+		processStarted(provData, false);
 	}
 
 	/**
 	 * Initializes the prefuse tables.
 	 */
-	public void processStarted(String processName, boolean compareDDG) {
-		processStarted(processName, null, true);
+	public void processStartedForDiff() {
+		processStarted(null, true);
 	}
 
 	/**
 	 * Initializes the prefuse tables.
 	 */
-	private void processStarted(String processName, ProvenanceData provData, boolean compareDDG) {
+	private void processStarted(ProvenanceData provData, boolean compareDDG) {
 		// initialize file
 		/* initFile(); */
 

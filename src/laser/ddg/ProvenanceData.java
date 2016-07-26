@@ -882,7 +882,7 @@ public class ProvenanceData {
 	 * Allows a visitor to operate on each input edge in a ddg
 	 * @param visitor the object that will operate on the edge
 	 */
-	private void visitInputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
+	private static void visitInputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
 		Iterator<DataInstanceNode> inputIter = pin.inputParamValues();
 		while (inputIter.hasNext()) {
 			DataInstanceNode input = inputIter.next();
@@ -894,7 +894,7 @@ public class ProvenanceData {
 	 * Allows a visitor to operate on each output edge in a ddg
 	 * @param visitor the object that will operate on the edge
 	 */
-	private void visitOutputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
+	private static void visitOutputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
 
 		Iterator<DataInstanceNode> outputIter = pin.outputParamValues();
 		while (outputIter.hasNext()) {
