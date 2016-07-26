@@ -383,7 +383,32 @@ public class DDGPanel extends JPanel {
 	}
 
 
+	/**
+	 * Display source code highlighting the selected lines
+	 * @param firstLine first line to highlight
+	 * @param lastLine last line to highlight
+	 * @param scriptNum which script to show
+	 */
 	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+		loadSourceCode(scriptNum);
+	
+		fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
+	}
+	
+	/**
+	 * Display source code without highlighting
+	 * @param scriptNum which script to load
+	 */
+	public void displaySourceCode(int scriptNum) {
+		loadSourceCode(0);
+		fileDisplayers.get(scriptNum).nohighlight();
+	}
+
+	/**
+	 * Load the script into a frame if it is not already loaded
+	 * @param scriptNum which script to load
+	 */
+	private void loadSourceCode(int scriptNum) {
 		for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
 			fileDisplayers.add(i, null);
 		}
@@ -391,8 +416,6 @@ public class DDGPanel extends JPanel {
 		if (fileDisplayers.get(scriptNum) == null) {
 			fileDisplayers.set(scriptNum, new ScriptDisplayer(builder, scriptNum));
 		}
-	
-		fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
 	}
 
 }

@@ -123,4 +123,10 @@ public class ScriptDisplayer {
 
 	}
 
+	public void nohighlight() {
+		fileFrame.setVisible(true);
+		fileTextArea.setCaretPosition(0);
+		fileHighlighter.removeAllHighlights();
+	}
+
 }

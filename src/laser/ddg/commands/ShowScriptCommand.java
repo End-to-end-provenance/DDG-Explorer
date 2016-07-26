@@ -22,24 +22,25 @@ public class ShowScriptCommand implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
+		ddgExplorer.getCurrentDDGPanel().displaySourceCode(0);
 		
-		// TODO: Put up a menu to allow the user to select which script if there is more than one sourced
-		String scriptFileName = curDDG.getProcessName();
-		//System.out.println("ShowScriptCommand: scriptFileName = " + scriptFileName);
-		if (scriptFileName == null) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
-		}
-		else {
-			File scriptFile = new File (scriptFileName);
-			if (scriptFile.exists()) {
-				FileViewer fileViewer = new FileViewer(scriptFileName, "");
-				fileViewer.displayFile();
-			}
-			else {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
-			}				
-
-		}
+//		// TODO: Put up a menu to allow the user to select which script if there is more than one sourced
+//		String scriptFileName = curDDG.getProcessName();
+//		//System.out.println("ShowScriptCommand: scriptFileName = " + scriptFileName);
+//		if (scriptFileName == null) {
+//			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
+//		}
+//		else {
+//			File scriptFile = new File (scriptFileName);
+//			if (scriptFile.exists()) {
+//				FileViewer fileViewer = new FileViewer(scriptFileName, "");
+//				fileViewer.displayFile();
+//			}
+//			else {
+//				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
+//			}				
+//
+//		}
 	}
 
 }

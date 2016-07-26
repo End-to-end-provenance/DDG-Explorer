@@ -794,7 +794,7 @@ public class ProvenanceData {
 	 */
 	public void createFunctionTable() {
 		for (ScriptInfo script : scripts()) {
-			System.out.println("Creating function table for " + script);
+			// System.out.println("Creating function table for " + script);
 			createFunctionTable(script);
 		}
 	}
