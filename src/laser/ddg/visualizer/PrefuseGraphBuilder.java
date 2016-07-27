@@ -1923,19 +1923,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	/**
-	 * Returns the definition of a block. Returns an error string if there is no
-	 * function with that name, or there is more than one function with that
-	 * name
-	 * 
-	 * @param blockName
-	 *            the name of the block
-	 * @return the block
-	 */
-	public String getBlockBody(String blockName) {
-		return provData.getBlockBody(blockName);
-	}
-
 	public void setProvData(ProvenanceData provData) {
 		this.provData = provData;
 		ddgPanel.setProvData(provData);

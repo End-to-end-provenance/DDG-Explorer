@@ -174,7 +174,6 @@ public class Parser {
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
 		provData.setAttributes(attributes);
 		
-		provData.createFunctionTable();
 		provData.setQuery("Entire DDG");
 		builder.setProvData(provData);
 		

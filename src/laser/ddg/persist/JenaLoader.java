@@ -283,13 +283,7 @@ public class JenaLoader {
 			//System.out.println("Object is " + value);
 		}
 		pd.setAttributes(attributes);
-		
-		// Find the file that contains the script used to create the DDG being loaded
-		
-		for (ScriptInfo script: pd.scripts()) {
-			pd.createFunctionTable(script);
-		}
-		
+				
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);
 	}
 

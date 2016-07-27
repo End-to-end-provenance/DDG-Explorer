@@ -87,9 +87,6 @@ public class ProvenanceData {
 	// Listeners to changes to the DDG
 	private List<ProvenanceListener> provListeners = new LinkedList<>();
 
-	// Table mapping named blocks to the code within those blocks.
-	private Map<String, String> blockTable = new HashMap<>();
-	
 	// The query that this provenance data represents.
 	private String query;
 	
@@ -796,36 +793,6 @@ public class ProvenanceData {
 	
 	public String getScriptPath(int which) {
 		return scripts.get(which).getFilepath();
-	}
-
-	/**
-	 * Parses the file that contains the source code for the program executed.
-	 * Creates a table that allows us to look up function definitions given a
-	 * function name.
-	 */
-	public void createFunctionTable() {
-		for (ScriptInfo script : scripts()) {
-			// System.out.println("Creating function table for " + script);
-			createFunctionTable(script);
-		}
-	}
-
-	/**
-	 * Parses the file that contains the source code for the program executed.
-	 * Creates a table that allows us to look up function definitions given a
-	 * function name.
-	 * @param fileName the name of the file that contains the function definitions
-	 */
-	public void createFunctionTable(ScriptInfo script) {
-		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
-
-		if (scriptParser != null) {
-			blockTable.putAll(scriptParser.buildBlockTable(script.getFilepath()));
-		}
-	}
-
-	public String getBlockBody(String blockName) {
-		return blockTable.get(blockName);
 	}
 
 	public String getSourcePath() {
