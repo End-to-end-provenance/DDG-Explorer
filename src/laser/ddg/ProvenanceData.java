@@ -952,7 +952,7 @@ public class ProvenanceData {
 	 * 
 	 * @return the information about the scripts used to make this ddg
 	 */
-	public Collection<ScriptInfo> scripts() {
+	public List<ScriptInfo> scripts() {
 		// TODO Auto-generated method stub
 		return scripts;
 	}

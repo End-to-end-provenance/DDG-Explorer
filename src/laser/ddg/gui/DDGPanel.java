@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -18,6 +19,7 @@ import javax.swing.border.EtchedBorder;
 
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptInfo;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
@@ -395,7 +397,7 @@ public class DDGPanel extends JPanel {
 	 * @param scriptNum which script to load
 	 */
 	public void displaySourceCode(int scriptNum) {
-		loadSourceCode(0);
+		loadSourceCode(scriptNum);
 		fileDisplayers.get(scriptNum).nohighlight();
 	}
 
@@ -411,6 +413,13 @@ public class DDGPanel extends JPanel {
 		if (fileDisplayers.get(scriptNum) == null) {
 			fileDisplayers.set(scriptNum, new ScriptDisplayer(builder, scriptNum));
 		}
+	}
+
+	public void displaySourceCode(ScriptInfo script) {
+		List<ScriptInfo> scripts = provData.scripts();
+		int pos = scripts.indexOf(script);
+		assert pos >= 0;
+		displaySourceCode (pos);
 	}
 
 }

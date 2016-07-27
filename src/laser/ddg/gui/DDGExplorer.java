@@ -324,8 +324,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		attributesItem.setEnabled(false);
 		DDGMenu.add(attributesItem);
 		
-		showScriptItem = new JMenuItem("Show R script");
-		showScriptItem.addActionListener(new ShowScriptCommand());
+		showScriptItem = new JMenu("Show R script...");
+		showScriptItem.addMouseListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
