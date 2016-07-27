@@ -381,6 +381,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 		return null;
 	}
+	
+	public DataInstanceNode getDataNode (String leafName) {
+		return provData.findDin (leafName);
+	}
 
 	/**
 	 * Build the visual graph

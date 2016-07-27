@@ -1,7 +1,6 @@
 package laser.ddg.visualizer;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -17,15 +16,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 
+import laser.ddg.DataInstanceNode;
+import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.gui.DDGPanel;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -286,33 +285,6 @@ public class DDGDisplay extends Display {
 	}
 
 	/**
-	 * Method that, given a NodeItem, will return the function name associated
-	 * with that node.
-	 * 
-	 * @return funcName a String representing the function name associated with
-	 *         the NodeItem
-	 */
-	private static String funcFromNode(NodeItem node) {
-		String funName = PrefuseUtils.getValue(node);
-
-		// Value indicates this is a function node, look in node name for
-		// function name
-		if (funName.equals(FUNCTION)) {
-			String nodeName = PrefuseUtils.getName(node);
-
-			// The index exists, take that substring, otherwise take all of it
-			int beginIndex = nodeName.indexOf("-");
-			if (beginIndex >= 0) {
-				funName = nodeName.substring(beginIndex + 1);
-			} else {
-				funName = nodeName;
-			}
-		}
-
-		return (funName);
-	}
-
-	/**
 	 * Method that will display the code of an R function in a JTextArea for
 	 * procedure nodes or data nodes which contain FUNCTION values
 	 * 
@@ -320,53 +292,17 @@ public class DDGDisplay extends Display {
 	 *            leaf process node that holds the name of the function
 	 */
 	private void displayFunc(VisualItem leaf) {
-		// find the name of the function to display
-		String functionName = funcFromNode((NodeItem) leaf);
-
-		// Create the JFrame to display the function contents in a JTextArea
-		JFrame.setDefaultLookAndFeelDecorated(true);
-		JFrame frame = new JFrame(functionName);
-		frame.setSize(new Dimension(500, 500));
-
-		// Create the text area, include the first line to start with
-		JTextArea rFunc = new JTextArea();
-
-		String body = null;
-		if (PrefuseUtils.isLeafNode((NodeItem) leaf)) {
-			// System.out.println("Looking for function " + functionName);
-			body = builder.getFunctionBody(functionName);
-			if (body == null) {
-				// System.out.println("Looking for block " + functionName);
-				body = builder.getBlockBody(functionName);
-			}
-			if (body == null) {
-				JOptionPane.showMessageDialog(DDGDisplay.this,
-						"Sorry, this code could not be found within the associated script file.");
-				return;
-			}
-		} else {
-			body = builder.getBlockBody(functionName);
-			// System.out.println("Looking for block " + functionName);
-			if (body == null) {
-				// System.out.println("Looking for function " + functionName);
-				body = builder.getFunctionBody(functionName);
-			}
-			if (body == null) {
-				JOptionPane.showMessageDialog(DDGDisplay.this,
-						"Sorry, this code could not be found within the associated script file.");
-				return;
-			}
-		}
-
-		// add each line to the text area
-		rFunc.setText(body);
-		rFunc.setEditable(false);
-		JScrollPane scrollPane = new JScrollPane(rFunc, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		rFunc.setLineWrap(true);
-		frame.add(scrollPane);
-		frame.setVisible(true);
-
+		String leafName = PrefuseUtils.getName((NodeItem) leaf);
+		
+		DataInstanceNode funcDin = builder.getDataNode (leafName);
+		
+		// Find the node that sets the function value
+		ProcedureInstanceNode funcPin = funcDin.getProducer();
+		int scriptNum = funcPin.getScriptNumber();
+		int lineNum = funcPin.getLineNumber();
+		DDGPanel curPanel = DDGExplorer.getCurrentDDGPanel();
+		curPanel.displaySourceCode(lineNum, lineNum, scriptNum);
+		
 	}
 
 	/**

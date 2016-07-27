@@ -726,6 +726,20 @@ public class ProvenanceData {
 		return null;
 	}
 
+	public DataInstanceNode findDin(String nodeName) {
+		Iterator<DataInstanceNode> dinIt = dinIter();
+		//System.out.println("Looking for data node " + data + "  Found:");
+		
+		while(dinIt.hasNext()){
+			DataInstanceNode dCheck = dinIt.next();
+			//System.out.println("   " + dCheck.getId());
+			if(nodeName.equals(dCheck.getName())){
+				return dCheck;
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * @return the timestamp associated with the file that contains
 	 * 	the program that was executed to produce the ddg.  This is 
@@ -956,6 +970,7 @@ public class ProvenanceData {
 		// TODO Auto-generated method stub
 		return scripts;
 	}
+
 
 
 }
