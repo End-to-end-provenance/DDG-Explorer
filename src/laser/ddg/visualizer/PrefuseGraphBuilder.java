@@ -1924,30 +1924,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Returns the definition of a function. Returns an error string if there is
-	 * no function with that name, or there is more than one function with that
-	 * name
-	 * 
-	 * @param functionName
-	 *            the name of the function
-	 * @return the definition
-	 */
-	public String getFunctionBody(String functionName) {
-		// Remove any parameters if they appear in the string
-		int blankIndex = functionName.indexOf(" ");
-		if (blankIndex != -1) {
-			functionName = functionName.substring(0, blankIndex);
-		}
-
-		int parenIndex = functionName.indexOf("(");
-		if (parenIndex != -1) {
-			functionName = functionName.substring(0, parenIndex);
-		}
-
-		return provData.getFunctionBody(functionName);
-	}
-
-	/**
 	 * Returns the definition of a block. Returns an error string if there is no
 	 * function with that name, or there is more than one function with that
 	 * name

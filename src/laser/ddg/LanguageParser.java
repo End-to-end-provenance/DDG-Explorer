@@ -14,14 +14,6 @@ import java.util.Map;
 public interface LanguageParser {
 
 	/**
-	 * Parse the script and create a table where the keys are function names
-	 * and the values are the function bodies
-	 * @param script file containing the program text
-	 * @return the table
-	 */
-	public Map<String, String> buildFunctionTable(String script);
-
-	/**
 	 * Parse the script and create a table where the keys are block names
 	 * and the values are the block bodies
          * @param fileName

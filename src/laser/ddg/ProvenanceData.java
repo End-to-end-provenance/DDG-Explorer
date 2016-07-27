@@ -87,9 +87,6 @@ public class ProvenanceData {
 	// Listeners to changes to the DDG
 	private List<ProvenanceListener> provListeners = new LinkedList<>();
 
-	// Table mapping function names to function bodies
-	private Map<String, String> functionTable = new HashMap<>();
-	
 	// Table mapping named blocks to the code within those blocks.
 	private Map<String, String> blockTable = new HashMap<>();
 	
@@ -823,19 +820,8 @@ public class ProvenanceData {
 		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
 
 		if (scriptParser != null) {
-			functionTable.putAll(scriptParser.buildFunctionTable(script.getFilepath()));
 			blockTable.putAll(scriptParser.buildBlockTable(script.getFilepath()));
 		}
-	}
-
-	/**
-	 * Looks up the definition of a function.  Returns an error string if there is more
-	 * than one function with that name. 
-	 * @param functionName the name of the function to look up
-	 * @return the function definition
-	 */
-	public String getFunctionBody(String functionName) {
-		return functionTable.get(functionName);
 	}
 
 	public String getBlockBody(String blockName) {

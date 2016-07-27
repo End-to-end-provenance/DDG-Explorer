@@ -68,27 +68,6 @@ public class RParser implements LanguageParser {
 	}
 
 	/**
-	 * Builds a table mapping function names to function bodies.
-	 * @param script the name of the file to parse
-	 * @return the function table constructed
-	 */
-	@Override
-	public Map<String, String> buildFunctionTable(String script) {
-		if (!script.equals(fileName)) {
-			readScript(script);
-		}
-
-		if (fileContents != null) {
-			Map<String, String> functionTable = findFunctionDeclarations(fileContents.toString());
-			//System.out.println(fileContents.toString());
-			return functionTable;
-			
-		} 
-		
-		return new HashMap<>();
-	}
-
-	/**
 	 * Find blocks of code set off by ddg.start and ddg.finish calls and add those to
 	 * the function table
 	 * @param script name of the file to examine
@@ -306,11 +285,4 @@ public class RParser implements LanguageParser {
 		return bindStart;
 	}
 
-	public static void main (String[] args) {
-		JFileChooser fileChooser = new JFileChooser (System.getProperty("user.home"));
-		if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-			new RParser().buildFunctionTable(fileChooser.getSelectedFile().getAbsolutePath());	
-		}
-		
-	}
 }
