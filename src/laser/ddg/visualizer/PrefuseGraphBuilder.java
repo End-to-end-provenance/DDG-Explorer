@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1040,12 +1041,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					addSuccessorsToQueue(nestedFinish, nodesReached);
 					NodeItem collapsedNode = addCollapsedNode(next, nestedFinish, nestedMembers);
 					memberNodes.add(collapsedNode);
-					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
+					try {
+						totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
+					} catch (ParseException e) {
+						e.printStackTrace(System.err);
+					}
 				}
 			}
 			else {
 				memberNodes.add(next);
-				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
+				try {
+					totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(next));
+				} catch (ParseException e) {
+					e.printStackTrace(System.err);
+				}
 
 				// Remember the finish node
 				if (nextName.endsWith(" Finish")) {
@@ -1058,9 +1067,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					int startStarts = startName.indexOf(" Start");
 					if (startStarts != -1) {
 						startName = startName.substring(startName.indexOf('-')+1, startStarts);
-						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp (finishNode));
-						PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
-						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
+						try {
+							totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(finishNode));
+							PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
+							PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
+						} catch (ParseException e) {
+							PrefuseUtils.setTimestamp(startNode, -1);
+							PrefuseUtils.setTimestamp(finishNode, -1);
+							e.printStackTrace(System.err);
+						}
 					}
 					if (startStarts == -1 || !startName.equals(finishName)) {
 						DDGExplorer.showErrMsg("Start and Finish nodes not paired up correctly.\n");

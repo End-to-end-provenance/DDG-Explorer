@@ -1,8 +1,9 @@
 package laser.ddg.search;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
-import com.ibm.icu.util.Calendar;
+import laser.ddg.visualizer.PrefuseUtils;
 
 /**
  * Manages lists of nodes by type to facilitate searching.
@@ -32,7 +33,13 @@ public class SearchIndex {
 		SearchElement element;
 		
 		if (type.equals("Operation")) {
-			double parsedTime = Double.parseDouble(time);
+			double parsedTime;
+			try {
+				parsedTime = PrefuseUtils.parseDouble(time);
+			} catch (ParseException e) {
+				parsedTime = -1;
+				e.printStackTrace(System.err);
+			}
 			OperationSearchElement opElement = new OperationSearchElement (type, name, id, parsedTime);
 			operationList.add (opElement);
 			element = opElement;

@@ -1,6 +1,7 @@
 package laser.ddg.visualizer;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,6 +87,11 @@ public class PrefuseUtils {
 	static final String LOCATION = "Location";
 	
 	static final DecimalFormat elapsedTimeFormat = new DecimalFormat("##.###");
+
+	public static double parseDouble (String num) throws ParseException {
+	    Number number = elapsedTimeFormat.parse(num);
+	    return number.doubleValue();
+	}
 
 
 	/**
