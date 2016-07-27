@@ -21,13 +21,20 @@ import laser.ddg.gui.DDGExplorer;
  *
  */
 public class ShowScriptCommand extends MouseAdapter {
+	private ProvenanceData menuDDG;
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		JMenu scriptMenu = (JMenu) e.getSource();
-		if (scriptMenu.getItemCount() == 0) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
 		
-			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-			ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
+		// If this is the first time the menu is used or if the
+		// user is viewing a different ddg than the one that the
+		// menu was created for, create a new menu.
+		if (menuDDG == null || menuDDG != curDDG) {
+			menuDDG = curDDG;
+		
+			JMenu scriptMenu = (JMenu) e.getSource();
+			scriptMenu.removeAll();
 			
 			Collection<ScriptInfo> scripts= curDDG.scripts();
 			for (ScriptInfo script : scripts) {
