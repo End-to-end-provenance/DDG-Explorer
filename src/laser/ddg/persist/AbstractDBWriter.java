@@ -46,6 +46,7 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 		
 		saveDir = FileUtil.getSaveDir(processPathName);
 
+		// Copy all of the scripts used
 		for (ScriptInfo script : provData.scripts()) {
 			FileUtil.copyScriptFile(script);
 		}

@@ -127,8 +127,8 @@ public class ProvenanceData {
 	 * 			the timestamp associated with the script
 	 * @param language the language that the process was written in
 	 */
-	public ProvenanceData(String[] scriptNames, String timestamp, String language) {
-		this(scriptNames[0]);
+	public ProvenanceData(String scrpt, String timestamp, String language) {
+		this(scrpt);
 		this.timestamp = timestamp;
 		this.language = language;
 	}
@@ -605,13 +605,6 @@ public class ProvenanceData {
 	}
 	
 	/**
-	 * @return the names of the scripts used in this execution
-	 */
-//	public String[] getScriptNames() {
-//		return scripts;
-//	}
-	
-	/**
 	 * 
 	 * Return the language the process was written in to create this ddg
 	 * 
@@ -719,6 +712,12 @@ public class ProvenanceData {
 		return null;
 	}
 
+	/**
+	 * Find the data node with the given name
+	 * @param nodeName the name of the node to search for
+	 * @return the data instance node with the given name.  Returns
+	 *   null if there is no node with that name.
+	 */
 	public DataInstanceNode findDin(String nodeName) {
 		Iterator<DataInstanceNode> dinIt = dinIter();
 		//System.out.println("Looking for data node " + data + "  Found:");
@@ -790,6 +789,12 @@ public class ProvenanceData {
 		attributes.set(name, value);
 	}
 	
+	/**
+	 * @param which the position if the script in the Sourced Files
+	 *   attribute.  Position 0 is the main script.  Sourced files
+	 *   begin at position 1.
+	 * @return the full path to the script
+	 */
 	public String getScriptPath(int which) {
 		return scripts.get(which).getFilepath();
 	}
@@ -890,6 +895,8 @@ public class ProvenanceData {
 		// Use the attribute information about the main and the sourced scripts
 		// to build the list of scripts referenced so that we will be able to
 		// find the source code later.
+		
+		// Include the main script that was executed
 		String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
 		String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
 		scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
@@ -897,6 +904,7 @@ public class ProvenanceData {
 		File mainScript = new File(mainScriptName);
 		File scriptDir = mainScript.getParentFile();
 		
+		// Include all the scripts included via a call to R's source function
 		String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
 		if (sourcedScriptList == null) {
 			return;
@@ -905,7 +913,7 @@ public class ProvenanceData {
 
 		String[] sourcedScriptTimestamps = attributes.get(Attributes.SCRIPT_TIMESTAMPS).split(",");
 		assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
-
+		
 		for (int i = 0; i < sourcedScriptNames.length; i++) {
 			scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
 		}
@@ -919,7 +927,6 @@ public class ProvenanceData {
 	 * @return the information about the scripts used to make this ddg
 	 */
 	public List<ScriptInfo> scripts() {
-		// TODO Auto-generated method stub
 		return scripts;
 	}
 

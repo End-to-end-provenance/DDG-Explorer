@@ -32,7 +32,6 @@ import laser.ddg.FileInfo;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
-import laser.ddg.ScriptInfo;
 
 /**
  * This class reads provenance data from a Jena database.

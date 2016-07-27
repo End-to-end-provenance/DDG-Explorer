@@ -68,6 +68,10 @@ public class ScriptDisplayer {
 		}
 	}
 
+	/**
+	 * Read the file recording the character position for each line start
+	 * @param theFile the file to read in
+	 */
 	private void readFile(File theFile) throws FileNotFoundException {
 		StringBuilder contentsBuilder = new StringBuilder();
 		Scanner readFile = null;
@@ -89,6 +93,9 @@ public class ScriptDisplayer {
 		}
 	}
 
+	/**
+	 * Display the file in a frame
+	 */
 	private void displayFileContents() {
 		fileFrame = new JFrame();
 		fileTextArea = new JTextArea();
@@ -104,6 +111,11 @@ public class ScriptDisplayer {
 		scroller.setRowHeaderView(tln);
 	}
 
+	/**
+	 * Highlight selected lines of the displayed file
+	 * @param firstLine highlight will begin with the first character of this line
+	 * @param lastLine highlight will end with the last character of this line
+	 */
 	public void highlight(int firstLine, int lastLine) {
 		try {
 			fileFrame.setVisible(true);
@@ -123,6 +135,9 @@ public class ScriptDisplayer {
 
 	}
 
+	/**
+	 * Removes all highlighting from the displayed file
+	 */
 	public void nohighlight() {
 		fileFrame.setVisible(true);
 		fileTextArea.setCaretPosition(0);

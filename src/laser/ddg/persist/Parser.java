@@ -101,11 +101,6 @@ public class Parser {
 	//The language of the script
 	private String language;
 	
-	// The scripts that are used in the program.
-	// The main script is in position 0.  The others appear 
-	// in the order listed in the attributes.
-	private String[] scripts;
-
 	//String of attribute names and values
 	private Attributes attributes = new Attributes();
 	
@@ -159,16 +154,10 @@ public class Parser {
 		parseHeader();
 		
 		// If there was no script attribute, use the filename.
-		if (scripts == null) {
-			scripts = new String[1];
-		}
 		if (scrpt == null) {
-			scripts[0] = fileBeingParsed.getName();
+			scrpt = fileBeingParsed.getName();
 		}
-		else {
-			scripts[0] = scrpt;
-		}
-		ProvenanceData provData = new ProvenanceData(scripts, timestamp, language);
+		ProvenanceData provData = new ProvenanceData(scrpt, timestamp, language);
 		
 		// Store the file path to the selected file in attributes
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
@@ -768,25 +757,6 @@ public class Parser {
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
 			}
-			else if (attributeName.equals(Attributes.SOURCED_SCRIPT_NAMES)) {
-				// Remember the script names so that we will be able to show
-				// the user the source code
-				String[] sourcedScripts = attributeValue.split(",");
-				scripts = new String[sourcedScripts.length + 1];
-				String ddgDir = fileBeingParsed.getParent();
-					
-				for (int i = 0; i < sourcedScripts.length; i++) {
-					scripts[i+1] = ddgDir + "/scripts/" + sourcedScripts[i];
-				}
-
-				scripts[0] = scrpt;
-				
-				
-				// System.out.println("Scripts:");
-				// for (int i = 0; i < scripts.length; i++) {
-				// 	System.out.println(scripts[i]);
-				// }
-			}
 			attributes.set(attributeName, attributeValue);
 			
 		} catch (IllegalStateException e) {
@@ -813,7 +783,7 @@ public class Parser {
 	 * @param tokens the tokens from the declaration
 	 * @return the name to use
 	 */
-	private String constructName(String nodeType, String nodeName) {
+	private static String constructName(String nodeType, String nodeName) {
 		if(nodeName == null){
 			DDGExplorer.showErrMsg("Invalid node construct. No name given.");
 			return null;

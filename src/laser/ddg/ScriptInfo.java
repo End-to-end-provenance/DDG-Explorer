@@ -1,13 +1,6 @@
 package laser.ddg;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-
-import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.FileUtil;
 
 /**
  * Manages the information about a script involved in the creation of a DDG.
@@ -19,13 +12,13 @@ import laser.ddg.persist.FileUtil;
  */
 public class ScriptInfo {
 	// Filename
-	private String filepath;
+	final private String filepath;
 	
 	// The modification date of the file containing this script
-	private String timestamp;
+	final private String timestamp;
 	
 	// Name of the script with the directory removed
-	private String name;
+	final private String name;
 
 	public ScriptInfo(String filepath, String timestamp) {
 		//System.out.println("Creating ScriptInfo for " + filepath + " " + timestamp);

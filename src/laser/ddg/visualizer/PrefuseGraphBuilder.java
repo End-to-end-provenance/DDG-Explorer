@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
@@ -29,7 +28,6 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
-import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -382,6 +380,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return null;
 	}
 	
+	/**
+	 * @param leafName the name of a data node
+	 * @return the DataInstanceNode with that name
+	 */
 	public DataInstanceNode getDataNode (String leafName) {
 		return provData.findDin (leafName);
 	}
@@ -1990,6 +1992,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
+	/**
+	 * @param scriptNum the position of the script in the script list
+	 * @return the full path to the script file
+	 */
 	public String getScriptPath(int scriptNum) {
 		return provData.getScriptPath(scriptNum);
 	}
@@ -2014,6 +2020,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return PrefuseUtils.getName(n);
 	}
 
+	/**
+	 * Display source code highlighting the selected lines
+	 * @param firstLine first line to highlight
+	 * @param lastLine last line to highlight
+	 * @param scriptNum which script to show
+	 */
 	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
 		ddgPanel.displaySourceCode(firstLine, lastLine, scriptNum);
 	}

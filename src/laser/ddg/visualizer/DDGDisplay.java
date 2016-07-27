@@ -48,7 +48,7 @@ public class DDGDisplay extends Display {
 	private double proportionY = 0.25;
 
 	// Builds the nodes and edges that comprise the graph
-	PrefuseGraphBuilder builder;
+	private PrefuseGraphBuilder builder;
 
 	private static final int FILE_CURRENT = 0;
 	private static final int FILE_INCONSISTENT_WITH_DDG = 1;
@@ -292,14 +292,19 @@ public class DDGDisplay extends Display {
 	 *            leaf process node that holds the name of the function
 	 */
 	private void displayFunc(VisualItem leaf) {
-		String leafName = PrefuseUtils.getName((NodeItem) leaf);
-		
+		// Get the Data node for this leaf
+		String leafName = PrefuseUtils.getName((NodeItem) leaf);		
 		DataInstanceNode funcDin = builder.getDataNode (leafName);
 		
 		// Find the node that sets the function value
 		ProcedureInstanceNode funcPin = funcDin.getProducer();
+
+		// Find out where the function definition starts in the script
 		int scriptNum = funcPin.getScriptNumber();
 		int lineNum = funcPin.getLineNumber();
+
+		// Display the script highlighting the first line
+		// of the function.
 		DDGPanel curPanel = DDGExplorer.getCurrentDDGPanel();
 		curPanel.displaySourceCode(lineNum, lineNum, scriptNum);
 		

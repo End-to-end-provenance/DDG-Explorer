@@ -15,15 +15,24 @@ import laser.ddg.gui.DDGExplorer;
 
 /**
  * Command to display the R script associated with the current DDG.
+ * The user is shown a menu with the name of the main script and all
+ * scripts that were included with R's source function.
  * 
  * @author Barbara Lerner
  * @version Sep 1, 2015
  *
  */
 public class ShowScriptCommand extends MouseAdapter {
+	// The DDG that the menu is for.  The menu varies by
+	// DDG since each DDG likely uses different scripts.
 	private ProvenanceData menuDDG;
+	
+	/**
+	 * Creates the menu of scripts for the current ddg
+	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		// Find out what ddg the user is currently viewing
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
 		
@@ -33,45 +42,21 @@ public class ShowScriptCommand extends MouseAdapter {
 		if (menuDDG == null || menuDDG != curDDG) {
 			menuDDG = curDDG;
 		
+			// Remove the previous entries
 			JMenu scriptMenu = (JMenu) e.getSource();
 			scriptMenu.removeAll();
 			
+			// Create the new entries
 			Collection<ScriptInfo> scripts= curDDG.scripts();
 			for (ScriptInfo script : scripts) {
 				JMenuItem scriptItem = new JMenuItem(script.toString());
-				scriptItem.addActionListener(new ActionListener() {
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
+				scriptItem.addActionListener((ActionEvent e2) -> {
 						DDGExplorer.getCurrentDDGPanel().displaySourceCode(script);
 					}
-				});
+				);
 				
 				scriptMenu.add(scriptItem);
 			}
 		}
 	}
-		
-
-//		ddgExplorer.getCurrentDDGPanel().displaySourceCode(0);
-		
-//		// TODO: Put up a menu to allow the user to select which script if there is more than one sourced
-//		String scriptFileName = curDDG.getProcessName();
-//		//System.out.println("ShowScriptCommand: scriptFileName = " + scriptFileName);
-//		if (scriptFileName == null) {
-//			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
-//		}
-//		else {
-//			File scriptFile = new File (scriptFileName);
-//			if (scriptFile.exists()) {
-//				FileViewer fileViewer = new FileViewer(scriptFileName, "");
-//				fileViewer.displayFile();
-//			}
-//			else {
-//				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
-//			}				
-//
-//		}
-//	}
-
 }

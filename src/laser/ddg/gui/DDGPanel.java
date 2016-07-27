@@ -415,6 +415,10 @@ public class DDGPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Display the source code for a script with no highlighting
+	 * @param script the script to display
+	 */
 	public void displaySourceCode(ScriptInfo script) {
 		List<ScriptInfo> scripts = provData.scripts();
 		int pos = scripts.indexOf(script);
