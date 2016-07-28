@@ -31,7 +31,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -498,7 +497,7 @@ public class FileUseQuery extends AbstractQuery {
 						// data.getScriptAt(modelRow) + "\n");
 						// ErrorLog.showErrMsg("Selected timestamp = " +
 						// data.getTimeAt(modelRow) + "\n");
-						PrefuseGraphBuilder graphBuilder = new LoadFromDBCommand()
+						PrefuseGraphBuilder graphBuilder = LoadFromDBCommand
 								.loadDDGFromDB(data1.getScriptAt(modelRow), data1.getTimeAt(modelRow));
 						graphBuilder.drawFullGraph();
 						// ErrorLog.showErrMsg("Focusing on " +

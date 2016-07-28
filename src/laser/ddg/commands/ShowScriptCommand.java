@@ -35,6 +35,7 @@ public class ShowScriptCommand implements ActionListener {
 					FileViewer fileViewer = new FileViewer(scriptFileName, "");
 					fileViewer.displayFile();
 				} catch (IOException e1) {
+					// Should not happen because we checked if the file existed.
 					e1.printStackTrace(System.err);
 				}
 			}

@@ -188,6 +188,7 @@ public class DDGDisplay extends Display {
 	 * 
 	 * @param path path name that the image file is found or. Can be .jpeg, .gif, .png or a URL
 	 * @param time timestamp of the plot given by the DDG
+	 * @exception IOException if the image file cannot be read
 	 */
 	private void createPlotFrame(String path, String time) throws IOException{
 		//Check the timestamps

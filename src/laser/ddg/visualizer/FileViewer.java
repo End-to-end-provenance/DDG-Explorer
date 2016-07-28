@@ -7,8 +7,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +66,8 @@ public class FileViewer {
 	
 	// The contents to display.  The exact type of this depends on the file type.
 	private JComponent contents;
+	
+	// The fullsize image as read from the file
 	private BufferedImage fileImage;
 	
 	/**
@@ -75,6 +77,7 @@ public class FileViewer {
 	 * @param time the timestamp.  If the file is a text, jpeg or csv file, the 
 	 *    timestamp will be displayed in the window title.  For other file types,
 	 *    the timestamp is not used.  
+	 * @exception IOException thrown if the file cannot be read
 	 */
 	public FileViewer(String path, String time) throws IOException {
 		if (path.startsWith("\"") && path.endsWith("\"")) {
@@ -293,14 +296,18 @@ public class FileViewer {
 	/**
 	 * Creates a component that displays an image.  Assumes that the
 	 * file contains an image.
+	 * @exception IOException thrown if the image file named in the path 
+	 * instance variable cannot be read
 	 */
 	private void displayImage() throws IOException {
 		Image image;
 		
+		// Read in the fullsize image
 		fileImage = ImageIO.read(new File(path));
 		int imageWidth          = fileImage.getWidth();
 		int imageHeight         = fileImage.getHeight();
 		
+		// If the image is too big, scale it.  
 		if (imageWidth > FRAME_WIDTH || imageHeight > FRAME_HEIGHT) {
 			Dimension scaledSize = getScaledDimension (imageWidth, imageHeight, FRAME_WIDTH, FRAME_HEIGHT);
 			image = getScaledImage (fileImage, scaledSize);
@@ -313,51 +320,33 @@ public class FileViewer {
 		ImageIcon icon = new ImageIcon(image);
 		icon.getImage().flush();
 
-		
-		
+		// Display the image in a label
 		plotted = new JLabel(icon);
 		plotted.setHorizontalAlignment(JLabel.CENTER);
 		contents = plotted;
 		
-		plotted.addComponentListener(new ComponentListener() {
+		// Add a listener so we can resize the image if the
+		// label size changes
+		plotted.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				System.out.println("Plot label resized");
-				resizeImage (plotted, icon);
+				Dimension newSize = getScaledDimension(fileImage.getWidth(), fileImage.getHeight(), 
+						plotted.getWidth(), plotted.getHeight());
+				Image scaledImage = getScaledImage (fileImage, newSize);
+				icon.setImage(scaledImage);
 			}
 
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
 		});
 	}
 	
-	private void resizeImage(JLabel imageLabel, ImageIcon icon) {
-		Dimension newSize = getScaledDimension(fileImage.getWidth(), fileImage.getHeight(), 
-				imageLabel.getWidth(), imageLabel.getHeight());
-		System.out.println("Resizing icon to " + newSize);
-		Image scaledImage = getScaledImage (fileImage, newSize);
-		icon.setImage(scaledImage);
-		//imageLabel.setIcon(icon);
-	}
-	
-	private Image getScaledImage(Image srcImg, Dimension newSize){
+	/**
+	 * Scale the image to the desired size
+	 * @param srcImg the image to scale
+	 * @param newSize the desired size
+	 * @return a new image with newSize
+	 */
+	private static Image getScaledImage(Image srcImg, Dimension newSize){
 		int w = (int)newSize.getWidth();
 		int h = (int)newSize.getHeight();
 	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -370,6 +359,14 @@ public class FileViewer {
 	    return resizedImg;
 	}
 	
+	/**
+	 * Calculate a new size that maintains the img aspect ratio and is no
+	 * larger than the boundary size
+	 * @param imgWidth original width of an image
+	 * @param imgHeight origitnal height of an image
+	 * @param boundaryWidth maximum width desired
+	 * @param boundaryHeight maximum height desired
+	 */
 	public static Dimension getScaledDimension(int imgWidth, int imgHeight, int boundaryWidth, int boundaryHeight) {
 
 	    int newWidth = imgWidth;
@@ -421,7 +418,6 @@ public class FileViewer {
 			fileFrame.getContentPane().add(contents, BorderLayout.CENTER);
 			fileFrame.setLocationByPlatform(true);
 			fileFrame.setVisible(true);
-			System.out.println("contents size = " + contents.getWidth() + " x " + contents.getHeight());
 		}
 		
 		else {
