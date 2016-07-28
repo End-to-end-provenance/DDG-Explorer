@@ -478,8 +478,13 @@ public class FileUseQuery extends AbstractQuery {
 				FileTableModel data1 = (FileTableModel) fileTable.getModel();
 				for (int row1 : selectedRows) {
 					int modelRow = fileTable.convertRowIndexToModel(row1);
-					FileViewer viewer = new FileViewer(data1.getFileAt(modelRow), data1.getTimeAt(modelRow));
-					viewer.displayFile();
+					String selectedFile = data1.getFileAt(modelRow);
+					try {
+						FileViewer viewer = new FileViewer(selectedFile, data1.getTimeAt(modelRow));
+						viewer.displayFile();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not find " + selectedFile);
+					}
 				}
 			});
 

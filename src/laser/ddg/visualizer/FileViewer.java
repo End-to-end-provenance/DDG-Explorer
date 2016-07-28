@@ -4,6 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -14,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -38,6 +45,10 @@ import laser.ddg.gui.DDGExplorer;
  *
  */
 public class FileViewer {
+	private static final int FRAME_WIDTH = 500;
+	private static final int FRAME_HEIGHT = 500;
+	private static final Dimension FRAME_SIZE = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
+
 	// The full path and file name to display
 	private String path;
 	
@@ -55,6 +66,7 @@ public class FileViewer {
 	
 	// The contents to display.  The exact type of this depends on the file type.
 	private JComponent contents;
+	private BufferedImage fileImage;
 	
 	/**
 	 * Create the structures needed to hold the file contents.  This does not 
@@ -64,7 +76,7 @@ public class FileViewer {
 	 *    timestamp will be displayed in the window title.  For other file types,
 	 *    the timestamp is not used.  
 	 */
-	public FileViewer(String path, String time) {
+	public FileViewer(String path, String time) throws IOException {
 		if (path.startsWith("\"") && path.endsWith("\"")) {
 			this.path = path.substring(1, path.length()-1);
 		}
@@ -282,15 +294,104 @@ public class FileViewer {
 	 * Creates a component that displays an image.  Assumes that the
 	 * file contains an image.
 	 */
-	private void displayImage() {
+	private void displayImage() throws IOException {
+		Image image;
+		
+		fileImage = ImageIO.read(new File(path));
+		int imageWidth          = fileImage.getWidth();
+		int imageHeight         = fileImage.getHeight();
+		
+		if (imageWidth > FRAME_WIDTH || imageHeight > FRAME_HEIGHT) {
+			Dimension scaledSize = getScaledDimension (imageWidth, imageHeight, FRAME_WIDTH, FRAME_HEIGHT);
+			image = getScaledImage (fileImage, scaledSize);
+		}
+		else {
+			image = fileImage;
+		}
+
 		// clear out the image buffer
-		ImageIcon icon = new ImageIcon(path);
+		ImageIcon icon = new ImageIcon(image);
 		icon.getImage().flush();
+
 		
 		
 		plotted = new JLabel(icon);
 		plotted.setHorizontalAlignment(JLabel.CENTER);
 		contents = plotted;
+		
+		plotted.addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				System.out.println("Plot label resized");
+				resizeImage (plotted, icon);
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+	}
+	
+	private void resizeImage(JLabel imageLabel, ImageIcon icon) {
+		Dimension newSize = getScaledDimension(fileImage.getWidth(), fileImage.getHeight(), 
+				imageLabel.getWidth(), imageLabel.getHeight());
+		System.out.println("Resizing icon to " + newSize);
+		Image scaledImage = getScaledImage (fileImage, newSize);
+		icon.setImage(scaledImage);
+		//imageLabel.setIcon(icon);
+	}
+	
+	private Image getScaledImage(Image srcImg, Dimension newSize){
+		int w = (int)newSize.getWidth();
+		int h = (int)newSize.getHeight();
+	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2 = resizedImg.createGraphics();
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g2.drawImage(srcImg, 0, 0, w, h, null);
+	    g2.dispose();
+
+	    return resizedImg;
+	}
+	
+	public static Dimension getScaledDimension(int imgWidth, int imgHeight, int boundaryWidth, int boundaryHeight) {
+
+	    int newWidth = imgWidth;
+	    int newHeight = imgHeight;
+
+	    // first check if we need to scale width
+	    if (imgWidth > boundaryWidth) {
+	        //scale width to fit
+	    	newWidth = boundaryWidth;
+	        //scale height to maintain aspect ratio
+	    	newHeight = (newWidth * imgHeight) / imgWidth;
+	    }
+
+	    // then check if we need to scale even with the new height
+	    if (newHeight > boundaryHeight) {
+	        //scale height to fit instead
+	    	newHeight = boundaryHeight;
+	        //scale width to maintain aspect ratio
+	    	newWidth = (newHeight * imgWidth) / imgHeight;
+	    }
+
+	    return new Dimension(newWidth, newHeight);
 	}
 	
 	/**
@@ -314,12 +415,13 @@ public class FileViewer {
 			
 			//set the title to the name of the file 
 			fileFrame.setTitle(title + " " + timestamp);
-			fileFrame.setSize(new Dimension(500, 500));
+			fileFrame.setSize(FRAME_SIZE);
 			
 			//Add the table to the frame
 			fileFrame.getContentPane().add(contents, BorderLayout.CENTER);
 			fileFrame.setLocationByPlatform(true);
 			fileFrame.setVisible(true);
+			System.out.println("contents size = " + contents.getWidth() + " x " + contents.getHeight());
 		}
 		
 		else {
