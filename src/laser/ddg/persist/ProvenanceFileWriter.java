@@ -46,9 +46,9 @@ public class ProvenanceFileWriter implements ProvenanceListener {
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
-		String timestamp = DateFormat.getDateTimeInstance(DateFormat.FULL,
+		String time = DateFormat.getDateTimeInstance(DateFormat.FULL,
 				DateFormat.FULL).format(Calendar.getInstance().getTime());
-		processStarted(processName, provData, timestamp, language);
+		processStarted(processName, provData, time, language);
 	}
 	
 	@Override

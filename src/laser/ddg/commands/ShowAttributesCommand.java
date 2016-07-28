@@ -73,7 +73,7 @@ public class ShowAttributesCommand implements ActionListener {
 			String text = (String) ddgBuilderClass.getMethod("getAttributeString", Attributes.class).invoke(null, attrs);
 			return text;
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.out.println("Can't create attribute text");
+			System.err.println("Can't create attribute text");
 			e.printStackTrace(System.err);
 			return null;
 		}

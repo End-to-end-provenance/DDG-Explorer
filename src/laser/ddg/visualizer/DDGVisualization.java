@@ -243,7 +243,13 @@ public class DDGVisualization extends Visualization {
 				return super.getText(item);
 			}
 			else {
-				return super.getText(item) + " [" + lineNum + "]";
+				int scriptNum = PrefuseUtils.getScriptNumber((Node) item);
+				if (scriptNum < 0) { 
+					return super.getText(item) + " [" + lineNum + "]";
+				}
+				else {
+					return super.getText(item) + " [" + scriptNum + ":" + lineNum + "]";
+				}
 			}
 		}
 	}

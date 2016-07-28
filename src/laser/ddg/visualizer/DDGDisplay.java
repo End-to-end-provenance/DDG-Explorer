@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -103,7 +104,19 @@ public class DDGDisplay extends Display {
 		}
 	}
 
-	private void openFile(final NodeItem n) {
+	public void zoomToExactFit(){
+		if(!this.isTranformInProgress()){
+			Visualization vis = this.getVisualization();
+			synchronized(vis) {
+				//System.out.println("Fitting overview");
+				Rectangle2D bounds = vis.getBounds(Visualization.ALL_ITEMS);
+				GraphicsLib.expand(bounds, (int)(1/this.getScale()));
+				DisplayLib.fitViewToBounds(this, bounds, 0);
+			}
+		}
+	}
+
+	private void openFile(final NodeItem n) throws IOException {
 		//Get timeStamp if one has been included
 		String ddgTime = PrefuseUtils.getTimestamp(n);
 
@@ -147,7 +160,7 @@ public class DDGDisplay extends Display {
 	 * @param path path of the file (either .csv or .txt)
 	 * @param time timestamp of the file given by the DDG
 	 */
-	private void createFileFrame(String path, String time){
+	private void createFileFrame(String path, String time) throws IOException{
 		//Check the timestamps
 		//assume no change if timestamp was never given
 		int tChange = FILE_CURRENT;
@@ -175,8 +188,9 @@ public class DDGDisplay extends Display {
 	 * 
 	 * @param path path name that the image file is found or. Can be .jpeg, .gif, .png or a URL
 	 * @param time timestamp of the plot given by the DDG
+	 * @exception IOException if the image file cannot be read
 	 */
-	private void createPlotFrame(String path, String time){
+	private void createPlotFrame(String path, String time) throws IOException{
 		//Check the timestamps
 		//assume no change if timestamp was never given
 		int tChange = FILE_CURRENT;
@@ -499,32 +513,44 @@ public class DDGDisplay extends Display {
 					NodeItem lastMember = builder.getLastMember(item);
 					int lastLine = PrefuseUtils.getLineNumber(lastMember);
 					
-					// display source code between those lines
-					if (firstLine != -1 && lastLine != -1) {
-						displaySourceCode (firstLine, lastLine);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
-					}
+					// Get the script number.  The first and last lines should come from the same script
+					int scriptNum = PrefuseUtils.getScriptNumber(firstMember);
+					displaySourceCode (firstLine, lastLine, scriptNum);
 				}
 				else {
 					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					if (lineNumber != -1){
-						//JOptionPane.showMessageDialog(DDGDisplay.this, "Line " + lineNumber);
-						displaySourceCode(lineNumber);
-					}
-					else {
-						JOptionPane.showMessageDialog(DDGDisplay.this,"There is no line number associated with this node.");
-					}
+					int scriptNum = PrefuseUtils.getScriptNumber((NodeItem) item);
+					displaySourceCode(lineNumber, scriptNum);
 				}
 			}
 
-			private void displaySourceCode(int firstLine, int lastLine) {
+			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+				if (scriptNum > 0) {
+					// Currently, we only save the main script file!!!
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no copy of the sourced script available.");
+					return;
+				}
+				
 				// Just read the file in one time.
 				if (fileContents == null) {
 					String fileName = builder.getScriptPath();
-					//System.out.println("Reading script from " + fileName);
+					if (fileName == null) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
 					File theFile = new File(fileName);
+					if (!theFile.exists()) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + builder.getProcessName());
+						return;
+					}
+
+					// display source code between those lines
+					if (firstLine == -1 || lastLine == -1) {
+						JOptionPane.showMessageDialog(DDGDisplay.this,"There are no line numbers associated with this node.");
+						return;
+					}
+					
+					//System.out.println("Reading script from " + fileName);
 					Scanner readFile = null;
 			    	StringBuilder contentsBuilder = new StringBuilder(); 
 			    	lineStarts = new ArrayList<>();
@@ -541,7 +567,7 @@ public class DDGDisplay extends Display {
 						fileContents = contentsBuilder.toString();
 	
 					} catch (FileNotFoundException e) {
-						DDGExplorer.showErrMsg("Cannot find script file: " + fileName + "\n\n");
+						DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
 					} finally {
 						if (readFile != null) {
 							readFile.close();
@@ -585,8 +611,8 @@ public class DDGDisplay extends Display {
 
 			}
 
-			private void displaySourceCode(int lineNumber) {
-				displaySourceCode (lineNumber, lineNumber);
+			private void displaySourceCode(int lineNumber, int scriptNumber) {
+				displaySourceCode (lineNumber, lineNumber, scriptNumber);
 			}
 
 			
@@ -645,12 +671,22 @@ public class DDGDisplay extends Display {
 					int choice = JOptionPane.showConfirmDialog(DDGDisplay.this,"The referenced URL is \n"+ 
 								PrefuseUtils.getValue((NodeItem) node)+ "\nDo you want to view it?\n", "URL destination", JOptionPane.OK_CANCEL_OPTION);
 				    if(choice == JOptionPane.OK_OPTION){
-				    	new FileViewer(PrefuseUtils.getValue((NodeItem)node), null).displayFile();
+				    	try {
+							new FileViewer(PrefuseUtils.getValue((NodeItem)node), null).displayFile();
+						} catch (IOException e1) {
+							JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
+									"Could not load the URL " + PrefuseUtils.getValue((NodeItem) node));
+						}
 				    } 
 				}
 				//If the node is a file node
 				else if(PrefuseUtils.isFile(node)){
-					openFile((NodeItem)node);
+					try {
+						openFile((NodeItem)node);
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
+								"Could not find the file " + PrefuseUtils.getValue((NodeItem) node));
+					}
 					
 				}
 			}

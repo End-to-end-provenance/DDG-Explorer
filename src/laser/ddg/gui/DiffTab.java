@@ -36,7 +36,7 @@ public class DiffTab extends JPanel {
 	private DiffPanel diffPanel = new DiffPanel("");
 	
 	// The object used to load R scripts that are not in the database
-	private JFileChooser chooser;
+	private static JFileChooser chooser;
 	
 	// The file shown on the left side
 	private File leftFile;
@@ -100,9 +100,9 @@ public class DiffTab extends JPanel {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 		JPanel topRow = new JPanel();
 		selectFileButton.addActionListener((ActionEvent e) -> {
-                    try {
+                   try {
                         selectFile(e.getSource());
-                    } catch (Exception e1) {
+                   } catch (Exception e1) {
                         JOptionPane.showMessageDialog(buttonPanel,
                                 "Unable to load file: " + e1.getMessage(),
                                 "Error loading file", JOptionPane.ERROR_MESSAGE);
@@ -206,6 +206,9 @@ public class DiffTab extends JPanel {
 		openButton.addActionListener((ActionEvent e) -> {
                     File selectedFile = browser.getSelectedFile();
                     selectFrame.dispose();
+                    if (selectedFile == null) {
+						return;
+                    }
                     
                     try {
                         if (button == selectFromDB1Button) {

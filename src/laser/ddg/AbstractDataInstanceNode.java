@@ -216,7 +216,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			this.producedBy = p;
 			this.hasProducer = 1;
 		}else{
-			System.out.println("Cannot reset the producer for this data node.");
+			System.err.println("Cannot reset the producer for this data node.");
 		}
 	}
 

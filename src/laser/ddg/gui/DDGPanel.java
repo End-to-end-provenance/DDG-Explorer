@@ -28,6 +28,7 @@ import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import prefuse.Display;
 
@@ -115,8 +116,7 @@ public class DDGPanel extends JPanel {
 	 * @param provData
 	 *            the ddg data being displayed
 	 */
-	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, final Display ddgDisplay,
-			final Display ddgOverview, ProvenanceData provData) {
+	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, DisplayWithOverview dispPlusOver, ProvenanceData provData) {
 		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;
@@ -125,9 +125,9 @@ public class DDGPanel extends JPanel {
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
-		createMainPanel(ddgDisplay, ddgOverview);
+		ddgMain = dispPlusOver.createPanel(createDescription());
 		
-		toolbar = new Toolbar((DDGDisplay) ddgDisplay);
+		toolbar = new Toolbar(dispPlusOver.getDisplay());
 
 		// hold toolbarPanel and everything inside
 		add(toolbar, BorderLayout.NORTH);
@@ -164,34 +164,13 @@ public class DDGPanel extends JPanel {
 		return logPanel;
 	}
 
-	private void createMainPanel(Display ddgDisplay, final Display ddgOverview) {
-		ddgMain = new JPanel(new BorderLayout());
-		ddgMain.setBackground(Color.WHITE);
-		ddgMain.add(createDescriptionPanel(), BorderLayout.NORTH);
-		ddgMain.add(ddgDisplay, BorderLayout.CENTER);
-		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		ddgMain.add(ddgOverview, BorderLayout.EAST);
-		// legend added to WEST through preferences
-		// TODO searchbar added to SOUTH! (through button press?)
-
-		// resize components within layers
-		ddgMain.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				int panelHeight = ddgMain.getHeight();
-				Rectangle prevBounds = ddgOverview.getBounds();
-				ddgOverview.setBounds(prevBounds.x, prevBounds.y,
-						prevBounds.width, panelHeight - 16);
-			}
-		});
-	}
 
 	/**
 	 * Creates the panel that holds the main attributes
 	 * 
 	 * @return the panel
 	 */
-	private Component createDescriptionPanel() {
+	private Component createDescription() {
 		descriptionArea = new JLabel("", SwingConstants.CENTER);
 
 		if (provData != null) {
@@ -228,7 +207,7 @@ public class DDGPanel extends JPanel {
 			return ((JenaWriter) dbWriter).alreadyInDB(processPathName,
 					executionTimestamp, language);
 		} catch (Exception e) {
-			System.out.println("DDGPanel's alreadyInDB unsuccessful");
+			System.err.println("DDGPanel's alreadyInDB unsuccessful");
 			return false;
 		}
 	}
@@ -388,9 +367,18 @@ public class DDGPanel extends JPanel {
 		builder.setHighlighted(id, value);
 	}
 
+	public void createCopiedGroup(String groupName){
+		builder.createCopiedGroup(groupName);
+	}
+
+	public void updateCopiedGroup(int id, String groupname){
+		builder.updateCopiedGroup(id, groupname);
+	}
+
 	public void focusOn(String name) {
 		builder.focusOn(name);
 	}
+
 
 
 }

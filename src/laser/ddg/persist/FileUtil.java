@@ -241,16 +241,16 @@ public class FileUtil {
 	private static void createDirectory(File savedCopyDir) throws IllegalStateException {
 		if (!savedCopyDir.exists()) {
 			if (!savedCopyDir.mkdir()) {
-				System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+				System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 				throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 			}
 		}
 		else if (!savedCopyDir.isDirectory()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 		else if (!savedCopyDir.canWrite()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 	}
@@ -293,7 +293,7 @@ public class FileUtil {
 			
 			// Look for the desired timestamp in the directory for one version of
 			// the script.  If we find it, delete the associated files
-			if (findAndDelete(timestamp, savedDDGDirs)) {
+			if (savedDDGDirs != null && findAndDelete(timestamp, savedDDGDirs)) {
 				
 				// The script directory contains the R code for the script in addition to 
 				// the subdirectories for eadh DDG.  If the length of the savedDDGDirs array
@@ -355,7 +355,7 @@ public class FileUtil {
 			
 			// Look for the desired timestamp in the directory for one version of
 			// the script.  If we find it, return the directory for that version of the process.
-			if (find(ddgTimestamp, savedDDGDirs) != null) {
+			if (savedDDGDirs != null && find(ddgTimestamp, savedDDGDirs) != null) {
 				
 				return savedTimestampDir;
 			}
