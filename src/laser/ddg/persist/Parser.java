@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 
 import laser.ddg.AbstractProcedureInstanceNode;
 import laser.ddg.Attributes;
+import laser.ddg.ClientConnection;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DDGServer;
 import laser.ddg.LanguageConfigurator;
@@ -103,7 +104,7 @@ public class Parser {
 	private String scrpt;
 
 	//The timestamp on the script
-	private String timestamp;
+	private static String timestamp;
 
 	//The language of the script
 	private String language;
@@ -133,38 +134,28 @@ public class Parser {
 	public Parser(File file, PrefuseGraphBuilder builder) 
 			throws FileNotFoundException {
 		Reader r = new BufferedReader (new FileReader (file));
-		in = new StreamTokenizer(r);
-		in.eolIsSignificant(true);
-		in.resetSyntax();
-
-		// Only ; and = are special characters
-		in.wordChars('a', 'z');
-		in.wordChars('A', 'Z');
-		in.wordChars('0', '9');
-		in.wordChars('!', '/');
-		in.wordChars(':', ':');
-		in.wordChars('<', '<');
-		in.wordChars('>', '@');
-		in.wordChars('[', '`');
-		in.wordChars('{', '~');
-
-		in.quoteChar('\"');
-		in.whitespaceChars(0, ' ');
-
-		this.builder = builder;
-		ddgBuilder = null;
+		tokenize(builder,r);
 		fileBeingParsed = file;
 	}
 
 	/**
-	 * Initializes the parser and reads from the server
-	 * @param ddgServer to read from the server
-	 * @param builder the prefuse object that will build the graph
+	 * Initializes the parser and reads from the client side 
+	 * @param clientConnection 
+	 * @param builder
 	 * @throws IOException
 	 */
-	public Parser(DDGServer ddgServer, PrefuseGraphBuilder builder) throws IOException {
+	public Parser(ClientConnection clientConnection, PrefuseGraphBuilder builder) throws IOException {
 		incremental = true;
-		Reader r = ddgServer.getClientReader();
+		Reader r = clientConnection.getClientReader();
+		tokenize(builder,r);
+	}
+
+	/**
+	 * Initializes the parser and reads from the reader 
+	 * @param builder
+	 * @param r
+	 */
+	public void tokenize(PrefuseGraphBuilder builder, Reader r){
 		in = new StreamTokenizer(r);
 		in.eolIsSignificant(true);
 		in.resetSyntax();
@@ -186,7 +177,6 @@ public class Parser {
 		this.builder = builder;
 		ddgBuilder = null;
 	}
-
 
 	/**
 	 * Adds the nodes and edges from the DDG to the graph.
@@ -201,11 +191,8 @@ public class Parser {
 		}
 
 		ProvenanceData provData = new ProvenanceData(scrpt,timestamp,language);
-
-		// Store the file path to the selected file in attributes
-		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
+		//provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
 		provData.setAttributes(attributes);
-
 		provData.createFunctionTable();
 		provData.setQuery("Entire DDG");
 		builder.setProvData(provData);
@@ -216,6 +203,9 @@ public class Parser {
 			}
 			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
 			builder.createLegend(language);
+			if(incremental){
+				provData.addProvenanceListener(builder);
+			}
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
@@ -229,7 +219,9 @@ public class Parser {
 			parseDeclaration(nextToken);
 			nextToken = skipBlankLines();
 		}
-		addEdges();
+
+		if(!incremental)
+			addEdges();
 
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
@@ -237,57 +229,7 @@ public class Parser {
 		builder.processFinished();
 	}
 
-	/**
-	 * Adds the nodes and edges from the DDG to the graph.
-	 * @throws IOException if there is a problem reading the file
-	 */
-	public void addNodesAndEdgesForIncrementalDrawing(DDGServer ddgServer) throws IOException {
-		//parseHeader();
 
-		language = ddgServer.getLanguage();
-
-		// If there was no script attribute, use the filename.
-		if (scrpt == null) {
-			scrpt = ddgServer.getFileName();
-		}
-		ProvenanceData provData = new ProvenanceData(scrpt,ddgServer.getTimeStamp(),language);
-
-		// Store the file path to the selected file in attributes
-		provData.setSourceDDGFile("");
-		provData.setAttributes(attributes);	
-		provData.createFunctionTable();
-		provData.setQuery("Entire DDG");
-		builder.setProvData(provData);
-
-		try {
-			if (language == null) {
-				language = "Little-JIL";
-			}
-			
-			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
-			builder.createLegend(language);
-			//System.out.println("Using " + ddgBuilder.getClass().getName());
-			provData.addProvenanceListener(builder);
-
-
-		} catch (Exception e) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No DDG Builder for " + language + ".  Cannot add the DDG to the database.\n\n");
-			e.printStackTrace();
-		}
-
-
-		int nextToken = skipBlankLines();
-
-		while (nextToken != StreamTokenizer.TT_EOF) {
-
-			// System.out.println(in.sval);
-			parseDeclaration(nextToken);
-			nextToken = skipBlankLines();
-		}
-		//addEdges();
-
-		builder.processFinished();
-	}
 
 	/**
 	 * Parses the attributes and their values and the pin counter.
@@ -302,17 +244,22 @@ public class Parser {
 			throw new IOException("The file is empty.");
 		}
 
-		// Loop until we find the number of procedure nodes .
+		
 		while(true){
 			try {
-				// System.out.println(in.sval);
-				numPins = Integer.parseInt(in.sval);
-				assert in.nextToken() == StreamTokenizer.TT_EOL;
-				System.out.println("Number of pins = " + numPins);
-				break;
+				//stop looping when the number passed from the client side is -1
+				if(incremental && Integer.parseInt(in.sval)==-1 ){
+					break;
+				}
+				// Loop until we find the number of procedure nodes if it's not incremental .
+				else if (!incremental){
+					numPins = Integer.parseInt(in.sval);
+					assert in.nextToken() == StreamTokenizer.TT_EOL;
+					break;
+				}
 			}
 			catch (NumberFormatException e) {
-				// Haven't found the number of pins yet.  
+				// Haven't found the number of pins yet for regular execution. 
 				// This should be an attribute-value pair
 				if (nextToken == StreamTokenizer.TT_WORD) {
 					parseAttribute();
@@ -478,7 +425,7 @@ public class Parser {
 		String value = null;
 
 		value = parseValue(nodeId);
-		System.out.println("proc node: name = " + name + "  value = " + value);
+		//System.out.println("proc node: name = " + name + "  value = " + value);
 
 		double elapsedTime = 0;
 		int lineNum = -1;
@@ -527,7 +474,7 @@ public class Parser {
 		}
 
 
-		System.out.println("Line number = " + lineNum);
+		//System.out.println("Line number = " + lineNum);
 		if(!incremental){
 			builder.addNode(nodeType, extractUID(nodeId),
 					AbstractProcedureInstanceNode.constructName(nodeType, name), value, elapsedTime, null, lineNum);
@@ -770,7 +717,7 @@ public class Parser {
 
 			else if (nextToken == StreamTokenizer.TT_WORD) {
 				while (nextToken == StreamTokenizer.TT_WORD) {
-					System.out.println("parseDataNode: Found " + in.sval);
+					//System.out.println("parseDataNode: Found " + in.sval);
 					in.pushBack();
 					boolean somethingMatched = false;
 
@@ -840,7 +787,7 @@ public class Parser {
 	 */
 	private void parseAttribute() throws IOException{
 		String attributeName = in.sval;
-		System.out.println("parseAttribute: attributeName = " + attributeName);
+		//System.out.println("parseAttribute: attributeName = " + attributeName);
 
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
@@ -861,9 +808,10 @@ public class Parser {
 			else if(attributeName.equals(EXECUTION_TIME)){
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				attributeValue = attributeValue.replaceAll(":", ".");
-				timestamp = attributeValue;
+				timestamp = attributeValue;;
+				
 			}
-			System.out.println("Got attribute " + attributeName + " with value " + attributeValue);
+//			System.out.println("Got attribute " + attributeName + " with value " + attributeValue);
 			attributes.set(attributeName, attributeValue);
 
 		} catch (IllegalStateException e) {
@@ -922,7 +870,7 @@ public class Parser {
 		}
 
 		try {
-			System.out.println("Found edge " + tokens.get(1) + " to " + tokens.get(2));
+			//System.out.println("Found edge " + tokens.get(1) + " to " + tokens.get(2));
 			if(edgeType.equals("CF") && ddgBuilder != null){
 				parseControlFlowEdge(tokens);
 			}
