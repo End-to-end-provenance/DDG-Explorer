@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -186,7 +187,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		ddgPanel = new DDGPanel(jenaWriter);
 		ddgPanel.setSearchIndex (searchIndex);
         Logger.getLogger("prefuse").setLevel(Level.WARNING);
-    }
+	}
 
 	/**
 	 * Creates an object that builds a visual graph.
@@ -790,7 +791,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend").invoke(null);
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.out.println("Can't create legend");
+			// System.out.println("Can't create legend");
 			e.printStackTrace(System.err);
 		}
 	}
@@ -1057,12 +1058,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					addSuccessorsToQueue(nestedFinish, nodesReached);
 					NodeItem collapsedNode = addCollapsedNode(next, nestedFinish, nestedMembers);
 					memberNodes.add(collapsedNode);
-					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
+					try {
+						totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
+					} catch (ParseException e) {
+						e.printStackTrace(System.err);
+					}
 				}
 			}
 			else {
 				memberNodes.add(next);
-				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
+				try {
+					totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(next));
+				} catch (ParseException e) {
+					e.printStackTrace(System.err);
+				}
 
 				// Remember the finish node
 				if (nextName.endsWith(" Finish")) {
@@ -1075,9 +1084,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					int startStarts = startName.indexOf(" Start");
 					if (startStarts != -1) {
 						startName = startName.substring(startName.indexOf('-')+1, startStarts);
-						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp (finishNode));
-						PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
-						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
+						try {
+							totalElapsedTime = totalElapsedTime + PrefuseUtils.parseDouble(PrefuseUtils.getTimestamp(finishNode));
+							PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
+							PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
+						} catch (ParseException e) {
+							PrefuseUtils.setTimestamp(startNode, -1);
+							PrefuseUtils.setTimestamp(finishNode, -1);
+							e.printStackTrace(System.err);
+						}
 					}
 					if (startStarts == -1 || !startName.equals(finishName)) {
 						DDGExplorer.showErrMsg("Start and Finish nodes not paired up correctly.\n");
@@ -1127,8 +1142,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// 		PrefuseUtils.getValue(finishNode), 
 		// 			PrefuseUtils.getTimestamp(finishNode));
 		}
-
-
 
 		else if (PrefuseUtils.isCheckpointNode(startNode)) {
 			collapsedNode = addCollapsedNode(getStepNameFromStartNode(startNode),
@@ -1884,7 +1897,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 }
 
 	 public static class updateOverview implements PaintListener{
-		private DDGDisplay overview;
+		 private DDGDisplay overview;
 		public updateOverview(DDGDisplay overview){
 			super();
 			this.overview = overview;

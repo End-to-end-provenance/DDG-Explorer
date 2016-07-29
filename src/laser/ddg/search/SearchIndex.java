@@ -1,7 +1,9 @@
 package laser.ddg.search;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
+import laser.ddg.visualizer.PrefuseUtils;
 
 /**
  * Manages lists of nodes by type to facilitate searching.
@@ -26,13 +28,19 @@ public class SearchIndex {
 	 * @param type the type of node:  one of "Exception", "Data", "File", "URL", or "Operation"
 	 * @param id the node id used by Prefuse
 	 * @param name the node's label
-         * @param time
+     * @param time
 	 */
 	public void addToSearchIndex(String type, int id, String name, String time) {
 		SearchElement element;
 		
 		if (type.equals("Operation")) {
-			double parsedTime = Double.parseDouble(time);
+			double parsedTime;
+			try {
+				parsedTime = PrefuseUtils.parseDouble(time);
+			} catch (ParseException e) {
+				parsedTime = -1;
+				e.printStackTrace(System.err);
+			}
 			OperationSearchElement opElement = new OperationSearchElement (type, name, id, parsedTime);
 			operationList.add (opElement);
 			element = opElement;
