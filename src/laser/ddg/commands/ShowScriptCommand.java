@@ -3,6 +3,7 @@ package laser.ddg.commands;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
@@ -30,8 +31,13 @@ public class ShowScriptCommand implements ActionListener {
 		else {
 			File scriptFile = new File (scriptFileName);
 			if (scriptFile.exists()) {
-				FileViewer fileViewer = new FileViewer(scriptFileName, "");
-				fileViewer.displayFile();
+				try {
+					FileViewer fileViewer = new FileViewer(scriptFileName, "");
+					fileViewer.displayFile();
+				} catch (IOException e1) {
+					// Should not happen because we checked if the file existed.
+					e1.printStackTrace(System.err);
+				}
 			}
 			else {
 				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());

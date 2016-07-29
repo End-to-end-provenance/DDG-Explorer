@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -115,7 +116,7 @@ public class DDGDisplay extends Display {
 		}
 	}
 
-	private void openFile(final NodeItem n) {
+	private void openFile(final NodeItem n) throws IOException {
 		//Get timeStamp if one has been included
 		String ddgTime = PrefuseUtils.getTimestamp(n);
 
@@ -159,7 +160,7 @@ public class DDGDisplay extends Display {
 	 * @param path path of the file (either .csv or .txt)
 	 * @param time timestamp of the file given by the DDG
 	 */
-	private void createFileFrame(String path, String time){
+	private void createFileFrame(String path, String time) throws IOException{
 		//Check the timestamps
 		//assume no change if timestamp was never given
 		int tChange = FILE_CURRENT;
@@ -187,8 +188,9 @@ public class DDGDisplay extends Display {
 	 * 
 	 * @param path path name that the image file is found or. Can be .jpeg, .gif, .png or a URL
 	 * @param time timestamp of the plot given by the DDG
+	 * @exception IOException if the image file cannot be read
 	 */
-	private void createPlotFrame(String path, String time){
+	private void createPlotFrame(String path, String time) throws IOException{
 		//Check the timestamps
 		//assume no change if timestamp was never given
 		int tChange = FILE_CURRENT;
@@ -669,12 +671,22 @@ public class DDGDisplay extends Display {
 					int choice = JOptionPane.showConfirmDialog(DDGDisplay.this,"The referenced URL is \n"+ 
 								PrefuseUtils.getValue((NodeItem) node)+ "\nDo you want to view it?\n", "URL destination", JOptionPane.OK_CANCEL_OPTION);
 				    if(choice == JOptionPane.OK_OPTION){
-				    	new FileViewer(PrefuseUtils.getValue((NodeItem)node), null).displayFile();
+				    	try {
+							new FileViewer(PrefuseUtils.getValue((NodeItem)node), null).displayFile();
+						} catch (IOException e1) {
+							JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
+									"Could not load the URL " + PrefuseUtils.getValue((NodeItem) node));
+						}
 				    } 
 				}
 				//If the node is a file node
 				else if(PrefuseUtils.isFile(node)){
-					openFile((NodeItem)node);
+					try {
+						openFile((NodeItem)node);
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
+								"Could not find the file " + PrefuseUtils.getValue((NodeItem) node));
+					}
 					
 				}
 			}

@@ -31,7 +31,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -478,8 +477,13 @@ public class FileUseQuery extends AbstractQuery {
 				FileTableModel data1 = (FileTableModel) fileTable.getModel();
 				for (int row1 : selectedRows) {
 					int modelRow = fileTable.convertRowIndexToModel(row1);
-					FileViewer viewer = new FileViewer(data1.getFileAt(modelRow), data1.getTimeAt(modelRow));
-					viewer.displayFile();
+					String selectedFile = data1.getFileAt(modelRow);
+					try {
+						FileViewer viewer = new FileViewer(selectedFile, data1.getTimeAt(modelRow));
+						viewer.displayFile();
+					} catch (Exception e1) {
+						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "Could not find " + selectedFile);
+					}
 				}
 			});
 
@@ -493,7 +497,7 @@ public class FileUseQuery extends AbstractQuery {
 						// data.getScriptAt(modelRow) + "\n");
 						// ErrorLog.showErrMsg("Selected timestamp = " +
 						// data.getTimeAt(modelRow) + "\n");
-						PrefuseGraphBuilder graphBuilder = new LoadFromDBCommand()
+						PrefuseGraphBuilder graphBuilder = LoadFromDBCommand
 								.loadDDGFromDB(data1.getScriptAt(modelRow), data1.getTimeAt(modelRow));
 						graphBuilder.drawFullGraph();
 						// ErrorLog.showErrMsg("Focusing on " +
