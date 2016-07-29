@@ -698,7 +698,7 @@ public class ProvenanceData {
 	 */
 	public DataInstanceNode findDin(int data) {
 		Iterator<DataInstanceNode> dinIt = dinIter();
-		//System.out.println("Looking for data node " + data + "  Found:");
+		//("Looking for data node " + data + "  Found:");
 		
 		while(dinIt.hasNext()){
 			DataInstanceNode dCheck = dinIt.next();
@@ -778,10 +778,7 @@ public class ProvenanceData {
 	 */
 	public void createFunctionTable(String fileName) {
 		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
-		System.out.println("LANGUAGE " + language);
 		scriptFileName = fileName;
-		System.out.println("SCRIPT FILE NAME IN PROVENANCE DATA " + fileName.toString());
-		//this is just R Scipt..
 		if (scriptParser != null) {
 			functionTable = scriptParser.buildFunctionTable(fileName);
 			blockTable = scriptParser.buildBlockTable(fileName);
