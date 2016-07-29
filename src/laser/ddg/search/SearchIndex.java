@@ -28,6 +28,7 @@ public class SearchIndex {
 	 * @param type the type of node:  one of "Exception", "Data", "File", "URL", or "Operation"
 	 * @param id the node id used by Prefuse
 	 * @param name the node's label
+     * @param time
 	 */
 	public void addToSearchIndex(String type, int id, String name, String time) {
 		SearchElement element;

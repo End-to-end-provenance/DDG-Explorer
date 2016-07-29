@@ -3,7 +3,6 @@ package laser.ddg.gui;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -72,12 +71,9 @@ class SearchPanel extends JPanel {
 
 
 		// Submit Search if the enter button is pressed in the search field
-		searchField.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doSearch();
-			}
-		});
+		searchField.addActionListener((ActionEvent e) -> {
+                    doSearch();
+                });
 		
 		searchField.addKeyListener (new KeyAdapter () {
 
@@ -88,12 +84,9 @@ class SearchPanel extends JPanel {
 		});
 
 		// Submit Search if the advanced search button is pressed
-		searchButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				doSearch();
-			}
-		});
+		searchButton.addActionListener((ActionEvent e) -> {
+                    doSearch();
+                });
 
 	}
 
@@ -101,15 +94,12 @@ class SearchPanel extends JPanel {
 		final JComboBox<String> box = new JComboBox<>(ddgOptions);
 		// Changes text in search field in response to the selected ddgOptions
 		// box
-		box.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent select) {
-				String ddgOption = box.getSelectedItem().toString();
-				if (!searchTyped) {
-					searchField.setText("Search for " + ddgOption);
-				}
-			}
-		});
+		box.addActionListener((ActionEvent select) -> {
+                    String ddgOption = box.getSelectedItem().toString();
+                    if (!searchTyped) {
+                        searchField.setText("Search for " + ddgOption);
+                    }
+                });
 		return box;
 	}
 	
@@ -146,7 +136,7 @@ class SearchPanel extends JPanel {
 			return;
 		}
 
-		ArrayList<SearchElement> newList = new ArrayList<SearchElement>();
+		ArrayList<SearchElement> newList = new ArrayList<>();
 		// if user entered information into the search bar
 		if (searchTyped) {
 			String searchText = searchField.getText().toLowerCase();

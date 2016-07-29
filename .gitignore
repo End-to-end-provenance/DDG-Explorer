@@ -3,3 +3,18 @@
 /.project
 /ddgbuilder.jar
 /.settings/
+/.DS_Store
+/eclispe-build.xml
+/nbproject
+/build/
+manifest.mf
+/lib/CopyLibs/*
+lib/nblibraries.properties
+nbbuild.xml
+*.jar
+/dist/
+<<<<<<< HEAD
+=======
+/.DS_Store
+/eclispe-build.xml
+>>>>>>> refs/heads/MissingScript

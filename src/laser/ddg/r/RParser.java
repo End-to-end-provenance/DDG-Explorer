@@ -57,7 +57,7 @@ public class RParser implements LanguageParser {
 				}
 			}
 		} catch (FileNotFoundException e) {
-			DDGExplorer.showErrMsg("Cannot find script file: " + script + "\n\n");
+			DDGExplorer.showErrMsg("There is no script available for " + script + "\n\n");
 		} finally {
 			if (readFile != null) {
 				fileContents = contentsBuilder.toString();
@@ -84,7 +84,7 @@ public class RParser implements LanguageParser {
 			
 		} 
 		
-		return new HashMap<String, String>();
+		return new HashMap<>();
 	}
 
 	/**
@@ -94,16 +94,17 @@ public class RParser implements LanguageParser {
 	 * @return a table mapping block names to the code within
 	 * 	the blocks.
 	 */
+        @Override
 	public Map<String, String> buildBlockTable(String script) {
 		if (!script.equals(fileName)) {
 			readScript(script);
 		}
 
 		if (fileContents == null) {
-			return new HashMap<String, String>();
+			return new HashMap<>();
 		}
 		
-		Map<String, String> blockTable = new HashMap<String, String>();
+		Map<String, String> blockTable = new HashMap<>();
 		//ErrorLog.showErrMsg("Searching for start-finish blocks");
 		int nextStart = fileContents.indexOf("ddg.start");
 		int count = 0;
@@ -112,7 +113,7 @@ public class RParser implements LanguageParser {
 			String blockName = getBlockName(fileContents, nextStart);
 			if (blockName != null) {
 				//ErrorLog.showErrMsg("Block: " + blockName);
-				System.out.println("Found block start: " + blockName);
+				//System.out.println("Found block start: " + blockName);
 				if (blockTable.containsKey(blockName)) {
 					DDGExplorer.showErrMsg("There is more than one definition of block " + blockName + "\n\n");
 					blockTable.put(blockName, "There is more than one definition of block " + blockName + ".");
@@ -126,7 +127,7 @@ public class RParser implements LanguageParser {
 					}
 					else {
 						//ErrorLog.showErrMsg("Found block finish");
-						System.out.println("Found block end: " + blockName);
+						//System.out.println("Found block end: " + blockName);
 						int blockStart = fileContents.indexOf("\n", nextStart) + 1;
 						String block = fileContents.substring(blockStart, blockFinish); 
 						blockTable.put(blockName, block);
@@ -139,7 +140,7 @@ public class RParser implements LanguageParser {
 			nextStart = fileContents.indexOf("ddg.start", nextStart + 1);
 		}
 		//ErrorLog.showErrMsg("Found " + count + " block starts");
-		System.out.println("Found " + count + " block starts");
+		//System.out.println("Found " + count + " block starts");
 		return blockTable;
 	}
 
@@ -182,7 +183,7 @@ public class RParser implements LanguageParser {
 	}
 
 	private Map<String, String> findFunctionDeclarations(String script) {
-		Map<String, String> functionTable = new HashMap<String, String>();
+		Map<String, String> functionTable = new HashMap<>();
 		int nextFunctionKeyword = script.indexOf("function");
 		int count = 0;
 		while (nextFunctionKeyword != -1) {
@@ -201,14 +202,14 @@ public class RParser implements LanguageParser {
 						count++;
 						String functionBody = getFunctionBody(script, nextFunctionKeyword);
 						functionTable.put(functionName, functionBody);
-						System.out.println(functionName);
+						//System.out.println(functionName);
 						//System.out.println(functionBody + "\n\n\n");
 					}
 				}
 			}
 			nextFunctionKeyword = script.indexOf("function", nextFunctionKeyword + 1);
 		}
-		System.out.println("Found " + count + " function declarations");
+		//System.out.println("Found " + count + " function declarations");
 		return functionTable;
 	}
 
@@ -232,7 +233,7 @@ public class RParser implements LanguageParser {
 		}
 		
 		if (nextChar != '{') {
-			System.out.println("Function contains a single expression.  I don't know how to parse that!!!");
+			//System.out.println("Function contains a single expression.  I don't know how to parse that!!!");
 			int endOfLine = script.indexOf('\n', i);
 			return script.substring(startIndex, endOfLine);
 		}

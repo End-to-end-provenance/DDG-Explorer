@@ -116,7 +116,7 @@ public class TabComp extends JPanel {
             addMouseListener(buttonMouseListener);
             setRolloverEnabled(true);
             //Close the proper tab by clicking the button
-            addActionListener(this);
+            addActionListener(this); // Thomas: TODO passing this as parameter should be avoided from within the constructor.
         }
         
         /**

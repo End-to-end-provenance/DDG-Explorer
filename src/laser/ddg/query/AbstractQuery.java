@@ -11,7 +11,7 @@ import javax.swing.JComponent;
  */
 public abstract class AbstractQuery implements Query {
 
-	private List<QueryListener> listeners = new ArrayList<QueryListener>();
+	private List<QueryListener> listeners = new ArrayList<>();
 
 	public AbstractQuery() {
 		super();

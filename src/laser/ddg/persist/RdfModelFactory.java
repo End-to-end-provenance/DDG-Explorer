@@ -19,11 +19,11 @@ public class RdfModelFactory {
 	public static final String JENA_DIRECTORY
 		= FileUtil.DDG_DIRECTORY + "jena" + File.separatorChar;
 	
-	private static Map<String,Dataset> datasetMap = new HashMap<String,Dataset>();
+	private static Map<String,Dataset> datasetMap = new HashMap<>();
 	
 	// Nobody should try to create an instance of this class.
 	private RdfModelFactory() {
-		
+
 	}
 	
 	/**
@@ -61,9 +61,9 @@ public class RdfModelFactory {
     		return null;
     	}
     	
-    	System.out.println("Creating model in directory " + directory);
+    	//System.out.println("Creating model in directory " + directory);
     	
-    	System.out.println("Creating Jena directory " + directory);
+    	//System.out.println("Creating Jena directory " + directory);
     	dataset = TDBFactory.createDataset(directory);
     	datasetMap.put(directory, dataset);
     	return dataset;

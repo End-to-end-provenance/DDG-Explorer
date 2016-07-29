@@ -3,7 +3,6 @@ package laser.ddg.commands;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -44,25 +43,16 @@ public class DBBrowserFrame {
 
 			JPanel buttonPanel = new JPanel();
 			buttonPanel.add(okButton);
-			okButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					queryFrame.dispose();
-					DDGExplorer.loadingDDG();
-					query.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, ddgExplorer);
-					query.addQueryListener(ddgExplorer);
-				}
-				
-			});
+			okButton.addActionListener((ActionEvent e) -> {
+                            queryFrame.dispose();
+                            DDGExplorer.loadingDDG();
+                            query.performQuery(jenaLoader, selectedProcessName, selectedTimestamp, ddgExplorer);
+                            query.addQueryListener(ddgExplorer);
+                        });
 			buttonPanel.add(cancelButton);
-			cancelButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					queryFrame.dispose();
-				}
-				
-			});
+			cancelButton.addActionListener((ActionEvent e) -> {
+                            queryFrame.dispose();
+                        });
 
 			queryFrame.add(dbBrowser, BorderLayout.CENTER);
 			queryFrame.add(buttonPanel, BorderLayout.SOUTH);

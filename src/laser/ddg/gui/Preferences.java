@@ -7,7 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.JOptionPane;
 
@@ -26,7 +27,7 @@ import laser.ddg.persist.FileUtil;
 public class Preferences {
 	private static final File PREFERENCE_FILE = new File(FileUtil.DDG_DIRECTORY
 			+ "prefs.txt");
-	private static Hashtable<String, String> preferences = new Hashtable<String, String>();
+	private static Map<String, String> preferences = new ConcurrentHashMap<>();
 
 
 	/**
@@ -190,6 +191,28 @@ public class Preferences {
 		savePreferences();
 	}
 
-
-
+        /**
+        * Determine from preference if default or system LAF should be used. 
+        * @return true if system LAF should be used, false by default.
+        */
+        public boolean isSystemLookAnFeel() {
+            if (preferences.containsKey("SystemLookAnFeel")) {
+                    return preferences.get("SystemLookAnFeel").toLowerCase().equals("true");
+            }
+            return false;
+        }
+        
+        /**
+        * Set either to use the default LAF (false) or the system one (true)
+        * @param use true for system LAF, false set to default.
+        */
+        public void useSystemLookAndFeel(boolean use){
+            if (use) {
+                    preferences.put("SystemLookAnFeel", "true");
+            }
+            else {
+                    preferences.put("SystemLookAnFeel", "false");
+            }
+            savePreferences();
+        }
 }
