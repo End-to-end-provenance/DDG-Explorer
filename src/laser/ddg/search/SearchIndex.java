@@ -14,12 +14,12 @@ import laser.ddg.visualizer.PrefuseUtils;
  */
 public class SearchIndex {
 	//2D Array to hold information on each type of node for search within Current DDG
-	private ArrayList <SearchElement> errorList = new ArrayList<SearchElement>();
-	private ArrayList <SearchElement> dataList = new ArrayList<SearchElement>();
-	private ArrayList <SearchElement> fileList = new ArrayList<SearchElement>();
-	private ArrayList <SearchElement> urlList = new ArrayList<SearchElement>();
-	private ArrayList <OperationSearchElement> operationList = new ArrayList<OperationSearchElement>();
-	private ArrayList <SearchElement> allList = new ArrayList<SearchElement>();
+	private ArrayList<SearchElement> errorList = new ArrayList<>();
+	private ArrayList<SearchElement> dataList = new ArrayList<>();
+	private ArrayList<SearchElement> fileList = new ArrayList<>();
+	private ArrayList<SearchElement> urlList = new ArrayList<>();
+	private ArrayList<OperationSearchElement> operationList = new ArrayList<>();
+	private ArrayList<SearchElement> allList = new ArrayList<>();
 
 	/**
 	 * Adds a node to the appropriate search index based on the node's type.
