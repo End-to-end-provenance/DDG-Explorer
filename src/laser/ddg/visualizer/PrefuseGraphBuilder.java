@@ -560,7 +560,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
-				System.out.println("Adding node at row " + rowNum);
+
 				//Thread.currentThread().dumpStack();
 
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
@@ -846,7 +846,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend").invoke(null);
 			ddgPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (Exception e) {
-			System.out.println("Can't create legend");
+			//System.out.println("Can't create legend");
 			e.printStackTrace();
 		}
 	}
@@ -886,27 +886,22 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void processFinished() {
-
-
 		// close file
 		/* outFile.close(); */
 
 		//System.out.println("Drawing DDG");
 		processFinished = true;
-		display.stopRefocusing();
-		displayOverview.stopRefocusing();
 		if (!incremental) {
 			drawFullGraph();
 			return;
 		}
-		
-		if(incremental){
+
+		else if(incremental){
 			addCollapsedNodes();
-			display.stopRefocusing();
-			displayOverview.stopRefocusing();
-			layout(root);
 		}
+		
 		repaint();
+
 	}
 
 	/**
@@ -914,7 +909,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void procedureNodeCreated(ProcedureInstanceNode pin) {
-		System.out.println("Adding procedure node " + pin.getName());
 		synchronized (vis) {
 			int pinId = pin.getId();
 			if (pinId >= MIN_DATA_ID) {
@@ -941,7 +935,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// left
 			// corner of the window.
 			if (incremental && !rootDrawn) {
-				System.out.println("Updating focus from procedureNodeCreated");
 				updateFocusGroup(pinId);
 				repaint();
 				rootDrawn = true;
@@ -979,10 +972,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 
-	public void stopRefous(){
-		display.stopRefocusing();
-		displayOverview.stopRefocusing();
-	}
 	/**
 	 * Draw the complete graph at once instead of incrementally.
 	 * @param attrList
@@ -1041,7 +1030,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * displays those in place of the expanded versions.
 	 */
 	private void addCollapsedNodes() {
-		System.out.println("ADD COLLAPSED NODE BEING CALLED ");
 		Set<NodeItem> rootMembers = new HashSet<NodeItem>();
 		if (root == null) {
 			setRoot();
@@ -1121,7 +1109,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					NodeItem collapsedNode = addCollapsedNode(next, nestedFinish, nestedMembers);
 					memberNodes.add(collapsedNode);
 					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(collapsedNode));
-					System.out.println("Total Elapsed Time" + totalElapsedTime);
 				}
 			}
 			else {
@@ -1140,7 +1127,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					if (startStarts != -1) {
 						startName = startName.substring(startName.indexOf('-')+1, startStarts);
 						totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp (finishNode));
-						System.out.println("Total Elapsed Time" + totalElapsedTime);
 						PrefuseUtils.setTimestamp(startNode, totalElapsedTime);
 						PrefuseUtils.setTimestamp(finishNode, totalElapsedTime);
 					}
@@ -1366,7 +1352,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	NodeItem expand(NodeItem root) {
 
-		System.out.println("IN ROOT EXPAND");
 		// Expanding a collapsed node.  In this case, the members are currently
 		// not displayed, so we just need to hide the collapsed node and
 		// show the members instead.
