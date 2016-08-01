@@ -11,11 +11,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-<<<<<<< HEAD
-=======
-import java.io.FileNotFoundException;
 import java.io.IOException;
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -114,13 +110,8 @@ public class DDGDisplay extends Display {
 		}
 	}
 
-<<<<<<< HEAD
-	private void openFile(final NodeItem n) {
-		// Get timeStamp if one has been included
-=======
 	private void openFile(final NodeItem n) throws IOException {
-		//Get timeStamp if one has been included
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
+		// Get timeStamp if one has been included
 		String ddgTime = PrefuseUtils.getTimestamp(n);
 
 		// Get the extension of the node's value
@@ -164,15 +155,9 @@ public class DDGDisplay extends Display {
 	 * @param time
 	 *            timestamp of the file given by the DDG
 	 */
-<<<<<<< HEAD
-	private void createFileFrame(String path, String time) {
+	private void createFileFrame(String path, String time) throws IOException {
 		// Check the timestamps
 		// assume no change if timestamp was never given
-=======
-	private void createFileFrame(String path, String time) throws IOException{
-		//Check the timestamps
-		//assume no change if timestamp was never given
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 		int tChange = FILE_CURRENT;
 		if (time != null) {
 			tChange = timeChanged(path, time);
@@ -197,27 +182,16 @@ public class DDGDisplay extends Display {
 	 * Create the frame that will display an image file as an ImageIcon in a new
 	 * panel
 	 * 
-<<<<<<< HEAD
 	 * @param path
 	 *            path name that the image file is found or. Can be .jpeg, .gif,
 	 *            .png or a URL
 	 * @param time
 	 *            timestamp of the plot given by the DDG
-=======
-	 * @param path path name that the image file is found or. Can be .jpeg, .gif, .png or a URL
-	 * @param time timestamp of the plot given by the DDG
 	 * @exception IOException if the image file cannot be read
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 	 */
-<<<<<<< HEAD
-	private void createPlotFrame(String path, String time) {
+	private void createPlotFrame(String path, String time) throws IOException {
 		// Check the timestamps
 		// assume no change if timestamp was never given
-=======
-	private void createPlotFrame(String path, String time) throws IOException{
-		//Check the timestamps
-		//assume no change if timestamp was never given
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 		int tChange = FILE_CURRENT;
 		if (time != null) {
 			tChange = timeChanged(path, time);
@@ -540,7 +514,7 @@ public class DDGDisplay extends Display {
 						JOptionPane.showMessageDialog(DDGDisplay.this, valueClause + timestampClause + locationClause);
 					}
 				}
-<<<<<<< HEAD
+
 				// If the node is a URL type data node
 				else if (nodeType.equals(PrefuseUtils.URL)
 						|| (PrefuseUtils.isFile(node) && PrefuseUtils.getValue((NodeItem) node) != null
@@ -552,42 +526,24 @@ public class DDGDisplay extends Display {
 											+ "\nDo you want to view it?\n",
 									"URL destination", JOptionPane.OK_CANCEL_OPTION);
 					if (choice == JOptionPane.OK_OPTION) {
-						new FileViewer(PrefuseUtils.getValue((NodeItem) node), null).displayFile();
-					}
-=======
-				//If the node is a URL type data node
-				else if(nodeType.equals(PrefuseUtils.URL) ||
-						(PrefuseUtils.isFile(node) && PrefuseUtils.getValue((NodeItem) node) != null &&
-							(PrefuseUtils.getValue((NodeItem) node).endsWith(".html") ||
-									PrefuseUtils.getValue((NodeItem) node).endsWith(".htm")))){
-					int choice = JOptionPane.showConfirmDialog(DDGDisplay.this,"The referenced URL is \n"+ 
-								PrefuseUtils.getValue((NodeItem) node)+ "\nDo you want to view it?\n", "URL destination", JOptionPane.OK_CANCEL_OPTION);
-				    if(choice == JOptionPane.OK_OPTION){
 				    	try {
-							new FileViewer(PrefuseUtils.getValue((NodeItem)node), null).displayFile();
+				    		new FileViewer(PrefuseUtils.getValue((NodeItem) node), null).displayFile();
 						} catch (IOException e1) {
 							JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
 									"Could not load the URL " + PrefuseUtils.getValue((NodeItem) node));
 						}
-				    } 
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
+					}
 				}
-<<<<<<< HEAD
+
 				// If the node is a file node
 				else if (PrefuseUtils.isFile(node)) {
-					openFile((NodeItem) node);
-
-=======
-				//If the node is a file node
-				else if(PrefuseUtils.isFile(node)){
 					try {
-						openFile((NodeItem)node);
+						openFile((NodeItem) node);
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
 								"Could not find the file " + PrefuseUtils.getValue((NodeItem) node));
 					}
-					
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
+
 				}
 			}
 		};

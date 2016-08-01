@@ -911,7 +911,11 @@ public class ProvenanceData {
 		}
 		String[] sourcedScriptNames = sourcedScriptList.split(",");
 
-		String[] sourcedScriptTimestamps = attributes.get(Attributes.SCRIPT_TIMESTAMPS).split(",");
+		String scriptTimestampList = attributes.get(Attributes.SCRIPT_TIMESTAMPS);
+		if (scriptTimestampList == null) {
+			return;
+		}
+		String[] sourcedScriptTimestamps = scriptTimestampList.split(",");
 		assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
 		
 		for (int i = 0; i < sourcedScriptNames.length; i++) {

@@ -2,14 +2,9 @@ package laser.ddg.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-<<<<<<< HEAD
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
-=======
-import java.io.File;
-import java.io.IOException;
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -40,7 +35,6 @@ public class ShowScriptCommand extends MouseAdapter {
 		// Find out what ddg the user is currently viewing
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ProvenanceData curDDG = ddgExplorer.getCurrentDDG();
-<<<<<<< HEAD
 		
 		// If this is the first time the menu is used or if the
 		// user is viewing a different ddg than the one that the
@@ -62,23 +56,6 @@ public class ShowScriptCommand extends MouseAdapter {
 				);
 				
 				scriptMenu.add(scriptItem);
-=======
-		String scriptFileName = curDDG.getScript();
-		//System.out.println("ShowScriptCommand: scriptFileName = " + scriptFileName);
-		if (scriptFileName == null) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "There is no script available for " + curDDG.getProcessName());
-		}
-		else {
-			File scriptFile = new File (scriptFileName);
-			if (scriptFile.exists()) {
-				try {
-					FileViewer fileViewer = new FileViewer(scriptFileName, "");
-					fileViewer.displayFile();
-				} catch (IOException e1) {
-					// Should not happen because we checked if the file existed.
-					e1.printStackTrace(System.err);
-				}
->>>>>>> branch 'development' of https://github.com/End-to-end-provenance/DDG-Explorer.git
 			}
 		}
 	}
