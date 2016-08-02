@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
@@ -44,10 +45,16 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 			return;
 		}
 		
-		saveDir = FileUtil.getSaveDir(processPathName);
+		List<ScriptInfo> scripts = provData.scripts();
+		if (scripts.size() >= 1) {
+			saveDir = FileUtil.getSaveDir(scripts.get(0));
+		}
+		else {
+			saveDir = FileUtil.getSaveDir(processPathName);
+		}
 
 		// Copy all of the scripts used
-		for (ScriptInfo script : provData.scripts()) {
+		for (ScriptInfo script : scripts) {
 			FileUtil.copyScriptFile(script);
 		}
 		

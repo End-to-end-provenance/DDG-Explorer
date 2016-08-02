@@ -739,6 +739,10 @@ public class ProvenanceData {
 	 *  program that created this specific ddg. 
 	 */
 	public String getScriptTimestamp() {
+		if (scripts != null && scripts.size() >= 1) {
+			return scripts.get(0).getTimestamp();
+		}
+		
 		if (processName == null) {
 			return null;
 		}

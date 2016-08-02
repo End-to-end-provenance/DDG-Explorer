@@ -18,7 +18,7 @@ public class Attributes {
 	public static final String LANGUAGE = "Language";
 	public static final String EXECUTION_TIME = "DateTime";
 	public static final String MAIN_SCRIPT_NAME = "Script";
-	public static final String MAIN_SCRIPT_TIMESTAMP = "Script Timestamp";
+	public static final String MAIN_SCRIPT_TIMESTAMP = "ProcessFileTimestamp";
 	public static final String SOURCED_SCRIPT_NAMES = "SourcedScripts";
 	public static final String SCRIPT_TIMESTAMPS = "SourcedScriptTimestamps";
 
