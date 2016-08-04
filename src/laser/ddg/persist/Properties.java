@@ -178,7 +178,7 @@ public class Properties {
 	public Property getProcessFileTimestamp(Model m) {
 		return m.createProperty(ALL_PROCESSES_URI, PROCESS_FILE_TIMESTAMP);
 	}
-
+	
 	public String getSinURI() {
 		return sinURI;
 	}

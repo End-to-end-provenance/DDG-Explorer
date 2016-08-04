@@ -53,7 +53,6 @@ public class LoadFileCommand implements ActionListener {
 	 */
 	public static void loadFile(File selectedFile) throws Exception{
 		JenaWriter jenaWriter = JenaWriter.getInstance();
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 		String selectedFileName = selectedFile.getName();
 		DDGExplorer.loadingDDG();
@@ -62,6 +61,7 @@ public class LoadFileCommand implements ActionListener {
 		parser.addNodesAndEdges();
 		
 		//new tab!
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
 	}
@@ -72,6 +72,7 @@ public class LoadFileCommand implements ActionListener {
 			execute();
 		} catch (Exception e) {
 			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+			e.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);

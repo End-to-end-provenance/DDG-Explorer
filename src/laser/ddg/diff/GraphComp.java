@@ -50,8 +50,7 @@ public class GraphComp extends JPanel {
 
 		builder.createCopiedGroup(copyGroupName);
 
-		String selectedFileName = selectedFile.getName();
-		builder.processStarted(selectedFileName, true);
+		builder.processStartedForDiff();
 
 		Parser parser = new Parser(selectedFile, builder);
 		parser.addNodesAndEdges();

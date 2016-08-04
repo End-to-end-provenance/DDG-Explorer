@@ -67,7 +67,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	// The singleton
 	private static DDGExplorer instance;
 	
-	private static final Preferences preferences = new Preferences();
+	private static final Preferences PREFERENCES = new Preferences();
 
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
@@ -142,14 +142,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		add(tabbed, BorderLayout.CENTER);
 
 		// set size based upon preferences, or default 
-		setSize (preferences.getWindowSize());
+		setSize (PREFERENCES.getWindowSize());
 
 		// modify size preferences when frame is resized
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				Rectangle bounds = e.getComponent().getBounds();
-				preferences.setWindowSize(bounds);
+				PREFERENCES.setWindowSize(bounds);
 			}
 		});
 
@@ -196,19 +196,19 @@ public class DDGExplorer extends JFrame implements QueryListener {
                         DDGPanel openDDGPanel = (DDGPanel) openTab;
                         enableDDGCommands();
                         SearchPanel.enableSearch();
-                        if (preferences.isArrowDirectionDown()) {
+                        if (PREFERENCES.isArrowDirectionDown()) {
                             openDDGPanel.setArrowDirectionDown();
                         }
                         else {
                             openDDGPanel.setArrowDirectionUp();
                         }
-                        if (preferences.isShowLegend()) {
+                        if (PREFERENCES.isShowLegend()) {
                             openDDGPanel.addLegend();
                         }
                         else {
                             openDDGPanel.removeLegend();
                         }
-                        openDDGPanel.showLineNumbers(preferences.isShowLineNumbers());
+                        openDDGPanel.showLineNumbers(PREFERENCES.isShowLineNumbers());
                     } else {
                         disableDDGCommands();
                         SearchPanel.disableSearch();
@@ -324,8 +324,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		attributesItem.setEnabled(false);
 		DDGMenu.add(attributesItem);
 		
-		showScriptItem = new JMenuItem("Show R script");
-		showScriptItem.addActionListener(new ShowScriptCommand());
+		showScriptItem = new JMenu("Show R script...");
+		showScriptItem.addMouseListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
@@ -378,22 +378,22 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		prefMenu.setBackground(MENU_COLOR);
 		
 		final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
-				preferences.isArrowDirectionDown());
+				PREFERENCES.isArrowDirectionDown());
 		arrowsDirectionMenuItem.addActionListener(new SetArrowDirectionCommand());
 		prefMenu.add(arrowsDirectionMenuItem);
 		
 		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
-				preferences.isShowLegend());
+				PREFERENCES.isShowLegend());
 		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
 		prefMenu.add(showLegendMenuItem);
 		
 		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
-				preferences.isShowLineNumbers());
+				PREFERENCES.isShowLineNumbers());
 		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
 		prefMenu.add(showLineNumbersMenuItem);
 		
 		final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
-				preferences.isSystemLookAnFeel());
+				PREFERENCES.isSystemLookAnFeel());
 		useSystemLAFMenuItem.addActionListener(new SystemLookAndFeelCommand());
         prefMenu.add(useSystemLAFMenuItem);
 		return prefMenu;
@@ -462,7 +462,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().setArrowDirectionDown();
 		}
-		preferences.setArrowDirectionDown();
+		PREFERENCES.setArrowDirectionDown();
 	}
 
 	/**
@@ -474,7 +474,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().setArrowDirectionUp();
 		}
-		preferences.setArrowDirectionUp();
+		PREFERENCES.setArrowDirectionUp();
 	}
 
 	/**
@@ -487,13 +487,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().showLineNumbers(show);
 		}
-		preferences.showLineNumbers(show);
+		PREFERENCES.showLineNumbers(show);
 	}
 
         public void useSystemLookAndFeel(boolean use){
             loadLookAndFeel(use);
             SwingUtilities.updateComponentTreeUI(this);
-            preferences.useSystemLookAndFeel(use);
+            PREFERENCES.useSystemLookAndFeel(use);
         }
 
 	/**
@@ -505,7 +505,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			curDDGPanel.addLegend();  
 		}
-		preferences.setShowLegend (true);
+		PREFERENCES.setShowLegend (true);
 	}
 
 	/**
@@ -516,7 +516,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			curDDGPanel.removeLegend();  
 		}
-		preferences.setShowLegend (false);
+		PREFERENCES.setShowLegend (false);
 		if (showLegendMenuItem != null) {
 			showLegendMenuItem.setSelected(false);
 		}
@@ -551,8 +551,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	public static void main(String[] args) {
 		try {
 			DDGExplorer explorer = DDGExplorer.getInstance();
-			preferences.load();
-            explorer.loadLookAndFeel(preferences.isSystemLookAnFeel());
+			PREFERENCES.load();
+            explorer.loadLookAndFeel(PREFERENCES.isSystemLookAnFeel());
 			explorer.createAndShowGUI();
 			if(args.length==1){
 				LoadFileCommand.loadDDG(args[0]);

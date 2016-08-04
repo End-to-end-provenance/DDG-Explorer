@@ -1,6 +1,5 @@
 package laser.ddg.persist;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -283,15 +282,7 @@ public class JenaLoader {
 			//System.out.println("Object is " + value);
 		}
 		pd.setAttributes(attributes);
-		
-		// Find the file that contains the script used to create the DDG being loaded
-		String processFileTimestamp = getStringValue(processName, timestamp, Properties.PROCESS_FILE_TIMESTAMP_URI, null);
-		String savedFileName = FileUtil.getSavedFileName(processName, processFileTimestamp);
-		File savedFile = new File (savedFileName);
-		if (savedFile.exists()) {
-			pd.createFunctionTable(savedFileName);	
-		}
-		
+				
 		load = LanguageConfigurator.createDDGBuilder(language, processName, provData, null);
 	}
 

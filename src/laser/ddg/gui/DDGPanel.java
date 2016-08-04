@@ -4,10 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -21,16 +19,15 @@ import javax.swing.border.EtchedBorder;
 
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptInfo;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
-import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
-import prefuse.Display;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the
@@ -84,6 +81,9 @@ public class DDGPanel extends JPanel {
 	
 	// Remembers the direction of the arrows.  REVERSE == down
 	private int arrowDirection = prefuse.Constants.EDGE_ARROW_REVERSE;
+	
+	// The windows that are used to display and highlight scripts
+	private ArrayList<ScriptDisplayer> fileDisplayers = new ArrayList<>();
 	
 	/**
 	 * Create a frame to display the DDG graph in
@@ -380,5 +380,50 @@ public class DDGPanel extends JPanel {
 	}
 
 
+	/**
+	 * Display source code highlighting the selected lines
+	 * @param firstLine first line to highlight
+	 * @param lastLine last line to highlight
+	 * @param scriptNum which script to show
+	 */
+	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+		loadSourceCode(scriptNum);
+	
+		fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
+	}
+	
+	/**
+	 * Display source code without highlighting
+	 * @param scriptNum which script to load
+	 */
+	public void displaySourceCode(int scriptNum) {
+		loadSourceCode(scriptNum);
+		fileDisplayers.get(scriptNum).nohighlight();
+	}
+
+	/**
+	 * Load the script into a frame if it is not already loaded
+	 * @param scriptNum which script to load
+	 */
+	private void loadSourceCode(int scriptNum) {
+		for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
+			fileDisplayers.add(i, null);
+		}
+	
+		if (fileDisplayers.get(scriptNum) == null) {
+			fileDisplayers.set(scriptNum, new ScriptDisplayer(builder, scriptNum));
+		}
+	}
+
+	/**
+	 * Display the source code for a script with no highlighting
+	 * @param script the script to display
+	 */
+	public void displaySourceCode(ScriptInfo script) {
+		List<ScriptInfo> scripts = provData.scripts();
+		int pos = scripts.indexOf(script);
+		assert pos >= 0;
+		displaySourceCode (pos);
+	}
 
 }

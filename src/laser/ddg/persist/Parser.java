@@ -66,11 +66,6 @@ public class Parser {
 	// Special characters
 	private static final char QUOTE = '\"';
 	
-	// Attributes describing the entire DDG
-	private static final String EXECUTION_TIME = "DateTime";
-	private static final String SCRIPT = "Script";
-	private static final String LANGUAGE = "Language";
-	
 	// Codes used to identify dataflow and control flow edges
 	private static final String DATA_FLOW = "DF";
 	private static final String CONTROL_FLOW = "CF";
@@ -118,7 +113,7 @@ public class Parser {
 	
 	// Time of the last procedure node encountered
 	private double lastProcElapsedTime = 0.0;
-	
+
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
@@ -168,7 +163,6 @@ public class Parser {
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
 		provData.setAttributes(attributes);
 		
-		provData.createFunctionTable();
 		provData.setQuery("Entire DDG");
 		builder.setProvData(provData);
 		
@@ -752,13 +746,13 @@ public class Parser {
 		try {
 			String attributeValue = convertNextTokenToString();
 			//System.out.println("Found attribute, " + attributeName + " value: " + attributeValue);
-			if(attributeName.equals(LANGUAGE)){
+			if(attributeName.equals(Attributes.LANGUAGE)){
 				language = attributeValue;
 			}
-			else if(attributeName.equals(SCRIPT)){
+			else if(attributeName.equals(Attributes.MAIN_SCRIPT_NAME)){
 				scrpt = attributeValue;
 			}
-			else if(attributeName.equals(EXECUTION_TIME)){
+			else if(attributeName.equals(Attributes.EXECUTION_TIME)){
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				attributeValue = attributeValue.replaceAll(":", ".");
 				timestamp = attributeValue;
@@ -789,7 +783,7 @@ public class Parser {
 	 * @param tokens the tokens from the declaration
 	 * @return the name to use
 	 */
-	private String constructName(String nodeType, String nodeName) {
+	private static String constructName(String nodeType, String nodeName) {
 		if(nodeName == null){
 			DDGExplorer.showErrMsg("Invalid node construct. No name given.");
 			return null;

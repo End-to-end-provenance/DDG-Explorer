@@ -259,19 +259,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return pinID;
 	}
 
-	private static String getStepNameFromFinishNode(String nodeFinishName) {
-		return nodeFinishName.substring(0, nodeFinishName.lastIndexOf("Finish"));
-	}
-
-	private String getStepNameFromFinishNode(Node finishNode) {
-		return getStepNameFromFinishNode(PrefuseUtils.getName(finishNode));
-	}
-
 	private static String getStepNameFromStartNode(String nodeStartName) {
 		return nodeStartName.substring(0, nodeStartName.lastIndexOf("Start"));
 	}
 
-	private String getStepNameFromStartNode(Node startNode) {
+	private static String getStepNameFromStartNode(Node startNode) {
 		return getStepNameFromStartNode(PrefuseUtils.getName(startNode));
 	}
 
@@ -386,6 +378,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * @param leafName the name of a data node
+	 * @return the DataInstanceNode with that name
+	 */
+	public DataInstanceNode getDataNode (String leafName) {
+		return provData.findDin (leafName);
 	}
 
 	/**
@@ -712,7 +712,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param compareDDG true if we are drawing side-by-side graphs for comparison, otherwise false
 	 * @return
 	 */
-	private ActionList assignColors(boolean compareDDG) {
+	private static ActionList assignColors(boolean compareDDG) {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -847,20 +847,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
-		processStarted(processName, provData, false);
+		processStarted(provData, false);
 	}
 
 	/**
 	 * Initializes the prefuse tables.
 	 */
-	public void processStarted(String processName, boolean compareDDG) {
-		processStarted(processName, null, true);
+	public void processStartedForDiff() {
+		processStarted(null, true);
 	}
 
 	/**
 	 * Initializes the prefuse tables.
 	 */
-	private void processStarted(String processName, ProvenanceData provData, boolean compareDDG) {
+	private void processStarted(ProvenanceData provData, boolean compareDDG) {
 		// initialize file
 		/* initFile(); */
 
@@ -1925,43 +1925,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	/**
-	 * Returns the definition of a function. Returns an error string if there is
-	 * no function with that name, or there is more than one function with that
-	 * name
-	 * 
-	 * @param functionName
-	 *            the name of the function
-	 * @return the definition
-	 */
-	public String getFunctionBody(String functionName) {
-		// Remove any parameters if they appear in the string
-		int blankIndex = functionName.indexOf(" ");
-		if (blankIndex != -1) {
-			functionName = functionName.substring(0, blankIndex);
-		}
-
-		int parenIndex = functionName.indexOf("(");
-		if (parenIndex != -1) {
-			functionName = functionName.substring(0, parenIndex);
-		}
-
-		return provData.getFunctionBody(functionName);
-	}
-
-	/**
-	 * Returns the definition of a block. Returns an error string if there is no
-	 * function with that name, or there is more than one function with that
-	 * name
-	 * 
-	 * @param blockName
-	 *            the name of the block
-	 * @return the block
-	 */
-	public String getBlockBody(String blockName) {
-		return provData.getBlockBody(blockName);
-	}
-
 	public void setProvData(ProvenanceData provData) {
 		this.provData = provData;
 		ddgPanel.setProvData(provData);
@@ -2029,8 +1992,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	}
 
-	public String getScriptPath() {
-		return provData.getScript();
+	/**
+	 * @param scriptNum the position of the script in the script list
+	 * @return the full path to the script file
+	 */
+	public String getScriptPath(int scriptNum) {
+		return provData.getScriptPath(scriptNum);
 	}
 
 	public String getProcessName() {
@@ -2052,4 +2019,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public String getName(NodeItem n) {
 		return PrefuseUtils.getName(n);
 	}
+
+	/**
+	 * Display source code highlighting the selected lines
+	 * @param firstLine first line to highlight
+	 * @param lastLine last line to highlight
+	 * @param scriptNum which script to show
+	 */
+	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+		ddgPanel.displaySourceCode(firstLine, lastLine, scriptNum);
+	}
+
 }
