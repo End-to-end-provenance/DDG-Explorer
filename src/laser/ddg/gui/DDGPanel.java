@@ -111,9 +111,8 @@ public class DDGPanel extends JPanel {
 	 * 		the object that manages the visible nodes and edges
 	 * @param vis
 	 *            the visualization to display
-	 * @param ddgDisplay
-	 *            the ddg display
-	 * @param ddgOverview
+	 * @param dispPlusOver
+	 *            the combined ddg display and its overview
 	 * @param provData
 	 *            the ddg data being displayed
 	 */
@@ -383,9 +382,7 @@ public class DDGPanel extends JPanel {
 
 	/**
 	 * Display source code highlighting the selected lines
-	 * @param firstLine first line to highlight
-	 * @param lastLine last line to highlight
-	 * @param scriptNum which script to show
+	 * @param sourcePos the position in the source code to display
 	 */
 	public void displaySourceCode(SourcePos sourcePos) {
 		int scriptNum = sourcePos.getScriptNumber();

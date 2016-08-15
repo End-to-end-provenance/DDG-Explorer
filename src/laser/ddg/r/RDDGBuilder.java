@@ -74,8 +74,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @param id the id number of the node
 	 * @param nodeName the name of the node
 	 * @param funcName the name of the function executed
-	 * @param lineNum the line number this node corresponds to
-	 * @param scriptNum the script number the line is from
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the node that is created
 	 */
 	@Override
@@ -133,7 +132,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @param value optional value associated with the data node
 	 * @param time the timestamp of the data node
 	 * @param location the original location of a file, null if not a file node
-         * @return 
+     * @return the node created
 	 */
 	@Override
 	public DataInstanceNode addDataNode(String type, int id, String name, String value, String time, String location){

@@ -176,7 +176,7 @@ public class FileUtil {
 	/**
 	 * Creates a file in a special directory where the file can be
 	 * saved so the database can access the current version
-	 * @param originalFile the file being copied
+	 * @param script the file being copied
 	 * @return the file object created.  Returns null if the path
 	 * 		to the file does not already exist and it cannot create
 	 * 		the path
@@ -260,6 +260,7 @@ public class FileUtil {
 	/**
 	 * Copy a script file so the database will be able to find it
 	 * @param script the script to copy
+	 * @return the absolute path to the copied file
 	 */
 	public static String copyScriptFile(ScriptInfo script) {
 		//System.out.println("File to copy: " + script.getFilepath() + "\n");

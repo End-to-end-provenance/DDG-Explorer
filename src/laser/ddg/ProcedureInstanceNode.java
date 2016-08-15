@@ -183,16 +183,10 @@ public interface ProcedureInstanceNode extends Node, Comparable<ProcedureInstanc
 	 */
 	public boolean canBeRoot();
 
-//	/**
-//	 * @return the line number in the script that corresponds to this node.
-//	 */
-//	public int getLineNumber();
-//
-//	/**
-//	 * @return the script number that corresponds to this node.
-//	 */
-//	public int getScriptNumber();
-
+	/**
+	 * 
+	 * @return the position in the source code that this node represents
+	 */
 	public SourcePos getSourcePos();
 
 }

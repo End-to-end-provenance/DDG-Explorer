@@ -26,6 +26,11 @@ public class ScriptInfo {
 	// Name of the script with the directory removed
 	final private String name;
 
+	/**
+	 * Create an object to remember information about the script that is executed
+	 * @param filepath absolute path to the file containing the script
+	 * @param timestamp last modified time of the script
+	 */
 	public ScriptInfo(String filepath, String timestamp) {
 		assert timestamp != null;
 		
@@ -39,14 +44,26 @@ public class ScriptInfo {
 		name = file.getName();
 	}
 
+	/**
+	 * 
+	 * @return the absolute path to the script
+	 */
 	public String getFilepath() {
 		return filepath;
 	}
 
+	/**
+	 * 
+	 * @return last modifiication time of the script
+	 */
 	public String getTimestamp() {
 		return timestamp;
 	}
 
+	/**
+	 * 
+	 * @return filename of the script with the directory path removed
+	 */
 	public String getName() {
 		// TODO Auto-generated method stub
 		return name;

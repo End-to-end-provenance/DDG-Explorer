@@ -18,8 +18,7 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * @param procDefinition the code the node represents
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
 	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
 		super(name, procDefinition, provData, elapsedTime, sourcePos);

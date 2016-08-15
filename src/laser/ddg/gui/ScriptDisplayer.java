@@ -43,6 +43,7 @@ public class ScriptDisplayer {
 
 	/**
 	 * Create the display for a script
+	 * @param builder the object that knows about the visible graph
 	 * @param scriptNum the number of the script as referenced in the ddg
 	 */
 	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) {
@@ -114,8 +115,7 @@ public class ScriptDisplayer {
 
 	/**
 	 * Highlight selected lines of the displayed file
-	 * @param firstLine highlight will begin with the first character of this line
-	 * @param lastLine highlight will end with the last character of this line
+	 * @param sourcePos the location in the source code to display
 	 */
 	public void highlight(SourcePos sourcePos) {
 		try {

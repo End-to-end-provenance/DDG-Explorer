@@ -124,8 +124,7 @@ public abstract class AbstractProcedureInstanceNode implements
 	 *            the agent that executed the procedure
 	 * @param provData the provenance data that this node belongs to
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos position in source code
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
 			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {

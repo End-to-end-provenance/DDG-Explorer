@@ -18,8 +18,7 @@ public class RRestoreNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
 	public RRestoreNode(String name, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
 		super(name, null, provData, elapsedTime, sourcePos);

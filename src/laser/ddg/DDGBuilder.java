@@ -41,8 +41,7 @@ public abstract class DDGBuilder {
 	 * @param id the id number of the node
 	 * @param name the name of the node
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos location in source code
 	 * @return the new procedure instance node
 	 */
 	public abstract ProcedureInstanceNode addProceduralNode(String type, int id, String name, double elapsedTime, SourcePos sourcePos);
@@ -55,8 +54,7 @@ public abstract class DDGBuilder {
 	 * @param name the name of the node
 	 * @param value the definition of the procedure
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos location in source code
 	 * @return the new procedure instance node
 	 */
 	public ProcedureInstanceNode addProceduralNode(String type, int id, String name, String value, double elapsedTime, SourcePos sourcePos) {

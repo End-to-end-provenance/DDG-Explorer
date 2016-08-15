@@ -912,8 +912,7 @@ public class JenaLoader {
 	 * @param id the id of the procedure node
 	 * @param procDef the definition of the procedure that was executed
      * @param elapsedTime
-	 * @param lineNumber the line in the script that generated the node
-	 * @param scriptNumber the script number for this node
+	 * @param sourcePos the position within the source code
 	 * @return the node created
 	 */
 	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, SourcePos sourcePos) {

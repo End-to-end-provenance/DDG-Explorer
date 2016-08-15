@@ -120,8 +120,8 @@ public class ProvenanceData {
 	/**
 	 * Construct a default object
 	 * 
-	 * @param processName
-	 *            the name of the process or activity this is the provenance
+	 * @param scrpt
+	 *            the name of the script or activity this is the provenance
 	 *            data for
 	 * @param timestamp
 	 * 			the timestamp associated with the script

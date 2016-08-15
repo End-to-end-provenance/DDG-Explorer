@@ -489,10 +489,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param location
 	 *            if this is a file node, this will be the full path to the
 	 *            original file. If it is not a file node, it will be null
-	 * @param lineNum
-	 *            the line number in the script where the node is derived from
-	 * @param scriptNum
-	 *            the script number identifying the script that the line is from
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, double time, String location, SourcePos sourcePos) {
@@ -516,10 +513,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param location
 	 *            if this is a file node, this will be the full path to the
 	 *            original file. If it is not a file node, it will be null
-	 * @param lineNum
-	 *            the line number in the script where the node is derived from
-	 * @param scriptNum
-	 *            the script number identifying which script the code is from
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String time, String location, SourcePos sourcePos) {
@@ -582,12 +576,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *            value of the node (could be null)
 	 * @param location
 	 *            original location of the file (could be null)
-	 * @param lineNum
-	 *            line number that the corresponding code is on in the script.
-	 *            Is -1 if not recorded.
-	 * @param scriptNum
-	 *            script number that the corresponding code is from. Is -1 if
-	 *            not recorded.
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String location, SourcePos sourcePos) {
@@ -2034,9 +2023,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Display source code highlighting the selected lines
-	 * @param firstLine first line to highlight
-	 * @param lastLine last line to highlight
-	 * @param scriptNum which script to show
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
 	public void displaySourceCode(SourcePos sourcePos) {
 		ddgPanel.displaySourceCode(sourcePos);
