@@ -32,6 +32,7 @@ import laser.ddg.FileInfo;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * This class reads provenance data from a Jena database.
@@ -909,7 +910,8 @@ public class JenaLoader {
 	 */
 	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber,
 			int scriptNumber) {
-		return load.addProceduralNode(type, id, name, procDef, elapsedTime, lineNumber, scriptNumber);
+		SourcePos sourcePos = new SourcePos (scriptNumber, lineNumber, 0, -1, 0);
+		return load.addProceduralNode(type, id, name, procDef, elapsedTime, sourcePos);
 	}
 	
 	private static boolean nodesToResContains(Resource r, ProvenanceData provData) {
