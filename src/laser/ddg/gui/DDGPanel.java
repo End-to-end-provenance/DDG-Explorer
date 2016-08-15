@@ -20,6 +20,7 @@ import javax.swing.border.EtchedBorder;
 import laser.ddg.Attributes;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
+import laser.ddg.SourcePos;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
@@ -386,10 +387,11 @@ public class DDGPanel extends JPanel {
 	 * @param lastLine last line to highlight
 	 * @param scriptNum which script to show
 	 */
-	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+	public void displaySourceCode(SourcePos sourcePos) {
+		int scriptNum = sourcePos.getScriptNumber();
 		loadSourceCode(scriptNum);
 	
-		fileDisplayers.get(scriptNum).highlight(firstLine, lastLine);
+		fileDisplayers.get(scriptNum).highlight(sourcePos);
 	}
 	
 	/**

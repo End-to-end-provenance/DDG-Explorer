@@ -11,6 +11,7 @@ import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
@@ -78,31 +79,31 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime, int lineNum, int scriptNum){
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime, SourcePos sourcePos){
 		RFunctionInstanceNode newFuncNode = null;
 		ProvenanceData provObject = getProvObject();
 		if(type.equals("Start")){
-			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Leaf") || type.equals("Operation")){
-			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Finish")){
-			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Interm")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Binding")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if (type.equals("Checkpoint")) {
-			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if (type.equals("Restore")) {
-			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, lineNum, scriptNum);
+			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		if (newFuncNode != null) {
 			provObject.addPIN(newFuncNode, id);
@@ -119,8 +120,8 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime, int lineNum, int scriptNum) {
-		return addProceduralNode(type, id, name, null, elapsedTime, lineNum, scriptNum);
+	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime, SourcePos sourcePos) {
+		return addProceduralNode(type, id, name, null, elapsedTime, sourcePos);
 	}
 
 	/**

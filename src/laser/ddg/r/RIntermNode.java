@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Represents the point between executions of a loop
@@ -19,8 +20,8 @@ public class RIntermNode extends RFunctionInstanceNode {
          * @param lineNum 
          * @param scriptNum
 	 */
-	public RIntermNode(String name, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
-		super(name, null, provData, elapsedTime, lineNum, scriptNum);
+	public RIntermNode(String name, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
+		super(name, null, provData, elapsedTime, sourcePos);
 	}
 	
 	/**

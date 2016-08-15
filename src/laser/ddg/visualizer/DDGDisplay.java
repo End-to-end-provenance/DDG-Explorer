@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import prefuse.Display;
@@ -302,13 +303,12 @@ public class DDGDisplay extends Display {
 		ProcedureInstanceNode funcPin = funcDin.getProducer();
 
 		// Find out where the function definition starts in the script
-		int scriptNum = funcPin.getScriptNumber();
-		int lineNum = funcPin.getLineNumber();
+		SourcePos sourcePos = funcPin.getSourcePos();
 
 		// Display the script highlighting the first line
 		// of the function.
 		DDGPanel curPanel = DDGExplorer.getCurrentDDGPanel();
-		curPanel.displaySourceCode(lineNum, lineNum, scriptNum);
+		curPanel.displaySourceCode(sourcePos);
 		
 	}
 
@@ -429,29 +429,28 @@ public class DDGDisplay extends Display {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VisualItem item = findItem(p);
+				SourcePos sourcePos;
 				if (PrefuseUtils.isCollapsed(item)) {
 					// Get the first member & its line number
 					NodeItem firstMember = builder.getFirstMember(item);
-					int firstLine = PrefuseUtils.getLineNumber(firstMember);
+					SourcePos firstSourcePos = PrefuseUtils.getSourcePos(firstMember);
 
 					// Get the last member & its line number
 					NodeItem lastMember = builder.getLastMember(item);
-					int lastLine = PrefuseUtils.getLineNumber(lastMember);
+					SourcePos lastSourcePos = PrefuseUtils.getSourcePos(lastMember);
 
-					// Get the script number. The first and last lines should
-					// come from the same script
-					int scriptNum = PrefuseUtils.getScriptNumber(firstMember);
-					displaySourceCode(firstLine, lastLine, scriptNum);
+					sourcePos = new SourcePos(firstSourcePos.getScriptNumber(), 
+							firstSourcePos.getStartLine(), firstSourcePos.getStartCol(),
+							lastSourcePos.getEndLine(), lastSourcePos.getEndCol());
 				} else {
-					int lineNumber = PrefuseUtils.getLineNumber((NodeItem) item);
-					int scriptNum = PrefuseUtils.getScriptNumber((NodeItem) item);
-					displaySourceCode(lineNumber, scriptNum);
+					sourcePos = PrefuseUtils.getSourcePos((NodeItem)item);
 				}
+				displaySourceCode(sourcePos);
 			}
 
-			private void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
+			private void displaySourceCode(SourcePos sourcePos) {
 				// display source code between those lines
-				if (firstLine == -1 || lastLine == -1) {
+				if (sourcePos == null || sourcePos.getStartLine() == -1) {
 					JOptionPane.showMessageDialog(DDGDisplay.this,
 							"There are no line numbers associated with this node.");
 					return;
@@ -461,11 +460,7 @@ public class DDGDisplay extends Display {
 				//System.out.println("scriptNum = " + scriptNum);
 				//System.out.println("fileDisplayers.size() = " + fileDisplayers.size());
 
-				builder.displaySourceCode(firstLine, lastLine, scriptNum);
-			}
-
-			private void displaySourceCode(int lineNumber, int scriptNumber) {
-				displaySourceCode(lineNumber, lineNumber, scriptNumber);
+				builder.displaySourceCode(sourcePos);
 			}
 
 		};

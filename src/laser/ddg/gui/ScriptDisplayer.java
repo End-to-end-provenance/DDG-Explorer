@@ -16,6 +16,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
+import laser.ddg.SourcePos;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.TextLineNumber;
 
@@ -116,17 +117,34 @@ public class ScriptDisplayer {
 	 * @param firstLine highlight will begin with the first character of this line
 	 * @param lastLine highlight will end with the last character of this line
 	 */
-	public void highlight(int firstLine, int lastLine) {
+	public void highlight(SourcePos sourcePos) {
 		try {
 			fileFrame.setVisible(true);
-			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1));
+			int firstLine = sourcePos.getStartLine();
+			int firstCol = sourcePos.getStartCol();
+			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1) + firstCol);
 			fileHighlighter.removeAllHighlights();
-			if (lastLine < lineStarts.size()) {
-				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine),
+			
+			int lastLine = sourcePos.getEndLine();
+			
+			// If ending line/col information is missing, highlight the entire
+			// start line.
+			if (lastLine == -1) {
+				lastLine = firstLine;
+				if (lastLine < lineStarts.size()) {
+					fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine),
+							fileHighlightPainter);
+				} else {
+					fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length() - 1,
+							fileHighlightPainter);
+				}
+			}
+			else {
+				int lastCol = sourcePos.getEndCol();
+				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1) + firstCol, 
+						lineStarts.get(lastLine - 1) + lastCol,
 						fileHighlightPainter);
-			} else {
-				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length() - 1,
-						fileHighlightPainter);
+
 			}
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
