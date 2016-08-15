@@ -4,6 +4,13 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.List;
 
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.query.ReadWrite;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
+
 import laser.ddg.Attributes;
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
@@ -13,14 +20,8 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.RemoveListenerException;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
-
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.ReadWrite;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
 
 /**
  * Writes an RDF model to a Jena database.  It does this incrementally as
@@ -360,8 +361,12 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		newSin.addProperty(props.getSinType(model), sin.getType());
 		newSin.addLiteral (props.getSinDDGId(model), sin.getId());
 		newSin.addLiteral (props.getSinElapsedTime(model), sin.getElapsedTime());
-		newSin.addLiteral (props.getSinLineNumber(model), sin.getLineNumber());
-		newSin.addLiteral (props.getSinScriptNumber(model), sin.getScriptNumber());
+		SourcePos sourcePos = sin.getSourcePos();
+		newSin.addLiteral (props.getSinStartLineNumber(model), sourcePos.getStartLine());
+		newSin.addLiteral (props.getSinStartColNumber(model), sourcePos.getStartCol());
+		newSin.addLiteral (props.getSinEndLineNumber(model), sourcePos.getEndLine());
+		newSin.addLiteral (props.getSinEndColNumber(model), sourcePos.getEndCol());
+		newSin.addLiteral (props.getSinScriptNumber(model), sourcePos.getScriptNumber());
 			
 		Object procDef = sin.getProcedureDefinition();
 		if (procDef == null) {

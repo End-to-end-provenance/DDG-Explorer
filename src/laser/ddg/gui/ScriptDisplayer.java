@@ -122,7 +122,7 @@ public class ScriptDisplayer {
 			fileFrame.setVisible(true);
 			int firstLine = sourcePos.getStartLine();
 			int firstCol = sourcePos.getStartCol();
-			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1) + firstCol);
+			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1) + firstCol - 1);
 			fileHighlighter.removeAllHighlights();
 			
 			int lastLine = sourcePos.getEndLine();
@@ -141,7 +141,7 @@ public class ScriptDisplayer {
 			}
 			else {
 				int lastCol = sourcePos.getEndCol();
-				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1) + firstCol, 
+				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1) + firstCol - 1, 
 						lineStarts.get(lastLine - 1) + lastCol,
 						fileHighlightPainter);
 

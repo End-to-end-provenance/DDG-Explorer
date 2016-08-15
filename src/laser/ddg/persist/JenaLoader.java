@@ -299,10 +299,14 @@ public class JenaLoader {
 		String name = retrieveSinName(res);
 		String value = retrieveSinValue(res);
 		Double elapsedTime = retrieveSinElapsedTime(res);
-		int lineNumber = retrieveSinLineNumber(res);
+		int startLineNumber = retrieveSinStartLineNumber(res);
+		int startColNumber = retrieveSinStartColNumber(res);
+		int endLineNumber = retrieveSinEndLineNumber(res);
+		int endColNumber = retrieveSinEndColNumber(res);
 		int scriptNumber = retrieveSinScriptNumber(res);
+		SourcePos sourcePos = new SourcePos(scriptNumber, startLineNumber, startColNumber, endLineNumber, endColNumber);
 		ProcedureInstanceNode pin = addSinToProvData(name,
-				type, value, elapsedTime, lineNumber, scriptNumber, res, id, provData);
+				type, value, elapsedTime, sourcePos, res, id, provData);
 		//System.out.println("Adding sin" + id + ": "
 		//		+ pin.toString());
 		return pin;
@@ -495,6 +499,7 @@ public class JenaLoader {
 			//System.out.println("Adding output " + outputDin.getName()
 			//			+ " to " + pin.getName());
 			pin.addOutput(outputDin.getName(), outputDin);
+			outputDin.setProducer(pin, outputDin);
 			// Producere is set when the data node is created.
 		}
 			
@@ -735,10 +740,13 @@ public class JenaLoader {
 	 * @param id The node's id
 	 * @return the procedure instance node that has been added to the provenance data
 	 */
-	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, int lineNumber, int scriptNumber,
+	private ProcedureInstanceNode addSinToProvData(String name, String type, String value, double elapsedTime, SourcePos sourcePos,
 			Resource res, int id, ProvenanceData provData) {
+		if (sourcePos == null) {
+			System.out.println("JenaLoader.addSinToProvData: No source position information for: " + name);
+		}
 		if (!nodesToResContains(res, provData)) {
-			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, lineNumber, scriptNumber);
+			ProcedureInstanceNode pin = createProcedureInstanceNode (name, type, id, value, elapsedTime, sourcePos);
 			provData.addPIN(pin, res.getURI());
 			return pin;
 		}
@@ -908,9 +916,7 @@ public class JenaLoader {
 	 * @param scriptNumber the script number for this node
 	 * @return the node created
 	 */
-	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, int lineNumber,
-			int scriptNumber) {
-		SourcePos sourcePos = new SourcePos (scriptNumber, lineNumber, 0, -1, 0);
+	protected ProcedureInstanceNode createProcedureInstanceNode (String name, String type, int id, String procDef, double elapsedTime, SourcePos sourcePos) {
 		return load.addProceduralNode(type, id, name, procDef, elapsedTime, sourcePos);
 	}
 	
@@ -962,15 +968,51 @@ public class JenaLoader {
 		}
 	}
 
-	private int retrieveSinLineNumber (Resource res) {
-		Property sinLineNumberProperty = prop.getSinLineNumber(res.getModel());
+	private int retrieveSinStartLineNumber (Resource res) {
+		Property sinStartLineNumberProperty = prop.getSinStartLineNumber(res.getModel());
 		try {
-			int sinLineNumber = retrieveIntProperty(res, sinLineNumberProperty);
-			return sinLineNumber;
+			int sinStartLineNumber = retrieveIntProperty(res, sinStartLineNumberProperty);
+			return sinStartLineNumber;
 		} catch (NullPointerException e) {
 			// No line number in the database.  Happens for ddgs saved before
 			// we started recording line numbers.
 			return -1;
+		}
+	}
+
+	private int retrieveSinStartColNumber (Resource res) {
+		Property sinStartColNumberProperty = prop.getSinStartColNumber(res.getModel());
+		try {
+			int sinStartColNumber = retrieveIntProperty(res, sinStartColNumberProperty);
+			return sinStartColNumber;
+		} catch (NullPointerException e) {
+			// No column number in the database.  Happens for ddgs saved before
+			// we started recording column numbers.
+			return 0;
+		}
+	}
+
+	private int retrieveSinEndLineNumber (Resource res) {
+		Property sinEndLineNumberProperty = prop.getSinEndLineNumber(res.getModel());
+		try {
+			int sinEndLineNumber = retrieveIntProperty(res, sinEndLineNumberProperty);
+			return sinEndLineNumber;
+		} catch (NullPointerException e) {
+			// No line number in the database.  Happens for ddgs saved before
+			// we started recording line numbers.
+			return -1;
+		}
+	}
+
+	private int retrieveSinEndColNumber (Resource res) {
+		Property sinEndColNumberProperty = prop.getSinEndColNumber(res.getModel());
+		try {
+			int sinEndColNumber = retrieveIntProperty(res, sinEndColNumberProperty);
+			return sinEndColNumber;
+		} catch (NullPointerException e) {
+			// No column number in the database.  Happens for ddgs saved before
+			// we started recording column numbers.
+			return 0;
 		}
 	}
 

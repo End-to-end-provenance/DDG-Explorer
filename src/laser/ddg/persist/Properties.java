@@ -38,7 +38,10 @@ public class Properties {
 	public static final String SUCCESSORS = "successors";
 	public static final String NAME = "name";
 	public static final String ELAPSED_TIME = "time";
-	public static final String LINE_NUMBER = "line";
+	public static final String START_LINE_NUMBER = "start_line";
+	public static final String END_LINE_NUMBER = "end_line";
+	public static final String START_COL_NUMBER = "start_col";
+	public static final String END_COL_NUMBER = "end_col";
 	public static final String SCRIPT_NUMBER = "script_num";
 	public static final String VALUE = "value";
 	static final String LANGUAGE = "Language";
@@ -84,8 +87,20 @@ public class Properties {
 		return m.createProperty(ALL_SINS_URI, ELAPSED_TIME);
 	}
 
-	public Property getSinLineNumber(Model m) {
-		return m.createProperty(ALL_SINS_URI, LINE_NUMBER);
+	public Property getSinStartLineNumber(Model m) {
+		return m.createProperty(ALL_SINS_URI, START_LINE_NUMBER);
+	}
+
+	public Property getSinStartColNumber(Model m) {
+		return m.createProperty(ALL_SINS_URI, START_COL_NUMBER);
+	}
+
+	public Property getSinEndLineNumber(Model m) {
+		return m.createProperty(ALL_SINS_URI, END_LINE_NUMBER);
+	}
+
+	public Property getSinEndColNumber(Model m) {
+		return m.createProperty(ALL_SINS_URI, END_COL_NUMBER);
 	}
 
 	public Property getSinScriptNumber(Model m) {
