@@ -18,6 +18,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import laser.ddg.Attributes;
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
@@ -383,8 +384,10 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Display source code highlighting the selected lines
 	 * @param sourcePos the position in the source code to display
+	 * @throws NoScriptFileException if the script number stored in sourcePos
+	 * 		is -1
 	 */
-	public void displaySourceCode(SourcePos sourcePos) {
+	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 		int scriptNum = sourcePos.getScriptNumber();
 		loadSourceCode(scriptNum);
 	
@@ -394,8 +397,9 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Display source code without highlighting
 	 * @param scriptNum which script to load
+	 * @throws NoScriptFileException if scriptNum is -1
 	 */
-	public void displaySourceCode(int scriptNum) {
+	public void displaySourceCode(int scriptNum) throws NoScriptFileException {
 		loadSourceCode(scriptNum);
 		fileDisplayers.get(scriptNum).nohighlight();
 	}
@@ -403,8 +407,12 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Load the script into a frame if it is not already loaded
 	 * @param scriptNum which script to load
+	 * @throws NoScriptFileException if scriptNum is -1
 	 */
-	private void loadSourceCode(int scriptNum) {
+	private void loadSourceCode(int scriptNum) throws NoScriptFileException {
+		if (scriptNum == -1) {
+			throw new NoScriptFileException("There is no script file available to display.");
+		}
 		for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
 			fileDisplayers.add(i, null);
 		}
@@ -417,8 +425,10 @@ public class DDGPanel extends JPanel {
 	/**
 	 * Display the source code for a script with no highlighting
 	 * @param script the script to display
+	 * @throws NoScriptFileException if there is no script file associated with
+	 * 		this script
 	 */
-	public void displaySourceCode(ScriptInfo script) {
+	public void displaySourceCode(ScriptInfo script) throws NoScriptFileException {
 		List<ScriptInfo> scripts = provData.scripts();
 		int pos = scripts.indexOf(script);
 		assert pos >= 0;

@@ -23,6 +23,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 import laser.ddg.DataInstanceNode;
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
@@ -293,8 +294,9 @@ public class DDGDisplay extends Display {
 	 * 
 	 * @param leaf
 	 *            leaf process node that holds the name of the function
+	 * @throws NoScriptFileException if there is no script file associated with this node
 	 */
-	private void displayFunc(VisualItem leaf) {
+	private void displayFunc(VisualItem leaf) throws NoScriptFileException {
 		// Get the Data node for this leaf
 		String leafName = PrefuseUtils.getName((NodeItem) leaf);		
 		DataInstanceNode funcDin = builder.getDataNode (leafName);
@@ -445,10 +447,14 @@ public class DDGDisplay extends Display {
 				} else {
 					sourcePos = PrefuseUtils.getSourcePos((NodeItem)item);
 				}
-				displaySourceCode(sourcePos);
+				try {
+					displaySourceCode(sourcePos);
+				} catch (NoScriptFileException e1) {
+					JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1.getMessage());
+				}
 			}
 
-			private void displaySourceCode(SourcePos sourcePos) {
+			private void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 				// display source code between those lines
 				if (sourcePos == null || sourcePos.getStartLine() == -1) {
 					JOptionPane.showMessageDialog(DDGDisplay.this,
@@ -504,7 +510,11 @@ public class DDGDisplay extends Display {
 					if (value == null && time == null && location == null) {
 						JOptionPane.showMessageDialog(DDGDisplay.this, "There is no information about this file.");
 					} else if (value != null && value.equals(FUNCTION)) {
-						displayFunc(node);
+						try {
+							displayFunc(node);
+						} catch (NoScriptFileException e1) {
+							JOptionPane.showMessageDialog(DDGDisplay.this, e1.getMessage());
+						}
 					} else {
 						JOptionPane.showMessageDialog(DDGDisplay.this, valueClause + timestampClause + locationClause);
 					}

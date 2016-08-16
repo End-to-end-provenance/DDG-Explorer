@@ -16,6 +16,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
+import laser.ddg.NoScriptFileException;
 import laser.ddg.SourcePos;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.TextLineNumber;
@@ -45,19 +46,19 @@ public class ScriptDisplayer {
 	 * Create the display for a script
 	 * @param builder the object that knows about the visible graph
 	 * @param scriptNum the number of the script as referenced in the ddg
+	 * @throws NoScriptFileException if the file containing the script is either 
+	 * 		unknown or missing
 	 */
-	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) {
+	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) throws NoScriptFileException {
 		String fileName = builder.getScriptPath(scriptNum);
 		if (fileName == null) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
+			throw new NoScriptFileException (
 					"There is no script available for " + builder.getProcessName());
-			return;
 		}
 		File theFile = new File(fileName);
 		if (!theFile.exists()) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
-					"There is no script available for " + builder.getProcessName());
-			return;
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
 		}
 
 		// System.out.println("Reading script from " + fileName);
@@ -66,7 +67,9 @@ public class ScriptDisplayer {
 			readFile(theFile);
 			displayFileContents();
 		} catch (FileNotFoundException e) {
-			DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
+
 		}
 	}
 

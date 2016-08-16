@@ -7,7 +7,9 @@ import java.util.Collection;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
@@ -50,7 +52,11 @@ public class ShowScriptCommand extends MouseAdapter {
 			for (ScriptInfo script : scripts) {
 				JMenuItem scriptItem = new JMenuItem(script.toString());
 				scriptItem.addActionListener((ActionEvent e2) -> {
-						DDGExplorer.getCurrentDDGPanel().displaySourceCode(script);
+						try {
+							DDGExplorer.getCurrentDDGPanel().displaySourceCode(script);
+						} catch (NoScriptFileException e1) {
+							JOptionPane.showMessageDialog(DDGExplorer.getInstance(), e1.getMessage());
+						}
 					}
 				);
 				

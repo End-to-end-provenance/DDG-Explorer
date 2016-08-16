@@ -24,6 +24,7 @@ import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
@@ -2024,8 +2025,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	/**
 	 * Display source code highlighting the selected lines
 	 * @param sourcePos the location in the source file that this node corresponds to
+	 * @throws NoScriptFileException if there is no script references in sourcePos
 	 */
-	public void displaySourceCode(SourcePos sourcePos) {
+	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 		ddgPanel.displaySourceCode(sourcePos);
 	}
 
