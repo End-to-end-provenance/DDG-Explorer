@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Represents the beginning of an R function or block
@@ -17,11 +18,10 @@ public class RStartNode extends RFunctionInstanceNode {
 	 * @param procDefinition the code the node represents
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
-	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
-		super(name, procDefinition, provData, elapsedTime, lineNum, scriptNum);
+	public RStartNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
+		super(name, procDefinition, provData, elapsedTime, sourcePos);
 		assert provData != null;
 	}
 

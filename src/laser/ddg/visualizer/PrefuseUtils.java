@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import laser.ddg.SourcePos;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.visual.EdgeItem;
@@ -39,8 +40,11 @@ public class PrefuseUtils {
 	/** The field name to identify the timestamp of an item */
 	static final String TIMESTAMP = "Time";
 	
-	/** The field name to identify the line number in the script */
-	static final String LINE = "Line";
+	/** The field names to identify the line and column numbers in the script */
+	public static final String STARTLINE = "StartLine";
+	public static final String STARTCOL = "StartCol";
+	public static final String ENDLINE = "EndLine";
+	public static final String ENDCOL = "EndCol";
 
 	/** The field name to identify the script number  */
 	static final String SCRIPT = "Script";
@@ -520,18 +524,15 @@ public class PrefuseUtils {
 
 	/**
 	 * @param n
-	 * @return the line number associated with a node
+	 * @return the source code position associated with a node
 	 */
-	public static int getLineNumber(Node n) {
-		return n.getInt(LINE);
-	}
-
-	/**
-	 * @param n
-	 * @return the script number associated with a node
-	 */
-	public static int getScriptNumber(Node n) {
-		return n.getInt(SCRIPT);
+	public static SourcePos getSourcePos(Node n) {
+		int startLine = n.getInt(STARTLINE);
+		int startCol = n.getInt(STARTCOL);
+		int endLine = n.getInt(ENDLINE);
+		int endCol = n.getInt(ENDCOL);
+		int script = n.getInt(SCRIPT);
+		return new SourcePos (script, startLine, startCol, endLine, endCol);
 	}
 
 	/**

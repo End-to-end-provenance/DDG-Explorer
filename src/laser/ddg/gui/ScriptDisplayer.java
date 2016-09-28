@@ -16,6 +16,8 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
+import laser.ddg.NoScriptFileException;
+import laser.ddg.SourcePos;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.TextLineNumber;
 
@@ -42,20 +44,21 @@ public class ScriptDisplayer {
 
 	/**
 	 * Create the display for a script
+	 * @param builder the object that knows about the visible graph
 	 * @param scriptNum the number of the script as referenced in the ddg
+	 * @throws NoScriptFileException if the file containing the script is either 
+	 * 		unknown or missing
 	 */
-	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) {
+	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) throws NoScriptFileException {
 		String fileName = builder.getScriptPath(scriptNum);
 		if (fileName == null) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
+			throw new NoScriptFileException (
 					"There is no script available for " + builder.getProcessName());
-			return;
 		}
 		File theFile = new File(fileName);
 		if (!theFile.exists()) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(),
-					"There is no script available for " + builder.getProcessName());
-			return;
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
 		}
 
 		// System.out.println("Reading script from " + fileName);
@@ -64,7 +67,9 @@ public class ScriptDisplayer {
 			readFile(theFile);
 			displayFileContents();
 		} catch (FileNotFoundException e) {
-			DDGExplorer.showErrMsg("There is no script available for " + fileName + "\n\n");
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
+
 		}
 	}
 
@@ -113,20 +118,36 @@ public class ScriptDisplayer {
 
 	/**
 	 * Highlight selected lines of the displayed file
-	 * @param firstLine highlight will begin with the first character of this line
-	 * @param lastLine highlight will end with the last character of this line
+	 * @param sourcePos the location in the source code to display
 	 */
-	public void highlight(int firstLine, int lastLine) {
+	public void highlight(SourcePos sourcePos) {
 		try {
 			fileFrame.setVisible(true);
-			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1));
+			int firstLine = sourcePos.getStartLine();
+			int firstCol = sourcePos.getStartCol();
+			fileTextArea.setCaretPosition(lineStarts.get(firstLine - 1) + firstCol - 1);
 			fileHighlighter.removeAllHighlights();
-			if (lastLine < lineStarts.size()) {
-				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine),
+			
+			int lastLine = sourcePos.getEndLine();
+			
+			// If ending line/col information is missing, highlight the entire
+			// start line.
+			if (lastLine == -1) {
+				lastLine = firstLine;
+				if (lastLine < lineStarts.size()) {
+					fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), lineStarts.get(lastLine),
+							fileHighlightPainter);
+				} else {
+					fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length() - 1,
+							fileHighlightPainter);
+				}
+			}
+			else {
+				int lastCol = sourcePos.getEndCol();
+				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1) + firstCol - 1, 
+						lineStarts.get(lastLine - 1) + lastCol,
 						fileHighlightPainter);
-			} else {
-				fileHighlighter.addHighlight(lineStarts.get(firstLine - 1), fileContents.length() - 1,
-						fileHighlightPainter);
+
 			}
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block

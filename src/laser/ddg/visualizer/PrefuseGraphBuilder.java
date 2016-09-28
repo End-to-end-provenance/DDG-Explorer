@@ -24,10 +24,12 @@ import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
@@ -426,7 +428,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			nodes.addColumn(PrefuseUtils.VALUE, String.class);
 			nodes.addColumn(PrefuseUtils.TIMESTAMP, String.class);
 			nodes.addColumn(PrefuseUtils.LOCATION, String.class);
-			nodes.addColumn(PrefuseUtils.LINE, int.class);
+			nodes.addColumn(PrefuseUtils.STARTLINE, int.class);
+			nodes.addColumn(PrefuseUtils.STARTCOL, int.class);
+			nodes.addColumn(PrefuseUtils.ENDLINE, int.class);
+			nodes.addColumn(PrefuseUtils.ENDCOL, int.class);
 			nodes.addColumn(PrefuseUtils.SCRIPT, int.class);
 			edges.addColumn(PrefuseUtils.TYPE, String.class);
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
@@ -443,8 +448,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
-		addNode(pin.getType(), pin.getId(), pin.getNameAndType(), null, pin.getElapsedTime(), null, pin.getLineNumber(),
-				pin.getScriptNumber());
+		addNode(pin.getType(), pin.getId(), pin.getNameAndType(), null, pin.getElapsedTime(), null, pin.getSourcePos());
 		provData.visitControlFlowEdges(pin, this);
 		numPins++;
 	}
@@ -452,7 +456,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	@Override
 	public void visitDin(DataInstanceNode din) {
 		addNode(din.getType(), din.getId() + numPins, din.getName(), din.getValue().toString(), din.getCreatedTime(),
-				din.getLocation(), -1, -1);
+				din.getLocation(), null);
 	}
 
 	@Override
@@ -486,16 +490,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param location
 	 *            if this is a file node, this will be the full path to the
 	 *            original file. If it is not a file node, it will be null
-	 * @param lineNum
-	 *            the line number in the script where the node is derived from
-	 * @param scriptNum
-	 *            the script number identifying the script that the line is from
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, double time, String location, int lineNum,
-			int scriptNum) {
+	public int addNode(String type, int id, String name, String value, double time, String location, SourcePos sourcePos) {
 		String formattedTime = PrefuseUtils.elapsedTimeFormat.format(time);
-		return addNode(type, id, name, value, formattedTime, location, lineNum, scriptNum);
+		return addNode(type, id, name, value, formattedTime, location, sourcePos);
 	}
 
 	/**
@@ -514,14 +514,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param location
 	 *            if this is a file node, this will be the full path to the
 	 *            original file. If it is not a file node, it will be null
-	 * @param lineNum
-	 *            the line number in the script where the node is derived from
-	 * @param scriptNum
-	 *            the script number identifying which script the code is from
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, String time, String location, int lineNum,
-			int scriptNum) {
+	public int addNode(String type, int id, String name, String value, String time, String location, SourcePos sourcePos) {
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -540,8 +536,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				nodes.setString(rowNum, PrefuseUtils.VALUE, value);
 				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, time);
 				nodes.setString(rowNum, PrefuseUtils.LOCATION, location);
-				nodes.setInt(rowNum, PrefuseUtils.LINE, lineNum);
-				nodes.setInt(rowNum, PrefuseUtils.SCRIPT, scriptNum);
+				if (sourcePos == null) {
+					nodes.setInt(rowNum, PrefuseUtils.SCRIPT, -1);
+					nodes.setInt(rowNum, PrefuseUtils.STARTLINE, -1);
+					nodes.setInt(rowNum, PrefuseUtils.STARTCOL, -1);
+					nodes.setInt(rowNum, PrefuseUtils.ENDLINE, -1);
+					nodes.setInt(rowNum, PrefuseUtils.ENDCOL, -1);
+				}
+				else {
+					nodes.setInt(rowNum, PrefuseUtils.SCRIPT, sourcePos.getScriptNumber());
+					nodes.setInt(rowNum, PrefuseUtils.STARTLINE, sourcePos.getStartLine());
+					nodes.setInt(rowNum, PrefuseUtils.STARTCOL, sourcePos.getStartCol());
+					nodes.setInt(rowNum, PrefuseUtils.ENDLINE, sourcePos.getEndLine());
+					nodes.setInt(rowNum, PrefuseUtils.ENDCOL, sourcePos.getEndCol());
+				}
 
 				searchIndex.addToSearchIndex(type, id, name, time);
 				return rowNum;
@@ -569,16 +577,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *            value of the node (could be null)
 	 * @param location
 	 *            original location of the file (could be null)
-	 * @param lineNum
-	 *            line number that the corresponding code is on in the script.
-	 *            Is -1 if not recorded.
-	 * @param scriptNum
-	 *            script number that the corresponding code is from. Is -1 if
-	 *            not recorded.
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the row of the table where the new node is added
 	 */
-	public int addNode(String type, int id, String name, String value, String location, int lineNum, int scriptNum) {
-		return addNode(type, id, name, value, null, location, lineNum, scriptNum);
+	public int addNode(String type, int id, String name, String value, String location, SourcePos sourcePos) {
+		return addNode(type, id, name, value, null, location, sourcePos);
 	}
 
 	/**
@@ -926,8 +929,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			// add the procedure node passing in null value since pin's do not
 			// have values
-			addNode(pin.getType(), pinId, pin.getNameAndType(), procName, pin.getElapsedTime(), "", pin.getLineNumber(),
-					pin.getScriptNumber());
+			addNode(pin.getType(), pinId, pin.getNameAndType(), procName, pin.getElapsedTime(), "", pin.getSourcePos());
 			if (root == null) {
 				root = getNode(pinId);
 				// System.out.println("procedureNodeCreated: root set to " +
@@ -1761,9 +1763,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			// timestamp
 			Object value = din.getValue();
 			if (value == null) {
-				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime(), -1, -1);
+				addNode(din.getType(), dinId, din.getName(), null, din.getCreatedTime(), null);
 			} else {
-				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime(), -1, -1);
+				addNode(din.getType(), dinId, din.getName(), din.getValue().toString(), din.getCreatedTime(), null);
 			}
 			NodeItem dataNode = getNode(dinId);
 
@@ -2022,12 +2024,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * Display source code highlighting the selected lines
-	 * @param firstLine first line to highlight
-	 * @param lastLine last line to highlight
-	 * @param scriptNum which script to show
+	 * @param sourcePos the location in the source file that this node corresponds to
+	 * @throws NoScriptFileException if there is no script references in sourcePos
 	 */
-	public void displaySourceCode(int firstLine, int lastLine, int scriptNum) {
-		ddgPanel.displaySourceCode(firstLine, lastLine, scriptNum);
+	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
+		ddgPanel.displaySourceCode(sourcePos);
 	}
 
 }

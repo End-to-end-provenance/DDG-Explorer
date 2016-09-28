@@ -2,6 +2,7 @@ package laser.ddg.r;
 
 import laser.ddg.AbstractProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Represents the execution of an R function or R block
@@ -19,11 +20,10 @@ public abstract class RFunctionInstanceNode extends AbstractProcedureInstanceNod
 	 * @param procDefinition Procedure definition(R function itself)
 	 * @param provData Provenance data object it will be passed to
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
 	public RFunctionInstanceNode(String name, Object procDefinition, ProvenanceData provData, double elapsedTime, 
-			int lineNum, int scriptNum) {
-		super(name, procDefinition, null, provData, elapsedTime, lineNum, scriptNum);
+			SourcePos sourcePos) {
+		super(name, procDefinition, null, provData, elapsedTime, sourcePos);
 	}
 }

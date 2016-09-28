@@ -18,6 +18,7 @@ import laser.ddg.NoSuchDataNodeException;
 import laser.ddg.NoSuchNodeException;
 import laser.ddg.NoSuchProcNodeException;
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -76,6 +77,7 @@ public class Parser {
 	private static final String LOCATION = "Location";
 
 	private static final String LINE_NUMBER = "Line";
+	private static final String POS = "Pos";
 
 	// Attribute associated with a procedure node to identify the script number.
 	private static final Object SCRIPT_NUMBER = "Script";
@@ -369,7 +371,10 @@ public class Parser {
 //		System.out.println("nodeid="+nodeId);
 		
 		double elapsedTime = 0;
-		int lineNum = -1;
+		int startLineNum = -1;
+		int startColNum = -1;
+		int endLineNum = -1;
+		int endColNum = -1;
 		int scriptNum = 0;
 		
 		// The remaining attributes are optional
@@ -410,13 +415,42 @@ public class Parser {
 				}
 			
 				else if (in.sval.equals(LINE_NUMBER)) {
-					lineNum = parseNumber();
+					startLineNum = parseNumber();
+				}
+
+				else if (in.sval.equals(POS)) {
+					int nextToken2 = in.nextToken();
+					if (nextToken2 != '=') {
+						in.pushBack();
+					}
+
+					nextToken2 = in.nextToken();
+					if (nextToken2 == QUOTE) {
+						String[] lineCols = in.sval.split(",");
+						if (lineCols.length == 1) {
+							assert (lineCols[0].equals("NA"));
+							startLineNum = -1;
+							startColNum = 0;
+							endLineNum = -1;
+							endColNum = 0;
+						}
+						else {
+							try {
+								startLineNum = Integer.parseInt(lineCols[0]);
+								startColNum = Integer.parseInt(lineCols[1]);
+								endLineNum = Integer.parseInt(lineCols[2]);
+								endColNum = Integer.parseInt(lineCols[3]);
+							} catch (NumberFormatException e) {
+								e.printStackTrace(System.err);
+							}
+						}
+					}
 				}
 
 				else if (in.sval.equals(SCRIPT_NUMBER)) {
 					scriptNum = parseNumber();
 				}
-}
+			}
 		}
 			
 
@@ -424,11 +458,12 @@ public class Parser {
 		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
 		//System.out.println("Line number = " + lineNum);
 		
+		SourcePos sourcePos = new SourcePos(scriptNum, startLineNum, startColNum, endLineNum, endColNum);
 		builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, elapsedTime, null, lineNum, scriptNum);
+					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
-		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, lineNum, scriptNum);
+		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
 
 	/** 
@@ -718,7 +753,7 @@ public class Parser {
 				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 			}
 			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location, -1, -1);
+					constructName(nodeType, name), value, timestamp, location, null);
 
 			
 		} catch (IllegalStateException e) {

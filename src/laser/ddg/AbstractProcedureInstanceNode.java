@@ -41,11 +41,8 @@ public abstract class AbstractProcedureInstanceNode implements
 	// is another ProcedureInstanceNode (rather than a DataInstanceNode)
 	private List<ProcedureInstanceNode> predecessors;
 	
-	// The line number where the code is that corresponds to this node. */
-	private int lineNumber;
-	
-	// The script number for this node
-	private int scriptNumber;
+	// The script and line number information for this node
+	private SourcePos sourcePos;
 	
 	/**
 	 * @return inputs map of names of input parameters to DIN values of those
@@ -127,11 +124,10 @@ public abstract class AbstractProcedureInstanceNode implements
 	 *            the agent that executed the procedure
 	 * @param provData the provenance data that this node belongs to
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos position in source code
 	 */
 	public AbstractProcedureInstanceNode(String name, Object procDefinition, 
-			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
+			AgentConfiguration ac, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
 
 		nameOfPIN = name;
 		procedureDefinition = procDefinition;
@@ -141,8 +137,7 @@ public abstract class AbstractProcedureInstanceNode implements
 		predecessors = new LinkedList<>();
 		this.provData = provData;
 		this.elapsedTime = elapsedTime;
-		this.lineNumber = lineNum;
-		this.scriptNumber = scriptNum;
+		this.sourcePos = sourcePos;
 	}
 	
 	/**
@@ -562,16 +557,20 @@ public abstract class AbstractProcedureInstanceNode implements
 	 * @return the line number in the script that corresponds to this node.
 	 */
         @Override
-	public int getLineNumber() {
-		return lineNumber;
-	}
-	
-	/**
-	 * @return the script number in the script that corresponds to this node.
-	 */
-        @Override
-	public int getScriptNumber() {
-		return scriptNumber;
-	}
+//	public int getLineNumber() {
+//		return lineNumber;
+//	}
+//	
+//	/**
+//	 * @return the script number in the script that corresponds to this node.
+//	 */
+//        @Override
+//	public int getScriptNumber() {
+//		return scriptNumber;
+//	}
+        
+    public SourcePos getSourcePos() {
+    	return sourcePos;
+    }
     	
 }

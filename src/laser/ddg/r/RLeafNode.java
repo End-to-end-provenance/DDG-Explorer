@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Creates a node that represents an atomic unit of computation in an R script, like
@@ -18,11 +19,10 @@ public class RLeafNode extends RFunctionInstanceNode {
 	 * @param procName the name of the function
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
-         * @param scriptNum
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
-	public RLeafNode(String name, String procName, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
-		super(name, procName, provData, elapsedTime, lineNum, scriptNum);
+	public RLeafNode(String name, String procName, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
+		super(name, procName, provData, elapsedTime, sourcePos);
 	}
 
 	/**

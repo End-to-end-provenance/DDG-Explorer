@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Creates a node that represents a checkpoint where the state of
@@ -17,10 +18,10 @@ public class RCheckpointNode extends RFunctionInstanceNode {
 	 * @param name node name
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
-	public RCheckpointNode(String name, ProvenanceData provData, double elapsedTime, int lineNum, int scriptNum) {
-		super(name, null, provData, elapsedTime, lineNum, scriptNum);
+	public RCheckpointNode(String name, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
+		super(name, null, provData, elapsedTime, sourcePos);
 	}
 
 	/**
