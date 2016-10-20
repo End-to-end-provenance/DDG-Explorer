@@ -15,21 +15,32 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
 import laser.ddg.NoSuchDataNodeException;
 import laser.ddg.NoSuchProcNodeException;
 import laser.ddg.ScriptInfo;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
+/**
+ * Parser for ddgs written in Json syntax.
+ * 
+ * @author Barbara Lerner
+ * @version Oct 20, 2016
+ *
+ */
 public class JSonParser extends Parser {
-    private PrefuseGraphBuilder builder;
-	private DDGBuilder ddgBuilder;
 	private JsonElement jsonRoot;
+	private BufferedReader reader;
 
+	/**
+	 * Create a Json parser
+	 * @param file the json file to parser
+	 * @param builder the object that builds the visual graph
+	 * @throws IOException
+	 */
 	public JSonParser(File file, PrefuseGraphBuilder builder) throws IOException {
 		super (file, builder);
 
-    	BufferedReader reader = new BufferedReader (new FileReader(file));
+    	reader = new BufferedReader (new FileReader(file));
     	
     	// Read the entire file in to a string
     	StringBuffer s = new StringBuffer();
@@ -50,6 +61,7 @@ public class JSonParser extends Parser {
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
+	@Override
 	protected void parseHeader() throws IOException {
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
         JsonObject activities = wholeThing.getAsJsonObject("activity");
@@ -89,16 +101,22 @@ public class JSonParser extends Parser {
 			}
 			else {
 				try {
-					// TODO:  Examine JSON attributes.  Sourced scripts do not come as a simple string, for exmaple.  Also installed libraries.
 					attributes.set(attributeName, attributeValue.getAsString());
 				} catch (IllegalStateException | UnsupportedOperationException e) {
+					// Ignore any other attributes that are not simple strings
 				}
 
 			}
 		}
 	}
 
-	private List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
+	/**
+	 * Parses the json attribute that contains the sourced script information
+	 * @param scriptDir the directory where the script is stored
+	 * @param sourcedScripts the json attribute for sourced scripts
+	 * @return a list of sourced script objects 
+	 */
+	private static List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
 		List<ScriptInfo> sourcedScriptInfo = new ArrayList<>();
 		for (JsonElement sourcedScriptElem : sourcedScripts) {
 			JsonObject sourcedScript = sourcedScriptElem.getAsJsonObject();
@@ -109,7 +127,12 @@ public class JSonParser extends Parser {
 		return sourcedScriptInfo;
 	}
 
-	private List<String> parsePackages(JsonArray packages) {
+	/**
+	 * Parses the installed packages information
+	 * @param packages the json attribute for the packages
+	 * @return a list of the packages
+	 */
+	private static List<String> parsePackages(JsonArray packages) {
 		List<String> packageInfo = new ArrayList<>();
 		for (JsonElement packageElem : packages) {
 			JsonObject packageObj = packageElem.getAsJsonObject();
@@ -120,11 +143,13 @@ public class JSonParser extends Parser {
 		return packageInfo;
 	}
 
+	/**
+	 * Parses all the nodes and edges and adds everything to the provenance
+	 * data and visual graph.
+	 */
+	@Override
 	protected void parseNodesAndEdges () {
 
-        // use the isxxx methods to find out the type of jsonelement. In our
-        // example we know that the root object is the Albums object and
-        // contains an array of dataset objects
         if (jsonRoot.isJsonObject()) {
             JsonObject wholeThing = jsonRoot.getAsJsonObject();
             JsonObject procNodes = wholeThing.getAsJsonObject("activity");
@@ -143,9 +168,16 @@ public class JSonParser extends Parser {
             parseInputEdges (inputEdges);
         }
 
+        try {
+			reader.close();
+		} catch (IOException e) {
+			// Do nothing
+		}
     }
     
+	/** Parses all the procedural nodes and adds them to the provenance data and visual graph */
 	private void parseProcNodes(JsonObject procNodes) {
+		// This is the Json syntax for a procedural node
 //		"p12" : {
 //		"rdt:name" : "SimpleFunction.R",
 //		"rdt:type" : "Finish",
@@ -167,7 +199,7 @@ public class JSonParser extends Parser {
 				System.out.println("Found proc node: " + id + " with type " + type);
 				
 				String name = nodeDef.get("rdt:name").getAsString();
-				Double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
+				double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
 				
 				String script = nodeDef.get("rdt:scriptNum").getAsString();
 				String startLine = nodeDef.get("rdt:startLine").getAsString();
@@ -182,7 +214,9 @@ public class JSonParser extends Parser {
 		}
 	}
 	
+	/** Parses all the data nodes and adds them to the provenance data and visual graph */
 	private void parseDataNodes(JsonObject dataNodes) {
+		// This is the json syntax for a data node
 //		"d5" : {
 //		"rdt:name" : "y",
 //		"rdt:value" : "2",
@@ -215,7 +249,9 @@ public class JSonParser extends Parser {
 
 	}
 
+	/** Parses all the control flow edges and adds them to the provenance data and visual graph */
 	private void parseControlFlowEdges(JsonObject cfEdges) {
+		// This is the json syntax for a control flow edge
 //		"e1" : {
 //		"prov:informant" : "p1",
 //		"prov:informed" : "p2"
@@ -224,17 +260,18 @@ public class JSonParser extends Parser {
 		Set<Entry<String, JsonElement> > cfEdgeSet = cfEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) {
-			String id = cfEdge.getKey();
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
 			String pred = nodeDef.get("prov:informant").getAsString();
 			String succ = nodeDef.get("prov:informed").getAsString();
-			System.out.println("Found cf edge from " + pred + " to " + succ);
+			//System.out.println("Found cf edge from " + pred + " to " + succ);
 			
 			addControlFlowEdge(pred, succ);
 		}
 	}
 
+	/** Parses all the data output edges and adds them to the provenance data and visual graph */
 	private void parseOutputEdges(JsonObject outputEdges) {
+		// This is the json syntax for a data out edge
 //		"e2" : {
 //		"prov:entity" : "d1",
 //		"prov:activity" : "p2"
@@ -243,7 +280,6 @@ public class JSonParser extends Parser {
 		Set<Entry<String, JsonElement> > outputEdgeset = outputEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : outputEdgeset) {
-			String id = cfEdge.getKey();
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
 			String proc = nodeDef.get("prov:activity").getAsString();
 			String data = nodeDef.get("prov:entity").getAsString();
@@ -258,7 +294,9 @@ public class JSonParser extends Parser {
 
 	}
 
+	/** Parses all the data input edges and adds them to the provenance data and visual graph */
 	private void parseInputEdges(JsonObject inputEdges) {
+		// This is the json syntax for a data in edge
 //		"e18" : {
 //		"prov:activity" : "p10",
 //		"prov:entity" : "d4"
@@ -267,11 +305,10 @@ public class JSonParser extends Parser {
 		Set<Entry<String, JsonElement> > inputEdgeset = inputEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : inputEdgeset) {
-			String id = cfEdge.getKey();
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
 			String proc = nodeDef.get("prov:activity").getAsString();
 			String data = nodeDef.get("prov:entity").getAsString();
-			System.out.println("Found cf edge from " + data + " to " + proc);
+			//System.out.println("Found cf edge from " + data + " to " + proc);
 			
 			try {
 				addDataConsumerEdge(proc, data);

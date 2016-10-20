@@ -12,13 +12,8 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import laser.ddg.Attributes;
-import laser.ddg.DDGBuilder;
-import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoSuchDataNodeException;
-import laser.ddg.NoSuchNodeException;
 import laser.ddg.NoSuchProcNodeException;
-import laser.ddg.ProvenanceData;
-import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -93,6 +88,9 @@ public class TextParser extends Parser {
 	// Time of the last procedure node encountered
 	private double lastProcElapsedTime = 0.0;
 
+	// Used to read from the file being parsed.
+	private Reader reader;
+
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
@@ -102,8 +100,8 @@ public class TextParser extends Parser {
 	public TextParser(File file, PrefuseGraphBuilder builder) 
 		throws FileNotFoundException {
 		super (file, builder);
-		Reader r = new BufferedReader (new FileReader (file));
-	    in = new StreamTokenizer(r);
+		reader = new BufferedReader (new FileReader (file));
+	    in = new StreamTokenizer(reader);
 	    in.eolIsSignificant(true);
 	    in.resetSyntax();
 
@@ -127,6 +125,7 @@ public class TextParser extends Parser {
 	 * Adds the nodes and edges from the DDG to the graph.
 	 * @throws IOException if there is a problem reading the file
 	 */
+	@Override
 	public void parseNodesAndEdges() throws IOException {
 		int nextToken = skipBlankLines();
 		while (nextToken != StreamTokenizer.TT_EOF) {
@@ -135,6 +134,7 @@ public class TextParser extends Parser {
 			nextToken = skipBlankLines();
 		}
 		addEdges();
+		reader.close();
 	}
 
 	/**
@@ -142,6 +142,7 @@ public class TextParser extends Parser {
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
+	@Override
 	protected void parseHeader() throws IOException {
 		// Skip over blank lines
 		int nextToken = skipBlankLines();
@@ -332,7 +333,7 @@ public class TextParser extends Parser {
 			if (nextToken == StreamTokenizer.TT_WORD ) {
 				if (in.sval.equals(TIMESTAMP)) {
 					// get the timeStamp
-					String time = parseElapsedTime(nodeId);
+					String time = parseElapsedTime();
 
 					if (time == null) {
 						elapsedTime = 0;
@@ -408,32 +409,7 @@ public class TextParser extends Parser {
 		addProcNode (nodeType, nodeId, name, value, elapsedTime, script, startLine, startCol, endLine, endCol);
 	}
 
-	/** 
-	 * Parse the line or script number attribute
-	 * @return the number value of the attribute, or -1 if there is no number attribute 
-	 * 
-	 **/
-	private int parseNumber() throws IOException {
-		int nextToken = in.nextToken();
-		if (nextToken != '=') {
-			in.pushBack();
-			return -1;
-		}
-
-		nextToken = in.nextToken();
-		if (nextToken == QUOTE) {
-			try {
-				return Integer.parseInt(in.sval);
-			} catch (NumberFormatException e) {
-				// ddg.txt uses "NA" for a missing number
-				return -1;
-			}
-		}
-
-		return -1;
-	}
-
-	private String parseElapsedTime(String nodeId) throws IOException {
+	private String parseElapsedTime() throws IOException {
 		int nextToken = in.nextToken();
 		if (nextToken != '=') {
 			in.pushBack();
@@ -779,9 +755,6 @@ public class TextParser extends Parser {
 	}
 
 	private void parseControlFlowEdge(ArrayList<String> tokens) {
-		int pred = Integer.parseInt(tokens.get(1).substring(1));
-		int succ = Integer.parseInt(tokens.get(2).substring(1));
-		// System.out.println("Found CF edge from " + pred + " to " + succ);
 		addControlFlowEdge(tokens.get(1), tokens.get(2));
 	}
 
@@ -800,12 +773,5 @@ public class TextParser extends Parser {
 		}
 	}
 
-	private static void displayTokens(ArrayList<String> tokens) {
-		String s = "";
-		for (int i = 0; i < tokens.size(); i++) {
-			s = s + tokens.get(i) + " ";
-		}
-		DDGExplorer.showErrMsg(s + "\n\n");
-	}
 
 }

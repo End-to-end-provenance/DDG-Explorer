@@ -1,13 +1,7 @@
 package laser.ddg.persist;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -64,73 +58,48 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * @author Barbara Lerner
  */
 public abstract class Parser {
-	// Special characters
-	private static final char QUOTE = '\"';
-	
-	// Codes used to identify dataflow and control flow edges
-	private static final String DATA_FLOW = "DF";
-	private static final String CONTROL_FLOW = "CF";
-	
-	// Attribute names for data nodes
-	private static final String VALUE = "Value";
-	private static final String TIMESTAMP = "Time";
-	private static final String LOCATION = "Location";
-
-	private static final String LINE_NUMBER = "Line";
-	private static final String POS = "Pos";
-
-	// Attribute associated with a procedure node to identify the script number.
-	private static final Object SCRIPT_NUMBER = "Script";
-
-	// The input stream
-	private StreamTokenizer in;
-	
-	// The object that builds the prefuse graph
+	/** The object that builds the prefuse graph */
 	protected PrefuseGraphBuilder builder;
 	
-	//The object that builds the internal ddg graph
+	/** The object that builds the internal ddg graph */
 	protected DDGBuilder ddgBuilder;
 	
-	// The number of step/procedure nodes.  Default to half the integers if it is not set.
-	// The purpose is for data and procedure nodes to have different numbers inside Prefuse.
+	/** The number of step/procedure nodes.  Default to half the integers if it is not set.
+	    The purpose is for data and procedure nodes to have different numbers inside Prefuse. */
 	protected int numPins = Integer.MAX_VALUE / 2;
 	
-	//The name of the script
+	/** The name of the script */
 	protected String scrpt;
 	
-	//The timestamp on the script
+	/** The timestamp on the script */
 	protected String timestamp;
 	
-	//The language of the script
+	/** The language of the script */
 	protected String language;
 	
-	//String of attribute names and values
+	/** String of attribute names and values */
 	protected Attributes attributes = new Attributes();
-	
-	// Edges are saved and processed after all the nodes have been added
-	// to the graph.  That way there can be no references to edges that
-	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
 	
 	private File fileBeingParsed;
 	
-	// Time of the last procedure node encountered
-	private double lastProcElapsedTime = 0.0;
-
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
 	 * @param builder the prefuse object that will build the graph
-	 * @throws FileNotFoundException if the file to parse cannot be found
 	 */
-	protected Parser(File file, PrefuseGraphBuilder builder) 
-		throws FileNotFoundException {
-
+	protected Parser(File file, PrefuseGraphBuilder builder)  {
 	    this.builder = builder;
 		ddgBuilder = null;
 		fileBeingParsed = file;
 	}
 
+	/**
+	 * Creates either a TextParser or a JsonParser depending on the type of the file passed in
+	 * @param file the file to parse.  Its name should end in .txt or .json
+	 * @param prefuseGraphBuilder the object to build the visual graph
+	 * @return the parser that can handle the given file
+	 * @throws IOException if there are problems reading the file
+	 */
 	public static Parser createParser(File file, PrefuseGraphBuilder prefuseGraphBuilder) throws IOException {
 		String fileName = file.getName();
 		String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
@@ -180,17 +149,18 @@ public abstract class Parser {
 		
 		parseNodesAndEdges();
 		
-		System.out.println("Done parsing");
+		//System.out.println("Done parsing");
 		
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
-			System.out.println("ddgBuilt returned");
-			
 		}
 		builder.processFinished();
-		System.out.println("processFinished returned");
 	}
 
+	/**
+	 * Parse all the nodes and edges in the file and add them to the visual graph and the provenance data
+	 * @throws IOException if there are problems reading the file
+	 */
 	protected abstract void parseNodesAndEdges() throws IOException;
 
 	/**
@@ -200,8 +170,21 @@ public abstract class Parser {
 	 */
 	protected abstract void parseHeader() throws IOException;
 
+	/**
+	 * Add a node to the provenance data and the visual graph
+	 * @param nodeType the type of the node, such as "Start", "Operation", "Finish"
+	 * @param nodeId the node's unique id
+	 * @param name the label that should appear on the node
+	 * @param value the node's value; may be null
+	 * @param elapsedTime the time recorded for the node
+	 * @param script the script number that created the node
+	 * @param startLine the first line in the script associated with this node
+	 * @param startCol the column number on the first line
+	 * @param endLine the last line in the script associated with this node
+	 * @param endCol the column on the last line
+	 */
 	protected void addProcNode (String nodeType, String nodeId, String name, String value, double elapsedTime, String script, String startLine, String startCol, String endLine, String endCol) {
-		System.out.println("Adding proc node " + nodeId);
+		//System.out.println("Adding proc node " + nodeId);
 		SourcePos sourcePos = buildSourcePos(script, startLine, startCol, endLine, endCol);
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
@@ -210,7 +193,17 @@ public abstract class Parser {
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
 	
-	public SourcePos buildSourcePos (String script, String startLine, String startCol, String endLine, String endCol) {
+	/**
+	 * Creates a SourcePos object given the information from the ddg.  The ddg may contain NA for some values.
+	 * These are translated into appropriate integers.
+	 * @param script the script number or NA
+	 * @param startLine the starting line number or NA
+	 * @param startCol the starting column or NA
+	 * @param endLine the ending line number or NA
+	 * @param endCol the ending column or NA
+	 * @return the same information encapsulated inside a SourcePos object
+	 */
+	protected static SourcePos buildSourcePos (String script, String startLine, String startCol, String endLine, String endCol) {
 		int scriptNum;
 		int startLineNum;
 		int startColNum;
@@ -254,8 +247,17 @@ public abstract class Parser {
 		return new SourcePos (scriptNum, startLineNum, startColNum, endLineNum, endColNum);
 	}
 
+	/**
+	 * Add a data node to the provenance data and the visual graph
+	 * @param nodeType the type of node, such as "File", "Data", "Exception"
+	 * @param nodeId the node's unique id
+	 * @param name the label to display
+	 * @param value the data value
+	 * @param timestamp the timestamp for the data
+	 * @param location the file location if the data is a file or snapshot
+	 */
 	protected void addDataNode (String nodeType, String nodeId, String name, String value, String timestamp, String location) {
-		System.out.println("Adding data node " + nodeId + " with type " + nodeType);
+		//System.out.println("Adding data node " + nodeId + " with type " + nodeType);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 		if (ddgBuilder != null) {
 			ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
@@ -332,26 +334,44 @@ public abstract class Parser {
 		// step nodes both start at 1.  We therefore offset the uid for the data nodes
 		// by adding on the number of step nodes.
 		if (idToken.charAt(0) == 'd') {
-			System.out.println("numPins = " + numPins);
 			uid = uid + numPins;
 		}
 		return uid;
 	}
 	
+	/**
+	 * Adds an edge to the visual graph
+	 * @param edgeType the type of edge
+	 * @param source the node at the tail
+	 * @param destination the node at the head
+	 */
 	private void addEdge(String edgeType, int source, int destination) {
 		builder.addEdge(edgeType, destination, source);
 	}
 
+	/**
+	 * Add a control flow edge to the provenance data and the visual graph
+	 * @param predId id of the node that executed first
+	 * @param succId id fo the node that executed second
+	 */
 	protected void addControlFlowEdge(String predId, String succId) {
-		System.out.println("Adding CF edge from " + predId + " to " + succId);
+		//System.out.println("Adding CF edge from " + predId + " to " + succId);
 		int pred = Integer.parseInt(predId.substring(1));
 		int succ = Integer.parseInt(succId.substring(1));
 		ddgBuilder.addPredSuccLink(pred, succ);
 		addEdge ("CF", pred, succ);
 	}
 
+	/**
+	 * Add a data flow edge that goes from a data node to a procedural node
+	 * to the provenance data and the visual graph
+	 * @param procId the id of the procedural node
+	 * @param dataId the id of the data node
+	 * @throws NoSuchDataNodeException if there is no data node with that id
+	 * @throws NoSuchProcNodeException if there is no procedural node with that id
+	 */
 	protected void addDataConsumerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException {
-		System.out.println("Adding DF consumer edge from " + dataId + " to " + procId);
+		//System.out.println("Adding DF consumer edge from " + dataId + " to " + procId);
 		int data = Integer.parseInt(dataId.substring(1));
 		int consumer = Integer.parseInt(procId.substring(1));
 		try {
@@ -373,8 +393,17 @@ public abstract class Parser {
 		}
 	}
 
+	/**
+	 * Add a data flow edge that goes from a procedure node to a data node
+	 * to the provenance data and the visual graph
+	 * @param procId the id of the procedural node
+	 * @param dataId the id of the data node
+	 * @throws NoSuchDataNodeException if there is no data node with that id
+	 * @throws NoSuchProcNodeException if there is no procedural node with that id
+	 * @throws ReportErrorException if another error has been reported to the user
+	 */
 	protected void addDataProducerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException, ReportErrorException {
-		System.out.println("Adding DF producer edge from " + procId + " to " + dataId);
+		//System.out.println("Adding DF producer edge from " + procId + " to " + dataId);
 		int data = Integer.parseInt(dataId.substring(1));
 		int producer = Integer.parseInt(procId.substring(1));
 		try {

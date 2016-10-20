@@ -475,9 +475,9 @@ public class DDGDisplay extends Display {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VisualItem node = findItem(p);
-				String time = null;
+				String time = PrefuseUtils.getTimestamp((NodeItem) node);
 				// display time without the seconds
-				if (PrefuseUtils.getTimestamp((NodeItem) node) != null) {
+				if (time != null && time.length() > 16) {
 					time = PrefuseUtils.getTimestamp((NodeItem) node).substring(0, 16);
 				}
 				// if the node is a data node only show dialog boxes with values
