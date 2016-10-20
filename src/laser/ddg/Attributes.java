@@ -1,6 +1,7 @@
 package laser.ddg;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,8 @@ public class Attributes {
 	public static final String JSON_MAIN_SCRIPT_TIMESTAMP = "rdt:scriptTimeStamp";
 	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
 
+	private List<ScriptInfo> sourcedScriptInfo;
+
 	public String get(String attrName) {
 		return attributes.get(attrName);
 	}
@@ -52,6 +55,14 @@ public class Attributes {
 			sb.append(key + " = " + attributes.get(key) + "\n");
 		}
 		return sb.toString();
+	}
+
+	public void setSourcedScriptInfo(List<ScriptInfo> sourcedScriptInfo) {
+		this.sourcedScriptInfo = sourcedScriptInfo;
+	}
+	
+	public List<ScriptInfo> getSourcedScriptInfo() {
+		return sourcedScriptInfo;
 	}
 	
 }

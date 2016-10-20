@@ -2,15 +2,11 @@ package laser.ddg.persist;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StreamTokenizer;
-import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
-
-import javax.swing.JOptionPane;
-
 import java.util.Set;
 
 import com.google.gson.JsonArray;
@@ -20,14 +16,9 @@ import com.google.gson.JsonParser;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
-import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoSuchDataNodeException;
-import laser.ddg.NoSuchNodeException;
 import laser.ddg.NoSuchProcNodeException;
-import laser.ddg.ProvenanceData;
-import laser.ddg.SourcePos;
-import laser.ddg.gui.DDGExplorer;
-import laser.ddg.r.RDDGBuilder;
+import laser.ddg.ScriptInfo;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
 public class JSonParser extends Parser {
@@ -82,16 +73,34 @@ public class JSonParser extends Parser {
 				timestamp = attributeValue.getAsString().replaceAll(":", ".");
 				attributes.set(Attributes.MAIN_SCRIPT_TIMESTAMP, timestamp);
 			}
-			
-			try {
-				attributes.set(attributeName, attributeValue.getAsString());
-			} catch (IllegalStateException e) {
-				// TODO:  Examine JSON attributes.  Sourced scripts do not come as a simple string, for exmaple.
+			else if (attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS)) {
+				String scriptFile = attributes.get(Attributes.MAIN_SCRIPT_NAME);
+				String scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf(File.separator) + 1);
+				if (attributeValue.isJsonArray()) {
+					List<ScriptInfo> sourcedScriptInfo = parseSourcedScripts(scriptDir, attributeValue.getAsJsonArray());
+					attributes.setSourcedScriptInfo(sourcedScriptInfo);
+				}
 			}
-			
-				
-		
+			else {
+				try {
+					// TODO:  Examine JSON attributes.  Sourced scripts do not come as a simple string, for exmaple.  Also installed libraries.
+					attributes.set(attributeName, attributeValue.getAsString());
+				} catch (IllegalStateException | UnsupportedOperationException e) {
+				}
+
+			}
 		}
+	}
+
+	private List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
+		List<ScriptInfo> sourcedScriptInfo = new ArrayList<>();
+		for (JsonElement sourcedScriptElem : sourcedScripts) {
+			JsonObject sourcedScript = sourcedScriptElem.getAsJsonObject();
+			String name = sourcedScript.get("name").getAsString();
+			String timestamp = sourcedScript.get("timestamp").getAsString();
+			sourcedScriptInfo.add(new ScriptInfo(scriptDir + File.separator + name, timestamp));
+		}
+		return sourcedScriptInfo;
 	}
 
 	protected void parseNodesAndEdges () {
