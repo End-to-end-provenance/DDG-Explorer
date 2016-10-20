@@ -983,10 +983,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			if (root == null) {
 				setRoot();
 			}
-			System.out.println("Adding collapsed nodes");
+			//System.out.println("Adding collapsed nodes");
 			addCollapsedNodes();
 			//System.out.println("WARNING: Collapsed node code commented out!!!");
-			System.out.println("Done adding collapsed nodes");
+			//System.out.println("Done adding collapsed nodes");
 			dispPlusOver.stopRefocusing();
 			layout(root);
 		}

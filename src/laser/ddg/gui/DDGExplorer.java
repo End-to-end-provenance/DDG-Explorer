@@ -67,7 +67,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	// The singleton
 	private static DDGExplorer instance;
 	
-	public static final Preferences PREFERENCES = new Preferences();
+	private static final Preferences PREFERENCES = new Preferences();
 
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
@@ -125,7 +125,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	/**
 	 * Create the GUI and show it. 
 	 */
-	public void createAndShowGUI() {
+	private void createAndShowGUI() {
 		setWindowTitle();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

@@ -31,8 +31,10 @@ public class Attributes {
 	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
 	public static final Object JSON_INSTALLED_PACKAGES = "rdt:InstalledPackages";
 
+	// Information about the sourced scripts as recorded in Json attributes
 	private List<ScriptInfo> sourcedScriptInfo;
 
+	// Information about installed packages as recorded in Json attributes
 	private List<String> packages;
 
 	public String get(String attrName) {

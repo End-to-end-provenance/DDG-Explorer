@@ -34,7 +34,7 @@ public class Preferences {
 	 * Loads user preferences from a file or sets to the default if there is no
 	 * preference file.
 	 */
-	public void load() {
+	void load() {
 		// Set default values
 		preferences.put("WindowWidth", "950");
 		preferences.put("WindowHeight", "700");
