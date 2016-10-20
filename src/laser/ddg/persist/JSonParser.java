@@ -196,7 +196,7 @@ public class JSonParser extends Parser {
 			if (!id.equals("environment")) {
 				JsonObject nodeDef = (JsonObject) procNode.getValue(); 
 				String type = nodeDef.get("rdt:type").getAsString();
-				System.out.println("Found proc node: " + id + " with type " + type);
+				//System.out.println("Found proc node: " + id + " with type " + type);
 				
 				String name = nodeDef.get("rdt:name").getAsString();
 				double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
@@ -233,13 +233,20 @@ public class JSonParser extends Parser {
 			String id = dataNode.getKey();
 			JsonObject nodeDef = (JsonObject) dataNode.getValue(); 
 			String type = nodeDef.get("rdt:type").getAsString();
-			System.out.println("Found data node: " + id + " with type " + type);
+			//System.out.println("Found data node: " + id + " with type " + type);
 			
 			String name = nodeDef.get("rdt:name").getAsString();
 			String value = nodeDef.get("rdt:value").getAsString();
 			
 			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
+			if (timestamp.equals("")) {
+				timestamp = null;
+			}
+			
 			String location = nodeDef.get("rdt:location").getAsString();
+			if (location.equals("")) {
+				location = null;
+			}
 
 			int idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
@@ -283,7 +290,7 @@ public class JSonParser extends Parser {
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
 			String proc = nodeDef.get("prov:activity").getAsString();
 			String data = nodeDef.get("prov:entity").getAsString();
-			System.out.println("Found df edge from " + proc + " to " + data);
+			//System.out.println("Found df edge from " + proc + " to " + data);
 			
 			try {
 				addDataProducerEdge(proc, data);
