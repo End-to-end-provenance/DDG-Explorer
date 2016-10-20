@@ -183,6 +183,14 @@ public class RDDGBuilder extends DDGBuilder {
         	}
         }
 
+        List<String> packageList = attributes.getPackages();
+        if (packageList != null) {
+    		attrText.append("Installed packages = \n");
+        	for (String packageInfo : packageList) {
+        		attrText.append("   " + packageInfo + "\n");
+        	}
+        }
+
 		return attrText.toString();
 	}
 

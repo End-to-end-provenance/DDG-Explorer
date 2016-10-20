@@ -81,6 +81,12 @@ public class JSonParser extends Parser {
 					attributes.setSourcedScriptInfo(sourcedScriptInfo);
 				}
 			}
+			else if (attributeName.equals(Attributes.JSON_INSTALLED_PACKAGES)) {
+				if (attributeValue.isJsonArray()) {
+					List<String> packages = parsePackages(attributeValue.getAsJsonArray());
+					attributes.setPackages(packages);
+				}
+			}
 			else {
 				try {
 					// TODO:  Examine JSON attributes.  Sourced scripts do not come as a simple string, for exmaple.  Also installed libraries.
@@ -101,6 +107,17 @@ public class JSonParser extends Parser {
 			sourcedScriptInfo.add(new ScriptInfo(scriptDir + File.separator + name, timestamp));
 		}
 		return sourcedScriptInfo;
+	}
+
+	private List<String> parsePackages(JsonArray packages) {
+		List<String> packageInfo = new ArrayList<>();
+		for (JsonElement packageElem : packages) {
+			JsonObject packageObj = packageElem.getAsJsonObject();
+			String name = packageObj.get("package").getAsString();
+			String version = packageObj.get("version").getAsString();
+			packageInfo.add(name + " " + version);
+		}
+		return packageInfo;
 	}
 
 	protected void parseNodesAndEdges () {

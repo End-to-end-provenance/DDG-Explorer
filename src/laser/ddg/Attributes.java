@@ -29,8 +29,11 @@ public class Attributes {
 	public static final String JSON_MAIN_SCRIPT_NAME = "rdt:script";
 	public static final String JSON_MAIN_SCRIPT_TIMESTAMP = "rdt:scriptTimeStamp";
 	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
+	public static final Object JSON_INSTALLED_PACKAGES = "rdt:InstalledPackages";
 
 	private List<ScriptInfo> sourcedScriptInfo;
+
+	private List<String> packages;
 
 	public String get(String attrName) {
 		return attributes.get(attrName);
@@ -63,6 +66,14 @@ public class Attributes {
 	
 	public List<ScriptInfo> getSourcedScriptInfo() {
 		return sourcedScriptInfo;
+	}
+
+	public void setPackages(List<String> packages) {
+		this.packages = packages;		
+	}
+	
+	public List<String> getPackages() {
+		return packages;
 	}
 	
 }
