@@ -52,7 +52,7 @@ public class GraphComp extends JPanel {
 
 		builder.processStartedForDiff();
 
-		Parser parser = new Parser(selectedFile, builder);
+		Parser parser = Parser.createParser(selectedFile, builder);
 		parser.addNodesAndEdges();
 
 		return createTextToDiff(parser, builder);

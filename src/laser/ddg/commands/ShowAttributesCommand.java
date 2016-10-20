@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import laser.ddg.Attributes;
@@ -56,7 +57,9 @@ public class ShowAttributesCommand implements ActionListener {
 		attrText.setEditable(false);
 		attrText.setLineWrap(true);
 		
-		f.add(attrText);
+		JScrollPane scroller = new JScrollPane(attrText);
+		
+		f.add(scroller);
 		f.pack();
 		f.setVisible(true);
 	}

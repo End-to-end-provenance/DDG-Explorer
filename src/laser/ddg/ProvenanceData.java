@@ -908,22 +908,29 @@ public class ProvenanceData {
 		File mainScript = new File(mainScriptName);
 		File scriptDir = mainScript.getParentFile();
 		
-		// Include all the scripts included via a call to R's source function
-		String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
-		if (sourcedScriptList == null) {
-			return;
-		}
-		String[] sourcedScriptNames = sourcedScriptList.split(",");
-
-		String scriptTimestampList = attributes.get(Attributes.SCRIPT_TIMESTAMPS);
-		if (scriptTimestampList == null) {
-			return;
-		}
-		String[] sourcedScriptTimestamps = scriptTimestampList.split(",");
-		assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
-		
-		for (int i = 0; i < sourcedScriptNames.length; i++) {
-			scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
+		// Json files will have this set already
+		scripts = attributes.getSourcedScriptInfo();
+		if (scripts == null) {
+			// for ddg.txt files, we need to build the list here
+			
+			// Include all the scripts included via a call to R's source function
+			String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
+			if (sourcedScriptList == null) {
+				return;
+			}
+			String[] sourcedScriptNames = sourcedScriptList.split(",");
+	
+			String scriptTimestampList = attributes.get(Attributes.SCRIPT_TIMESTAMPS);
+			if (scriptTimestampList == null) {
+				return;
+			}
+			String[] sourcedScriptTimestamps = scriptTimestampList.split(",");
+			assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
+			
+			scripts = new ArrayList<>();
+			for (int i = 0; i < sourcedScriptNames.length; i++) {
+				scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
+			}
 		}
 		
 		// System.out.println(attributes.toString());

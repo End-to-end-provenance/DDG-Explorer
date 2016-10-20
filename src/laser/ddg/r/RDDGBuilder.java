@@ -11,6 +11,7 @@ import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
@@ -165,9 +166,6 @@ public class RDDGBuilder extends DDGBuilder {
 			if (attrValue != null) {
 				attrText.append(printAttrNames[which] + " = " + attrValue + "\n");
 			}
-			else {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No value for " + attrName + "\n");
-			}
 			which++;
 		}
 		
@@ -176,6 +174,22 @@ public class RDDGBuilder extends DDGBuilder {
         attributes.names().stream().filter((attrName) -> (!attrName.equals("processName") && !attrNameList.contains(attrName))).forEach((attrName) -> {
         	attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
         });
+        
+        List<ScriptInfo> scriptInfoList = attributes.getSourcedScriptInfo();
+        if (scriptInfoList != null) {
+    		attrText.append("Sourced scripts = \n");
+        	for (ScriptInfo scriptInfo : scriptInfoList) {
+        		attrText.append("   " + scriptInfo.getName() + "  " + scriptInfo.getTimestamp() + "\n");
+        	}
+        }
+
+        List<String> packageList = attributes.getPackages();
+        if (packageList != null) {
+    		attrText.append("Installed packages = \n");
+        	for (String packageInfo : packageList) {
+        		attrText.append("   " + packageInfo + "\n");
+        	}
+        }
 
 		return attrText.toString();
 	}

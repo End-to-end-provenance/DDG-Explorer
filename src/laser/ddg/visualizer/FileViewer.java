@@ -11,6 +11,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -116,31 +117,25 @@ public class FileViewer {
 	/**
 	 * Creates an un-editable text area containing the file contents.
 	 * The file should contain text.
+	 * @throws FileNotFoundException 
 	 */
-	private void displayText() {
+	private void displayText() throws FileNotFoundException {
 		JTextArea text = new JTextArea();
-		try{
-			//get and read in the file
-			File theFile = new File(path);
-			Scanner readFile = new Scanner(theFile);
-			
-			while(readFile.hasNextLine()){
-				String line = readFile.nextLine();
-				text.append(line + "\n");
-			}
-			
-			readFile.close();
+		//get and read in the file
+		File theFile = new File(path);
+		Scanner readFile = new Scanner(theFile);
+		
+		while(readFile.hasNextLine()){
+			String line = readFile.nextLine();
+			text.append(line + "\n");
+		}
+		
+		readFile.close();
 
-			text.setEditable(false);
-			text.setCaretPosition(0);
-			contents = new JScrollPane(text,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			
-		}catch (Exception e){
-			// Catch block that will print out exception
-			DDGExplorer.showErrMsg("Error with file. "+ e.getMessage());
-			e.printStackTrace(System.err);
-		}		
+		text.setEditable(false);
+		text.setCaretPosition(0);
+		contents = new JScrollPane(text,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 	}
 

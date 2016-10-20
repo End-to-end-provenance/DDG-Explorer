@@ -414,7 +414,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *             if the file cannot be read
 	 */
 	private void buildGraph(File file) throws IOException {
-		Parser parser = new Parser(file, this);
+		Parser parser = Parser.createParser(file, this);
 		parser.addNodesAndEdges();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
 
@@ -983,7 +983,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			if (root == null) {
 				setRoot();
 			}
+			//System.out.println("Adding collapsed nodes");
 			addCollapsedNodes();
+			//System.out.println("WARNING: Collapsed node code commented out!!!");
+			//System.out.println("Done adding collapsed nodes");
 			dispPlusOver.stopRefocusing();
 			layout(root);
 		}
@@ -1136,7 +1139,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				}
 			} else {
 				memberNodes.add(next);
-				totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
+				try {
+					totalElapsedTime = totalElapsedTime + Double.parseDouble(PrefuseUtils.getTimestamp(next));
+				} catch (NumberFormatException e) {
+					// Do nothing
+				}
 
 				// Remember the finish node
 				if (nextName.endsWith(" Finish")) {

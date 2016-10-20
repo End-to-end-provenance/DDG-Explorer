@@ -1,13 +1,7 @@
 package laser.ddg.persist;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
@@ -63,89 +57,61 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * 
  * @author Barbara Lerner
  */
-public class Parser {
-	// Special characters
-	private static final char QUOTE = '\"';
+public abstract class Parser {
+	/** The object that builds the prefuse graph */
+	protected PrefuseGraphBuilder builder;
 	
-	// Codes used to identify dataflow and control flow edges
-	private static final String DATA_FLOW = "DF";
-	private static final String CONTROL_FLOW = "CF";
+	/** The object that builds the internal ddg graph */
+	protected DDGBuilder ddgBuilder;
 	
-	// Attribute names for data nodes
-	private static final String VALUE = "Value";
-	private static final String TIMESTAMP = "Time";
-	private static final String LOCATION = "Location";
-
-	private static final String LINE_NUMBER = "Line";
-	private static final String POS = "Pos";
-
-	// Attribute associated with a procedure node to identify the script number.
-	private static final Object SCRIPT_NUMBER = "Script";
-
-	// The input stream
-	private StreamTokenizer in;
+	/** The number of step/procedure nodes.  Default to half the integers if it is not set.
+	    The purpose is for data and procedure nodes to have different numbers inside Prefuse. */
+	protected int numPins = Integer.MAX_VALUE / 2;
 	
-	// The object that builds the prefuse graph
-	private PrefuseGraphBuilder builder;
+	/** The name of the script */
+	protected String scrpt;
 	
-	//The object that builds the internal ddg graph
-	private DDGBuilder ddgBuilder;
+	/** The timestamp on the script */
+	protected String timestamp;
 	
-	// The number of step/procedure nodes.
-	private int numPins;
+	/** The language of the script */
+	protected String language;
 	
-	//The name of the script
-	private String scrpt;
-	
-	//The timestamp on the script
-	private String timestamp;
-	
-	//The language of the script
-	private String language;
-	
-	//String of attribute names and values
-	private Attributes attributes = new Attributes();
-	
-	// Edges are saved and processed after all the nodes have been added
-	// to the graph.  That way there can be no references to edges that
-	// are not yet created.
-	private ArrayList<ArrayList<String>> savedEdges = new ArrayList<>();
+	/** String of attribute names and values */
+	protected Attributes attributes = new Attributes();
 	
 	private File fileBeingParsed;
 	
-	// Time of the last procedure node encountered
-	private double lastProcElapsedTime = 0.0;
-
 	/**
 	 * Initializes the parser
 	 * @param file the file to read the DDG from
 	 * @param builder the prefuse object that will build the graph
-	 * @throws FileNotFoundException if the file to parse cannot be found
 	 */
-	public Parser(File file, PrefuseGraphBuilder builder) 
-		throws FileNotFoundException {
-		Reader r = new BufferedReader (new FileReader (file));
-	    in = new StreamTokenizer(r);
-	    in.eolIsSignificant(true);
-	    in.resetSyntax();
-
-	    // Only ; and = are special characters
-	    in.wordChars('a', 'z');
-	    in.wordChars('A', 'Z');
-	    in.wordChars('0', '9');
-	    in.wordChars('!', '/');
-	    in.wordChars(':', ':');
-	    in.wordChars('<', '<');
-	    in.wordChars('>', '@');
-	    in.wordChars('[', '`');
-	    in.wordChars('{', '~');
-
-	    in.quoteChar('\"');
-	    in.whitespaceChars(0, ' ');
-
+	protected Parser(File file, PrefuseGraphBuilder builder)  {
 	    this.builder = builder;
 		ddgBuilder = null;
 		fileBeingParsed = file;
+	}
+
+	/**
+	 * Creates either a TextParser or a JsonParser depending on the type of the file passed in
+	 * @param file the file to parse.  Its name should end in .txt or .json
+	 * @param prefuseGraphBuilder the object to build the visual graph
+	 * @return the parser that can handle the given file
+	 * @throws IOException if there are problems reading the file
+	 */
+	public static Parser createParser(File file, PrefuseGraphBuilder prefuseGraphBuilder) throws IOException {
+		String fileName = file.getName();
+		String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+		if (extension.equals("txt")) {
+			return new TextParser (file, prefuseGraphBuilder);
+		}
+		else if (extension.equals("json")) {
+			return new JSonParser (file, prefuseGraphBuilder);
+		}
+		else {
+			throw new IllegalArgumentException("No parser available for " + fileName);
+		}
 	}
 
 	/**
@@ -181,13 +147,9 @@ public class Parser {
 			e.printStackTrace(System.err);
 		}
 		
-		int nextToken = skipBlankLines();
-		while (nextToken != StreamTokenizer.TT_EOF) {
-			// System.out.println(in.sval);
-			parseDeclaration(nextToken);
-			nextToken = skipBlankLines();
-		}
-		addEdges();
+		parseNodesAndEdges();
+		
+		//System.out.println("Done parsing");
 		
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
@@ -196,608 +158,114 @@ public class Parser {
 	}
 
 	/**
+	 * Parse all the nodes and edges in the file and add them to the visual graph and the provenance data
+	 * @throws IOException if there are problems reading the file
+	 */
+	protected abstract void parseNodesAndEdges() throws IOException;
+
+	/**
 	 * Parses the attributes and their values and the pin counter.
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
-	private void parseHeader() throws IOException {
-		// Skip over blank lines
-		int nextToken = skipBlankLines();
-		if (nextToken == StreamTokenizer.TT_EOF) {
-			JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "The file is empty.\n\n");
-			throw new IOException("The file is empty.");
-		}
-		
-		// Loop until we find the number of procedure nodes.
-		while(true){
-			//System.out.println(nextToken);
-			try {
-				// System.out.println(in.sval);
-				numPins = Integer.parseInt(in.sval);
-				assert in.nextToken() == StreamTokenizer.TT_EOL;
-				// System.out.println("Number of pins = " + numPins);
-				break;
-			}
-			catch (NumberFormatException e) {
-				// Haven't found the number of pins yet.  
-				// This should be an attribute-value pair
-				if (nextToken == StreamTokenizer.TT_WORD) {
-					parseAttribute();
-					nextToken = skipBlankLines();
-					if (nextToken == StreamTokenizer.TT_EOF) {
-						DDGExplorer.showErrMsg("Number of pins is missing from the file.\n\n");
-						throw new IOException("Number of pins is missing from the file.");
-					}
-				}
-				
-				else {
-					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected attribute name or pin counter.\n\n");
-					throw new IOException("Expected attribute name or pin counter.");
-				}
-			}
-		}
-	}
+	protected abstract void parseHeader() throws IOException;
 
 	/**
-	 * Skip over blank lines
-	 * @return the first non-EOL, non-EOF token found
-	 * @throws IOException if can't read from the stream
+	 * Add a node to the provenance data and the visual graph
+	 * @param nodeType the type of the node, such as "Start", "Operation", "Finish"
+	 * @param nodeId the node's unique id
+	 * @param name the label that should appear on the node
+	 * @param value the node's value; may be null
+	 * @param elapsedTime the time recorded for the node
+	 * @param script the script number that created the node
+	 * @param startLine the first line in the script associated with this node
+	 * @param startCol the column number on the first line
+	 * @param endLine the last line in the script associated with this node
+	 * @param endCol the column on the last line
 	 */
-	private int skipBlankLines() throws IOException {
-		int nextToken = in.nextToken();
-		while (nextToken == StreamTokenizer.TT_EOF || nextToken == StreamTokenizer.TT_EOL) {
-			if (nextToken == StreamTokenizer.TT_EOF) {
-				return nextToken;
-			}
-			nextToken = in.nextToken();
-		}
-		return nextToken;
-	}
-
-	/**
-	 * Handles the next line of input.  If it is a node, it is parsed.
-	 * If it is an edge, it saves it to parse later so that we are sure 
-	 * the endpoints of the edge exist before the edge is parsed.
-	 * @param nextLine the next line from the input.
-	 * @throws IOException 
-	 */
-	private void parseDeclaration(int nextToken) throws IOException {
-		if (nextToken == StreamTokenizer.TT_WORD) {
-			if (in.sval.equals(CONTROL_FLOW) || in.sval.equals(DATA_FLOW)) {
-				saveEdgeDeclaration();
-			}
-			else {
-				parseNode();
-			}
-			
-			nextToken = in.nextToken();
-			if (nextToken == ';') {
-				skipBlankLines();
-				in.pushBack();
-			}
-			else if (nextToken != StreamTokenizer.TT_EOF && nextToken != StreamTokenizer.TT_EOL) {
-				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected tokens at end of line. Token:" + nextToken + "\n\n");
-				
-				// Consume the rest of the line.
-				consumeRestOfLine();
-			}
-		}
-		else {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected first token.\n\n");
-			consumeRestOfLine();
-		}
-	}
-
-	/**
-	 * Read tokens until reach the end of the line.  Then read the subsequent blank
-	 * lines.  On return, the next token to process will be on the input stream.
-	 * @throws IOException
-	 */
-	private void consumeRestOfLine() throws IOException {
-		int nextToken = in.nextToken();
-		while (nextToken != StreamTokenizer.TT_EOF && nextToken != StreamTokenizer.TT_EOL) {
-			nextToken = in.nextToken();
-		}
-		nextToken = skipBlankLines();
-		in.pushBack();
-	}
-
-	/**
-	 * Adds all the tokens on this line to a list so they can be processed later.
-	 * @throws IOException
-	 */
-	private void saveEdgeDeclaration() throws IOException {
-		ArrayList<String> decl = new ArrayList<>();
-		decl.add(in.sval);
-		
-		try {
-			while (true) {
-				decl.add(convertNextTokenToString());
-			}
-		} catch (IllegalStateException e) {
-			// Thrown when we reach the end of the line.
-		}
-		savedEdges.add(decl);
-	}
-	
-	/**
-	 * Adds a node to the graph
-	 * @throws IOException 
-	 */
-	private void parseNode() throws IOException {
-		String nodeType = in.sval;
-//		System.out.println("Node Type:"+nodeType);
-		
-		if (in.nextToken() != StreamTokenizer.TT_WORD) {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected data or procedure node identifier:  " + nodeType + "\n\n");
-			in.pushBack();
-			consumeRestOfLine();
-			return;
-		}
-		
-		String nodeId = in.sval;
-		// System.out.println("Parsing " + nodeId);
-		if(nodeId.startsWith("p") && ddgBuilder != null){
-			parseProcNode(nodeType, nodeId);
-		}
-		//add data nodes
-		else if(nodeId.startsWith("d") && ddgBuilder != null){
-			parseDataNode(nodeType, nodeId);
-		}
-		
-	}
-
-	/**
-	 * Parses a procedure node declaration
-	 * @param nodeType The type of node
-	 * @param nodeId the node's id
-	 * @throws IOException
-	 */
-	private void parseProcNode(String nodeType, String nodeId) throws IOException {
-		String name = null;
-		try {
-			name = convertNextTokenToString ();
-		} catch (IllegalStateException e) {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Name is missing for node " + nodeId + "\n\n");
-			in.pushBack();
-			consumeRestOfLine();
-			return;
-		}
-		
-		String value = null;
-
-		value = parseValue(nodeId);
-//		System.out.println("name = " + name + "  value = " + value);
-//		System.out.println("nodeid="+nodeId);
-		
-		double elapsedTime = 0;
-		int startLineNum = -1;
-		int startColNum = -1;
-		int endLineNum = -1;
-		int endColNum = -1;
-		int scriptNum = 0;
-		
-		// The remaining attributes are optional
-		while (true) {
-			int nextToken = in.nextToken();
-		
-			// Line number is optional.  This is the case where it is missing.
-			if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF || nextToken == ';') {
-				in.pushBack();
-				break;
-			}
-			
-			if (nextToken == StreamTokenizer.TT_WORD ) {
-				if (in.sval.equals(TIMESTAMP)) {
-					// get the timeStamp
-					String time = parseElapsedTime(nodeId);
-
-					if (time == null) {
-						elapsedTime = 0;
-					}
-					// We later calculate the time for start/finish nodes to be the sum of the times of the internal
-					// operations.
-					else if (!nodeType.equals("Operation")) {
-						elapsedTime = 0;
-						time = null;
-					}
-					else {
-						try {
-							double elapsedTimeFromStart = Double.parseDouble(time);
-							elapsedTime = elapsedTimeFromStart - lastProcElapsedTime;
-							lastProcElapsedTime = elapsedTimeFromStart;
-						} catch (NumberFormatException e) {
-							// Old style file, probably storing a timestamp instead so just ignore
-							time = null;
-							elapsedTime = 0;
-						}
-					}
-				}
-			
-				else if (in.sval.equals(LINE_NUMBER)) {
-					startLineNum = parseNumber();
-				}
-
-				else if (in.sval.equals(POS)) {
-					int nextToken2 = in.nextToken();
-					if (nextToken2 != '=') {
-						in.pushBack();
-					}
-
-					nextToken2 = in.nextToken();
-					if (nextToken2 == QUOTE) {
-						String[] lineCols = in.sval.split(",");
-						if (lineCols.length == 1) {
-							assert (lineCols[0].equals("NA"));
-							startLineNum = -1;
-							startColNum = 0;
-							endLineNum = -1;
-							endColNum = 0;
-						}
-						else {
-							try {
-								startLineNum = Integer.parseInt(lineCols[0]);
-								startColNum = Integer.parseInt(lineCols[1]);
-								endLineNum = Integer.parseInt(lineCols[2]);
-								endColNum = Integer.parseInt(lineCols[3]);
-							} catch (NumberFormatException e) {
-								e.printStackTrace(System.err);
-							}
-						}
-					}
-				}
-
-				else if (in.sval.equals(SCRIPT_NUMBER)) {
-					scriptNum = parseNumber();
-				}
-			}
-		}
-			
-
-		//System.out.println ("Parser:  Storing time in prefuse graph of " + time);
-		//System.out.println ("Parser:  Storing time in ddg of " + elapsedTime);
-		//System.out.println("Line number = " + lineNum);
-		
-		SourcePos sourcePos = new SourcePos(scriptNum, startLineNum, startColNum, endLineNum, endColNum);
+	protected void addProcNode (String nodeType, String nodeId, String name, String value, double elapsedTime, String script, String startLine, String startCol, String endLine, String endCol) {
+		//System.out.println("Adding proc node " + nodeId);
+		SourcePos sourcePos = buildSourcePos(script, startLine, startCol, endLine, endCol);
 		builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 			
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
-
-	/** 
-	 * Parse the line or script number attribute
-	 * @return the number value of the attribute, or -1 if there is no number attribute 
-	 * 
-	 **/
-	private int parseNumber() throws IOException {
-		int nextToken = in.nextToken();
-		if (nextToken != '=') {
-			in.pushBack();
-			return -1;
-		}
-
-		nextToken = in.nextToken();
-		if (nextToken == QUOTE) {
-			try {
-				return Integer.parseInt(in.sval);
-			} catch (NumberFormatException e) {
-				// ddg.txt uses "NA" for a missing number
-				return -1;
-			}
-		}
-
-		return -1;
-	}
-
-	private String parseElapsedTime(String nodeId) throws IOException {
-		int nextToken = in.nextToken();
-		if (nextToken != '=') {
-			in.pushBack();
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
-			return null;
-		}
-
-		nextToken = in.nextToken();
-		if (nextToken == QUOTE || nextToken == StreamTokenizer.TT_WORD) {
-			return in.sval;
-		}
-
-		//DDGExplorer.showErrMsg("Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
-		return null;
-	}
-
-
-	/**
-	 * Parses a VALUE = <value> string
-	 * @param nodeId the id of the node being parsed
-	 * @return the value or null if there is no value 
-	 * @throws IOException
-	 */
-	private String parseValue(String nodeId) throws IOException {
-		int nextToken = in.nextToken();
-		
-		// Value is optional.  This is the case where it is missing.
-		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF) {
-			in.pushBack();
-			return null;
-		}
-		
-		// If value is present, expect to see VALUE = "value" or VALUE = <value>
-		if (nextToken == StreamTokenizer.TT_WORD ) {
-			if (in.sval.equals(VALUE)) {
-				nextToken = in.nextToken();
-				if (nextToken != '=') {
-					in.pushBack();
-					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected =.\n\n");
-					consumeRestOfLine();
-					return null;
-				}
-				
-				nextToken = in.nextToken();
-				if (nextToken == StreamTokenizer.TT_WORD || nextToken == QUOTE) {
-					return in.sval;
-				}
-				
-				in.pushBack();
-				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Value is missing for node " + nodeId + "\n\n");
-				consumeRestOfLine();
-				return null;
-			}
-
-			// Might be some other attribute, like timestamp instead.
-			in.pushBack();
-			return null;
-		}
-
-		in.pushBack();
-		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
-		consumeRestOfLine();
-		return null;
-	}
-
-	/**
-	 * Parses a LOCATION = FILENAME string
-	 * @param nodeId the id of the node being parsed
-	 * @return the filename or null if there is no location
-	 * @throws IOException
-	 */
-	private String parseLocation(String nodeId) throws IOException {
-		int nextToken = in.nextToken();
-		
-		// Location is optional.  This is the case where it is missing.
-		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF || nextToken == ';') {
-			in.pushBack();
-			return null;
-		}
-		
-		// If location is present, expect to see LOCATION = "filename"
-		if (nextToken == StreamTokenizer.TT_WORD ) {
-			if (in.sval.equals(LOCATION)) {
-				nextToken = in.nextToken();
-				if (nextToken != '=') {
-					in.pushBack();
-					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected =.\n\n");
-					consumeRestOfLine();
-					return null;
-				}
-				
-				nextToken = in.nextToken();
-				if (nextToken == QUOTE) {
-					return in.sval;
-				}
-				
-				in.pushBack();
-				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Location is missing for node " + nodeId + "\n\n");
-				consumeRestOfLine();
-				return null;
-			}
-
-			// Might be some other attribute, like timestamp instead.
-			in.pushBack();
-			return null;
-		}
-
-		in.pushBack();
-		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
-		consumeRestOfLine();
-		return null;
-	}
-
-	/**
-	 * Reads in the next token and converts it to a string no matter what type of token it is.
-	 * @return the token as a string.
-	 * @throws IOException
-	 * @throws IllegalStateException if the next token is EOL or EOF
-	 */
-	private String convertNextTokenToString () throws IOException, IllegalStateException {
-		int nextToken = in.nextToken();
-		if (nextToken == StreamTokenizer.TT_WORD) {
-			return in.sval;
-		}
-		else if (nextToken == QUOTE) {
-			//return "\"" + in.sval + "\"";
-			return in.sval;
-		}
-		else if (nextToken != StreamTokenizer.TT_EOF && nextToken != StreamTokenizer.TT_EOL) {
-			return "" + (char) nextToken;
-		}
-		else {
-			in.pushBack();
-			throw new IllegalStateException("No more tokens");
-		}
-	}
-
-	/**
-	 * Parses the timestamp attribute.  Expect to see TIMESTAMP = <timestamp>
-	 * @param nodeId the node whose timestamp is being parsed
-	 * @return the timestamp value or null if there is no timestamp
-	 * @throws IOException
-	 */
-	private String parseTimestamp(String nodeId) throws IOException {
-		int nextToken = in.nextToken();
-		
-		// Timestamp is optional.  This is the case where it is missing.
-		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF || nextToken == ';') {
-			in.pushBack();
-			return null;
-		}
-		
-		// If timestamp is present, expect to see TIMESTAMP = "timestamp"
-		if (nextToken == StreamTokenizer.TT_WORD ) {
-			if (in.sval.equals(TIMESTAMP)) {
-				nextToken = in.nextToken();
-				if (nextToken != '=') {
-					in.pushBack();
-					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = after TIMESTAMP.\n\n");
-					consumeRestOfLine();
-					return null;
-				}
-				
-				nextToken = in.nextToken();
-				if (nextToken == QUOTE || nextToken == StreamTokenizer.TT_WORD) {
-					return in.sval;
-				}
-				
-				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Timestamp is missing for node " + nodeId + "\n\n");
-				consumeRestOfLine();
-				return null;
-			}
-			
-			// No error.  It might be some other attribute.
-			in.pushBack();
-			return null;
-		}
-		in.pushBack();
-		DDGExplorer.showErrMsg("Line " + in.lineno() + " Node " + nodeId + " unexpected token.\n\n");
-		consumeRestOfLine();
-		return null;
-	}
-
-	/**
-	 * Parses a data node declaration
-	 * @param nodeType the type of node
-	 * @param nodeId the node's id
-	 * @throws IOException
-	 */
-	private void parseDataNode(String nodeType, String nodeId) throws IOException {
-		int idNum = Integer.parseInt(nodeId.substring(1));
-		
-		try {
-			String name = convertNextTokenToString ();
-			String value = null;
-			String timestamp = null;
-			String location = null;
-			
-			int nextToken = in.nextToken();
-			if (nextToken == StreamTokenizer.TT_EOF || nextToken == StreamTokenizer.TT_EOL) {
-				// No value or timestamp.  They are optional
-				in.pushBack();
-			}
-			
-			else if (nextToken == StreamTokenizer.TT_WORD) {
-				while (nextToken == StreamTokenizer.TT_WORD) {
-					//System.out.println("parseDataNode: Found " + in.sval);
-					in.pushBack();
-					boolean somethingMatched = false;
-					
-					// See if value is next.
-					if (value == null) {
-						value = parseValue(nodeId);
-						if (value != null) {
-							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
-								File thefile = new File(value);
-								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
-								value = relative.getAbsolutePath();
-							}
-							somethingMatched = true;
-						}
-					}
-					
-					if (timestamp == null) {
-						timestamp = parseTimestamp(nodeId);
-						if (timestamp != null) {
-							somethingMatched = true;
-						}
-					}
-						
-					if (location == null) {
-						location = parseLocation(nodeId);
-						if (location != null) {
-							somethingMatched = true;
-						}
-					}
-
-					if (somethingMatched) {
-						nextToken = in.nextToken();
-					}
-					else {
-						// Neither value nor timestamp nor location
-						DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expecting VALUE or TIMESTAMP or LOCATION for node " + nodeId + "\n\n");
-						consumeRestOfLine();
-						break;
-					}
-				}
-				
-			}
-			
-			else if (nextToken != ';') {
-				DDGExplorer.showErrMsg("Line " + in.lineno() + ": Unexpected tokens for node " + nodeId + "\n\n");
-				consumeRestOfLine();
-			}
-			
-			//System.out.println("name = " + name + "  value = " + value + "  timestamp = " + timestamp + "\n\n");
-
-			if (ddgBuilder != null) {
-				ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
-			}
-			builder.addNode(nodeType, extractUID(nodeId), 
-					constructName(nodeType, name), value, timestamp, location, null);
-
-			
-		} catch (IllegalStateException e) {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Name missing for node " + nodeId + "\n\n");
-		}
-
-	}
 	
 	/**
-	 * Creates a string of all attributes and their given values.
-	 * 
-	 * @param tokens the input tokens that make up the attribute declaration
-	 * @throws IOException 
+	 * Creates a SourcePos object given the information from the ddg.  The ddg may contain NA for some values.
+	 * These are translated into appropriate integers.
+	 * @param script the script number or NA
+	 * @param startLine the starting line number or NA
+	 * @param startCol the starting column or NA
+	 * @param endLine the ending line number or NA
+	 * @param endCol the ending column or NA
+	 * @return the same information encapsulated inside a SourcePos object
 	 */
-	private void parseAttribute() throws IOException{
-		String attributeName = in.sval;
+	protected static SourcePos buildSourcePos (String script, String startLine, String startCol, String endLine, String endCol) {
+		int scriptNum;
+		int startLineNum;
+		int startColNum;
+		int endLineNum;
+		int endColNum;
 		
-		int nextToken = in.nextToken();
-		if (nextToken != '=') {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected = for attribute " + attributeName + "\n\n");
-			consumeRestOfLine();
-			return;
+		if (script.equals("NA")) {
+			scriptNum = -1;
+		}
+		else {
+			scriptNum = Integer.parseInt(script);
 		}
 		
-		try {
-			String attributeValue = convertNextTokenToString();
-			//System.out.println("Found attribute, " + attributeName + " value: " + attributeValue);
-			if(attributeName.equals(Attributes.LANGUAGE)){
-				language = attributeValue;
-			}
-			else if(attributeName.equals(Attributes.MAIN_SCRIPT_NAME)){
-				scrpt = attributeValue;
-			}
-			else if(attributeName.equals(Attributes.EXECUTION_TIME)){
-				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
-				attributeValue = attributeValue.replaceAll(":", ".");
-				timestamp = attributeValue;
-			}
-			attributes.set(attributeName, attributeValue);
-			
-		} catch (IllegalStateException e) {
-			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Attribute value missing for " + attributeName + "\n\n");
+		if (startLine.equals("NA")) {
+			startLineNum = -1;
 		}
+		else {
+			startLineNum = Integer.parseInt(startLine);
+		}
+		
+		if (startCol.equals("NA")) {
+			startColNum = 0;
+		}
+		else {
+			startColNum = Integer.parseInt(startCol);
+		}
+		
+		if (endLine.equals("NA")) {
+			endLineNum = -1;
+		}
+		else {
+			endLineNum = Integer.parseInt(endLine);
+		}
+		
+		if (endCol.equals("NA")) {
+			endColNum = 0;
+		}
+		else {
+			endColNum = Integer.parseInt(endCol);
+		}
+		return new SourcePos (scriptNum, startLineNum, startColNum, endLineNum, endColNum);
 	}
+
+	/**
+	 * Add a data node to the provenance data and the visual graph
+	 * @param nodeType the type of node, such as "File", "Data", "Exception"
+	 * @param nodeId the node's unique id
+	 * @param name the label to display
+	 * @param value the data value
+	 * @param timestamp the timestamp for the data
+	 * @param location the file location if the data is a file or snapshot
+	 */
+	protected void addDataNode (String nodeType, String nodeId, String name, String value, String timestamp, String location) {
+		//System.out.println("Adding data node " + nodeId + " with type " + nodeType);
+		int idNum = Integer.parseInt(nodeId.substring(1));
+		if (ddgBuilder != null) {
+			ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
+		}
+		builder.addNode(nodeType, extractUID(nodeId), 
+					constructName(nodeType, name), value, timestamp, location, null);
+	}
+	
 
 	/**
 	 * @return the string of all attributes
@@ -818,20 +286,19 @@ public class Parser {
 	 * @param tokens the tokens from the declaration
 	 * @return the name to use
 	 */
-	private static String constructName(String nodeType, String nodeName) {
+	static String constructName(String nodeType, String nodeName) {
 		if(nodeName == null){
 			DDGExplorer.showErrMsg("Invalid node construct. No name given.");
 			return null;
 		}
-		StringBuilder str = new StringBuilder();
-		str.append(nodeName);
+		String str = nodeName;
 		
 		// Concatenate node name and type for non-leaf nodes to distinguish
 		// start, finish, etc. nodes
 		if (isMultipleNodePIN(nodeType)){
-			str.append(" " + nodeType);
+			return str + " " + nodeType;
 		}
-		return str.toString();
+		return str;
 	}
 
 	/**
@@ -860,7 +327,7 @@ public class Parser {
 	 * @param idToken the id token
 	 * @return the numeric value of the id
 	 */
-	private int extractUID(String idToken) {
+	 private int extractUID(String idToken) {
 		int uid = Integer.parseInt(idToken.substring(1));
 		
 		// Prefuse requires each entry to have a unique id, but our data nodes and
@@ -873,123 +340,95 @@ public class Parser {
 	}
 	
 	/**
-	 * Add all the edges to the graph.
+	 * Adds an edge to the visual graph
+	 * @param edgeType the type of edge
+	 * @param source the node at the tail
+	 * @param destination the node at the head
 	 */
-	private void addEdges() {
-    	savedEdges.stream().forEach((nextEdge) -> {
-        	parseEdge(nextEdge);
-        });
+	private void addEdge(String edgeType, int source, int destination) {
+		builder.addEdge(edgeType, destination, source);
 	}
 
 	/**
-	 * Parse the tokens that describe an edge and add it to the prefuse graph
-	 * @param tokens the tokens that describe the edge
+	 * Add a control flow edge to the provenance data and the visual graph
+	 * @param predId id of the node that executed first
+	 * @param succId id fo the node that executed second
 	 */
-	private void parseEdge(ArrayList<String> tokens) {
-		String edgeType = tokens.get(0);
-		if(edgeType == null){
-			DDGExplorer.showErrMsg("Invalid edge construct. Nothing to add.\n");
-			return;
-		}
-		
-		if(tokens.size() < 3){
-			DDGExplorer.showErrMsg("Invalid edge construct. Need valid name, source and target.\n");
-			return;
-		}
-		
-		try {
-			//System.out.println("Found edge " + tokens.get(1) + " to " + tokens.get(2));
-			if(edgeType.equals("CF") && ddgBuilder != null){
-				parseControlFlowEdge(tokens);
-			}
-			
-			else if(edgeType.equals("DF") && ddgBuilder != null){
-				parseDataFlowEdge(tokens);
-			}
+	protected void addControlFlowEdge(String predId, String succId) {
+		//System.out.println("Adding CF edge from " + predId + " to " + succId);
+		int pred = Integer.parseInt(predId.substring(1));
+		int succ = Integer.parseInt(succId.substring(1));
+		ddgBuilder.addPredSuccLink(pred, succ);
+		addEdge ("CF", pred, succ);
+	}
 
-			builder.addEdge(edgeType, extractUID(tokens.get(2)),extractUID(tokens.get(1)));
-		} catch (NoSuchDataNodeException | NoSuchProcNodeException e) {
-			// Nothing to do.  The error message is produced inside parseDataFlowEdge.
-		}
-                // Nothing to do.  The error message is produced inside parseDataFlowEdge.
-        catch (ReportErrorException e) {
+	/**
+	 * Add a data flow edge that goes from a data node to a procedural node
+	 * to the provenance data and the visual graph
+	 * @param procId the id of the procedural node
+	 * @param dataId the id of the data node
+	 * @throws NoSuchDataNodeException if there is no data node with that id
+	 * @throws NoSuchProcNodeException if there is no procedural node with that id
+	 */
+	protected void addDataConsumerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException {
+		//System.out.println("Adding DF consumer edge from " + dataId + " to " + procId);
+		int data = Integer.parseInt(dataId.substring(1));
+		int consumer = Integer.parseInt(procId.substring(1));
+		try {
+			ddgBuilder.addDataConsumer(consumer, data);
+			addEdge ("DF", data + numPins, consumer);
+		} catch (NoSuchDataNodeException e) {
+			String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
+			msg = msg + "No data node with id " + data;
+			DDGExplorer.showErrMsg(msg);
+			throw e;
+		} catch (NoSuchProcNodeException e) {
+			String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
+			msg = msg + "No procedure node with id " + consumer;
+			DDGExplorer.showErrMsg(msg);
+			throw e;
+		} catch (NoSuchNodeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace(System.err);
 		}
 	}
 
-	private void parseControlFlowEdge(ArrayList<String> tokens) {
-		int pred = Integer.parseInt(tokens.get(1).substring(1));
-		int succ = Integer.parseInt(tokens.get(2).substring(1));
-		// System.out.println("Found CF edge from " + pred + " to " + succ);
-		ddgBuilder.addPredSuccLink(pred, succ);
-	}
-
-	private void parseDataFlowEdge(ArrayList<String> tokens) throws NoSuchDataNodeException, NoSuchProcNodeException, ReportErrorException {
-		//source is function node
-		if(tokens.get(2).startsWith("p")){
-			int data = Integer.parseInt(tokens.get(1).substring(1));
-			int consumer = Integer.parseInt(tokens.get(2).substring(1));
-			// System.out.println("Found input edge from " + data + " to " + consumer);
-			try {
-				ddgBuilder.addDataConsumer(consumer, data);
-			} catch (NoSuchDataNodeException e) {
-				String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
-				msg = msg + "No data node with id " + data;
-				DDGExplorer.showErrMsg(msg);
-				displayTokens(tokens);
-				throw e;
-			} catch (NoSuchProcNodeException e) {
-				String msg = "Can't create edge from data node " + data + " to procedure node " + consumer + "\n";
-				msg = msg + "No procedure node with id " + consumer;
-				DDGExplorer.showErrMsg(msg);
-				displayTokens(tokens);
-				throw e;
-			} catch (NoSuchNodeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			}
-		}
-		//if target is function node
-		else if(tokens.get(1).startsWith("p")){
-			int data = Integer.parseInt(tokens.get(2).substring(1));
-			int producer = Integer.parseInt(tokens.get(1).substring(1));
-			// System.out.println("Found output edge from " + producer + " to " + data);
-			try {
-				ddgBuilder.addDataProducer(data, producer);
-			} catch (NoSuchDataNodeException e) {
-				String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
-				msg = msg + "No data node with id " + data;
-				DDGExplorer.showErrMsg(msg);
-				displayTokens(tokens);
-				throw e;
-			} catch (NoSuchProcNodeException e) {
-				String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
-				msg = msg + "No procedure node with id " + producer;
-				DDGExplorer.showErrMsg(msg);
-				displayTokens(tokens);	
-				throw e;
-			} catch (NoSuchNodeException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			} catch (ReportErrorException e) {
-				// TODO Auto-generated catch block
-				DDGExplorer.showErrMsg(e.getMessage());
-				throw e;
-			}
-		}
-		else {
-			DDGExplorer.showErrMsg("Neither source nor target of edge is a procedure node:  " + 
-					tokens.get(0) + " " + tokens.get(1) + " " + tokens.get(2));
+	/**
+	 * Add a data flow edge that goes from a procedure node to a data node
+	 * to the provenance data and the visual graph
+	 * @param procId the id of the procedural node
+	 * @param dataId the id of the data node
+	 * @throws NoSuchDataNodeException if there is no data node with that id
+	 * @throws NoSuchProcNodeException if there is no procedural node with that id
+	 * @throws ReportErrorException if another error has been reported to the user
+	 */
+	protected void addDataProducerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException, ReportErrorException {
+		//System.out.println("Adding DF producer edge from " + procId + " to " + dataId);
+		int data = Integer.parseInt(dataId.substring(1));
+		int producer = Integer.parseInt(procId.substring(1));
+		try {
+			ddgBuilder.addDataProducer(data, producer);
+			addEdge ("DF", producer, data + numPins);
+		} catch (NoSuchDataNodeException e) {
+			String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
+			msg = msg + "No data node with id " + data;
+			DDGExplorer.showErrMsg(msg);
+			throw e;
+		} catch (NoSuchProcNodeException e) {
+			String msg = "Can't create edge from procedure node " + producer + " to data node " + data + "\n";
+			msg = msg + "No procedure node with id " + producer;
+			DDGExplorer.showErrMsg(msg);
+			throw e;
+		} catch (NoSuchNodeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace(System.err);
+		} catch (ReportErrorException e) {
+			// TODO Auto-generated catch block
+			DDGExplorer.showErrMsg(e.getMessage());
+			throw e;
 		}
 	}
 
-	private static void displayTokens(ArrayList<String> tokens) {
-		String s = "";
-		for (int i = 0; i < tokens.size(); i++) {
-			s = s + tokens.get(i) + " ";
-		}
-		DDGExplorer.showErrMsg(s + "\n\n");
-	}
+
 
 }
