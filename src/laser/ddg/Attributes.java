@@ -22,6 +22,13 @@ public class Attributes {
 	public static final String SOURCED_SCRIPT_NAMES = "SourcedScripts";
 	public static final String SCRIPT_TIMESTAMPS = "SourcedScriptTimestamps";
 
+	// Names of attributes describing the entire DDG as used in JSON
+	public static final String JSON_LANGUAGE = "rdt:language";
+	public static final String JSON_EXECUTION_TIME = "rdt:ddgTimeStamp";
+	public static final String JSON_MAIN_SCRIPT_NAME = "rdt:script";
+	public static final String JSON_MAIN_SCRIPT_TIMESTAMP = "rdt:scriptTimeStamp";
+	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
+
 	public String get(String attrName) {
 		return attributes.get(attrName);
 	}
