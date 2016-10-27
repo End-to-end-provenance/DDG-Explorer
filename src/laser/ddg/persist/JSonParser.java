@@ -237,6 +237,10 @@ public class JSonParser extends Parser {
 			
 			String name = nodeDef.get("rdt:name").getAsString();
 			String value = nodeDef.get("rdt:value").getAsString();
+			if(type.equals("File") || type.equals("Snapshot")){
+				File relative = new File(builder.getSourceDDGDirectory(), value);
+				value = relative.getAbsolutePath();
+			}
 			
 			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
 			if (timestamp.equals("")) {

@@ -623,8 +623,7 @@ public class TextParser extends Parser {
 						value = parseValue(nodeId);
 						if (value != null) {
 							if(nodeType.equals("File") || nodeType.equals("Snapshot")){
-								File thefile = new File(value);
-								File relative = new File(builder.getSourceDDGDirectory(), thefile.getName());
+								File relative = new File(builder.getSourceDDGDirectory(), value);
 								value = relative.getAbsolutePath();
 							}
 							somethingMatched = true;
