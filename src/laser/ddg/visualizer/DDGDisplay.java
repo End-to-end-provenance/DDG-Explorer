@@ -613,6 +613,10 @@ public class DDGDisplay extends Display {
 								showElapsedTimeCommand/* , showLineNumberCommand */);
 					}
 
+					else if (PrefuseUtils.isIncompleteNode((NodeItem) item)) {
+						showPopup(e, showElapsedTimeCommand);
+					}
+
 					else if (PrefuseUtils.isRestoreNode((NodeItem) item)) {
 						showPopup(e, collapseCommand);
 					}

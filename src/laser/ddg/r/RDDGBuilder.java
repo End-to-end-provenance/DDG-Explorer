@@ -47,6 +47,7 @@ public class RDDGBuilder extends DDGBuilder {
 		legend.add(new LegendEntry("Collapsible Operation", PrefuseGraphBuilder.NONLEAF_COLOR));
 		legend.add(new LegendEntry("Expandable Operation", PrefuseGraphBuilder.STEP_COLOR));
 		legend.add(new LegendEntry("Simple Operation", PrefuseGraphBuilder.LEAF_COLOR));
+		legend.add(new LegendEntry("Details Omitted", PrefuseGraphBuilder.INCOMPLETE_COLOR));
 		legend.add(new LegendEntry("Parameter Binding", PrefuseGraphBuilder.INTERPRETER_COLOR));
 		legend.add(new LegendEntry("Checkpoint Operation", PrefuseGraphBuilder.CHECKPOINT_COLOR));
 		legend.add(new LegendEntry("Restore Operation", PrefuseGraphBuilder.RESTORE_COLOR));
@@ -85,7 +86,7 @@ public class RDDGBuilder extends DDGBuilder {
 		if(type.equals("Start")){
 			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
-		else if(type.equals("Leaf") || type.equals("Operation")){
+		else if(type.equals("Leaf") || type.equals("Operation") || type.equals("Incomplete")){
 			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Finish")){

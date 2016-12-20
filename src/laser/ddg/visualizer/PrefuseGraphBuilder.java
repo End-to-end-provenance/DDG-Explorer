@@ -77,6 +77,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private static final int VIRTUAL_COLOR = ColorLib.rgb(217, 132, 181);
 	public static final int EXCEPTION_COLOR = ColorLib.rgb(209, 114, 110);
 	public static final int LEAF_COLOR = ColorLib.rgb(255, 255, 98);
+	public static final int INCOMPLETE_COLOR = ColorLib.rgb(255, 255, 255);
 	public static final int DATA_COLOR = ColorLib.rgb(175, 184, 233);
 	public static final int FILE_COLOR = ColorLib.rgb(255, 204, 153);
 	public static final int URL_COLOR = ColorLib.rgb(255, 204, 229);
@@ -774,6 +775,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Interm'"), NONLEAF_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), LEAF_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Operation'"), LEAF_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Incomplete'"), INCOMPLETE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Data'"), DATA_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);

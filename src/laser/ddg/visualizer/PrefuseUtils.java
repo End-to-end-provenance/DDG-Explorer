@@ -75,6 +75,9 @@ public class PrefuseUtils {
 	/** Type of a procedural node that represents a leaf*/
 	static final String LEAF = "Leaf";
 	
+	/** Type of a procedural node when we have not collected full detail, like inside a loop. */
+	static final String INCOMPLETE = "Incomplete";
+	
 	static final String RESTORE = "Restore";
 	static final String CHECKPOINT = "Checkpoint";
 	static final String CHECKPOINT_FILE = "CheckpointFile";
@@ -421,6 +424,11 @@ public class PrefuseUtils {
 	static boolean isLeafNode(Node n) {
 		String nodeType = n.getString(PrefuseUtils.TYPE);
 		return nodeType.equals(LEAF) || nodeType.equals(OPERATION);
+	}
+	
+	static boolean isIncompleteNode (Node n) {
+		String nodeType = n.getString(PrefuseUtils.TYPE);
+		return nodeType.equals(INCOMPLETE);
 	}
 
 	/**
