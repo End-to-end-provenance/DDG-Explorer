@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
-	<property name="version" value="2.7.0"/>
+	<property name="version" value="2.8.0"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -23,7 +23,12 @@
         <pathelement location="lib/xercesImpl-2.11.0.jar"/>
         <pathelement location="lib/xml-apis-1.4.01.jar"/>
         <pathelement location="lib/CPL.jar"/>
-        <pathelement location="lib/jdiff.jar"/>
+    	<pathelement location="lib/jdiff.jar"/>
+    	<pathelement location="lib/gson-2.6.2.jar"/>
+       <!--pathelement location="lib/jxbrowser-6.0.jar"/>
+       <pathelement location="lib/jxbrowser-linux64-6.0.jar"/>
+       <pathelement location="lib/evaluation.jar"/-->
+       
     </path>
     <target name="init">
         <mkdir dir="bin"/>
@@ -108,7 +113,11 @@
   		
   		<!-- Code to support text file differences -->
   		<zipfileset includes="**/*" src="lib/jdiff.jar" />
-   	</jar>
+
+  		<!-- Code to support parsing json -->
+  		<zipfileset includes="**/*" src="lib/gson-2.6.2.jar" />
+  	
+  	</jar>
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>
     <chmod file="ddg-explorer_${version}.jar" perm="755"/>
   </target>

@@ -143,9 +143,9 @@ public class ManageDatabaseCommand implements ActionListener {
 	 * @param listModel all of the timestamps associated with the selected process
 	 */
 	private void deleteAll(JenaLoader jenaLoader, List<String> timestamps) {
-		for (String timestamp : timestamps) {
-			deleteDDG(jenaLoader, selectedProcessName, timestamp);
-		}
+            timestamps.stream().forEach((timestamp) -> {
+                deleteDDG(jenaLoader, selectedProcessName, timestamp);
+            });
 	}
 
 	/**

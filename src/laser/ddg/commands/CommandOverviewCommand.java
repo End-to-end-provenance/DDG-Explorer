@@ -35,7 +35,7 @@ public class CommandOverviewCommand implements ActionListener {
 	}
 
 	private static String createHelpText() {
-		StringBuffer helpBuffer = new StringBuffer();
+		StringBuilder helpBuffer = new StringBuilder();
 		
 		helpBuffer.append("To collapse a section of the graph\n");
 		helpBuffer.append("   Left click on a green start or finish node.\n\n");
