@@ -900,19 +900,21 @@ public class ProvenanceData {
 		// to build the list of scripts referenced so that we will be able to
 		// find the source code later.
 		
-		// Include the main script that was executed
-		String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
-		String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
-		scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
-
-		File mainScript = new File(mainScriptName);
-		File scriptDir = mainScript.getParentFile();
 		
 		// Json files will have this set already
 		scripts = attributes.getSourcedScriptInfo();
 		if (scripts == null) {
 			// for ddg.txt files, we need to build the list here
+			scripts = new ArrayList<>();
+
+			// Include the main script that was executed
+			String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
+			String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
+			scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
 			
+			File mainScript = new File(mainScriptName);
+			File scriptDir = mainScript.getParentFile();
+
 			// Include all the scripts included via a call to R's source function
 			String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
 			if (sourcedScriptList == null) {
@@ -927,7 +929,6 @@ public class ProvenanceData {
 			String[] sourcedScriptTimestamps = scriptTimestampList.split(",");
 			assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
 			
-			scripts = new ArrayList<>();
 			for (int i = 0; i < sourcedScriptNames.length; i++) {
 				scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
 			}
