@@ -469,6 +469,11 @@ public class PrefuseUtils {
 		return nodeType.equals(FILE) || nodeType.equals(SNAPSHOT);
 	}
 
+	public static boolean isSnapshot(VisualItem node) {
+		String nodeType = node.getString(TYPE);
+		return nodeType.equals(SNAPSHOT);
+	}
+
 	private static String getNodeType(Node n) {
 		return n.getString(PrefuseUtils.TYPE);
 	}

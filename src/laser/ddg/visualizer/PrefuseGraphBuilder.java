@@ -1275,6 +1275,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		while (outNeighbors.hasNext()) {
 			Set<Node> edgesAddedTo = new HashSet<>();
 			Node neighbor = outNeighbors.next();
+			
+			// If it is a file, always add the edge
+			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
+				addEdge(PrefuseUtils.STEPDF, collapsedNodeId, PrefuseUtils.getId(neighbor));
+				edgesAddedTo.add(neighbor);
+			}
 
 			// Check if it is a data node
 			if (PrefuseUtils.isAnyDataNode(neighbor)) {
@@ -1318,9 +1324,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		Iterator<Node> inNeighbors = member.inNeighbors();
 		while (inNeighbors.hasNext()) {
 			Node neighbor = inNeighbors.next();
+			
+			// If the edge comes from a file node, always add the edge
+			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
+				addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
+				edgesAddedFrom.add(neighbor);
+			}
 
 			// Check that the edge comes from a data node
-			if (PrefuseUtils.isAnyDataNode(neighbor)) {
+			else if (PrefuseUtils.isAnyDataNode(neighbor)) {
 				Iterator<Node> dataConsumers = neighbor.inNeighbors();
 
 				// Find the consumers of the data node
@@ -1735,6 +1747,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *            node.
 	 */
 	private static void setDataNodeVisibility(NodeItem node) {
+		// Always make files visible
+		if (PrefuseUtils.isFile(node) && !PrefuseUtils.isSnapshot(node)) {
+			node.setVisible (true);
+			return;
+		}
+		
 		// Find the producer and the consumers of the data node
 		Iterator<NodeItem> dataNeighbors = node.neighbors();
 		boolean visible = false;
