@@ -30,6 +30,23 @@ public class DerivationQuery extends DataQuery {
 	
 	@Override
 	protected void doQuery (Resource qResource) {
+		loadNodes(qResource);
+		displayDDG();
+	}
+	
+	/**
+	 * Load the nodes that are returned by the query and display the resulting DDG.
+	 * @param qResource The Jena resource for the data node whose derivation information
+	 * 		is being loaded
+	 * @param dataName the name of the node whose derivation is being loaded
+	 * @param dataValue the value of the node whose derivation is being loaded
+	 */
+	public void doQuery (Resource qResource, String dataName, String dataValue) {
+		loadNodes(qResource);
+		displayDDG(dataName, dataValue);
+	}
+
+	private void loadNodes(Resource qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
@@ -40,8 +57,8 @@ public class DerivationQuery extends DataQuery {
 				addAllInputs(nextProcResource);
 			}
 		}
-		displayDDG();
 	}
+
 	
 	private void addAllInputs(Resource procRes) {
 		String queryVarName = "in";

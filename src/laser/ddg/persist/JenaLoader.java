@@ -1206,7 +1206,6 @@ public class JenaLoader {
 		String selectProcessNamesQueryString = JenaLoader.RDF_PREFIX
 					+ "SELECT ?" + queryVar + " WHERE  { ?res <" + Properties.PROCESS_NAME_URI + "> \"" + selectedProcessName
 					+ "\" . ?res <" + Properties.TIMESTAMP_URI + "> \"" + selectedTimestamp + "\" }" ;
-		
 		ResultSet resultSet = performQuery(selectProcessNamesQueryString);
 		
 		// I expect there to be exactly one result.

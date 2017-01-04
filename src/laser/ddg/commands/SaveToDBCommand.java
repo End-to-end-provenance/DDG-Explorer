@@ -14,11 +14,18 @@ import laser.ddg.persist.JenaWriter;
  *
  */
 public class SaveToDBCommand implements ActionListener {
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
+	
+	/**
+	 * Save the current ddg to the database.
+	 */
+	public static void execute() {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		jenaWriter.persistDDG (ddgExplorer.getCurrentDDG());
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		execute();
 	}
 }

@@ -26,11 +26,13 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
+import laser.ddg.commands.ShowHowValueComputedCommand;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
+import prefuse.data.Node;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
@@ -567,6 +569,15 @@ public class DDGDisplay extends Display {
 			}
 
 		};
+		
+		private PopupCommand showHowComputedCommand = new PopupCommand("Show how value was computed") {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+                ShowHowValueComputedCommand.execute(builder, (Node) findItem(p));
+			}
+
+		};
+
 
 		class PopupListener extends MouseAdapter {
 
@@ -605,7 +616,7 @@ public class DDGDisplay extends Display {
 					}
 
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {
-						showPopup(e, showValueCommand);
+						showPopup(e, showValueCommand, showHowComputedCommand);
 					}
 
 					else if (PrefuseUtils.isLeafNode((NodeItem) item)) {
