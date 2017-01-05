@@ -3,6 +3,7 @@ package laser.ddg.visualizer;
 import java.util.Iterator;
 import java.util.Set;
 
+import laser.ddg.SourcePos;
 import prefuse.Visualization;
 import prefuse.data.Node;
 import prefuse.render.DefaultRendererFactory;
@@ -238,12 +239,19 @@ public class DDGVisualization extends Visualization {
 		
                 @Override
 		protected String getText(VisualItem item) {
-			int lineNum = PrefuseUtils.getLineNumber((Node)item);
+            SourcePos sourcePos = PrefuseUtils.getSourcePos((Node) item);
+			int lineNum = sourcePos.getStartLine();
 			if (lineNum <= 0) {
 				return super.getText(item);
 			}
 			else {
-				return super.getText(item) + " [" + lineNum + "]";
+				int scriptNum = sourcePos.getScriptNumber();
+				if (scriptNum < 0) { 
+					return super.getText(item) + " [" + lineNum + "]";
+				}
+				else {
+					return super.getText(item) + " [" + scriptNum + ":" + lineNum + "]";
+				}
 			}
 		}
 	}

@@ -35,7 +35,7 @@ public class ProvenanceData {
 	// Name of the process the provenance data is for
 	private String processName;
 	
-	// The timestamp of the process the provenance data is for
+	// The execution timestamp of the ddg
 	private String timestamp;
 	
 	// The language the provenance data process was written in
@@ -86,17 +86,17 @@ public class ProvenanceData {
 	// Listeners to changes to the DDG
 	private List<ProvenanceListener> provListeners = new LinkedList<>();
 
-	// Table mapping function names to function bodies
-	private Map<String, String> functionTable;
-	
-	// Table mapping named blocks to the code within those blocks.
-	private Map<String, String> blockTable;
-	
 	// The query that this provenance data represents.
 	private String query;
 	
-	// The name of the file containing the script/program executed to create this DDG.
-	private String scriptFileName;
+	// Information about all of the scripts that are executed
+	// to create the ddg.  The main script is in position 0.
+	// The other entries are for sourced scripts, in the order
+	// that they are listed in the attributes at the top of the
+	// ddg.  The order is important since procedure nodes refer
+	// to source & line numbers which we use to display the
+	// source code to the user.
+	private List<ScriptInfo> scripts = new ArrayList<>();
 
 	/**
 	 * Construct a default object
@@ -120,15 +120,15 @@ public class ProvenanceData {
 	/**
 	 * Construct a default object
 	 * 
-	 * @param processName
-	 *            the name of the process or activity this is the provenance
+	 * @param scrpt
+	 *            the name of the script or activity this is the provenance
 	 *            data for
 	 * @param timestamp
 	 * 			the timestamp associated with the script
 	 * @param language the language that the process was written in
 	 */
-	public ProvenanceData(String processName, String timestamp, String language) {
-		this(processName);
+	public ProvenanceData(String scrpt, String timestamp, String language) {
+		this(scrpt);
 		this.timestamp = timestamp;
 		this.language = language;
 	}
@@ -713,12 +713,36 @@ public class ProvenanceData {
 	}
 
 	/**
+	 * Find the data node with the given name
+	 * @param nodeName the name of the node to search for
+	 * @return the data instance node with the given name.  Returns
+	 *   null if there is no node with that name.
+	 */
+	public DataInstanceNode findDin(String nodeName) {
+		Iterator<DataInstanceNode> dinIt = dinIter();
+		//System.out.println("Looking for data node " + data + "  Found:");
+		
+		while(dinIt.hasNext()){
+			DataInstanceNode dCheck = dinIt.next();
+			//System.out.println("   " + dCheck.getId());
+			if(nodeName.equals(dCheck.getName())){
+				return dCheck;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * @return the timestamp associated with the file that contains
 	 * 	the program that was executed to produce the ddg.  This is 
 	 *  distinct from the timestamp associated with the execution of the
 	 *  program that created this specific ddg. 
 	 */
 	public String getScriptTimestamp() {
+		if (scripts != null && scripts.size() >= 1) {
+			return scripts.get(0).getTimestamp();
+		}
+		
 		if (processName == null) {
 			return null;
 		}
@@ -768,53 +792,17 @@ public class ProvenanceData {
 	public void addAttribute(String name, String value) {
 		attributes.set(name, value);
 	}
-
-	/**
-	 * Parses the file that contains the source code for the program executed.
-	 * Creates a table that allows us to look up function definitions given a
-	 * function name.
-	 */
-	public void createFunctionTable() {
-		createFunctionTable(processName);
-	}
-
-	/**
-	 * Parses the file that contains the source code for the program executed.
-	 * Creates a table that allows us to look up function definitions given a
-	 * function name.
-	 * @param fileName the name of the file that contains the function definitions
-	 */
-	public void createFunctionTable(String fileName) {
-		LanguageParser scriptParser = LanguageConfigurator.createParser(language); 
-		scriptFileName = fileName;
-		if (scriptParser != null) {
-			functionTable = scriptParser.buildFunctionTable(fileName);
-			blockTable = scriptParser.buildBlockTable(fileName);
-		}
-		else {
-			functionTable = new HashMap<>();
-			blockTable = new HashMap<>();
-		}
-	}
-
-	/**
-	 * Looks up the definition of a function.  Returns an error string if there is more
-	 * than one function with that name. 
-	 * @param functionName the name of the function to look up
-	 * @return the function definition
-	 */
-	public String getFunctionBody(String functionName) {
-		return functionTable.get(functionName);
-	}
-
-	public String getBlockBody(String blockName) {
-		return blockTable.get(blockName);
-	}
-
-	public String getScript() {
-		return scriptFileName;
-	}
 	
+	/**
+	 * @param which the position if the script in the Sourced Files
+	 *   attribute.  Position 0 is the main script.  Sourced files
+	 *   begin at position 1.
+	 * @return the full path to the script
+	 */
+	public String getScriptPath(int which) {
+		return scripts.get(which).getFilepath();
+	}
+
 	public String getSourcePath() {
 		return sourceDDGFile;
 	}
@@ -870,7 +858,7 @@ public class ProvenanceData {
 	 * Allows a visitor to operate on each input edge in a ddg
 	 * @param visitor the object that will operate on the edge
 	 */
-	private void visitInputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
+	private static void visitInputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
 		Iterator<DataInstanceNode> inputIter = pin.inputParamValues();
 		while (inputIter.hasNext()) {
 			DataInstanceNode input = inputIter.next();
@@ -882,7 +870,7 @@ public class ProvenanceData {
 	 * Allows a visitor to operate on each output edge in a ddg
 	 * @param visitor the object that will operate on the edge
 	 */
-	private void visitOutputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
+	private static void visitOutputEdges(ProcedureInstanceNode pin, ProvenanceDataVisitor visitor) {
 
 		Iterator<DataInstanceNode> outputIter = pin.outputParamValues();
 		while (outputIter.hasNext()) {
@@ -907,7 +895,57 @@ public class ProvenanceData {
 
 	public void setAttributes(Attributes attributes) {
 		this.attributes = attributes;
+		
+		// Use the attribute information about the main and the sourced scripts
+		// to build the list of scripts referenced so that we will be able to
+		// find the source code later.
+		
+		
+		// Json files will have this set already
+		scripts = attributes.getSourcedScriptInfo();
+		if (scripts == null) {
+			// for ddg.txt files, we need to build the list here
+			scripts = new ArrayList<>();
+
+			// Include the main script that was executed
+			String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
+			String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
+			scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
+			
+			File mainScript = new File(mainScriptName);
+			File scriptDir = mainScript.getParentFile();
+
+			// Include all the scripts included via a call to R's source function
+			String sourcedScriptList = attributes.get(Attributes.SOURCED_SCRIPT_NAMES);
+			if (sourcedScriptList == null) {
+				return;
+			}
+			String[] sourcedScriptNames = sourcedScriptList.split(",");
+	
+			String scriptTimestampList = attributes.get(Attributes.SCRIPT_TIMESTAMPS);
+			if (scriptTimestampList == null) {
+				return;
+			}
+			String[] sourcedScriptTimestamps = scriptTimestampList.split(",");
+			assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
+			
+			for (int i = 0; i < sourcedScriptNames.length; i++) {
+				scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
+			}
+		}
+		
+		// System.out.println(attributes.toString());
+		
 	}
+
+	/**
+	 * 
+	 * @return the information about the scripts used to make this ddg
+	 */
+	public List<ScriptInfo> scripts() {
+		return scripts;
+	}
+
 
 
 }

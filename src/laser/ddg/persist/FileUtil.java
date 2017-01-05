@@ -17,11 +17,13 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import laser.ddg.ScriptInfo;
 import laser.ddg.gui.DDGExplorer;
 
 /**
@@ -174,32 +176,32 @@ public class FileUtil {
 	/**
 	 * Creates a file in a special directory where the file can be
 	 * saved so the database can access the current version
-	 * @param originalFile the file being copied
+	 * @param script the file being copied
 	 * @return the file object created.  Returns null if the path
 	 * 		to the file does not already exist and it cannot create
 	 * 		the path
 	 */
-	public static File createSavedFile(File originalFile) {
+	public static File createSavedFile(ScriptInfo script) {
 		try {
 			File savedCopyDir = new File(SAVED_FILE_DIRECTORY);
 			//ErrorLog.showErrMsg("Creating " + savedCopyDir + "\n");
 			createDirectory(savedCopyDir);
 			
-			String filename = originalFile.getName();
+			String filename = script.getName();
 			savedCopyDir = new File(SAVED_FILE_DIRECTORY + filename);
 			//ErrorLog.showErrMsg("Creating " + savedCopyDir + "\n");
 			createDirectory(savedCopyDir);
 			
-			String timestamp = getTimestamp(originalFile);
+			String timestamp = script.getTimestamp();
 			savedCopyDir = new File(savedCopyDir.getAbsolutePath() + File.separatorChar + timestamp);
 			//ErrorLog.showErrMsg("Creating " + savedCopyDir + "\n");
 			createDirectory (savedCopyDir);
 			
-			File savedCopy = new File(savedCopyDir.getAbsolutePath() + File.separatorChar + originalFile.getName());
+			File savedCopy = new File(savedCopyDir.getAbsolutePath() + File.separatorChar + script.getName());
 			//ErrorLog.showErrMsg("Will copy to " + savedCopy + "\n");
 			return savedCopy;
 		} catch (IllegalStateException e) {
-			DDGExplorer.showErrMsg("Unable to save file " + originalFile.getAbsolutePath() + "\n");
+			DDGExplorer.showErrMsg("Unable to save file " + script.getFilepath() + "\n");
 			DDGExplorer.showErrMsg(e + "\n");
 			return null;
 		}
@@ -234,6 +236,68 @@ public class FileUtil {
 	}
 				
 	/**
+	 * @param originalFilePath the full path to the script file
+	 * being copied
+	 * @return the directory where files will get saved to 
+	 * when copying this script.
+	 */
+	public static String getSaveDir(String originalFilePath) {
+		
+		File originalFile = new File(originalFilePath);
+		String timestamp = getTimestamp(originalFile);
+		String originalFileName = originalFile.getName();
+		
+		return SAVED_FILE_DIRECTORY + File.separatorChar + originalFileName + File.separatorChar + timestamp;
+	}
+
+	public static String getSaveDir(ScriptInfo scriptInfo) {
+		String timestamp = scriptInfo.getTimestamp();
+		String originalFileName = scriptInfo.getName();
+		
+		return SAVED_FILE_DIRECTORY + File.separatorChar + originalFileName + File.separatorChar + timestamp;
+	}
+
+	/**
+	 * Copy a script file so the database will be able to find it
+	 * @param script the script to copy
+	 * @return the absolute path to the copied file
+	 */
+	public static String copyScriptFile(ScriptInfo script) {
+		//System.out.println("File to copy: " + script.getFilepath() + "\n");
+		File theFile = new File(script.getFilepath());
+		//Scanner readFile;
+
+		try {
+			//readFile = new Scanner(theFile);
+			//PrintWriter writeFile = null;
+			File savedFile = createSavedFile(script);
+			// System.out.println("Copying " + theFile.toPath() + " to " + savedFile.toPath() + "\n");
+			
+			// It may have been copied on a previous execution.
+			if (!savedFile.exists()) {
+				// System.out.println("Copying");
+				Files.copy(theFile.toPath(), savedFile.toPath(), StandardCopyOption.COPY_ATTRIBUTES);
+				if (!savedFile.exists()) {
+					DDGExplorer.showErrMsg("Copy failed!!!\n\n");
+				}
+				savedFile.setReadOnly();
+			}
+			// else {
+			//	System.out.println("Not copying.  Already there.");
+			// }
+			return savedFile.getAbsolutePath();
+			
+			//System.out.println(fileContents.toString());
+		} catch (FileNotFoundException e) {
+			DDGExplorer.showErrMsg("Cannot find file: " + script.getFilepath() + "\n\n");
+			return null;
+		} catch (IOException e) {
+			DDGExplorer.showErrMsg("Exception copying" + script.getFilepath() + "to database: " + e);
+			return null;
+		}
+	}
+	
+	/**
 	 * Creates the directory that the database uses to find saved files
 	 * @param savedCopyDir the directory to create
 	 * @throws IllegalStateException if it could not create the directory for any reason
@@ -241,16 +305,16 @@ public class FileUtil {
 	private static void createDirectory(File savedCopyDir) throws IllegalStateException {
 		if (!savedCopyDir.exists()) {
 			if (!savedCopyDir.mkdir()) {
-				System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+				System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 				throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 			}
 		}
 		else if (!savedCopyDir.isDirectory()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 		else if (!savedCopyDir.canWrite()) {
-			System.out.println ("Unable to create directory to save scripts in: " + savedCopyDir);
+			System.err.println ("Unable to create directory to save scripts in: " + savedCopyDir);
 			throw new IllegalStateException("Unable to create directory to save scripts in: " + savedCopyDir);
 		}
 	}
@@ -293,7 +357,7 @@ public class FileUtil {
 			
 			// Look for the desired timestamp in the directory for one version of
 			// the script.  If we find it, delete the associated files
-			if (findAndDelete(timestamp, savedDDGDirs)) {
+			if (savedDDGDirs != null && findAndDelete(timestamp, savedDDGDirs)) {
 				
 				// The script directory contains the R code for the script in addition to 
 				// the subdirectories for eadh DDG.  If the length of the savedDDGDirs array
@@ -355,7 +419,7 @@ public class FileUtil {
 			
 			// Look for the desired timestamp in the directory for one version of
 			// the script.  If we find it, return the directory for that version of the process.
-			if (find(ddgTimestamp, savedDDGDirs) != null) {
+			if (savedDDGDirs != null && find(ddgTimestamp, savedDDGDirs) != null) {
 				
 				return savedTimestampDir;
 			}
@@ -413,5 +477,6 @@ public class FileUtil {
 		}
 		
 	}
+
 
 }

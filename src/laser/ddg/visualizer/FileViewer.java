@@ -4,7 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -38,6 +46,10 @@ import laser.ddg.gui.DDGExplorer;
  *
  */
 public class FileViewer {
+	private static final int FRAME_WIDTH = 500;
+	private static final int FRAME_HEIGHT = 500;
+	private static final Dimension FRAME_SIZE = new Dimension(FRAME_WIDTH, FRAME_HEIGHT);
+
 	// The full path and file name to display
 	private String path;
 	
@@ -56,6 +68,9 @@ public class FileViewer {
 	// The contents to display.  The exact type of this depends on the file type.
 	private JComponent contents;
 	
+	// The fullsize image as read from the file
+	private BufferedImage fileImage;
+	
 	/**
 	 * Create the structures needed to hold the file contents.  This does not 
 	 * display the file.
@@ -63,8 +78,9 @@ public class FileViewer {
 	 * @param time the timestamp.  If the file is a text, jpeg or csv file, the 
 	 *    timestamp will be displayed in the window title.  For other file types,
 	 *    the timestamp is not used.  
+	 * @exception IOException thrown if the file cannot be read
 	 */
-	public FileViewer(String path, String time) {
+	public FileViewer(String path, String time) throws IOException {
 		if (path.startsWith("\"") && path.endsWith("\"")) {
 			this.path = path.substring(1, path.length()-1);
 		}
@@ -101,31 +117,25 @@ public class FileViewer {
 	/**
 	 * Creates an un-editable text area containing the file contents.
 	 * The file should contain text.
+	 * @throws FileNotFoundException 
 	 */
-	private void displayText() {
+	private void displayText() throws FileNotFoundException {
 		JTextArea text = new JTextArea();
-		try{
-			//get and read in the file
-			File theFile = new File(path);
-			Scanner readFile = new Scanner(theFile);
-			
-			while(readFile.hasNextLine()){
-				String line = readFile.nextLine();
-				text.append(line + "\n");
-			}
-			
-			readFile.close();
+		//get and read in the file
+		File theFile = new File(path);
+		Scanner readFile = new Scanner(theFile);
+		
+		while(readFile.hasNextLine()){
+			String line = readFile.nextLine();
+			text.append(line + "\n");
+		}
+		
+		readFile.close();
 
-			text.setEditable(false);
-			text.setCaretPosition(0);
-			contents = new JScrollPane(text,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
-					JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			
-		}catch (Exception e){
-			// Catch block that will print out exception
-			DDGExplorer.showErrMsg("Error with file. "+ e.getMessage());
-			e.printStackTrace(System.err);
-		}		
+		text.setEditable(false);
+		text.setCaretPosition(0);
+		contents = new JScrollPane(text,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		
 	}
 
@@ -281,16 +291,99 @@ public class FileViewer {
 	/**
 	 * Creates a component that displays an image.  Assumes that the
 	 * file contains an image.
+	 * @exception IOException thrown if the image file named in the path 
+	 * instance variable cannot be read
 	 */
-	private void displayImage() {
+	private void displayImage() throws IOException {
+		Image image;
+		
+		// Read in the fullsize image
+		fileImage = ImageIO.read(new File(path));
+		int imageWidth          = fileImage.getWidth();
+		int imageHeight         = fileImage.getHeight();
+		
+		// If the image is too big, scale it.  
+		if (imageWidth > FRAME_WIDTH || imageHeight > FRAME_HEIGHT) {
+			Dimension scaledSize = getScaledDimension (imageWidth, imageHeight, FRAME_WIDTH, FRAME_HEIGHT);
+			image = getScaledImage (fileImage, scaledSize);
+		}
+		else {
+			image = fileImage;
+		}
+
 		// clear out the image buffer
-		ImageIcon icon = new ImageIcon(path);
+		ImageIcon icon = new ImageIcon(image);
 		icon.getImage().flush();
-		
-		
+
+		// Display the image in a label
 		plotted = new JLabel(icon);
 		plotted.setHorizontalAlignment(JLabel.CENTER);
 		contents = plotted;
+		
+		// Add a listener so we can resize the image if the
+		// label size changes
+		plotted.addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				Dimension newSize = getScaledDimension(fileImage.getWidth(), fileImage.getHeight(), 
+						plotted.getWidth(), plotted.getHeight());
+				Image scaledImage = getScaledImage (fileImage, newSize);
+				icon.setImage(scaledImage);
+			}
+
+		});
+	}
+	
+	/**
+	 * Scale the image to the desired size
+	 * @param srcImg the image to scale
+	 * @param newSize the desired size
+	 * @return a new image with newSize
+	 */
+	private static Image getScaledImage(Image srcImg, Dimension newSize){
+		int w = (int)newSize.getWidth();
+		int h = (int)newSize.getHeight();
+	    BufferedImage resizedImg = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	    Graphics2D g2 = resizedImg.createGraphics();
+
+	    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+	    g2.drawImage(srcImg, 0, 0, w, h, null);
+	    g2.dispose();
+
+	    return resizedImg;
+	}
+	
+	/**
+	 * Calculate a new size that maintains the img aspect ratio and is no
+	 * larger than the boundary size
+	 * @param imgWidth original width of an image
+	 * @param imgHeight origitnal height of an image
+	 * @param boundaryWidth maximum width desired
+	 * @param boundaryHeight maximum height desired
+	 */
+	public static Dimension getScaledDimension(int imgWidth, int imgHeight, int boundaryWidth, int boundaryHeight) {
+
+	    int newWidth = imgWidth;
+	    int newHeight = imgHeight;
+
+	    // first check if we need to scale width
+	    if (imgWidth > boundaryWidth) {
+	        //scale width to fit
+	    	newWidth = boundaryWidth;
+	        //scale height to maintain aspect ratio
+	    	newHeight = (newWidth * imgHeight) / imgWidth;
+	    }
+
+	    // then check if we need to scale even with the new height
+	    if (newHeight > boundaryHeight) {
+	        //scale height to fit instead
+	    	newHeight = boundaryHeight;
+	        //scale width to maintain aspect ratio
+	    	newWidth = (newHeight * imgWidth) / imgHeight;
+	    }
+
+	    return new Dimension(newWidth, newHeight);
 	}
 	
 	/**
@@ -314,7 +407,7 @@ public class FileViewer {
 			
 			//set the title to the name of the file 
 			fileFrame.setTitle(title + " " + timestamp);
-			fileFrame.setSize(new Dimension(500, 500));
+			fileFrame.setSize(FRAME_SIZE);
 			
 			//Add the table to the frame
 			fileFrame.getContentPane().add(contents, BorderLayout.CENTER);

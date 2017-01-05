@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import laser.ddg.ProvenanceData;
+import laser.ddg.SourcePos;
 
 /**
  * Represents the finish node for a function or block in an R script
@@ -16,10 +17,10 @@ public class RFinishNode extends RFunctionInstanceNode {
 	 * @param name name of the node
 	 * @param provData the ddg
 	 * @param elapsedTime 
-         * @param lineNum 
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 */
-	public RFinishNode(String name, ProvenanceData provData, double elapsedTime, int lineNum) {
-		super(name, null, provData, elapsedTime, lineNum);
+	public RFinishNode(String name, ProvenanceData provData, double elapsedTime, SourcePos sourcePos) {
+		super(name, null, provData, elapsedTime, sourcePos);
 	}
 
 	/**

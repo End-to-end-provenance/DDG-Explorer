@@ -16,6 +16,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 public class DerivationQuery extends DataQuery {
 	/**
 	 * The value to display in the query menu
+     * @return 
 	 */
 	@Override
 	public String getMenuItem() {
@@ -27,8 +28,12 @@ public class DerivationQuery extends DataQuery {
 		return "Derivation query";
 	}
 	
+	/**
+	 * Loads the nodes that are reachable by following data flow paths
+	 * up from the given resource.
+	 */
 	@Override
-	protected void doQuery (Resource qResource) {
+	protected void loadNodes(Resource qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
@@ -39,8 +44,8 @@ public class DerivationQuery extends DataQuery {
 				addAllInputs(nextProcResource);
 			}
 		}
-		displayDDG();
 	}
+
 	
 	private void addAllInputs(Resource procRes) {
 		String queryVarName = "in";

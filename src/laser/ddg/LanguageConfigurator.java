@@ -73,26 +73,6 @@ public class LanguageConfigurator {
 	}
 
 	/**
-	 * Create and return a parser a programming language that was used to create a ddg
-	 * @param language the language of the program that wrote the DDG
-	 * @return the parser
-	 */
-	public static LanguageParser createParser(String language)  {
-		String parserClassName = parsers.get(language);
-		if (parserClassName == null) {
-			throw new IllegalArgumentException("No parser for " + language);
-		}
-		
-		try {
-			Class<LanguageParser> parserClass = (Class<LanguageParser>) Class.forName(parserClassName);
-			return parserClass.newInstance();
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			e.printStackTrace(System.err);
-			throw new IllegalStateException("Can't create parser for " + language, e);
-		}
-	}
-	
-	/**
 	 * Register a parser for a language
 	 * @param language the language the parser is for
 	 * @param parserClass the class that can parse this language

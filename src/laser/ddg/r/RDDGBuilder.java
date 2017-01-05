@@ -11,6 +11,8 @@ import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptInfo;
+import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
@@ -45,6 +47,7 @@ public class RDDGBuilder extends DDGBuilder {
 		legend.add(new LegendEntry("Collapsible Operation", PrefuseGraphBuilder.NONLEAF_COLOR));
 		legend.add(new LegendEntry("Expandable Operation", PrefuseGraphBuilder.STEP_COLOR));
 		legend.add(new LegendEntry("Simple Operation", PrefuseGraphBuilder.LEAF_COLOR));
+		legend.add(new LegendEntry("Details Omitted", PrefuseGraphBuilder.INCOMPLETE_COLOR));
 		legend.add(new LegendEntry("Parameter Binding", PrefuseGraphBuilder.INTERPRETER_COLOR));
 		legend.add(new LegendEntry("Checkpoint Operation", PrefuseGraphBuilder.CHECKPOINT_COLOR));
 		legend.add(new LegendEntry("Restore Operation", PrefuseGraphBuilder.RESTORE_COLOR));
@@ -73,36 +76,39 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @param id the id number of the node
 	 * @param nodeName the name of the node
 	 * @param funcName the name of the function executed
+	 * @param sourcePos the location in the source file that this node corresponds to
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime, int lineNum){
+	public ProcedureInstanceNode addProceduralNode(String type, int id, String nodeName, String funcName, double elapsedTime, SourcePos sourcePos){
 		RFunctionInstanceNode newFuncNode = null;
 		ProvenanceData provObject = getProvObject();
 		if(type.equals("Start")){
-			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RStartNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
-		else if(type.equals("Leaf") || type.equals("Operation")){
-			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, lineNum);
+		else if(type.equals("Leaf") || type.equals("Operation") || type.equals("Incomplete")){
+			newFuncNode = new RLeafNode(nodeName, funcName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Finish")){
-			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RFinishNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Interm")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RIntermNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if(type.equals("Binding")){
 			// This type is not currently produced by RDataTracker.
-			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RBindingNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if (type.equals("Checkpoint")) {
-			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RCheckpointNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
 		else if (type.equals("Restore")) {
-			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, lineNum);
+			newFuncNode = new RRestoreNode(nodeName, provObject, elapsedTime, sourcePos);
 		}
-		provObject.addPIN(newFuncNode, id);
+		if (newFuncNode != null) {
+			provObject.addPIN(newFuncNode, id);
+		}
 		return newFuncNode;
 	}
 	
@@ -115,8 +121,8 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @return the node that is created
 	 */
 	@Override
-	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime, int lineNum) {
-		return addProceduralNode(type, id, name, null, elapsedTime, lineNum);
+	public ProcedureInstanceNode addProceduralNode(String type, int id,	String name, double elapsedTime, SourcePos sourcePos) {
+		return addProceduralNode(type, id, name, null, elapsedTime, sourcePos);
 	}
 
 	/**
@@ -128,7 +134,7 @@ public class RDDGBuilder extends DDGBuilder {
 	 * @param value optional value associated with the data node
 	 * @param time the timestamp of the data node
 	 * @param location the original location of a file, null if not a file node
-         * @return 
+     * @return the node created
 	 */
 	@Override
 	public DataInstanceNode addDataNode(String type, int id, String name, String value, String time, String location){
@@ -161,19 +167,30 @@ public class RDDGBuilder extends DDGBuilder {
 			if (attrValue != null) {
 				attrText.append(printAttrNames[which] + " = " + attrValue + "\n");
 			}
-			else {
-				JOptionPane.showMessageDialog(DDGExplorer.getInstance(), "No value for " + attrName + "\n");
-			}
 			which++;
 		}
 		
 		// Print out any extra ones, deliberately skipping the one named "processName"
 		List<String> attrNameList = Arrays.asList(dbAttrNames);
-		for (String attrName : attributes.names()) {
-			if (!attrName.equals("processName") && !attrNameList.contains(attrName)) {
-				attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
-			}
-		}
+        attributes.names().stream().filter((attrName) -> (!attrName.equals("processName") && !attrNameList.contains(attrName))).forEach((attrName) -> {
+        	attrText.append(attrName + " = " + attributes.get(attrName) + "\n");
+        });
+        
+        List<ScriptInfo> scriptInfoList = attributes.getSourcedScriptInfo();
+        if (scriptInfoList != null) {
+    		attrText.append("Sourced scripts = \n");
+        	for (ScriptInfo scriptInfo : scriptInfoList) {
+        		attrText.append("   " + scriptInfo.getName() + "  " + scriptInfo.getTimestamp() + "\n");
+        	}
+        }
+
+        List<String> packageList = attributes.getPackages();
+        if (packageList != null) {
+    		attrText.append("Installed packages = \n");
+        	for (String packageInfo : packageList) {
+        		attrText.append("   " + packageInfo + "\n");
+        	}
+        }
 
 		return attrText.toString();
 	}

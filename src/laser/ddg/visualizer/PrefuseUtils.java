@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import laser.ddg.SourcePos;
 import prefuse.data.Edge;
 import prefuse.data.Node;
 import prefuse.visual.EdgeItem;
@@ -39,8 +40,14 @@ public class PrefuseUtils {
 	/** The field name to identify the timestamp of an item */
 	static final String TIMESTAMP = "Time";
 	
-	/** The field name to identify the line number in the script */
-	static final String LINE = "Line";
+	/** The field names to identify the line and column numbers in the script */
+	public static final String STARTLINE = "StartLine";
+	public static final String STARTCOL = "StartCol";
+	public static final String ENDLINE = "EndLine";
+	public static final String ENDCOL = "EndCol";
+
+	/** The field name to identify the script number  */
+	static final String SCRIPT = "Script";
 
 	/** The field name to identify the source of an edge */
 	static final String SOURCE = "source";
@@ -67,6 +74,9 @@ public class PrefuseUtils {
 	
 	/** Type of a procedural node that represents a leaf*/
 	static final String LEAF = "Leaf";
+	
+	/** Type of a procedural node when we have not collected full detail, like inside a loop. */
+	static final String INCOMPLETE = "Incomplete";
 	
 	static final String RESTORE = "Restore";
 	static final String CHECKPOINT = "Checkpoint";
@@ -415,6 +425,11 @@ public class PrefuseUtils {
 		String nodeType = n.getString(PrefuseUtils.TYPE);
 		return nodeType.equals(LEAF) || nodeType.equals(OPERATION);
 	}
+	
+	static boolean isIncompleteNode (Node n) {
+		String nodeType = n.getString(PrefuseUtils.TYPE);
+		return nodeType.equals(INCOMPLETE);
+	}
 
 	/**
 	 * Returns true if the node is any kind of procedural node
@@ -454,6 +469,11 @@ public class PrefuseUtils {
 		return nodeType.equals(FILE) || nodeType.equals(SNAPSHOT);
 	}
 
+	public static boolean isSnapshot(VisualItem node) {
+		String nodeType = node.getString(TYPE);
+		return nodeType.equals(SNAPSHOT);
+	}
+
 	private static String getNodeType(Node n) {
 		return n.getString(PrefuseUtils.TYPE);
 	}
@@ -467,7 +487,7 @@ public class PrefuseUtils {
 	 * @param node
 	 * @return the name
 	 */
-	static String getName(Node node) {
+	public static String getName(Node node) {
 		return node.getString(NAME);
 	}
 
@@ -485,7 +505,7 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return the value
 	 */
-	static String getValue(Node n) {
+	public static String getValue(Node n) {
 		return n.getString(VALUE);
 	}
 
@@ -517,10 +537,15 @@ public class PrefuseUtils {
 
 	/**
 	 * @param n
-	 * @return the line number associated with a node
+	 * @return the source code position associated with a node
 	 */
-	public static int getLineNumber(Node n) {
-		return n.getInt(LINE);
+	public static SourcePos getSourcePos(Node n) {
+		int startLine = n.getInt(STARTLINE);
+		int startCol = n.getInt(STARTCOL);
+		int endLine = n.getInt(ENDLINE);
+		int endCol = n.getInt(ENDCOL);
+		int script = n.getInt(SCRIPT);
+		return new SourcePos (script, startLine, startCol, endLine, endCol);
 	}
 
 	/**

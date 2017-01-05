@@ -45,10 +45,10 @@ public class StepTable {
 		// Make sure it is not a checkpoint / restore pair
 		if (PrefuseUtils.isStartNode(startNode)) {
 		
-			for (Node member : memberNodes) {
-				//System.out.println("StepTable.add: Putting " + PrefuseUtils.getName(member) + " as member of " + PrefuseUtils.getName(collapsedNode));
-				startFinishTable.put(member, collapsedNode);
-			}
+        	memberNodes.stream().forEach((member) -> {
+            	//System.out.println("StepTable.add: Putting " + PrefuseUtils.getName(member) + " as member of " + PrefuseUtils.getName(collapsedNode));
+                startFinishTable.put(member, collapsedNode);
+            });
 		}
 	}
 

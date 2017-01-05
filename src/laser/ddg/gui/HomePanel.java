@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import laser.ddg.commands.CompareScriptsCommand;
+import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
@@ -38,6 +39,10 @@ public class HomePanel extends JPanel {
 		JButton compareButton = new JButton("Compare R Scripts");
 		compareButton.addActionListener(new CompareScriptsCommand());
 
+		// Create a button to allow the user to compare 2 DDGs
+		JButton compareDDGButton = new JButton("Compare DDGs");
+		compareDDGButton.addActionListener(new CompareGraphsCommand());
+
 		// Create a button to allow the user to load a DDG from the database
 		JButton findFilesButton = new JButton("Find Data Files");
 		findFilesButton.addActionListener(new FindFilesCommand());
@@ -51,6 +56,7 @@ public class HomePanel extends JPanel {
 		buttonPanel.add(loadFileButton);
 		buttonPanel.add(loadFromDBButton);
 		buttonPanel.add(compareButton);
+		buttonPanel.add(compareDDGButton);
 		buttonPanel.add(findFilesButton);
 		buttonPanel.add(manageButton);
 		add(buttonPanel, BorderLayout.PAGE_START);

@@ -4,10 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -20,16 +18,18 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import laser.ddg.Attributes;
+import laser.ddg.NoScriptFileException;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptInfo;
+import laser.ddg.SourcePos;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
-import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
-import prefuse.Display;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the
@@ -84,6 +84,9 @@ public class DDGPanel extends JPanel {
 	// Remembers the direction of the arrows.  REVERSE == down
 	private int arrowDirection = prefuse.Constants.EDGE_ARROW_REVERSE;
 	
+	// The windows that are used to display and highlight scripts
+	private ArrayList<ScriptDisplayer> fileDisplayers = new ArrayList<>();
+	
 	/**
 	 * Create a frame to display the DDG graph in
 	 */
@@ -109,14 +112,12 @@ public class DDGPanel extends JPanel {
 	 * 		the object that manages the visible nodes and edges
 	 * @param vis
 	 *            the visualization to display
-	 * @param ddgDisplay
-	 *            the ddg display
-	 * @param ddgOverview
+	 * @param dispPlusOver
+	 *            the combined ddg display and its overview
 	 * @param provData
 	 *            the ddg data being displayed
 	 */
-	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, final Display ddgDisplay,
-			final Display ddgOverview, ProvenanceData provData) {
+	public void displayDDG(PrefuseGraphBuilder builder, DDGVisualization vis, DisplayWithOverview dispPlusOver, ProvenanceData provData) {
 		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;
@@ -125,9 +126,9 @@ public class DDGPanel extends JPanel {
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
-		createMainPanel(ddgDisplay, ddgOverview);
+		ddgMain = dispPlusOver.createPanel(createDescription());
 		
-		toolbar = new Toolbar((DDGDisplay) ddgDisplay);
+		toolbar = new Toolbar(dispPlusOver.getDisplay());
 
 		// hold toolbarPanel and everything inside
 		add(toolbar, BorderLayout.NORTH);
@@ -164,34 +165,13 @@ public class DDGPanel extends JPanel {
 		return logPanel;
 	}
 
-	private void createMainPanel(Display ddgDisplay, final Display ddgOverview) {
-		ddgMain = new JPanel(new BorderLayout());
-		ddgMain.setBackground(Color.WHITE);
-		ddgMain.add(createDescriptionPanel(), BorderLayout.NORTH);
-		ddgMain.add(ddgDisplay, BorderLayout.CENTER);
-		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		ddgMain.add(ddgOverview, BorderLayout.EAST);
-		// legend added to WEST through preferences
-		// TODO searchbar added to SOUTH! (through button press?)
-
-		// resize components within layers
-		ddgMain.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				int panelHeight = ddgMain.getHeight();
-				Rectangle prevBounds = ddgOverview.getBounds();
-				ddgOverview.setBounds(prevBounds.x, prevBounds.y,
-						prevBounds.width, panelHeight - 16);
-			}
-		});
-	}
 
 	/**
 	 * Creates the panel that holds the main attributes
 	 * 
 	 * @return the panel
 	 */
-	private Component createDescriptionPanel() {
+	private Component createDescription() {
 		descriptionArea = new JLabel("", SwingConstants.CENTER);
 
 		if (provData != null) {
@@ -221,6 +201,9 @@ public class DDGPanel extends JPanel {
 	 * @return boolean for saved/unsaved
 	 */
 	public boolean alreadyInDB() {
+		if (dbWriter == null) {
+			dbWriter = JenaWriter.getInstance();
+		}
 		try {
 			String processPathName = provData.getProcessName();
 			String executionTimestamp = provData.getTimestamp();
@@ -228,7 +211,7 @@ public class DDGPanel extends JPanel {
 			return ((JenaWriter) dbWriter).alreadyInDB(processPathName,
 					executionTimestamp, language);
 		} catch (Exception e) {
-			System.out.println("DDGPanel's alreadyInDB unsuccessful");
+			System.err.println("DDGPanel's alreadyInDB unsuccessful");
 			return false;
 		}
 	}
@@ -388,9 +371,71 @@ public class DDGPanel extends JPanel {
 		builder.setHighlighted(id, value);
 	}
 
+	public void createCopiedGroup(String groupName){
+		builder.createCopiedGroup(groupName);
+	}
+
+	public void updateCopiedGroup(int id, String groupname){
+		builder.updateCopiedGroup(id, groupname);
+	}
+
 	public void focusOn(String name) {
 		builder.focusOn(name);
 	}
 
+
+	/**
+	 * Display source code highlighting the selected lines
+	 * @param sourcePos the position in the source code to display
+	 * @throws NoScriptFileException if the script number stored in sourcePos
+	 * 		is -1
+	 */
+	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
+		int scriptNum = sourcePos.getScriptNumber();
+		loadSourceCode(scriptNum);
+	
+		fileDisplayers.get(scriptNum).highlight(sourcePos);
+	}
+	
+	/**
+	 * Display source code without highlighting
+	 * @param scriptNum which script to load
+	 * @throws NoScriptFileException if scriptNum is -1
+	 */
+	public void displaySourceCode(int scriptNum) throws NoScriptFileException {
+		loadSourceCode(scriptNum);
+		fileDisplayers.get(scriptNum).nohighlight();
+	}
+
+	/**
+	 * Load the script into a frame if it is not already loaded
+	 * @param scriptNum which script to load
+	 * @throws NoScriptFileException if scriptNum is -1
+	 */
+	private void loadSourceCode(int scriptNum) throws NoScriptFileException {
+		if (scriptNum == -1) {
+			throw new NoScriptFileException("There is no script file available to display.");
+		}
+		for (int i = fileDisplayers.size(); i <= scriptNum; i++) {
+			fileDisplayers.add(i, null);
+		}
+	
+		if (fileDisplayers.get(scriptNum) == null) {
+			fileDisplayers.set(scriptNum, new ScriptDisplayer(builder, scriptNum));
+		}
+	}
+
+	/**
+	 * Display the source code for a script with no highlighting
+	 * @param script the script to display
+	 * @throws NoScriptFileException if there is no script file associated with
+	 * 		this script
+	 */
+	public void displaySourceCode(ScriptInfo script) throws NoScriptFileException {
+		List<ScriptInfo> scripts = provData.scripts();
+		int pos = scripts.indexOf(script);
+		assert pos >= 0;
+		displaySourceCode (pos);
+	}
 
 }

@@ -140,11 +140,9 @@ class SearchPanel extends JPanel {
 		// if user entered information into the search bar
 		if (searchTyped) {
 			String searchText = searchField.getText().toLowerCase();
-			for (SearchElement entry : nodesList) {
-				if (entry.getName().toLowerCase().contains(searchText)) {
-					newList.add(entry);
-				}
-			}
+            nodesList.stream().filter((entry) -> (entry.getName().toLowerCase().contains(searchText))).forEach((entry) -> {
+            	newList.add(entry);
+            });
 			ddgPanel.showSearchResults(newList);
 		}
 

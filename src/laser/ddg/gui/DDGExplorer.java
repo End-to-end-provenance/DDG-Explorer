@@ -6,8 +6,13 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Properties;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -26,6 +31,7 @@ import javax.swing.event.ChangeEvent;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
+import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.FindTimeCommand;
@@ -66,7 +72,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	// The singleton
 	private static DDGExplorer instance;
 	
-	private static final Preferences preferences = new Preferences();
+	private static final Preferences PREFERENCES = new Preferences();
 
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
@@ -141,14 +147,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		add(tabbed, BorderLayout.CENTER);
 
 		// set size based upon preferences, or default 
-		setSize (preferences.getWindowSize());
+		setSize (PREFERENCES.getWindowSize());
 
 		// modify size preferences when frame is resized
 		addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				Rectangle bounds = e.getComponent().getBounds();
-				preferences.setWindowSize(bounds);
+				PREFERENCES.setWindowSize(bounds);
 			}
 		});
 
@@ -195,19 +201,19 @@ public class DDGExplorer extends JFrame implements QueryListener {
                         DDGPanel openDDGPanel = (DDGPanel) openTab;
                         enableDDGCommands();
                         SearchPanel.enableSearch();
-                        if (preferences.isArrowDirectionDown()) {
+                        if (PREFERENCES.isArrowDirectionDown()) {
                             openDDGPanel.setArrowDirectionDown();
                         }
                         else {
                             openDDGPanel.setArrowDirectionUp();
                         }
-                        if (preferences.isShowLegend()) {
+                        if (PREFERENCES.isShowLegend()) {
                             openDDGPanel.addLegend();
                         }
                         else {
                             openDDGPanel.removeLegend();
                         }
-                        openDDGPanel.showLineNumbers(preferences.isShowLineNumbers());
+                        openDDGPanel.showLineNumbers(PREFERENCES.isShowLineNumbers());
                     } else {
                         disableDDGCommands();
                         SearchPanel.disableSearch();
@@ -286,6 +292,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
 
+
+		//allow the user to compare 2 DDGs
+		JMenuItem compareGraph = new JMenuItem("Compare DDGs");
+		compareGraph.addActionListener(new CompareGraphsCommand());
+
 		// allow the user to manage the database
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
@@ -299,6 +310,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
+		fileMenu.add(compareGraph);
 		fileMenu.add(manageDB);
 		fileMenu.add(quit);
 		return fileMenu;
@@ -317,8 +329,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		attributesItem.setEnabled(false);
 		DDGMenu.add(attributesItem);
 		
-		showScriptItem = new JMenuItem("Show R script");
-		showScriptItem.addActionListener(new ShowScriptCommand());
+		showScriptItem = new JMenu("Show R script...");
+		showScriptItem.addMouseListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
@@ -371,22 +383,22 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		prefMenu.setBackground(MENU_COLOR);
 		
 		final JCheckBoxMenuItem arrowsDirectionMenuItem = new JCheckBoxMenuItem("Draw arrows from inputs to outputs", 
-				preferences.isArrowDirectionDown());
+				PREFERENCES.isArrowDirectionDown());
 		arrowsDirectionMenuItem.addActionListener(new SetArrowDirectionCommand());
 		prefMenu.add(arrowsDirectionMenuItem);
 		
 		showLegendMenuItem = new JCheckBoxMenuItem("Show legend", 
-				preferences.isShowLegend());
+				PREFERENCES.isShowLegend());
 		showLegendMenuItem.addActionListener(new ShowLegendMenuItem());
 		prefMenu.add(showLegendMenuItem);
 		
 		final JCheckBoxMenuItem showLineNumbersMenuItem = new JCheckBoxMenuItem("Show line numbers in node labels", 
-				preferences.isShowLineNumbers());
+				PREFERENCES.isShowLineNumbers());
 		showLineNumbersMenuItem.addActionListener(new ShowLineNumbersCommand());
 		prefMenu.add(showLineNumbersMenuItem);
 		
 		final JCheckBoxMenuItem useSystemLAFMenuItem = new JCheckBoxMenuItem("Use system Look and Feel", 
-				preferences.isSystemLookAnFeel());
+				PREFERENCES.isSystemLookAnFeel());
 		useSystemLAFMenuItem.addActionListener(new SystemLookAndFeelCommand());
         prefMenu.add(useSystemLAFMenuItem);
 		return prefMenu;
@@ -455,7 +467,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().setArrowDirectionDown();
 		}
-		preferences.setArrowDirectionDown();
+		PREFERENCES.setArrowDirectionDown();
 	}
 
 	/**
@@ -467,7 +479,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().setArrowDirectionUp();
 		}
-		preferences.setArrowDirectionUp();
+		PREFERENCES.setArrowDirectionUp();
 	}
 
 	/**
@@ -480,13 +492,13 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().showLineNumbers(show);
 		}
-		preferences.showLineNumbers(show);
+		PREFERENCES.showLineNumbers(show);
 	}
 
         public void useSystemLookAndFeel(boolean use){
             loadLookAndFeel(use);
             SwingUtilities.updateComponentTreeUI(this);
-            preferences.useSystemLookAndFeel(use);
+            PREFERENCES.useSystemLookAndFeel(use);
         }
 
 	/**
@@ -498,7 +510,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			curDDGPanel.addLegend();  
 		}
-		preferences.setShowLegend (true);
+		PREFERENCES.setShowLegend (true);
 	}
 
 	/**
@@ -509,7 +521,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			curDDGPanel.removeLegend();  
 		}
-		preferences.setShowLegend (false);
+		PREFERENCES.setShowLegend (false);
 		if (showLegendMenuItem != null) {
 			showLegendMenuItem.setSelected(false);
 		}
@@ -544,11 +556,19 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	public static void main(String[] args) {
 		try {
 			DDGExplorer explorer = DDGExplorer.getInstance();
-			preferences.load();
-            explorer.loadLookAndFeel(preferences.isSystemLookAnFeel());
+			PREFERENCES.load();
+            explorer.loadLookAndFeel(PREFERENCES.isSystemLookAnFeel());
 			explorer.createAndShowGUI();
-			if(args.length==1){
-				LoadFileCommand.loadDDG(args[0]);
+			if (args.length == 3) {
+				// Start server.  Port number should be the third argument
+				// System.out.println("Server starting on port " + Integer.parseInt(args[2]));
+				DDGServer server = new DDGServer(Integer.parseInt(args[2]));
+				new Thread(server).start();
+				// System.out.println("Server started");
+			}
+			if (args.length >= 1) {
+				// System.out.println("Loading " + args[0]);
+				LoadFileCommand.loadFile(new File(args[0]));
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
@@ -558,5 +578,92 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 	}
 
+	/**
+	 * This class contains the code that starts the server and accepts multiple clients
+	 * @author Moe Pwint Phyu 
+	 *
+	 */
+	static private class DDGServer extends ServerSocket implements Runnable {
+		
+		private Socket clientSocket;
+		private ClientConnection clientConnection;
+
+		public DDGServer(int portNumber) throws IOException{
+			super(portNumber);
+		}
+		
+		public void run() {
+			//accept multiple clients 
+			try {
+				while(true){
+					clientSocket = this.accept();
+					clientConnection = new ClientConnection(clientSocket);
+					new Thread(clientConnection).start();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		public ClientConnection getClientConnection(){
+			return this.clientConnection;
+		}
+	}
+	
+	/**
+	 * A class that reads in information from the client side 
+	 * @author Moe Pwint Phyu
+	 *
+	 */
+	static private class ClientConnection implements Runnable{
+
+		private String fileName;
+		private String timeStamp;
+		private Socket clientSocket;
+		private String language;
+		private BufferedReader in;
+		
+		
+		public ClientConnection(Socket clientSocket) throws IOException{
+			this.clientSocket = clientSocket;
+		}
+		
+		@Override
+		public void run(){
+			try {
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				fileName = in.readLine();
+				//timeStamp = in.readLine();
+				//language = in.readLine();
+				//LoadFileCommand.executeIncrementalDrawing(this);
+				LoadFileCommand.loadFile(new File(fileName));
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public Socket getClientSocket(){
+			return clientSocket;
+		}
+		public String getFileName(){
+			return fileName;
+		}
+
+		public String getTimeStamp(){
+			return timeStamp;
+		}
+		
+		public BufferedReader getClientReader() {
+			return in;
+		}
+
+		public String getLanguage() {
+			return language;
+		}
+	}
 
 }

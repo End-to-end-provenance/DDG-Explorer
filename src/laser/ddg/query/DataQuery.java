@@ -90,6 +90,22 @@ public abstract class DataQuery extends AbstractQuery {
 	 */
 	@Override
 	public abstract String getMenuItem();
+	
+	/**
+	 * Initialize the query. Call this to set up the query when you are planning
+	 * to add the details without prompting the user for them.  Use performQuery instead
+	 * to pull up popup menus to allow the user to provide further details for 
+	 * the query.
+	 * @param dbLoader the object that can read from the db 
+	 * @param processName the name of the process to be loaded from the db
+	 * @param timestamp the timestamp of the ddg
+	 */
+	public void initQuery(JenaLoader dbLoader, String processName,
+			String timestamp) {
+		this.dbLoader = dbLoader;
+		this.processName = processName;
+		this.timestamp = timestamp;
+	}
 
 	/**
 	 * Performs the query.
@@ -101,16 +117,14 @@ public abstract class DataQuery extends AbstractQuery {
 	@Override
 	public void performQuery(JenaLoader dbLoader, String processName,
 			String timestamp, Component invokingComponent) {
-		this.dbLoader = dbLoader;
-		this.processName = processName;
-		this.timestamp = timestamp;
+		initQuery (dbLoader, processName, timestamp);
 		
 		SortedSet<String> dinNames = dbLoader.getAllDinNames(processName, timestamp);
 		
 		Vector<String> names = new Vector<>();
-		for (String dinName : dinNames) {
-			names.add(dinName);
-		}
+        dinNames.stream().forEach((dinName) -> {
+        	names.add(dinName);
+        });
 		
 		queryFrame = new JFrame (getFrameTitle());
 		final JPanel varQueryPanel = new JPanel();
@@ -127,34 +141,24 @@ public abstract class DataQuery extends AbstractQuery {
 			
 		});
 		
-		okButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				allDinsToShow.clear();
-				allPinsToShow.clear();
-				try {
-					doQuery (selectedResource);
-				} catch (HeadlessException e1) {
-					JOptionPane.showMessageDialog(queryFrame, 
-							"Unable to complete the query: " + e1.getMessage(), 
-							"Error completing the query", JOptionPane.ERROR_MESSAGE);
-				}
-				queryFrame.dispose();
-			}
-
-		});
+		okButton.addActionListener((ActionEvent e) -> {
+        	allDinsToShow.clear();
+            allPinsToShow.clear();
+            try {
+            	doQuery (selectedResource);
+            } catch (HeadlessException e1) {
+            	JOptionPane.showMessageDialog(queryFrame,
+                	"Unable to complete the query: " + e1.getMessage(),
+                    "Error completing the query", JOptionPane.ERROR_MESSAGE);
+            }
+            queryFrame.dispose();
+        });
 		okButton.setEnabled(false);
 		
 		JButton cancelButton = new JButton ("Cancel");
-		cancelButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				queryFrame.setVisible(false);
-			}
-			
-		});
+		cancelButton.addActionListener((ActionEvent arg0) -> {
+        	queryFrame.setVisible(false);
+        });
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.add(okButton);
 		buttonPanel.add(cancelButton);
@@ -193,7 +197,29 @@ public abstract class DataQuery extends AbstractQuery {
 	 * Execute the query
 	 * @param resource the resource the user selected from the menu
 	 */
-	protected abstract void doQuery(Resource resource);
+	protected void doQuery(Resource resource) {
+		loadNodes(resource);
+		displayDDG(resource);
+	}
+	
+	/**
+	 * Load the nodes that are returned by the query and display the resulting DDG.
+	 * @param qResource The Jena resource for the data node whose derivation information
+	 * 		is being loaded
+	 * @param dataName the name of the node whose derivation is being loaded
+	 * @param dataValue the value of the node whose derivation is being loaded
+	 */
+	public void doQuery(Resource qResource, String dataName, String dataValue) {
+		loadNodes(qResource);
+		displayDDG(dataName, dataValue);
+	}
+
+	/**
+	 * Loads the nodes that correspond to the given query beginning at 
+	 * the resource passed in.
+	 * @param qResource the resource at which the query should start
+	 */
+	protected abstract void loadNodes(Resource qResource);
 
 	/**
 	 * Puts all the values associated with the name into the valueMenu
@@ -214,17 +240,29 @@ public abstract class DataQuery extends AbstractQuery {
 	}
 
 	/**
+	 * Displays the ddg resulting from a query using the name and value passed in
+	 * @param selectedName the node name that the query is done on
+	 * @param selectedValue the node value that the query is done on
+	 */
+	protected void displayDDG(String selectedName, String selectedValue) {
+		displayDDG (null, selectedName, selectedValue);
+	}
+	/**
 	 * Displays the ddg for the query result
 	 * @param rootResource the resource that should appear at the top of the DDG
 	 */
 	protected void displayDDG(final Resource rootResource) {
+		String selectedName = nameMenu.getSelectedItem().toString();
+		String selectedValue = valueField.getText();
+		displayDDG(rootResource, selectedName, selectedValue);
+	}
+
+	private void displayDDG(final Resource rootResource, String selectedName, String selectedValue) {
 		final ProvenanceData provData = new ProvenanceData(processName); 
 		graphBuilder = new PrefuseGraphBuilder(false, true);
 		graphBuilder.setTitle(provData.getProcessName(), timestamp);
 		
 		provData.addProvenanceListener(graphBuilder);
-		String selectedName = nameMenu.getSelectedItem().toString();
-		String selectedValue = valueField.getText();
 		provData.setQuery(getQuery(selectedName, selectedValue));
 		new Thread() {
 			@Override
@@ -248,15 +286,7 @@ public abstract class DataQuery extends AbstractQuery {
 	 * @param rootResource the root of the ddg
 	 */
 	protected void loadQueryResult(ProvenanceData pd, Resource rootResource) {
-		Collections.sort(allPinsToShow, new Comparator<Resource>() {
-
-			@Override
-			public int compare(Resource res0, Resource res1) {
-				return dbLoader.retrieveSinId(res0) - dbLoader.retrieveSinId(res1);
-			}
-			
-		});
-		
+    	Collections.sort(allPinsToShow, (Resource res0, Resource res1) -> dbLoader.retrieveSinId(res0) - dbLoader.retrieveSinId(res1));
 		for (Resource res : allPinsToShow) {
 			ProcedureInstanceNode pin = dbLoader.addProcResourceToProvenance(res, pd);
 			loadInputs(pd, rootResource, pin);
@@ -429,5 +459,6 @@ public abstract class DataQuery extends AbstractQuery {
 		int procId = dbLoader.retrieveSinId(procRes);
 		return dbLoader.getAllOutputs(processName, timestamp, procId, queryVarName);
 	}
+
 	
 }
