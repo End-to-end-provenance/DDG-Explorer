@@ -26,10 +26,11 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
-import laser.ddg.commands.ShowHowValueComputedCommand;
-import laser.ddg.commands.ShowWhatIsComputedCommand;
+import laser.ddg.commands.ShowDataFlowCommand;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
+import laser.ddg.query.DerivationQuery;
+import laser.ddg.query.ResultsQuery;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -574,7 +575,7 @@ public class DDGDisplay extends Display {
 		private PopupCommand showHowComputedCommand = new PopupCommand("Show how value was computed") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                ShowHowValueComputedCommand.execute(builder, (Node) findItem(p));
+                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new DerivationQuery());
 			}
 
 		};
@@ -583,7 +584,7 @@ public class DDGDisplay extends Display {
 		private PopupCommand showWhatIsComputedCommand = new PopupCommand("Show what is computed using this value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                ShowWhatIsComputedCommand.execute(builder, (Node) findItem(p));
+                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new ResultsQuery());
 			}
 
 		};

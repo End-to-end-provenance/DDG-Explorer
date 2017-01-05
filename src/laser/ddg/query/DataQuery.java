@@ -197,7 +197,29 @@ public abstract class DataQuery extends AbstractQuery {
 	 * Execute the query
 	 * @param resource the resource the user selected from the menu
 	 */
-	protected abstract void doQuery(Resource resource);
+	protected void doQuery(Resource resource) {
+		loadNodes(resource);
+		displayDDG(resource);
+	}
+	
+	/**
+	 * Load the nodes that are returned by the query and display the resulting DDG.
+	 * @param qResource The Jena resource for the data node whose derivation information
+	 * 		is being loaded
+	 * @param dataName the name of the node whose derivation is being loaded
+	 * @param dataValue the value of the node whose derivation is being loaded
+	 */
+	public void doQuery(Resource qResource, String dataName, String dataValue) {
+		loadNodes(qResource);
+		displayDDG(dataName, dataValue);
+	}
+
+	/**
+	 * Loads the nodes that correspond to the given query beginning at 
+	 * the resource passed in.
+	 * @param qResource the resource at which the query should start
+	 */
+	protected abstract void loadNodes(Resource qResource);
 
 	/**
 	 * Puts all the values associated with the name into the valueMenu

@@ -8,27 +8,26 @@ import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.JenaLoader;
 import laser.ddg.persist.JenaWriter;
-import laser.ddg.query.ResultsQuery;
+import laser.ddg.query.DataQuery;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.PrefuseUtils;
 import prefuse.data.Node;
 
 /**
- * Loads nodes that show how a data value is used in later computations by tracing forwards
- * on the dataflow paths.
+ * Executes a data flow query and displays the result.
  * 
  * @author Barbara Lerner
  * @version Jan 5, 2017
  *
  */
-public class ShowWhatIsComputedCommand {
-	
+public class ShowDataFlowCommand {
 	/**
 	 * Executes the query to display a dataflow path to a particular node
 	 * @param builder the Prefuse graph builder that holds the data for the ddg
 	 * @param node the node that the user wants to see the derivation of
+	 * @param query the query that Jena uses
 	 */
-	public static void execute(PrefuseGraphBuilder builder, Node node) {
+	public static void execute(PrefuseGraphBuilder builder, Node node, DataQuery query) {
 		String processPath = builder.getProcessName();
 		String timestamp = builder.getTimestamp();
 		String language = builder.getLanguage();
@@ -42,8 +41,6 @@ public class ShowWhatIsComputedCommand {
 			SaveToDBCommand.execute();
 		}
 
-		// Build the query that Jena uses
-		ResultsQuery query = new ResultsQuery();
         DDGExplorer ddgExplorer = DDGExplorer.getInstance();
         
         // Attach a listener so that the resulting graph is displayed when
@@ -58,7 +55,7 @@ public class ShowWhatIsComputedCommand {
 		//System.out.println("Search for node " + nodeName);
 		//System.out.println("All node names: " + dbLoader.getAllDinNames(processName, timestamp));
 		SortedSet<Resource> dins = dbLoader.getDinsNamed(processName, timestamp, nodeName);
-		assert dins.size() == 1 : "Num matching data nodes = " + dins.size();
+		assert dins.size() == 1;
 		Resource selectedResource = dins.first();
 		query.initQuery(dbLoader, processName, timestamp);
 		

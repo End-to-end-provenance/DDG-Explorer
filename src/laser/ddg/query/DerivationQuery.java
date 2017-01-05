@@ -28,25 +28,12 @@ public class DerivationQuery extends DataQuery {
 		return "Derivation query";
 	}
 	
-	@Override
-	protected void doQuery (Resource qResource) {
-		loadNodes(qResource);
-		displayDDG();
-	}
-	
 	/**
-	 * Load the nodes that are returned by the query and display the resulting DDG.
-	 * @param qResource The Jena resource for the data node whose derivation information
-	 * 		is being loaded
-	 * @param dataName the name of the node whose derivation is being loaded
-	 * @param dataValue the value of the node whose derivation is being loaded
+	 * Loads the nodes that are reachable by following data flow paths
+	 * up from the given resource.
 	 */
-	public void doQuery (Resource qResource, String dataName, String dataValue) {
-		loadNodes(qResource);
-		displayDDG(dataName, dataValue);
-	}
-
-	private void loadNodes(Resource qResource) {
+	@Override
+	protected void loadNodes(Resource qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
