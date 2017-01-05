@@ -34,6 +34,23 @@ public class ResultsQuery extends DataQuery {
 
 	@Override
 	protected void doQuery (Resource qResource) {
+		loadNodes(qResource);
+		displayDDG(qResource);
+	}
+
+	/**
+	 * Load the nodes that are returned by the query and display the resulting DDG.
+	 * @param qResource The Jena resource for the data node whose descendant information
+	 * 		is being loaded
+	 * @param dataName the name of the node whose descendant information is being loaded
+	 * @param dataValue the value of the node whose descendant information is being loaded
+	 */
+	public void doQuery (Resource qResource, String dataName, String dataValue) {
+		loadNodes(qResource);
+		displayDDG(dataName, dataValue);
+	}
+
+	private void loadNodes(Resource qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
@@ -45,7 +62,6 @@ public class ResultsQuery extends DataQuery {
 				addAllOutputs(nextProcResource);
 			}
 		}
-		displayDDG(qResource);
 	}
 	
 	private void addAllOutputs(Resource procRes) {

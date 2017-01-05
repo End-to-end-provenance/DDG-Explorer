@@ -92,7 +92,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// private static final int STEP_EDGE_COLOR = ColorLib.rgb(0, 0, 0);
 
 	// Used for nodes introduced by the interpreter rather than the program
-	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
+	public static final int INTERPRETER_COLOR = ColorLib.rgb(209, 208, 190);
 
 	// The parts of the graph
 	private Table nodes = new Table();

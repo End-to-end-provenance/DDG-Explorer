@@ -769,8 +769,9 @@ public class JenaLoader {
 		String selectDinQueryString = queryPrefix
 				+ "\nSELECT ?" + queryVar 
 				+ "\n WHERE  { ?" + queryVar + " " + DIN_PREFIX + Properties.NAME + " \"" + name + "\"  ."
-				+ "\n " + getDDGClause(queryVar) + "}";
+				+ "\n " + getDDGClause(queryVar, processName, timestamp) + "}";
 
+		System.out.println(selectDinQueryString);
 		ResultSet dinResultSet = performQuery(selectDinQueryString);
 		
 		SortedSet<Resource> sortedResources = new TreeSet<>((Resource r0, Resource r1) -> retrieveDinId(r0) - retrieveDinId(r1) // Allows sorting of din resources by id.
