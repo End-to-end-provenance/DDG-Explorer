@@ -92,7 +92,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// private static final int STEP_EDGE_COLOR = ColorLib.rgb(0, 0, 0);
 
 	// Used for nodes introduced by the interpreter rather than the program
-	public static final int INTERPRETER_COLOR = ColorLib.rgb(255, 254, 231);
+	public static final int INTERPRETER_COLOR = ColorLib.rgb(209, 208, 190);
 
 	// The parts of the graph
 	private Table nodes = new Table();
@@ -150,6 +150,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private SearchIndex searchIndex = new SearchIndex();
 
+	private DBWriter dbWriter;
+
 	/**
 	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
@@ -171,6 +173,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public PrefuseGraphBuilder(boolean incremental, DBWriter jenaWriter) {
 		this.incremental = incremental;
+		this.dbWriter = jenaWriter;
 		ddgPanel = new DDGPanel(jenaWriter);
 		ddgPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
@@ -2033,6 +2036,18 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		return provData.getProcessName();
 	}
 
+	public String getTimestamp() {
+		return provData.getTimestamp();
+	}
+
+	public String getLanguage() {
+		return provData.getLanguage();
+	}
+
+	public DBWriter getDBWriter() {
+		return dbWriter;
+	}
+
 	public NodeItem getFirstMember(VisualItem collapsedNode) {
 		return vis.getStart((Node) collapsedNode);
 	}
@@ -2057,5 +2072,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 		ddgPanel.displaySourceCode(sourcePos);
 	}
+
+
 
 }

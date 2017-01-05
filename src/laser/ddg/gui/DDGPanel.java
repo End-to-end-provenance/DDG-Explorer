@@ -201,6 +201,9 @@ public class DDGPanel extends JPanel {
 	 * @return boolean for saved/unsaved
 	 */
 	public boolean alreadyInDB() {
+		if (dbWriter == null) {
+			dbWriter = JenaWriter.getInstance();
+		}
 		try {
 			String processPathName = provData.getProcessName();
 			String executionTimestamp = provData.getTimestamp();

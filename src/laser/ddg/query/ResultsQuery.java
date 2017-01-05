@@ -32,8 +32,12 @@ public class ResultsQuery extends DataQuery {
 		return "Values computed from query";
 	}
 
+	/**
+	 * Loads nodes that are reachable by following dataflow paths
+	 * down from the given resource.
+	 */
 	@Override
-	protected void doQuery (Resource qResource) {
+	protected void loadNodes(Resource qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
@@ -45,7 +49,6 @@ public class ResultsQuery extends DataQuery {
 				addAllOutputs(nextProcResource);
 			}
 		}
-		displayDDG(qResource);
 	}
 	
 	private void addAllOutputs(Resource procRes) {

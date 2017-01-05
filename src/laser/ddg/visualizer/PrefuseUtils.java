@@ -487,7 +487,7 @@ public class PrefuseUtils {
 	 * @param node
 	 * @return the name
 	 */
-	static String getName(Node node) {
+	public static String getName(Node node) {
 		return node.getString(NAME);
 	}
 
@@ -505,7 +505,7 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return the value
 	 */
-	static String getValue(Node n) {
+	public static String getValue(Node n) {
 		return n.getString(VALUE);
 	}
 
