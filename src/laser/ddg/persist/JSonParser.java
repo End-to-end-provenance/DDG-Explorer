@@ -216,17 +216,21 @@ public class JSonParser extends Parser {
 	
 	/** Parses all the data nodes and adds them to the provenance data and visual graph */
 	private void parseDataNodes(JsonObject dataNodes) {
-		// This is the json syntax for a data node
-//		"d5" : {
-//		"rdt:name" : "y",
-//		"rdt:value" : "2",
-//		"rdt:type" : "Data",
-//		"rdt:scope" : "0x10c32da00",
-//		"rdt:fromEnv" : "FALSE",
-//		"rdt:timestamp" : "",
-//		"rdt:location" : ""
-//		} ,
-
+		/*
+		 * This is the json syntax for a data node
+		 *  
+		 * "d5" : {
+		 * "rdt:name" : "y",
+		 * "rdt:value" : "2",
+		 * "rdt:valType : "vector of length 1"
+		 * "rdt:type" : "Data",
+		 * "rdt:scope" : "0x10c32da00",
+		 * "rdt:fromEnv" : "FALSE",
+		 * "rdt:timestamp" : "",
+		 * "rdt:location" : ""
+		 * } ,
+		 */		
+		
 		Set<Entry<String, JsonElement> > dataNodeSet = dataNodes.entrySet();
 		
 		for (Entry <String, JsonElement> dataNode : dataNodeSet) {
@@ -242,6 +246,14 @@ public class JSonParser extends Parser {
 				value = relative.getAbsolutePath();
 			}
 			
+			
+			// TODO include valType
+			String valType = nodeDef.get("rdt:valType").getAsString();
+			if (valType.equals("")) {
+				valType = null;
+			}
+			
+			
 			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
 			if (timestamp.equals("")) {
 				timestamp = null;
@@ -255,7 +267,7 @@ public class JSonParser extends Parser {
 			int idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
 			
-			addDataNode (type, id, label, value, timestamp, location);
+			addDataNode (type, id, label, value, valType, timestamp, location);
 		}
 
 	}

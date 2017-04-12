@@ -68,6 +68,7 @@ public class TextParser extends Parser {
 	
 	// Attribute names for data nodes
 	private static final String VALUE = "Value";
+	private static final String VALTYPE = "ValType";
 	private static final String TIMESTAMP = "Time";
 	private static final String LOCATION = "Location";
 
@@ -474,6 +475,61 @@ public class TextParser extends Parser {
 		consumeRestOfLine();
 		return null;
 	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param nodeId
+	 * @return
+	 * @throws IOException
+	 */
+	private String parseValType(String nodeId) throws IOException {
+		int nextToken = in.nextToken();
+		
+		// Case where ValType is missing
+		if (nextToken == StreamTokenizer.TT_EOL || nextToken == StreamTokenizer.TT_EOF || nextToken == ';') {
+			in.pushBack();
+			return null;
+		}
+		
+		// check for ValType token
+		if (nextToken == StreamTokenizer.TT_WORD) {
+			
+			// ValType token found
+			if (in.sval.equals(VALTYPE)) {
+				nextToken = in.nextToken();
+				
+				if (nextToken != '=') {
+					in.pushBack();
+					DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected =.\n\n");
+					consumeRestOfLine();
+					return null;
+				}
+				
+				nextToken = in.nextToken();
+				
+				if(nextToken == StreamTokenizer.TT_WORD || nextToken == QUOTE) {
+					return in.sval;
+				}
+				
+				// token not found
+				in.pushBack();
+				DDGExplorer.showErrMsg("Line " + in.lineno() + ": ValType is missing for node " + nodeId + "\n\n");
+				consumeRestOfLine();
+				return null;
+			}
+			
+			// token is not ValType
+			in.pushBack();
+			return null;
+		}
+		
+		// unexpected token
+		in.pushBack();
+		DDGExplorer.showErrMsg("Line " + in.lineno() + ": ValType is missing for node " + nodeId + "\n\n");
+		consumeRestOfLine();
+		return null;
+	}
 
 	/**
 	 * Parses a LOCATION = FILENAME string
@@ -603,6 +659,7 @@ public class TextParser extends Parser {
 		try {
 			String name = convertNextTokenToString ();
 			String value = null;
+			String valType = null;
 			String timestamp = null;
 			String location = null;
 			
@@ -630,20 +687,30 @@ public class TextParser extends Parser {
 						}
 					}
 					
+					// valType
+					if(valType == null) {
+						valType = parseValType(nodeId);
+						if(valType != null) {
+							somethingMatched = true;
+						}
+					}
+					
+					// timestamp
 					if (timestamp == null) {
 						timestamp = parseTimestamp(nodeId);
 						if (timestamp != null) {
 							somethingMatched = true;
 						}
 					}
-						
+					
+					// location
 					if (location == null) {
 						location = parseLocation(nodeId);
 						if (location != null) {
 							somethingMatched = true;
 						}
 					}
-
+					
 					if (somethingMatched) {
 						nextToken = in.nextToken();
 					}
@@ -662,7 +729,7 @@ public class TextParser extends Parser {
 				consumeRestOfLine();
 			}
 			
-			addDataNode (nodeType, nodeId, name, value, timestamp, location);
+			addDataNode (nodeType, nodeId, name, value, valType, timestamp, location);
 
 			
 		} catch (IllegalStateException e) {
