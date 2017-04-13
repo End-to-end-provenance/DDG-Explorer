@@ -91,9 +91,10 @@ public class TextParser extends Parser {
 
 	// Used to read from the file being parsed.
 	private Reader reader;
-
+	
 	/**
 	 * Initializes the parser
+	 * 
 	 * @param file the file to read the DDG from
 	 * @param builder the prefuse object that will build the graph
 	 * @throws FileNotFoundException if the file to parse cannot be found
@@ -124,6 +125,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Adds the nodes and edges from the DDG to the graph.
+	 * 
 	 * @throws IOException if there is a problem reading the file
 	 */
 	@Override
@@ -140,6 +142,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses the attributes and their values and the pin counter.
+	 * 
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
@@ -184,6 +187,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Skip over blank lines
+	 * 
 	 * @return the first non-EOL, non-EOF token found
 	 * @throws IOException if can't read from the stream
 	 */
@@ -202,6 +206,7 @@ public class TextParser extends Parser {
 	 * Handles the next line of input.  If it is a node, it is parsed.
 	 * If it is an edge, it saves it to parse later so that we are sure 
 	 * the endpoints of the edge exist before the edge is parsed.
+	 * 
 	 * @param nextLine the next line from the input.
 	 * @throws IOException 
 	 */
@@ -235,6 +240,7 @@ public class TextParser extends Parser {
 	/**
 	 * Read tokens until reach the end of the line.  Then read the subsequent blank
 	 * lines.  On return, the next token to process will be on the input stream.
+	 * 
 	 * @throws IOException
 	 */
 	private void consumeRestOfLine() throws IOException {
@@ -248,6 +254,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Adds all the tokens on this line to a list so they can be processed later.
+	 * 
 	 * @throws IOException
 	 */
 	private void saveEdgeDeclaration() throws IOException {
@@ -266,11 +273,12 @@ public class TextParser extends Parser {
 	
 	/**
 	 * Adds a node to the graph
+	 * 
 	 * @throws IOException 
 	 */
 	private void parseNode() throws IOException {
 		String nodeType = in.sval;
-//		System.out.println("Node Type:"+nodeType);
+		// System.out.println("Node Type:"+nodeType);
 		
 		if (in.nextToken() != StreamTokenizer.TT_WORD) {
 			DDGExplorer.showErrMsg("Line " + in.lineno() + ": Expected data or procedure node identifier:  " + nodeType + "\n\n");
@@ -293,6 +301,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses a procedure node declaration
+	 * 
 	 * @param nodeType The type of node
 	 * @param nodeId the node's id
 	 * @throws IOException
@@ -311,8 +320,8 @@ public class TextParser extends Parser {
 		String value = null;
 
 		value = parseValue(nodeId);
-//		System.out.println("name = " + name + "  value = " + value);
-//		System.out.println("nodeid="+nodeId);
+		// System.out.println("name = " + name + "  value = " + value);
+		// System.out.println("nodeid="+nodeId);
 		
 		double elapsedTime = 0;
 		String startLine = "NA";
@@ -430,6 +439,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses a VALUE = <value> string
+	 * 
 	 * @param nodeId the id of the node being parsed
 	 * @return the value or null if there is no value 
 	 * @throws IOException
@@ -477,10 +487,10 @@ public class TextParser extends Parser {
 	}
 	
 	/**
-	 * TODO
+	 * Parses a {@code ValType = <ValType>} string.
 	 * 
-	 * @param nodeId
-	 * @return
+	 * @param nodeId The id of the node being parsed.
+	 * @return The {@code ValType}, or null, if there is no value.
 	 * @throws IOException
 	 */
 	private String parseValType(String nodeId) throws IOException {
@@ -533,6 +543,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses a LOCATION = FILENAME string
+	 * 
 	 * @param nodeId the id of the node being parsed
 	 * @return the filename or null if there is no location
 	 * @throws IOException
@@ -581,6 +592,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Reads in the next token and converts it to a string no matter what type of token it is.
+	 * 
 	 * @return the token as a string.
 	 * @throws IOException
 	 * @throws IllegalStateException if the next token is EOL or EOF
@@ -605,6 +617,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses the timestamp attribute.  Expect to see TIMESTAMP = <timestamp>
+	 * 
 	 * @param nodeId the node whose timestamp is being parsed
 	 * @return the timestamp value or null if there is no timestamp
 	 * @throws IOException
@@ -651,6 +664,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parses a data node declaration
+	 * 
 	 * @param nodeType the type of node
 	 * @param nodeId the node's id
 	 * @throws IOException
@@ -786,6 +800,7 @@ public class TextParser extends Parser {
 
 	/**
 	 * Parse the tokens that describe an edge and add it to the prefuse graph
+	 * 
 	 * @param tokens the tokens that describe the edge
 	 */
 	private void parseEdge(ArrayList<String> tokens) {

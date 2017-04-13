@@ -248,8 +248,6 @@ public abstract class Parser {
 	}
 
 	/**
-	 * TODO add valType parameter
-	 * 
 	 * Add a data node to the provenance data and the visual graph
 	 * @param nodeType the type of node, such as "File", "Data", "Exception"
 	 * @param nodeId the node's unique id
