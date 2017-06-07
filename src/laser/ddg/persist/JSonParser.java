@@ -256,10 +256,9 @@ public class JSonParser extends Parser {
 				value = relative.getAbsolutePath();
 			}
 			
-			String valType = nodeDef.get("rdt:valType").getAsString();
-			if (valType.equals("")) {
-				valType = null;
-			}
+			// If we ever want to do anything interesting with valType in DDG Explorer,
+			// we will need to parse ValType instead of just storing it as a string.
+			String valType = nodeDef.get("rdt:valType").toString();
 			
 			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
 			if (timestamp.equals("")) {
