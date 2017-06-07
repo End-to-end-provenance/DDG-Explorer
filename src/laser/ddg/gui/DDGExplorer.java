@@ -6,8 +6,13 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Properties;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -26,8 +31,8 @@ import javax.swing.event.ChangeEvent;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.ProvenanceData;
 import laser.ddg.commands.CommandOverviewCommand;
-import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.CompareGraphsCommand;
+import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
@@ -554,8 +559,16 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			PREFERENCES.load();
             explorer.loadLookAndFeel(PREFERENCES.isSystemLookAnFeel());
 			explorer.createAndShowGUI();
-			if(args.length==1){
-				LoadFileCommand.loadDDG(args[0]);
+			if (args.length == 3) {
+				// Start server.  Port number should be the third argument
+				// System.out.println("Server starting on port " + Integer.parseInt(args[2]));
+				DDGServer server = new DDGServer(Integer.parseInt(args[2]));
+				new Thread(server).start();
+				// System.out.println("Server started");
+			}
+			if (args.length >= 1) {
+				// System.out.println("Loading " + args[0]);
+				LoadFileCommand.loadFile(new File(args[0]));
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null,
@@ -565,5 +578,92 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 	}
 
+	/**
+	 * This class contains the code that starts the server and accepts multiple clients
+	 * @author Moe Pwint Phyu 
+	 *
+	 */
+	static private class DDGServer extends ServerSocket implements Runnable {
+		
+		private Socket clientSocket;
+		private ClientConnection clientConnection;
+
+		public DDGServer(int portNumber) throws IOException{
+			super(portNumber);
+		}
+		
+		public void run() {
+			//accept multiple clients 
+			try {
+				while(true){
+					clientSocket = this.accept();
+					clientConnection = new ClientConnection(clientSocket);
+					new Thread(clientConnection).start();
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		public ClientConnection getClientConnection(){
+			return this.clientConnection;
+		}
+	}
+	
+	/**
+	 * A class that reads in information from the client side 
+	 * @author Moe Pwint Phyu
+	 *
+	 */
+	static private class ClientConnection implements Runnable{
+
+		private String fileName;
+		private String timeStamp;
+		private Socket clientSocket;
+		private String language;
+		private BufferedReader in;
+		
+		
+		public ClientConnection(Socket clientSocket) throws IOException{
+			this.clientSocket = clientSocket;
+		}
+		
+		@Override
+		public void run(){
+			try {
+				in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				fileName = in.readLine();
+				//timeStamp = in.readLine();
+				//language = in.readLine();
+				//LoadFileCommand.executeIncrementalDrawing(this);
+				LoadFileCommand.loadFile(new File(fileName));
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		public Socket getClientSocket(){
+			return clientSocket;
+		}
+		public String getFileName(){
+			return fileName;
+		}
+
+		public String getTimeStamp(){
+			return timeStamp;
+		}
+		
+		public BufferedReader getClientReader() {
+			return in;
+		}
+
+		public String getLanguage() {
+			return language;
+		}
+	}
 
 }
