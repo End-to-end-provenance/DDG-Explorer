@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.BadLocationException;
