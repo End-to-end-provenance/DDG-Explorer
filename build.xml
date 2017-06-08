@@ -123,6 +123,18 @@
 
   		<!-- Code to support parsing json -->
   		<zipfileset includes="**/*" src="lib/gson-2.6.2.jar" />
+  		
+  		<!-- Code to support file output of the graphics -->
+    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-export-example-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphicsbase-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphicsio-2.4.jar"/>
+        <zipfileset includes="**/*" src="lib/freehep-graphicsio-ps-2.4.jar"/> 
+  		
+  		<!-- We can only include one of ps, pdf, or swf.  To get multiple formats, they need to 
+  		     be loaded from separate jar files, not packaged together into a single file like this. -->
+    	<!--<zipfileset includes="**/*" src="lib/freehep-graphicsio-pdf-2.4.jar"/> -->
+        <!-- <zipfileset includes="**/*" src="lib/freehep-graphicsio-swf-2.4.jar"/> -->
   	
   	</jar>
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>
