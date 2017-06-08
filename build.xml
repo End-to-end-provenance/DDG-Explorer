@@ -25,6 +25,13 @@
         <pathelement location="lib/CPL.jar"/>
     	<pathelement location="lib/jdiff.jar"/>
     	<pathelement location="lib/gson-2.6.2.jar"/>
+    	<pathelement location="lib/freehep-graphics2d-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphics2d-export-example-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsbase-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsio-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsio-pdf-2.4.jar"/>
+        <pathelement location="lib/freehep-graphicsio-ps-2.4.jar"/>
+        <pathelement location="lib/freehep-graphicsio-swf-2.4.jar"/>
        <!--pathelement location="lib/jxbrowser-6.0.jar"/>
        <pathelement location="lib/jxbrowser-linux64-6.0.jar"/>
        <pathelement location="lib/evaluation.jar"/-->
