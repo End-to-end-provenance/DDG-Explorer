@@ -34,6 +34,7 @@ import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
+import laser.ddg.commands.FindMatchingHashesCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
@@ -80,6 +81,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private static JMenuItem saveDB;   // Enabled when a ddg is read from a file
 	private JMenuItem attributesItem;  // Enabled on everything but the home panel
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
+	private JMenuItem hashesItem; // Enabled on everything but the home panel
 
 	private JCheckBoxMenuItem showLegendMenuItem;
 	
@@ -334,6 +336,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
+		hashesItem = new JMenuItem("Find matching hashes");
+		hashesItem.addActionListener(new FindMatchingHashesCommand());
+		hashesItem.setEnabled(false);
+		DDGMenu.add(hashesItem);
+		
 		return DDGMenu;
 	}
 
@@ -341,12 +348,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		saveDB.setEnabled(!getCurrentDDGPanel().alreadyInDB());
 		attributesItem.setEnabled(true);
 		showScriptItem.setEnabled(true);
+		hashesItem.setEnabled(true);
 	}
 
 	private void disableDDGCommands() {
 		saveDB.setEnabled(false);
 		attributesItem.setEnabled(false);
 		showScriptItem.setEnabled(false);
+		hashesItem.setEnabled(false);
 	}
 
 	private static JMenu createQueryMenu() {
