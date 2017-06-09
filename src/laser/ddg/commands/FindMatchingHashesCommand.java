@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
@@ -15,6 +17,8 @@ import laser.ddg.search.SearchElement;
 
 public class FindMatchingHashesCommand implements ActionListener {
 
+	private Map<String,String> hashkeys = new HashMap<String,String>();
+	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
 		// Based off of FindTimeCommand. This only finds the nodes/snapshot csv files, however.
@@ -41,14 +45,13 @@ public class FindMatchingHashesCommand implements ActionListener {
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
 		System.out.println(hashtable.getAbsolutePath());
 		String line = "";
-		String[] entries = null;
 
 		FileReader fr = new FileReader(hashtable);
 		BufferedReader br = new BufferedReader(fr);
-		br.readLine(); // To 
+		br.readLine(); // Ignores the first line
 		while((line = br.readLine()) != null) {
-			entries = line.split(",");
-			System.out.println(entries[4]);
+			String[] entries = line.split(",");
+			hashkeys.put(entries[0], entries[4]);
 		}
 		br.close();
 	}
