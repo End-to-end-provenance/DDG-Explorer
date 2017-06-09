@@ -4,16 +4,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.DDGPanel;
-import laser.ddg.search.SearchElement;
 
 public class FindMatchingHashesCommand implements ActionListener {
 
@@ -21,15 +15,7 @@ public class FindMatchingHashesCommand implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
-		// Based off of FindTimeCommand. This only finds the nodes/snapshot csv files, however.
-		/*
-		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
-		ArrayList<SearchElement> nodeList = 
-				(ArrayList<SearchElement>) panel.getSearchIndex().getFileList().clone();
-		for (int i = 0; i < nodeList.size(); i++) {
-			String name = nodeList.get(i).getName();
-		}
-		 */
+		
 		try {
 			readHashtable();
 		} catch (IOException e) {
@@ -48,10 +34,10 @@ public class FindMatchingHashesCommand implements ActionListener {
 
 		FileReader fr = new FileReader(hashtable);
 		BufferedReader br = new BufferedReader(fr);
-		br.readLine(); // Ignores the first line
+		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.split(",");
-			hashkeys.put(entries[0], entries[4]);
+			hashkeys.put(entries[0] + entries[5], entries[4]);
 		}
 		br.close();
 	}

@@ -2,6 +2,7 @@ package laser.ddg;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -128,6 +129,17 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
+		if (location != null) {
+			// System.out.println(location);
+			getFileHash(location);
+			// Potentially useful:
+			// http://alvinalexander.com/java/jwarehouse/hsqldb/src/org/hsqldb/lib/MD5.java.shtml
+			// https://stackoverflow.com/questions/304268/getting-a-files-md5-checksum-in-java
+		}
+	}
+	
+	public String getFileHash(String in) {
+		return "";
 	}
 
 	/**
