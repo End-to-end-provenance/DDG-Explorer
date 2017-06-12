@@ -34,7 +34,7 @@ import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.FindFilesCommand;
-import laser.ddg.commands.FindMatchingHashesCommand;
+import laser.ddg.commands.FindIdenticalObjectsCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.LoadFromDBCommand;
@@ -336,8 +336,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
-		hashesItem = new JMenuItem("Find matching hashes");
-		hashesItem.addActionListener(new FindMatchingHashesCommand());
+		hashesItem = new JMenuItem("Find objects with identical hashes");
+		hashesItem.addActionListener(new FindIdenticalObjectsCommand());
 		hashesItem.setEnabled(false);
 		DDGMenu.add(hashesItem);
 		

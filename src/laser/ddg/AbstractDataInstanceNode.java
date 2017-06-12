@@ -130,7 +130,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		timeCreated = time;
 		this.location = location;
 		if (location != null) {
-			// System.out.println(location);
+			System.out.println(location);
 			getFileHash(location);
 			// Potentially useful:
 			// http://alvinalexander.com/java/jwarehouse/hsqldb/src/org/hsqldb/lib/MD5.java.shtml

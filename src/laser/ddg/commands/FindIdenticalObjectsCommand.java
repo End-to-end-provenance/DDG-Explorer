@@ -9,9 +9,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FindMatchingHashesCommand implements ActionListener {
+public class FindIdenticalObjectsCommand implements ActionListener {
 
-	private Map<String,String> hashkeys = new HashMap<String,String>();
+	private Map<String,String> hashkeys;
+	
+	public FindIdenticalObjectsCommand() {
+		hashkeys = new HashMap<String,String>();
+	}
 	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
