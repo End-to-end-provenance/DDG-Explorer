@@ -154,11 +154,12 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+		//http://howtodoinjava.com/core-java/io/how-to-generate-sha-or-md5-file-checksum-hash-in-java/
 		FileInputStream in = new FileInputStream(location);
-		int len = 1024;
-		byte[] b = new byte[len];
-		while (in.read(b) != -1) {
-			md.update(b, 0, len);
+		byte[] b = new byte[1024];
+		int numbytes = 0;
+		while ((numbytes = in.read(b)) != -1) {
+			md.update(b, 0, numbytes);
 		}
 		byte[] digest = md.digest();
 		String hexString = Hex.encodeHexString(digest);
