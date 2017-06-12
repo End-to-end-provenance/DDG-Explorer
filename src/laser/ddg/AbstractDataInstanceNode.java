@@ -1,14 +1,23 @@
 package laser.ddg;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.security.MessageDigest;
+import java.security.DigestInputStream;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * The data instance node holds a state of a data entry whose processing is
@@ -69,6 +78,10 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
+	
+	// The digest for use in generating md5 hash values
+	private MessageDigest md;
+	private DigestInputStream digester;
 
 	/**
 	 * Create a data instance node wrapping the value passed in the process.
@@ -131,15 +144,30 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		this.location = location;
 		if (location != null) {
 			System.out.println(location);
-			getFileHash(location);
-			// Potentially useful:
-			// http://alvinalexander.com/java/jwarehouse/hsqldb/src/org/hsqldb/lib/MD5.java.shtml
-			// https://stackoverflow.com/questions/304268/getting-a-files-md5-checksum-in-java
+			try {
+				System.out.println(getFileHash(location));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
-	public String getFileHash(String in) {
-		return "";
+	public String getFileHash(String location) throws IOException {
+		try {
+			this.md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		FileInputStream in = new FileInputStream(location);
+		int len = 512;
+		byte[] b = new byte[len];
+		while (in.read(b) >= 0) {
+			md.update(b, 0, len);
+		}
+		byte[] digest = md.digest();
+		in.close();
+		return digest.toString();
 	}
 
 	/**
