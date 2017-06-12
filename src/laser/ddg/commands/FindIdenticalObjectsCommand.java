@@ -19,7 +19,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
-		
 		try {
 			readHashtable();
 		} catch (IOException e) {

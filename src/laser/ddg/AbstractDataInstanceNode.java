@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.security.MessageDigest;
-import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
 import org.apache.commons.codec.binary.Hex;
 
@@ -56,13 +55,19 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// The date & time the DIN was created.
 	private String timeCreated;
-	
+
 	// The original location of a file.  Null if this is not a file node.
 	private String location;
 
+	// The hash of the original file. Null if this is not a file node.
+	private String hash;
+
+	// The message digest object for use in generating md5 hash values
+	private MessageDigest md;
+
 	// The procedure that created this data
 	private ProcedureInstanceNode producedBy;
-	
+
 	//Flag to ensure producer is only set once.
 	private int hasProducer;
 
@@ -74,10 +79,6 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
-	
-	// The digest for use in generating md5 hash values
-	private MessageDigest md;
-	private DigestInputStream digester;
 
 	/**
 	 * Create a data instance node wrapping the value passed in the process.
@@ -139,16 +140,25 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		timeCreated = time;
 		this.location = location;
 		if (location != null) {
-			System.out.println(location);
 			try {
-				System.out.println(getFileHash(location));
+				this.hash = doFileHashing(location);
 			} catch (IOException e) {
+				this.hash = null;
 				e.printStackTrace();
 			}
+		} else {
+			this.hash = null;
 		}
 	}
-	
-	public String getFileHash(String location) throws IOException {
+
+	/**
+	 * Produces the MD5 hash of the file of the given node.
+	 * 
+	 * @param location
+	 * @return hexString, a hexadecimal string representation of the file's MD5 hash.
+	 * @throws IOException
+	 */
+	public String doFileHashing(String location) throws IOException {
 		try {
 			this.md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
@@ -206,8 +216,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		return nameOfDIN;
 	}
 
-	
-	
+
+
 	/**
 	 * @return the Java data produced by the running process
 	 */
@@ -216,7 +226,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public Serializable getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(Serializable value) {
 		this.value = value;
@@ -226,7 +236,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public String getLocation() {
 		return location;
 	}
-	
+
 	/**
 	 * @return date & time the Data Instance Node was created
 	 */
@@ -235,8 +245,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public String getCreatedTime() {
 		return timeCreated;
 	}
-	
-        @Override
+
+	@Override
 	public double getElapsedTime() {
 		return 0.0;
 	}
@@ -349,8 +359,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		if (id == 0) {
 			id = newId;
 		} else {
-			throw new IdAlreadySetException(
-				"Cannot reset the ID of a node that has already been assigned an ID.");
+			throw new IdAlreadySetException("Cannot reset the ID of a node that has already been assigned an ID.");
 		}
 	}
 
@@ -387,4 +396,10 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		attributeValues.put(name, value);
 	}
 
+	/**
+	 * @return the hash value, if a file node.
+	 */
+	public String getHash() {
+		return hash;
+	}
 }
