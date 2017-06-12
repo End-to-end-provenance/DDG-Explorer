@@ -1,13 +1,8 @@
 package laser.ddg;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,6 +13,7 @@ import java.util.TreeMap;
 import java.security.MessageDigest;
 import java.security.DigestInputStream;
 import java.security.NoSuchAlgorithmException;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * The data instance node holds a state of a data entry whose processing is
@@ -147,7 +143,6 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			try {
 				System.out.println(getFileHash(location));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -160,14 +155,15 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			e.printStackTrace();
 		}
 		FileInputStream in = new FileInputStream(location);
-		int len = 512;
+		int len = 1024;
 		byte[] b = new byte[len];
-		while (in.read(b) >= 0) {
+		while (in.read(b) != -1) {
 			md.update(b, 0, len);
 		}
 		byte[] digest = md.digest();
+		String hexString = Hex.encodeHexString(digest);
 		in.close();
-		return digest.toString();
+		return hexString;
 	}
 
 	/**
