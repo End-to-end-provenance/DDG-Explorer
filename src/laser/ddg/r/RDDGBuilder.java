@@ -51,11 +51,11 @@ public class RDDGBuilder extends DDGBuilder {
 		legend.add(new LegendEntry("Parameter Binding", PrefuseGraphBuilder.INTERPRETER_COLOR));
 		legend.add(new LegendEntry("Checkpoint Operation", PrefuseGraphBuilder.CHECKPOINT_COLOR));
 		legend.add(new LegendEntry("Restore Operation", PrefuseGraphBuilder.RESTORE_COLOR));
-		legend.add(new LegendEntry("Script", PrefuseGraphBuilder.SCRIPT_COLOR));
 		legend.add(new LegendEntry("Data", PrefuseGraphBuilder.DATA_COLOR));
 		legend.add(new LegendEntry("Error", PrefuseGraphBuilder.EXCEPTION_COLOR));
 		legend.add(new LegendEntry("File", PrefuseGraphBuilder.FILE_COLOR));
 		legend.add(new LegendEntry("URL", PrefuseGraphBuilder.URL_COLOR));
+		legend.add(new LegendEntry("Script", PrefuseGraphBuilder.SCRIPT_COLOR));
 		return legend;
 	}
 
