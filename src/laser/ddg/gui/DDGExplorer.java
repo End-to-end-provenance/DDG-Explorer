@@ -336,7 +336,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
-		hashesItem = new JMenuItem("Find objects with identical hashes");
+		hashesItem = new JMenuItem("Show objects with identical checksums");
 		hashesItem.addActionListener(new FindIdenticalObjectsCommand());
 		hashesItem.setEnabled(false);
 		DDGMenu.add(hashesItem);

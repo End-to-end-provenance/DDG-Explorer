@@ -49,7 +49,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	 * @throws IOException if file is not found.
 	 */
 	private void readHashtable() throws IOException {
-		// https://www.javatpoint.com/java-bufferedreader-class
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
@@ -59,7 +58,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.split(",");
-			entries[4] = entries[4].substring(1, 33); //removing quotation marks.
+			entries[4] = entries[4].substring(1, 33);
 			if (csvmap.get(entries[4]) == null) {
 				csvmap.put(entries[4], new ArrayList<String>());
 			}
