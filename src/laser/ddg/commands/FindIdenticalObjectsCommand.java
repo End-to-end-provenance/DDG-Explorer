@@ -27,7 +27,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	
 	public FindIdenticalObjectsCommand() {
 		csvmap = new HashMap<String,ArrayList<String>>();
-		dataNodeVisitor = new DataNodeVisitor();
 	}
 	
 	@Override
@@ -38,6 +37,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			e.printStackTrace();
 			return;
 		}
+		dataNodeVisitor = new DataNodeVisitor();
 		dataNodeVisitor.visitNodes();
 		ArrayList<String> nodehashes = dataNodeVisitor.getNodeHashes();
 		ArrayList<String> matchedObjs = findMatchingHashes(nodehashes);
