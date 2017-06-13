@@ -117,7 +117,7 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 	}
 
 	/**
-	 * Makes the node psersistent
+	 * Makes the node persistent
 	 */
 	@Override
 	public void visitDin(DataInstanceNode din) {
