@@ -86,6 +86,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public static final int LEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(176, 196, 222);
 	public static final int CHECKPOINT_COLOR = ColorLib.rgb(204, 255, 229);
 	public static final int RESTORE_COLOR = ColorLib.rgb(102, 255, 255);
+	public static final int SCRIPT_COLOR = ColorLib.rgb(229, 148, 0);
 
 	// Colors for collapsed steps
 	public static final int STEP_COLOR = ColorLib.rgb(176, 226, 255);
@@ -793,6 +794,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Script'"), SCRIPT_COLOR);
 		return fill;
 	}
 
