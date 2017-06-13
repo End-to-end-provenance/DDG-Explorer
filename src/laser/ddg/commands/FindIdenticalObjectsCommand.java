@@ -22,8 +22,15 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
+		
+		String home = System.getProperty("user.home");
+		File hashtable = new File(home + "/.ddg/hashtable.csv");
+		if (!hashtable.exists()) {
+			return;
+		}
+		
 		try {
-			readHashtable();
+			readHashtable(hashtable);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -33,13 +40,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		findMatchingHashes(nodehashes);
 	}
 
-	public void readHashtable() throws IOException {
+	public void readHashtable(File hashtable) throws IOException {
 		// https://www.javatpoint.com/java-bufferedreader-class
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
-		String home = System.getProperty("user.home");
-		File hashtable = new File(home + "/.ddg/hashtable.csv");
 		String line = "";
-
 		FileReader fr = new FileReader(hashtable);
 		BufferedReader br = new BufferedReader(fr);
 		br.readLine();
