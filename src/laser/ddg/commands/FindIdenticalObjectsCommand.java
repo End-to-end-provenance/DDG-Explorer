@@ -7,18 +7,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import laser.ddg.DataNodeVisitor;
 
 public class FindIdenticalObjectsCommand implements ActionListener {
 
-	private Map<String,String> hashkeys;
+	private ArrayList<String> hashkeys;
 	private DataNodeVisitor dataNodeVisitor;
 	
 	public FindIdenticalObjectsCommand() {
-		hashkeys = new HashMap<String,String>();
+		hashkeys = new ArrayList<String>();
 		dataNodeVisitor = new DataNodeVisitor();
 	}
 	
@@ -47,8 +45,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.split(",");
-			//hashkeys.put(entries[4] + entries[5], entries[0]);
-			hashkeys.put(entries[4], entries[0]);
+			hashkeys.add(entries[4] + entries[0] + entries[1] + entries[5]);
 		}
 		br.close();
 	}
@@ -56,14 +53,15 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	public ArrayList<String> findMatchingHashes(ArrayList<String> nodehashes) {
 		ArrayList<String> matches = new ArrayList<String>();
 		for (int i = 0; i < nodehashes.size(); i++) {
-			System.out.println("Nodehashes: " + nodehashes.get(i));
-			String val = hashkeys.get(nodehashes.get(i));
-			if (val != null) {
-				matches.add(val);
+			
+			for (int j = 0; j < hashkeys.size(); j++) {
+				if (hashkeys.get(j).substring(1, 33).equals(nodehashes.get(i))){
+					matches.add(hashkeys.get(j).substring(34));
+				}
 			}
 		}
-		for (int j = 0; j < matches.size(); j++) {
-			System.out.println("Match: " + matches.get(j));;
+		for (int k = 0; k < matches.size(); k++) {
+			System.out.println(matches.get(k));;
 		}
 		return matches;
 	}
