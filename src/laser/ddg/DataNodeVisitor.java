@@ -12,6 +12,9 @@ public class DataNodeVisitor implements ProvenanceDataVisitor {
 		nodehashes = new ArrayList<String>();
 	}
 	
+	/**
+	 * Visits all nodes in a particular DDG.
+	 */
 	public void visitNodes() {
 		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
 		currDDG.visitDins(this);
@@ -23,6 +26,11 @@ public class DataNodeVisitor implements ProvenanceDataVisitor {
 		
 	}
 
+	/**
+	 * Visits a data instance node and retrieves its MD5 hash value.
+	 * 
+	 * @param din The data instance node currently being visited.
+	 */
 	@Override
 	public void visitDin(DataInstanceNode din) {
 		String dinType = din.getType();

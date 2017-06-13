@@ -163,6 +163,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			this.md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+			return null;
 		}
 		//http://howtodoinjava.com/core-java/io/how-to-generate-sha-or-md5-file-checksum-hash-in-java/
 		FileInputStream in = new FileInputStream(location);
