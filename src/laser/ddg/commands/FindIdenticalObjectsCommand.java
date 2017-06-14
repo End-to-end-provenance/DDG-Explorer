@@ -13,6 +13,7 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
 import laser.ddg.Workflow;
+import laser.ddg.WorkflowFileData;
 import laser.ddg.gui.DDGExplorer;
 
 /**
@@ -27,10 +28,12 @@ import laser.ddg.gui.DDGExplorer;
 public class FindIdenticalObjectsCommand implements ActionListener {
 
 	private HashMap<String, ArrayList<String>> csvmap;
+	private ArrayList<String> localddginfo;
 	private DataNodeVisitor dataNodeVisitor;
 
 	public FindIdenticalObjectsCommand() {
 		csvmap = new HashMap<String,ArrayList<String>>();
+		localddginfo = new ArrayList<String>();
 	}
 
 	@Override
@@ -76,14 +79,16 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.split(",");
-			// String level manipulation in order to eliminate hashtable entries of the same
-			// DDG
+			entries[4] = entries[4].substring(1, 33); 
+			// String level manipulation in order to eliminate hashtable entries of the same DDG
 			if(!currDDGDir.contains(entries[1].substring(2, entries[1].length()-1))) {
-				entries[4] = entries[4].substring(1, 33); 
 				if (csvmap.get(entries[4]) == null) {
 					csvmap.put(entries[4], new ArrayList<String>());
 				}
 				csvmap.get(entries[4]).add(entries[0] + entries[1] + entries[2] + entries[3]
+						+ entries[4] + entries[5] + entries[6]);
+			} else {
+				localddginfo.add(entries[0] + entries[1] + entries[2] + entries[3]
 						+ entries[4] + entries[5] + entries[6]);
 			}
 		}
@@ -107,10 +112,17 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			}
 		}
 		// Test printout of all matches.
+		System.out.println("Matches:");
 		for (int j = 0; j < matches.size(); j++) {
 			System.out.println(matches.get(j));
+		}
+		System.out.println("Local CSV Files:");
+		for (int j = 0; j < localddginfo.size(); j++) {
+			System.out.println(localddginfo.get(j));
 		}
 		return matches;
 	}
 
+	
+	
 }
