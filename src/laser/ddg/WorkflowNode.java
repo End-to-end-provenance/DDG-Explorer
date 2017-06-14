@@ -1,12 +1,12 @@
 package laser.ddg;
 
-public class WorkflowFileData {
+public class WorkflowNode {
 	
 	private String timestamp;
 	private DataInstanceNode din;
 	private String rw;
 	
-	WorkflowFileData(String timestamp, DataInstanceNode din, String rw) {
+	public WorkflowNode(String timestamp, DataInstanceNode din, String rw) {
 		this.timestamp = timestamp;
 		this.din = din;
 		this.rw = rw;

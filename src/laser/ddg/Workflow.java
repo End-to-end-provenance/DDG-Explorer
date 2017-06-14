@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class Workflow {
 	
-	ArrayList<ProvenanceData> scripts;
-	Map<String, ArrayList<WorkflowFileData>> sharedfileinfo;
+	private ArrayList<ProvenanceData> scripts;
+	private Map<String, ArrayList<WorkflowNode>> sharedfileinfo;
 	// The process name of the script that the workflow originated from
-	String processName;
+	private String processName;
 	// The timestamp of the script that the workflow originated from
-	String timestamp;
+	private String timestamp;
 	
 	Map<String, ArrayList<String>> filedata;
 	
@@ -25,10 +25,6 @@ public class Workflow {
 		this.filedata = new HashMap<String, ArrayList<String>>();
 		this.processName = scr;
 		this.timestamp = timestamp;
-	}
-	
-	public void add(DataInstanceNode din) {
-
 	}
 	
 	

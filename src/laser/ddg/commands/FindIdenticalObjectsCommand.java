@@ -13,7 +13,7 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
 import laser.ddg.Workflow;
-import laser.ddg.WorkflowFileData;
+import laser.ddg.WorkflowNode;
 import laser.ddg.gui.DDGExplorer;
 
 /**
@@ -27,13 +27,15 @@ import laser.ddg.gui.DDGExplorer;
 
 public class FindIdenticalObjectsCommand implements ActionListener {
 
-	private HashMap<String, ArrayList<String>> csvmap;
-	private ArrayList<String> localddginfo;
+	private HashMap<String, ArrayList<String[]>> csvmap;
+	private ArrayList<String[]> localddginfo;
 	private DataNodeVisitor dataNodeVisitor;
+	private ArrayList<DataInstanceNode> dins;
 
 	public FindIdenticalObjectsCommand() {
-		csvmap = new HashMap<String,ArrayList<String>>();
-		localddginfo = new ArrayList<String>();
+		csvmap = new HashMap<String,ArrayList<String[]>>();
+		localddginfo = new ArrayList<String[]>();
+		
 	}
 
 	@Override
@@ -52,23 +54,17 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 
 		// Find matched objs and dins
 		dataNodeVisitor = new DataNodeVisitor();
+		dins = dataNodeVisitor.getDins();
 		dataNodeVisitor.visitNodes();
-		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
+		
 		ArrayList<String> nodehashes = new ArrayList<String>();
 		for (int i = 0; i < dins.size(); i++) {
 			nodehashes.add(dins.get(i).getHash());
 		}
-
-		// Find the objects that match with
-		ArrayList<String> matchedObjs = findMatchingHashes(nodehashes);
-
-
+		ArrayList<String[]> matchedObjs = findMatchingHashes(nodehashes);
+		ArrayList<WorkflowNode> localObjs = makeLocalWorkflowObjects();
 	}
 
-	/**
-	 * Reads the hashtable.csv into a multimap.
-	 * @throws IOException if file is not found.
-	 */
 	private void readHashtable(String currDDGDir) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
@@ -79,50 +75,38 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.split(",");
-			entries[4] = entries[4].substring(1, 33); 
+			String hash = entries[4].substring(1, 33); 
 			// String level manipulation in order to eliminate hashtable entries of the same DDG
 			if(!currDDGDir.contains(entries[1].substring(2, entries[1].length()-1))) {
-				if (csvmap.get(entries[4]) == null) {
-					csvmap.put(entries[4], new ArrayList<String>());
+				if (csvmap.get(hash) == null) {
+					csvmap.put(hash, new ArrayList<String[]>());
 				}
-				csvmap.get(entries[4]).add(entries[0] + entries[1] + entries[2] + entries[3]
-						+ entries[4] + entries[5] + entries[6]);
+				csvmap.get(hash).add(entries);
 			} else {
-				localddginfo.add(entries[0] + entries[1] + entries[2] + entries[3]
-						+ entries[4] + entries[5] + entries[6]);
+				localddginfo.add(entries);
 			}
 		}
 		br.close();
 	}
 
-	/**
-	 * Finds the nodes in the current DDG with MD5 hashes that match the MD5 hashes
-	 * contained in the hashtable.csv file.
-	 * 
-	 * @param nodehashes A list of MD5 hashes derived from abstract data instance nodes
-	 * in the DDG.
-	 * @return matches A list containing information for each entry in hashtable.csv
-	 * with an MD5 hash that matches one contained in nodehashes.
-	 */
-	private ArrayList<String> findMatchingHashes(ArrayList<String> nodehashes) {
-		ArrayList<String> matches = new ArrayList<String>();
+	private ArrayList<String[]> findMatchingHashes(ArrayList<String> nodehashes) {
+		ArrayList<String[]> matches = new ArrayList<String[]>();
 		for (int i = 0; i < nodehashes.size(); i++) {
 			if (csvmap.get(nodehashes.get(i)) != null) {
 				matches.addAll(csvmap.get(nodehashes.get(i)));
 			}
 		}
-		// Test printout of all matches.
-		System.out.println("Matches:");
-		for (int j = 0; j < matches.size(); j++) {
-			System.out.println(matches.get(j));
-		}
-		System.out.println("Local CSV Files:");
-		for (int j = 0; j < localddginfo.size(); j++) {
-			System.out.println(localddginfo.get(j));
-		}
 		return matches;
 	}
 
-	
+	private ArrayList<WorkflowNode> makeLocalWorkflowObjects() {
+		// very unsafe code.
+		ArrayList<WorkflowNode> fileData = new ArrayList<WorkflowNode>();
+		for (int i = 0; i < localddginfo.size(); i++) {
+			WorkflowNode wf = new WorkflowNode(localddginfo.get(i)[6], dins.get(i),localddginfo.get(i)[5]);
+			fileData.add(wf);
+		}
+		return fileData;
+	}
 	
 }
