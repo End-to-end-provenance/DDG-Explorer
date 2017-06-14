@@ -7,6 +7,7 @@ import java.util.Map;
 public class Workflow {
 	
 	ArrayList<ProvenanceData> scripts;
+	Map<String, ArrayList<WorkflowFileData>> sharedfileinfo;
 	// The process name of the script that the workflow originated from
 	String processName;
 	// The timestamp of the script that the workflow originated from
@@ -26,33 +27,9 @@ public class Workflow {
 		this.timestamp = timestamp;
 	}
 	
-	public void put(ArrayList<String> matchedObjs, ArrayList<DataInstanceNode> dins) {
-		
+	public void add(DataInstanceNode din) {
+
 	}
 	
-	public void add(String info) {
-		String[] parsedInfo = parseInfoString(info);
-		ProvenanceData provData = constructProvData(parsedInfo);
-		scripts.add(provData);
-	}
-	
-	private String[] parseInfoString(String info) {
-		String[] splitInfo = info.split("\"");
-		String[] parsedInfo = new String[7];
-		int index = 0;
-		for (int i = 0; i < splitInfo.length; i++) {
-			if (!splitInfo[i].equals("")) {
-				parsedInfo[index++] = splitInfo[i];
-			}
-		}
-		return parsedInfo;
-	}
-	
-	private ProvenanceData constructProvData(String[] parsedInfo) {
-		String script = parsedInfo[1].substring(2, parsedInfo[1].length() - 4) + ".R";
-		String timestamp = parsedInfo[6];
-		ProvenanceData prov = new ProvenanceData(script, timestamp, "R");
-		return prov;
-	}
 	
 }
