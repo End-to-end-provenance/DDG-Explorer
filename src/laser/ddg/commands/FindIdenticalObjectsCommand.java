@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import laser.ddg.DataNodeVisitor;
+import laser.ddg.ProvenanceData;
+import laser.ddg.Workflow;
+import laser.ddg.gui.DDGExplorer;
 
 /**
  * Command to examine a DDG and determine if any of the MD5 hashes of its
@@ -41,7 +44,14 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		dataNodeVisitor.visitNodes();
 		ArrayList<String> nodehashes = dataNodeVisitor.getNodeHashes();
 		ArrayList<String> matchedObjs = findMatchingHashes(nodehashes);
-		System.out.println(matchedObjs);
+		
+		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
+		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
+		
+		for (int i = 0; i < matchedObjs.size(); i++) {
+			flow.add(matchedObjs.get(i));
+		}
+		//System.out.println(matchedObjs);
 	}
 
 	/**
@@ -62,7 +72,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			if (csvmap.get(entries[4]) == null) {
 				csvmap.put(entries[4], new ArrayList<String>());
 			}
-			csvmap.get(entries[4]).add(entries[0] + entries[1] + entries[5]);
+			csvmap.get(entries[4]).add(entries[0] + entries[1] + entries[2] + entries[3]
+					+ entries[4] + entries[5] + entries[6]);
 		}
 		br.close();
 	}
