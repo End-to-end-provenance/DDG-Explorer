@@ -6,10 +6,10 @@ import laser.ddg.gui.DDGExplorer;
 
 public class DataNodeVisitor implements ProvenanceDataVisitor {
 
-	private ArrayList<String> nodehashes;
+	private ArrayList<DataInstanceNode> dins;
 	
 	public DataNodeVisitor() {
-		nodehashes = new ArrayList<String>();
+		dins = new ArrayList<DataInstanceNode>();
 	}
 	
 	/**
@@ -35,13 +35,12 @@ public class DataNodeVisitor implements ProvenanceDataVisitor {
 	public void visitDin(DataInstanceNode din) {
 		String dinType = din.getType();
 		if (dinType.equals("File")) {
-			String dinHash = din.getHash();
-			nodehashes.add(dinHash);
+			dins.add(din);
 		}
 	}
 	
-	public ArrayList<String> getNodeHashes() {
-		return nodehashes;
+	public ArrayList<DataInstanceNode> getDins() {
+		return dins;
 	}
 
 	@Override

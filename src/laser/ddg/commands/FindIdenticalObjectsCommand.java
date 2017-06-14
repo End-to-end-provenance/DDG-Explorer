@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
 import laser.ddg.Workflow;
@@ -34,24 +35,31 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
+		// Attempt to read the hashtable.
 		try {
 			readHashtable();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		dataNodeVisitor = new DataNodeVisitor();
-		dataNodeVisitor.visitNodes();
-		ArrayList<String> nodehashes = dataNodeVisitor.getNodeHashes();
-		ArrayList<String> matchedObjs = findMatchingHashes(nodehashes);
 		
+		// Set up workflow
 		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
 		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
 		
-		for (int i = 0; i < matchedObjs.size(); i++) {
-			flow.add(matchedObjs.get(i));
+		// Find matched objs and dins
+		dataNodeVisitor = new DataNodeVisitor();
+		dataNodeVisitor.visitNodes();
+		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
+		ArrayList<String> nodehashes = new ArrayList<String>();
+		for (int i = 0; i < dins.size(); i++) {
+			nodehashes.add(dins.get(i).getHash());
 		}
-		//System.out.println(matchedObjs);
+		
+		// Find the objects that match with
+		ArrayList<String> matchedObjs = findMatchingHashes(nodehashes);
+		
+		
 	}
 
 	/**
