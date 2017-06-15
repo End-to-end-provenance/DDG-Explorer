@@ -7,7 +7,7 @@ import java.util.Map;
 public class Workflow {
 	
 	private ArrayList<ProvenanceData> scripts;
-	private Map<String, ArrayList<WorkflowNode>> sharedfileinfo;
+	private Map<String, ArrayList<WorkflowNode>> localsharedfileinfo;
 	// The process name of the script that the workflow originated from
 	private String processName;
 	// The timestamp of the script that the workflow originated from
@@ -25,6 +25,10 @@ public class Workflow {
 		this.filedata = new HashMap<String, ArrayList<String>>();
 		this.processName = scr;
 		this.timestamp = timestamp;
+	}
+	
+	public void setLocalSharedFileInfo (Map<String, ArrayList<WorkflowNode>> locals) {
+		localsharedfileinfo = locals;
 	}
 	
 	

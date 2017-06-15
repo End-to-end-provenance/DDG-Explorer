@@ -62,7 +62,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			nodehashes.add(dins.get(i).getHash());
 		}
 		ArrayList<String[]> matchedObjs = findMatchingHashes(nodehashes);
-		ArrayList<WorkflowNode> localObjs = makeLocalWorkflowObjects();
+		HashMap<String, WorkflowNode> localObjs = makeLocalWorkflowObjects();
 	}
 
 	private void readHashtable(String currDDGDir) throws IOException {
@@ -99,12 +99,12 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		return matches;
 	}
 
-	private ArrayList<WorkflowNode> makeLocalWorkflowObjects() {
+	private HashMap<String, WorkflowNode> makeLocalWorkflowObjects() {
 		// very unsafe code.
-		ArrayList<WorkflowNode> fileData = new ArrayList<WorkflowNode>();
+		HashMap<String, WorkflowNode> fileData = new HashMap<String, WorkflowNode>();
 		for (int i = 0; i < localddginfo.size(); i++) {
 			WorkflowNode wf = new WorkflowNode(localddginfo.get(i)[6], dins.get(i),localddginfo.get(i)[5]);
-			fileData.add(wf);
+			fileData.put(localddginfo.get(i)[0], wf);
 		}
 		return fileData;
 	}
