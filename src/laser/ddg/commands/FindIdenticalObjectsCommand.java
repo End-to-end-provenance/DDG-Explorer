@@ -15,6 +15,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.Workflow;
 import laser.ddg.WorkflowNode;
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.persist.Parser;
 
 /**
  * Command to examine a DDG and determine if any of the MD5 hashes of its
@@ -52,11 +53,15 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			return;
 		}
 
+
+	}
+
+	private void constructAll() {
 		// Find matched objs and dins
 		dataNodeVisitor = new DataNodeVisitor();
 		dins = dataNodeVisitor.getDins();
 		dataNodeVisitor.visitNodes();
-		
+
 		ArrayList<String> nodehashes = new ArrayList<String>();
 		for (int i = 0; i < dins.size(); i++) {
 			nodehashes.add(dins.get(i).getHash());
@@ -74,10 +79,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		BufferedReader br = new BufferedReader(fr);
 		br.readLine();
 		while((line = br.readLine()) != null) {
-			String[] entries = line.split(",");
-			String hash = entries[4].substring(1, 33); 
-			// String level manipulation in order to eliminate hashtable entries of the same DDG
-			if(!currDDGDir.contains(entries[1].substring(2, entries[1].length()-1))) {
+			String[] entries = line.replaceAll("\"", "").split(","); 
+			String hash = entries[4];
+			// String level manipulation in order to eliminate entries from this DDG
+			if(!currDDGDir.contains(entries[1].substring(1))) {
 				if (csvmap.get(hash) == null) {
 					csvmap.put(hash, new ArrayList<String[]>());
 				}
@@ -107,6 +112,12 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			fileData.put(localddginfo.get(i)[0], wf);
 		}
 		return fileData;
+	}
+	
+	private static ProvenanceData loadFileNoPrefuse(File selectedFile) throws Exception {
+		Parser parser = Parser.createParser(selectedFile, null);
+		ProvenanceData provData = parser.addNodesAndEdges();
+		return provData;
 	}
 	
 }

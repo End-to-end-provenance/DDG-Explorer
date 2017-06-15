@@ -7,6 +7,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import laser.ddg.ProvenanceData;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.Parser;
@@ -51,7 +52,7 @@ public class LoadFileCommand implements ActionListener {
 	 * @param selectedFile
 	 * @throws Exception
 	 */
-	public static void loadFile(File selectedFile) throws Exception{
+	public static void loadFile(File selectedFile) throws Exception {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 		String selectedFileName = selectedFile.getName();
