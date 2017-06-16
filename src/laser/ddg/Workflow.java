@@ -23,7 +23,5 @@ public class Workflow {
 	public void setWfnodes(ArrayList<WorkflowNode> wfns) {
 		this.wfnodes = wfns;
 	}
-
-	
 	
 }

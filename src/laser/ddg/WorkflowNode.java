@@ -11,10 +11,6 @@ public class WorkflowNode {
 	private String md5hash;
 	private String rw;
 	private String timestamp;
-	
-	public WorkflowNode() {
-		
-	}
 
 	public String getTimestamp() {
 		return timestamp;
