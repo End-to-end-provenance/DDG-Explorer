@@ -27,19 +27,12 @@ import laser.ddg.persist.Parser;
 
 public class FindIdenticalObjectsCommand implements ActionListener {
 
-	private ArrayList<String[]> csvmap;
-	private DataNodeVisitor dataNodeVisitor;
-	private ArrayList<DataInstanceNode> dins;
-
-	public FindIdenticalObjectsCommand() {
-		csvmap = new ArrayList<String[]>();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent args0) {
-		// Find matched objs and dins
-		dataNodeVisitor = new DataNodeVisitor();
-		dins = dataNodeVisitor.getDins();
+		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
+		DataNodeVisitor dataNodeVisitor = new DataNodeVisitor();
+		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
+		ArrayList<String[]> matches = new ArrayList<String[]>();
 		dataNodeVisitor.visitNodes();
 
 		ArrayList<String> nodehashes = new ArrayList<String>();
@@ -50,21 +43,19 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ArrayList<WorkflowNode> wfns = new ArrayList<WorkflowNode>();
 		
 		try {
-			ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
-			String currDDGDir = currDDG.getSourcePath();
-			readHashtable(currDDGDir, nodehashes);
-			wfns = constructWorkflowNodes(csvmap);
+			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
+			wfns = constructWorkflowNodes(matches);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	
-		System.out.println(wfns);
-		System.out.println("All done!");
+		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
+		flow.setWfnodes(wfns);
 	}
 
-	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes) throws IOException {
+	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
@@ -74,7 +65,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.replaceAll("\"", "").split(","); 
-			// Up until here is good.
 			String hash = entries[4];
 			if (nodehashes.contains(hash)) {
 				csvmap.add(entries);
