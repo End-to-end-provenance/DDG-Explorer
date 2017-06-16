@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
@@ -28,35 +27,16 @@ import laser.ddg.persist.Parser;
 
 public class FindIdenticalObjectsCommand implements ActionListener {
 
-	private HashMap<String, ArrayList<String[]>> csvmap;
-	private ArrayList<String[]> localddginfo;
+	private ArrayList<String[]> csvmap;
 	private DataNodeVisitor dataNodeVisitor;
 	private ArrayList<DataInstanceNode> dins;
 
 	public FindIdenticalObjectsCommand() {
-		csvmap = new HashMap<String,ArrayList<String[]>>();
-		localddginfo = new ArrayList<String[]>();
-		
+		csvmap = new ArrayList<String[]>();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent args0) {
-
-		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
-		String currDDGDir = currDDG.getSourcePath();
-
-		// Attempt to read the hashtable.
-		try {
-			readHashtable(currDDGDir);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
-
-	}
-
-	private void constructAll() {
 		// Find matched objs and dins
 		dataNodeVisitor = new DataNodeVisitor();
 		dins = dataNodeVisitor.getDins();
@@ -66,11 +46,25 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		for (int i = 0; i < dins.size(); i++) {
 			nodehashes.add(dins.get(i).getHash());
 		}
-		ArrayList<String[]> matchedObjs = findMatchingHashes(nodehashes);
-		HashMap<String, WorkflowNode> localObjs = makeLocalWorkflowObjects();
+
+		ArrayList<WorkflowNode> wfns = new ArrayList<WorkflowNode>();
+		
+		try {
+			ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
+			String currDDGDir = currDDG.getSourcePath();
+			readHashtable(currDDGDir, nodehashes);
+			wfns = constructWorkflowNodes(csvmap);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
+		System.out.println(wfns);
+		System.out.println("All done!");
 	}
 
-	private void readHashtable(String currDDGDir) throws IOException {
+	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
@@ -80,44 +74,38 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.replaceAll("\"", "").split(","); 
+			// Up until here is good.
 			String hash = entries[4];
-			// String level manipulation in order to eliminate entries from this DDG
-			if(!currDDGDir.contains(entries[1].substring(1))) {
-				if (csvmap.get(hash) == null) {
-					csvmap.put(hash, new ArrayList<String[]>());
-				}
-				csvmap.get(hash).add(entries);
-			} else {
-				localddginfo.add(entries);
+			if (nodehashes.contains(hash)) {
+				csvmap.add(entries);
 			}
 		}
 		br.close();
 	}
 
-	private ArrayList<String[]> findMatchingHashes(ArrayList<String> nodehashes) {
-		ArrayList<String[]> matches = new ArrayList<String[]>();
-		for (int i = 0; i < nodehashes.size(); i++) {
-			if (csvmap.get(nodehashes.get(i)) != null) {
-				matches.addAll(csvmap.get(nodehashes.get(i)));
-			}
+	private ArrayList<WorkflowNode> constructWorkflowNodes(ArrayList<String[]> sarrays) throws Exception {
+		ArrayList <WorkflowNode> wfns = new ArrayList<WorkflowNode>();
+		for (String[] s : sarrays) {
+			WorkflowNode wf = new WorkflowNode();
+			wf.setFilepath(s[0]);
+			wf.setDdgpath(s[1]);
+			wf.setNodepath(s[2]);
+			wf.setNodenumber(Integer.parseInt(s[3]));
+			wf.setMd5hash(s[4]);
+			wf.setRw(s[5]);
+			wf.setTimestamp(s[6]);
+			wf.setProvData(loadFileNoPrefuse(s[1]));
+			wf.setDin(wf.getProvData().findDin(wf.getNodenumber()));
+			wfns.add(wf);
 		}
-		return matches;
+		return wfns;
 	}
 
-	private HashMap<String, WorkflowNode> makeLocalWorkflowObjects() {
-		// very unsafe code.
-		HashMap<String, WorkflowNode> fileData = new HashMap<String, WorkflowNode>();
-		for (int i = 0; i < localddginfo.size(); i++) {
-			WorkflowNode wf = new WorkflowNode(localddginfo.get(i)[6], dins.get(i),localddginfo.get(i)[5]);
-			fileData.put(localddginfo.get(i)[0], wf);
-		}
-		return fileData;
-	}
-	
-	private static ProvenanceData loadFileNoPrefuse(File selectedFile) throws Exception {
+	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
+		File selectedFile = new File(path + "/ddg.json");
 		Parser parser = Parser.createParser(selectedFile, null);
 		ProvenanceData provData = parser.addNodesAndEdges();
 		return provData;
 	}
-	
+
 }

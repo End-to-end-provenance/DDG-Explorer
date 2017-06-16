@@ -2,14 +2,18 @@ package laser.ddg;
 
 public class WorkflowNode {
 	
-	private String timestamp;
 	private DataInstanceNode din;
+	private ProvenanceData provData;
+	private String filepath;
+	private String ddgpath;
+	private String nodepath;
+	private int nodenumber;
+	private String md5hash;
 	private String rw;
+	private String timestamp;
 	
-	public WorkflowNode(String timestamp, DataInstanceNode din, String rw) {
-		this.timestamp = timestamp;
-		this.din = din;
-		this.rw = rw;
+	public WorkflowNode() {
+		
 	}
 
 	public String getTimestamp() {
@@ -34,5 +38,53 @@ public class WorkflowNode {
 
 	public void setRw(String rw) {
 		this.rw = rw;
+	}
+
+	public ProvenanceData getProvData() {
+		return provData;
+	}
+
+	public void setProvData(ProvenanceData provData) {
+		this.provData = provData;
+	}
+
+	public String getFilepath() {
+		return filepath;
+	}
+
+	public void setFilepath(String filepath) {
+		this.filepath = filepath;
+	}
+
+	public String getDdgpath() {
+		return ddgpath;
+	}
+
+	public void setDdgpath(String ddgpath) {
+		this.ddgpath = ddgpath;
+	}
+
+	public int getNodenumber() {
+		return nodenumber;
+	}
+
+	public void setNodenumber(int nodenumber) {
+		this.nodenumber = nodenumber;
+	}
+
+	public String getMd5hash() {
+		return md5hash;
+	}
+
+	public void setMd5hash(String md5hash) {
+		this.md5hash = md5hash;
+	}
+
+	public String getNodepath() {
+		return nodepath;
+	}
+
+	public void setNodepath(String nodepath) {
+		this.nodepath = nodepath;
 	}
 }
