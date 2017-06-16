@@ -16,8 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import laser.ddg.visualizer.DDGDisplay.AutoPanAction;
-import laser.ddg.visualizer.DDGDisplay.PopupMenu;
+import laser.ddg.visualizer.WorkflowDisplay.AutoPanAction;
+import laser.ddg.visualizer.WorkflowDisplay.PopupMenu;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
@@ -30,27 +30,27 @@ import prefuse.util.display.DisplayLib;
 import prefuse.util.display.ItemBoundsListener;
 import prefuse.util.display.PaintListener;
 
-public class DisplayWithOverview {
-	private PrefuseGraphBuilder builder;
+public class DisplayWorkflowWithOverview {
+	private WorkflowGraphBuilder builder;
 
-	private DDGDisplay display;
+	private WorkflowDisplay display;
 	private AutoPanAction autoPan;
 
 	// display overview
-	private DDGDisplay displayOverview;
+	private WorkflowDisplay displayOverview;
 
-	public DisplayWithOverview(PrefuseGraphBuilder builder) {
+	public DisplayWorkflowWithOverview(WorkflowGraphBuilder builder) {
 		this.builder = builder;
-		display = new DDGDisplay(builder);
+		display = new WorkflowDisplay(builder);
 		autoPan = display.new AutoPanAction();
-		displayOverview = new DDGDisplay(builder);
+		displayOverview = new WorkflowDisplay(builder);
 	}
 
-	public DDGDisplay getDisplay() {
+	public WorkflowDisplay getDisplay() {
 		return display;
 	}
 
-	public DDGDisplay getOverview() {
+	public WorkflowDisplay getOverview() {
 		// TODO Auto-generated method stub
 		return displayOverview;
 	}
@@ -62,7 +62,7 @@ public class DisplayWithOverview {
 		display.addControlListener(new ZoomControl());
 		// zoom with mouse wheel
 		display.addControlListener(new WheelZoomControl(true, true));
-		display.addControlListener(new ExpandCollapseWorkflowControl(builder));
+		display.addControlListener(new ExpandCollapseControl(builder));
 		display.addPaintListener(new PaintListener() {
 			@Override
 			public void prePaint(Display d, Graphics2D g) {
@@ -89,7 +89,7 @@ public class DisplayWithOverview {
 
 		// keep track of the display's view and draw Overview's square
 		// accordingly
-		displayOverview.addPaintListener(new ViewFinderBorders(this));
+		displayOverview.addPaintListener(new ViewWorkflowFinderBorders(this));
 		
 		//To force overview's shape and zoom when bounds change
 		displayOverview.addItemBoundsListener(new FitOverviewListener());
@@ -100,9 +100,9 @@ public class DisplayWithOverview {
 			// keep track of mouse clicks to move the grey rectangle.
 			// When doing ddg comparisons, we do this later so that 
 			// both ddgs have the same view finder listener.
-			ViewFinderListener vfL = new ViewFinderListener(this);
-			displayOverview.addMouseMotionListener(vfL);
-			displayOverview.addMouseListener(vfL);
+			ViewWorkflowFinderListener vwfL = new ViewWorkflowFinderListener(this);
+			displayOverview.addMouseMotionListener(vwfL);
+			displayOverview.addMouseListener(vwfL);
 		}
 	}
 
@@ -124,7 +124,7 @@ public class DisplayWithOverview {
 			ddgMain.add(display);
 		}
 
-		DDGDisplay ddgOverview = displayOverview;
+		WorkflowDisplay ddgOverview = displayOverview;
 		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
 		ddgMain.add(ddgOverview);
 		

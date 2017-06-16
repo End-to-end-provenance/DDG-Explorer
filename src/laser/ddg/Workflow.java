@@ -12,16 +12,30 @@ public class Workflow {
 	// The timestamp of the script that the workflow originated from
 	private String timestamp;
 	
-	Map<String, ArrayList<String>> filedata;
 	
 	public Workflow(String scr, String timestamp) {
-		this.filedata = new HashMap<String, ArrayList<String>>();
 		this.processName = scr;
 		this.timestamp = timestamp;
 	}
 
 	public void setWfnodes(ArrayList<WorkflowNode> wfns) {
 		this.wfnodes = wfns;
+	}
+	
+	private void createSourceTargetPairs(ArrayList<WorkflowNode> wfnodes) {
+		for (WorkflowNode node : wfnodes) {
+			for (WorkflowNode searchnode : wfnodes) {
+				if (node.getMd5hash().equals(searchnode.getMd5hash())) {
+					if (node.getRw().equals("write") && searchnode.getRw().equals("read")) {
+						// This doesn't really work since there can be multiple of each.
+						node.setTarget(searchnode);
+						searchnode.setSource(node);
+					} else if (node.getRw().equals("read") && searchnode.getRw().equals("write")) {
+						
+					}
+				}
+			}
+		}
 	}
 	
 }

@@ -4,6 +4,8 @@ public class WorkflowNode {
 	
 	private DataInstanceNode din;
 	private ProvenanceData provData;
+	private WorkflowNode source;
+	private WorkflowNode target;
 	private String filepath;
 	private String ddgpath;
 	private String nodepath;
@@ -82,5 +84,21 @@ public class WorkflowNode {
 
 	public void setNodepath(String nodepath) {
 		this.nodepath = nodepath;
+	}
+
+	public WorkflowNode getSource() {
+		return source;
+	}
+
+	public void setSource(WorkflowNode source) {
+		this.source = source;
+	}
+
+	public WorkflowNode getTarget() {
+		return target;
+	}
+
+	public void setTarget(WorkflowNode target) {
+		this.target = target;
 	}
 }

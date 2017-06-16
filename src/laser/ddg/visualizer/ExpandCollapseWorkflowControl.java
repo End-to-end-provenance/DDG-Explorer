@@ -12,15 +12,15 @@ import prefuse.visual.VisualItem;
  * @version Jun 20, 2013
  *
  */
-public class ExpandCollapseControl extends ControlAdapter {
+public class ExpandCollapseWorkflowControl extends ControlAdapter {
 	// The objec that is building the Prefuse graph
-	private WorkflowGraphBuilder builder;
+	private PrefuseGraphBuilder builder;
 
 	/**
 	 * Creates the controller
 	 * @param builder the object that is building the graph.
 	 */
-	public ExpandCollapseControl(WorkflowGraphBuilder builder) {
+	public ExpandCollapseWorkflowControl(PrefuseGraphBuilder builder) {
 		this.builder = builder;
 	}
 
