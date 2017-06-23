@@ -29,6 +29,7 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
+import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.WorkflowPanel;
@@ -394,6 +395,14 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public DataInstanceNode getDataNode (String leafName) {
 		return provData.findDin (leafName);
 	}
+	
+	/**
+	 * @param leafName the name of a script node
+	 * @return the ScriptNode with that name
+	 */
+	public ScriptNode getScriptNode (String leafName) {
+		return provData.findSn (leafName);
+	}
 
 	/**
 	 * Build the visual graph
@@ -447,9 +456,11 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	private void addNodesAndEdges(ProvenanceData ddg) {
 		ddg.visitPins(this);
 		ddg.visitDins(this);
+		ddg.visitSns(this);
 		ddg.visitDataflowEdges(this);
 
 	}
+
 
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
@@ -2073,6 +2084,12 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 */
 	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 		workflowPanel.displaySourceCode(sourcePos);
+	}
+
+	@Override
+	public void visitSn(ScriptNode sn) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

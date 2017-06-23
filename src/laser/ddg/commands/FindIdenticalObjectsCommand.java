@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
+import laser.ddg.ScriptNode;
 import laser.ddg.Workflow;
 import laser.ddg.WorkflowNode;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.Parser;
+
+import laser.ddg.persist.WorkflowParser;
 
 /**
  * Command to examine a DDG and determine if any of the MD5 hashes of its
@@ -41,18 +43,19 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		}
 
 		ArrayList<WorkflowNode> wfns = new ArrayList<WorkflowNode>();
-		
+
 		try {
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
 			wfns = constructWorkflowNodes(matches);
-		} catch (IOException e1) {
-			e1.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
 		flow.setWfnodes(wfns);
+		flow.myDisplay(flow.getWfnodes().get(4).getProvData());
+		ArrayList<ScriptNode> scriptNodes = generateScriptNodes(wfns);
+		System.out.println("All done!");
 	}
 
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
@@ -86,16 +89,63 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			wf.setTimestamp(s[6]);
 			wf.setProvData(loadFileNoPrefuse(s[1]));
 			wf.setDin(wf.getProvData().findDin(wf.getNodenumber()));
+			wf.setScriptPath(s[1].substring(0, s[1].length() - 4) + ".R");
 			wfns.add(wf);
 		}
 		return wfns;
 	}
-
+	/*
+	private void Connect(ArrayList<WorkflowNode> wfnodes) {
+		for (WorkflowNode wfnode : wfnodes) {
+			for (WorkflowNode check : wfnodes) {
+				if (check.getMd5hash().equals(wfnode.getMd5hash())) {
+					if (wfnode.getRw().equals("write") && check.getRw().equals("read")) {
+						wfnode.addOutput(check);
+						check.addInput(wfnode);
+					} else if (wfnode.getRw().equals("read") && check.getRw().equals("write")) {
+						check.addOutput(wfnode);
+						wfnode.addInput(check);
+					}
+				}
+			}
+		}
+	}
+	 */
 	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
 		File selectedFile = new File(path + "/ddg.json");
-		Parser parser = Parser.createParser(selectedFile, null);
+		WorkflowParser parser = WorkflowParser.createParser(selectedFile, null);
 		ProvenanceData provData = parser.addNodesAndEdges();
 		return provData;
 	}
+
+	// Just to make things easier, I think I want to add the actual script name to the
+	// hashtable.csv file.
+
+
+	private ArrayList<ScriptNode> generateScriptNodes(ArrayList<WorkflowNode> wfnodes) {
+		ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
+		for (WorkflowNode wfnode : wfnodes) {
+			if (scrnodes.size() == 0) {
+				ScriptNode toAdd = new ScriptNode(0.0, wfnode.getScriptPath());
+				toAdd.addWorkflowNode(wfnode);
+				scrnodes.add(toAdd);
+			} else {
+				boolean added = false;
+				for (ScriptNode scrnode : scrnodes) {
+					if (scrnode.getName().equals(wfnode.getScriptPath())) {
+						scrnode.addWorkflowNode(wfnode);
+						added = true;
+					}
+				}
+				if (!added) {
+					ScriptNode toAdd = new ScriptNode(0.0, wfnode.getScriptPath());
+					toAdd.addWorkflowNode(wfnode);
+					scrnodes.add(toAdd);
+				}
+			}
+		}
+		return scrnodes;
+	}
+
 
 }

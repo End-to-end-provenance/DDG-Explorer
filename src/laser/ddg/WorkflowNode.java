@@ -1,5 +1,8 @@
 package laser.ddg;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class WorkflowNode {
 	
 	private DataInstanceNode din;
@@ -13,7 +16,31 @@ public class WorkflowNode {
 	private String md5hash;
 	private String rw;
 	private String timestamp;
+	private String scriptpath;
+	private Set<WorkflowNode> inputs;
+	private Set<WorkflowNode> outputs;
+	
+	public WorkflowNode() {
+		inputs = new HashSet<WorkflowNode>();
+		outputs = new HashSet<WorkflowNode>();
+	}
 
+	public void addInput(WorkflowNode in) {
+		inputs.add(in);
+	}
+
+	public void addOutput(WorkflowNode out) {
+		outputs.add(out);
+	}
+
+	public String getScriptPath() {
+		return scriptpath;
+	}
+	
+	public void setScriptPath(String scriptpath) {
+		this.scriptpath = scriptpath;
+	}
+	
 	public String getTimestamp() {
 		return timestamp;
 	}

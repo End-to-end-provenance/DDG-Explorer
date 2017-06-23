@@ -7,7 +7,6 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import laser.ddg.ProvenanceData;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.Parser;

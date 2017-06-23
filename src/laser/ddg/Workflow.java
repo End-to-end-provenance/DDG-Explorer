@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import laser.ddg.gui.DDGExplorer;
+import laser.ddg.persist.JenaWriter;
+import laser.ddg.visualizer.WorkflowGraphBuilder;
+
 public class Workflow {
 	
 	private ArrayList<WorkflowNode> wfnodes;
@@ -17,25 +21,24 @@ public class Workflow {
 		this.processName = scr;
 		this.timestamp = timestamp;
 	}
+	
+	public void myDisplay(ProvenanceData provData) {
+		JenaWriter jenaWriter = JenaWriter.getInstance();
+		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
+		
+		builder.drawGraph(provData);
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		ddgExplorer.addTab(builder.getPanel().getName(), builder.getPanel());
+		//DDGExplorer.doneLoadingDDG();
+	}
+
 
 	public void setWfnodes(ArrayList<WorkflowNode> wfns) {
 		this.wfnodes = wfns;
 	}
 	
-	private void createSourceTargetPairs(ArrayList<WorkflowNode> wfnodes) {
-		for (WorkflowNode node : wfnodes) {
-			for (WorkflowNode searchnode : wfnodes) {
-				if (node.getMd5hash().equals(searchnode.getMd5hash())) {
-					if (node.getRw().equals("write") && searchnode.getRw().equals("read")) {
-						// This doesn't really work since there can be multiple of each.
-						node.setTarget(searchnode);
-						searchnode.setSource(node);
-					} else if (node.getRw().equals("read") && searchnode.getRw().equals("write")) {
-						
-					}
-				}
-			}
-		}
+	public ArrayList<WorkflowNode> getWfnodes() {
+		return wfnodes;
 	}
 	
 }

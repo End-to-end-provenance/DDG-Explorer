@@ -10,6 +10,11 @@ package laser.ddg;
  */
 public interface ProvenanceDataVisitor {
 	/**
+	 * Visit an individual script node
+	 * @param sn the node
+	 */
+	public void visitSn(ScriptNode sn);
+	/**
 	 * Visit an individual procedure node.
 	 * @param pin the node
 	 */

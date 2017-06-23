@@ -23,7 +23,7 @@ public class ViewWorkflowFinderBorders implements PaintListener {
 	@Override
 	public void prePaint(Display overview, Graphics2D g) {
 		//System.out.println("overview prepaint");
-		((DDGDisplay)overview).zoomToExactFit();
+		((WorkflowDisplay)overview).zoomToExactFit();
 	}
 
 	@Override
