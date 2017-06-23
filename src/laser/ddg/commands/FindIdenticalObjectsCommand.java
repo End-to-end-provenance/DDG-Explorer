@@ -8,6 +8,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+
 import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
@@ -29,6 +32,8 @@ import laser.ddg.persist.WorkflowParser;
 
 public class FindIdenticalObjectsCommand implements ActionListener {
 
+	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
+	
 	@Override
 	public void actionPerformed(ActionEvent args0) {
 		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
@@ -48,7 +53,11 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
 			wfns = constructWorkflowNodes(matches);
 		} catch (Exception e) {
-			e.printStackTrace();
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+			e.printStackTrace(System.err);
+			JOptionPane.showMessageDialog(ddgExplorer,
+					"Unable to load the file: " + e.getMessage(),
+					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
 
 		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
@@ -58,10 +67,23 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		System.out.println("All done!");
 	}
 
+	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
+		File selectedFile = new File(path + "/ddg.json");
+		WorkflowParser parser = WorkflowParser.createParser(selectedFile, null);
+		ProvenanceData provData = parser.addNodesAndEdges();
+		return provData;
+	}
+	
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
+		if (!hashtable.exists()) {
+			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+			if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
+				hashtable = FILE_CHOOSER.getSelectedFile();
+			}
+		}
 		String line = "";
 		FileReader fr = new FileReader(hashtable);
 		BufferedReader br = new BufferedReader(fr);
@@ -111,12 +133,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		}
 	}
 	 */
-	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
-		File selectedFile = new File(path + "/ddg.json");
-		WorkflowParser parser = WorkflowParser.createParser(selectedFile, null);
-		ProvenanceData provData = parser.addNodesAndEdges();
-		return provData;
-	}
 
 	// Just to make things easier, I think I want to add the actual script name to the
 	// hashtable.csv file.

@@ -29,6 +29,7 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
+import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
@@ -2073,6 +2074,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 		ddgPanel.displaySourceCode(sourcePos);
+	}
+
+	@Override
+	public void visitSn(ScriptNode sn) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

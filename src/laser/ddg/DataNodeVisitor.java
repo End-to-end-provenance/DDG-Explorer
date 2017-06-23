@@ -61,4 +61,10 @@ public class DataNodeVisitor implements ProvenanceDataVisitor {
 		
 	}
 
+	@Override
+	public void visitSn(ScriptNode sn) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

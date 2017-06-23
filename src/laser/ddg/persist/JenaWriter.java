@@ -20,6 +20,7 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.RemoveListenerException;
+import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 
@@ -502,6 +503,12 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	/** No-op  */
 	@Override
 	public void rootSet(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitSn(ScriptNode sn) {
 		// TODO Auto-generated method stub
 		
 	}
