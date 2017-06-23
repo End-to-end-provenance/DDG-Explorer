@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import laser.ddg.r.RDataInstanceNode;
+
 public class ScriptNode implements Node {
 	// Here's what we're going to do: We're going to create each script node with a
 	// list of the files associated with that script. This way, we can add the nodes
@@ -26,7 +28,7 @@ public class ScriptNode implements Node {
 
 	private Map<String, SourcePos> sourcePositions;
 	
-	private List<WorkflowNode> workflowNodes;
+	private List<RDataInstanceNode> fileNodes;
 	
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
@@ -41,7 +43,7 @@ public class ScriptNode implements Node {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;
 		this.nameOfSN = name;
-		this.workflowNodes = new ArrayList<WorkflowNode>();
+		this.fileNodes = new ArrayList<RDataInstanceNode>();
 	}
 	
 	public String getName() {
@@ -88,12 +90,12 @@ public class ScriptNode implements Node {
 		return attributeValues.keySet().iterator();
 	}
 
-	public List<WorkflowNode> getWorkflowNodes() {
-		return workflowNodes;
+	public List<RDataInstanceNode> getWorkflowNodes() {
+		return fileNodes;
 	}
 
-	public void addWorkflowNode(WorkflowNode toAdd) {
-		this.workflowNodes.add(toAdd);
+	public void addWorkflowNode(RDataInstanceNode toAdd) {
+		this.fileNodes.add(toAdd);
 	}
 
 }

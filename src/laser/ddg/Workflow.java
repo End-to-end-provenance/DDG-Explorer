@@ -10,7 +10,6 @@ import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 public class Workflow {
 	
-	private ArrayList<WorkflowNode> wfnodes;
 	// The process name of the script that the workflow originated from
 	private String processName;
 	// The timestamp of the script that the workflow originated from
@@ -32,13 +31,5 @@ public class Workflow {
 		//DDGExplorer.doneLoadingDDG();
 	}
 
-
-	public void setWfnodes(ArrayList<WorkflowNode> wfns) {
-		this.wfnodes = wfns;
-	}
-	
-	public ArrayList<WorkflowNode> getWfnodes() {
-		return wfnodes;
-	}
 	
 }

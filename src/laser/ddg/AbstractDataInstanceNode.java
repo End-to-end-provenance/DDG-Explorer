@@ -150,6 +150,14 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			this.hash = null;
 		}
 	}
+	
+	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash) {
+		value = val;
+		nameOfDIN = name;
+		timeCreated = time;
+		this.location = location;
+		this.hash = hash;
+	}
 
 	/**
 	 * Produces the MD5 hash of the file of the given node.
