@@ -2082,6 +2082,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		
 	}
 
+	@Override
+	public void scriptNodeCreated(ScriptNode sn) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 }

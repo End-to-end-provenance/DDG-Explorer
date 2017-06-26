@@ -72,8 +72,8 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	/* Colors used in drawing the graph */
 	public static final int DATA_FLOW_COLOR = ColorLib.rgb(255, 0, 0);
 	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
-																			// 255,
-																			// 0);
+	// 255,
+	// 0);
 	private static final int SIMPLE_HANDLER_COLOR = ColorLib.rgb(140, 209, 207);
 	private static final int VIRTUAL_COLOR = ColorLib.rgb(217, 132, 181);
 	public static final int EXCEPTION_COLOR = ColorLib.rgb(209, 114, 110);
@@ -227,7 +227,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public WorkflowDisplay getOverview() {
 		return dispPlusOver.getOverview();
 	}
-	
+
 	public DisplayWorkflowWithOverview getDispPlusOver() {
 		return dispPlusOver;
 	}
@@ -387,7 +387,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param leafName the name of a data node
 	 * @return the DataInstanceNode with that name
@@ -395,7 +395,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public DataInstanceNode getDataNode (String leafName) {
 		return provData.findDin (leafName);
 	}
-	
+
 	/**
 	 * @param leafName the name of a script node
 	 * @return the ScriptNode with that name
@@ -722,7 +722,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// }
 		workflowPanel.displayDDG(this, vis, dispPlusOver, provData);
-		
+
 		dispPlusOver.createPopupMenu();
 	}
 
@@ -801,11 +801,11 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		fill.add(ExpressionParser.predicate("Type = 'VStart'"), VIRTUAL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), VIRTUAL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), VIRTUAL_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Script'"), SCRIPT_COLOR);
 		// color for Steps
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Script'"), SCRIPT_COLOR);
 		return fill;
 	}
 
@@ -835,6 +835,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		fill.add(ExpressionParser.predicate("Type = 'VStart'"), ColorLib.rgb(255, 255, 255));
 		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), ColorLib.rgb(255, 255, 255));
 		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), ColorLib.rgb(255, 255, 255));
+		fill.add(ExpressionParser.predicate("Type = 'Script'"), ColorLib.rgb(255, 255, 255));
 		// color for Steps
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255, 255, 255));
@@ -1291,7 +1292,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		while (outNeighbors.hasNext()) {
 			Set<Node> edgesAddedTo = new HashSet<>();
 			Node neighbor = outNeighbors.next();
-			
+
 			// If it is a file, always add the edge
 			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
 				addEdge(PrefuseUtils.STEPDF, collapsedNodeId, PrefuseUtils.getId(neighbor));
@@ -1340,7 +1341,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		Iterator<Node> inNeighbors = member.inNeighbors();
 		while (inNeighbors.hasNext()) {
 			Node neighbor = inNeighbors.next();
-			
+
 			// If the edge comes from a file node, always add the edge
 			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
 				addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
@@ -1768,7 +1769,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			node.setVisible (true);
 			return;
 		}
-		
+
 		// Find the producer and the consumers of the data node
 		Iterator<NodeItem> dataNeighbors = node.neighbors();
 		boolean visible = false;
@@ -2089,7 +2090,28 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	@Override
 	public void visitSn(ScriptNode sn) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void scriptNodeCreated(ScriptNode sn) {
+		synchronized (vis) {
+			int dinId = sn.getId() + MIN_DATA_ID;
+			// add the data node, passing in the optional associated value and
+			// timestamp
+			Object value = sn.getValue();
+			if (value == null) {
+				addNode(sn.getType(), dinId, sn.getName(), null, sn.getCreatedTime(), null);
+			} else {
+				addNode(sn.getType(), dinId, sn.getName(), sn.getValue().toString(), sn.getCreatedTime(), null);
+			}
+			NodeItem dataNode = getNode(dinId);
+
+			if (dataDerivation && (root == null)) {
+				root = dataNode;
+				// System.out.println("dataNodeCreated: root set to " + root);
+			}
+		}
 	}
 
 

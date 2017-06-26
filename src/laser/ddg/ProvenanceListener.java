@@ -46,10 +46,16 @@ public interface ProvenanceListener extends DataBindingListener {
 	public void procedureNodeCreated (ProcedureInstanceNode pin);
 	
 	/**
-	 * Called when a data node is add to the DDG
+	 * Called when a data node is added to the DDG
 	 * @param din the node created
 	 */
 	public void dataNodeCreated (DataInstanceNode din);
+	
+	/**
+	 * Called when a script node is added to the DDG
+	 * @param sn the node created
+	 */
+	public void scriptNodeCreated(ScriptNode sn);
 	
 	/**
 	 * Called when a control flow edge is created

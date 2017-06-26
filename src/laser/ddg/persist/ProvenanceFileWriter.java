@@ -12,6 +12,7 @@ import laser.ddg.Node;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
+import laser.ddg.ScriptNode;
 
 /**
  * @author xiang
@@ -113,6 +114,12 @@ public class ProvenanceFileWriter implements ProvenanceListener {
 
 	@Override
 	public void rootSet(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void scriptNodeCreated(ScriptNode sn) {
 		// TODO Auto-generated method stub
 		
 	}

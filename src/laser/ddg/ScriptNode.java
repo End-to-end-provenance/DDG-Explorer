@@ -1,5 +1,6 @@
 package laser.ddg;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -11,10 +12,6 @@ import java.util.TreeMap;
 import laser.ddg.r.RDataInstanceNode;
 
 public class ScriptNode implements Node {
-	// Here's what we're going to do: We're going to create each script node with a
-	// list of the files associated with that script. This way, we can add the nodes
-	// and edges based on them. To reiterate, each script node will contain several
-	// pieces of scripts.
 
 	// SIN name
 	private final String nameOfSN;
@@ -27,6 +24,8 @@ public class ScriptNode implements Node {
 	private Map<String, ScriptNode> outputs;
 
 	private Map<String, SourcePos> sourcePositions;
+	
+	private Serializable value;
 	
 	private List<RDataInstanceNode> fileNodes;
 	
@@ -96,6 +95,18 @@ public class ScriptNode implements Node {
 
 	public void addWorkflowNode(RDataInstanceNode toAdd) {
 		this.fileNodes.add(toAdd);
+	}
+
+	public String getType() {
+		return "Script";
+	}
+
+	public Serializable getValue() {
+		return value;
+	}
+
+	public void setValue(Serializable value) {
+		this.value = value;
 	}
 
 }

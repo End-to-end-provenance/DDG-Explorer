@@ -201,7 +201,6 @@ public class ProvenanceData {
 	 * @param resURI
 	 * 			The URI of the resource for this pin
 	 */
-	/*
 	public synchronized void addSN(ScriptNode sn, String resURI) {
 		if (!nodesToResources.containsKey(sn)) {
 			this.nodesToResources.put(sn, resURI);
@@ -214,7 +213,6 @@ public class ProvenanceData {
 		}
 		
 	}
-	*/
 	
 	/**
 	 * Add a PIN to the PINs set and sets its id. This should be called when the node is being
@@ -641,6 +639,12 @@ public class ProvenanceData {
 	private void notifyDinCreated(DataInstanceNode din) {
 		for (ProvenanceListener l : provListeners) {
 			l.dataNodeCreated(din);
+		}
+	}
+	
+	private void notifySnCreated(ScriptNode sn) {
+		for (ProvenanceListener l : provListeners) {
+			l.scriptNodeCreated(sn);
 		}
 	}
 

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import laser.ddg.AbstractDataInstanceNode;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
@@ -19,8 +18,8 @@ import laser.ddg.ScriptNode;
 import laser.ddg.Workflow;
 import laser.ddg.gui.DDGExplorer;
 
-import laser.ddg.persist.WorkflowParser;
 import laser.ddg.r.RDataInstanceNode;
+import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 /**
  * Command to examine a DDG and determine if any of the MD5 hashes of its
@@ -35,6 +34,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
 	private ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
+	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
 
 	@Override
 	public void actionPerformed(ActionEvent args0) {
@@ -61,15 +61,29 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		}
 
 		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
+		flow.setFileNodeList(fileNodes);
+		flow.setScriptNodeList(scrnodes);
+		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
+		
+		
+		builder.drawGraph(new ProvenanceData("Test"));
+		flow.addNodes(builder);
+		
+		
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		ddgExplorer.addTab(builder.getPanel().getName() + " Script Workflow", builder.getPanel());
+		//DDGExplorer.doneLoadingDDG();
 		System.out.println("All done!");
 	}
 
+/*	
 	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
 		File selectedFile = new File(path + "/ddg.json");
 		WorkflowParser parser = WorkflowParser.createParser(selectedFile, null);
 		ProvenanceData provData = parser.addNodesAndEdges();
 		return provData;
 	}
+*/
 
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
@@ -95,12 +109,13 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.close();
 	}
 
-	private ArrayList<AbstractDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
-		ArrayList<AbstractDataInstanceNode> fileNodes = new ArrayList<AbstractDataInstanceNode>();
+	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
 		for (String[] match : matches) {
 			RDataInstanceNode file = new RDataInstanceNode("File", match[2], match[2], match[6], match[0], match[4]);
 			fileNodes.add(file);
-			generateScriptNode(scrnodes, file, match[0]);
+			String scriptname = match[1].substring(match[1].lastIndexOf('/') + 1, match[1].length() - 4) + ".R"; //Shortened script name
+			//String scriptname = match[1].substring(0, match[1].length() - 4) + ".R"; //Full script path
+			generateScriptNode(scrnodes, file, scriptname);
 		}
 		return fileNodes;
 	}

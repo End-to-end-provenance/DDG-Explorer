@@ -48,7 +48,7 @@ public interface DBWriter {
 	 * Persist a procedure node
 	 * @param sin the node
 	 */
-	public abstract void persistSin(ProcedureInstanceNode sin);
+	public abstract void persistSn(ProcedureInstanceNode sin);
 
 	/**
 	 * Persist a data node
