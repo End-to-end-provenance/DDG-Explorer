@@ -6,18 +6,11 @@ import laser.ddg.r.RDataInstanceNode;
 
 public class Workflow {
 
-	// The process name of the script that the workflow originated from
-	//private String processName;
-	// The timestamp of the script that the workflow originated from
-	//private String timestamp;
-
 	private ArrayList<ScriptNode> scriptNodeList;
 	private ArrayList<RDataInstanceNode> fileNodeList;
 
 
 	public Workflow(String scr, String timestamp) {
-		//this.processName = scr;
-		//this.timestamp = timestamp;
 		this.setScriptNodeList(new ArrayList<ScriptNode>());
 		this.setFileNodeList(new ArrayList<RDataInstanceNode>());
 	}

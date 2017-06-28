@@ -82,6 +82,9 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
+	
+	// Script location
+	private String scrloc;
 
 	/**
 	 * Create a data instance node wrapping the value passed in the process.
@@ -154,13 +157,14 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		}
 	}
 	
-	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String rw) {
+	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String rw, String scrloc) {
 		value = val;
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
 		this.hash = hash;
 		this.rw = rw;
+		this.scrloc = scrloc;
 	}
 
 	/**
@@ -421,6 +425,14 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 */
 	public String getRw() {
 		return rw;
+	}
+
+	public String getScrloc() {
+		return scrloc;
+	}
+
+	public void setScrloc(String scrloc) {
+		this.scrloc = scrloc;
 	}
 
 

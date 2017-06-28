@@ -77,7 +77,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			builder.addNode(node.getType(), node.getId(), node.getName(), "Value????", 
 					node.getCreatedTime(), node.getLocation(), null);
 		}
-		addConnections(builder);
+		connectNodes(builder);
 		builder.drawGraph();
 		
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
@@ -111,25 +111,27 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 
 	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
 		for (String[] match : matches) {
-			// This constructor information needs fixing
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
-			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[6]);
-			file.setId(index++);
-			/*
-			boolean exists = false;
-			for (RDataInstanceNode node : fileNodes) {
-				if (node.getName().equals(file.getName()) && node.getHash().equals(file.getHash())) {
-					System.out.println("Extant.");
-					exists = true;
-				}
+			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[6], match[0]);
+			// match[6] contains the rw value
+			if (match[6].equals("read")) {
+				System.out.println("read");
+			} else if (match[6].equals("write")) {
+				System.out.println("write");
+			} else {
+				System.out.println("error");
 			}
 			
-			if (!exists) {
-				fileNodes.add(file);
-			}
-			*/
-			fileNodes.add(file);
+			
+			// Essentially, we keep track of the inputs and outputs inside of each RDataInstanceNode.
+			// So right after we generate a script node, we shunt that script node into the inputs/outputs of
+			// a RDataInstanceNode. We decide whether to add the RDataInstanceNode to the list of them based
+			// on whether there is one with a matching hash and name that already exists in the list. Yeah!
+			
+			//....that did not work.
 			generateScriptNode(scrnodes, file, match[0]);
+			fileNodes.add(file);
+			file.setId(index++);
 		}
 		return fileNodes;
 	}
@@ -157,7 +159,22 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		}
 		return scrnodes;
 	}
-	
-	
 
+	private void connectNodes(WorkflowGraphBuilder builder) {
+		// Institute some kind of check to see if a node similar to this one has been
+		// iterated through before.
+		
+		for (RDataInstanceNode filenode : fileNodes) {
+			for (ScriptNode scriptnode : scrnodes) {
+				if (filenode.getScrloc().equals(scriptnode.getName())) { // check if script is the same. May have to change if not doing full script path as name.
+					if (filenode.getRw().equals("read")) {
+						builder.addEdge("SF", filenode.getId(), scriptnode.getId());
+					} else {
+						builder.addEdge("SF", scriptnode.getId(), filenode.getId());
+					}
+				}
+			}
+		}
+	}
+	
 }
