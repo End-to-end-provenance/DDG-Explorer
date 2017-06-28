@@ -19,13 +19,15 @@ public class ScriptNode implements Node {
 	// The id of the node is set to zero if no id is assigned.
 	private int scrid = 0;
 
-	private Map<String, ScriptNode> inputs;
+	private ArrayList<RDataInstanceNode> inputs;
 
-	private Map<String, ScriptNode> outputs;
+	private ArrayList<RDataInstanceNode> outputs;
 
-	private Map<String, SourcePos> sourcePositions;
+	//private Map<String, SourcePos> sourcePositions;
 	
-	private Serializable value;
+	private String value;
+	
+	private String location;
 	
 	private List<RDataInstanceNode> fileNodes;
 	
@@ -42,6 +44,8 @@ public class ScriptNode implements Node {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;
 		this.nameOfSN = name;
+		this.inputs = new ArrayList<RDataInstanceNode>();
+		this.outputs = new ArrayList<RDataInstanceNode>();
 		this.fileNodes = new ArrayList<RDataInstanceNode>();
 	}
 	
@@ -101,12 +105,28 @@ public class ScriptNode implements Node {
 		return "Script";
 	}
 
-	public Serializable getValue() {
+	public String getValue() {
 		return value;
 	}
 
-	public void setValue(Serializable value) {
+	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public void addOutput(RDataInstanceNode file) {
+		outputs.add(file);
+	}
+	
+	public void addInput(RDataInstanceNode input) {
+		inputs.add(input);
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 }

@@ -105,7 +105,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private final DDGVisualization vis = new DDGVisualization();
+	private final WorkflowVisualization vis = new WorkflowVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 
@@ -418,6 +418,11 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
 
 	}
+	
+	private void buildGraph() {
+		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
+
+	}
 
 	/**
 	 * Builds a visual ddg from a textual ddg in a file
@@ -434,7 +439,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	}
 
-	private void buildNodeAndEdgeTables() {
+	public void buildNodeAndEdgeTables() {
 		synchronized (vis) {
 			nodes.addColumn(PrefuseUtils.TYPE, String.class);
 			nodes.addColumn(PrefuseUtils.ID, int.class);
@@ -579,6 +584,36 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		// write to a file
 		/* outFile.println(id+" \""+name+"\" "+type); */
 	}
+	
+	public int addNode(ScriptNode node, int id) {
+		try {
+			synchronized (vis) {
+				if (id < 1) {
+					DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+					DDGExplorer.showErrMsg("*** ERROR negative id " + id + " for node " + node.getName() + " !!\n\n");
+				}
+				if (getNode(id) != null) {
+					DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + node.getName() + " already in use!!\n\n");
+				}
+				int rowNum = nodes.addRow();
+				// System.out.println(node.getType());
+				nodes.setString(rowNum, PrefuseUtils.TYPE, node.getType());
+				nodes.setInt(rowNum, PrefuseUtils.ID, id);
+				nodes.setString(rowNum, PrefuseUtils.NAME, node.getName());
+				nodes.setString(rowNum, PrefuseUtils.VALUE, node.getValue());
+				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, node.getCreatedTime());
+				nodes.setString(rowNum, PrefuseUtils.LOCATION, node.getLocation());
+
+				searchIndex.addToSearchIndex(node.getType(), id, node.getName(), node.getCreatedTime());
+				return rowNum;
+			}
+		} catch (Exception e) {
+			DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+			DDGExplorer.showErrMsg("*** Error adding node *** \n ");
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	/**
 	 * Adds a node to the prefuse graph
@@ -652,16 +687,13 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 * @param ddg
 	 *            the ddg to display
 	 */
-	public void drawGraph(ProvenanceData ddg) {
+	public void drawGraph() {
 
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			// System.out.println("Building node and edge tables.");
-			buildNodeAndEdgeTables();
-
 			// System.out.println("Building graph");
-			buildGraph(ddg);
+			buildGraph();
 
 			// System.out.println("Drawing graph");
 			initializeDisplay(false);

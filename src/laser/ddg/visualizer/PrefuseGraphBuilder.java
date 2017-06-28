@@ -1777,7 +1777,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// PrefuseUtils.getName(node));
 		// }
 		// else {
-		// System.out.println("Making data INvisible: " +
+		// System.out.println("Making data Invisible: " +
 		// PrefuseUtils.getName(node));
 		// }
 		node.setVisible(visible);

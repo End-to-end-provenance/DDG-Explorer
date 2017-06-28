@@ -61,6 +61,9 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// The hash of the original file. Null if this is not a file node.
 	private String hash;
+	
+	// The read/write status of the file. Null if this is not a file node.
+	private String rw;
 
 	// The message digest object for use in generating md5 hash values
 	private MessageDigest md;
@@ -151,12 +154,13 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		}
 	}
 	
-	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash) {
+	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String rw) {
 		value = val;
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
 		this.hash = hash;
+		this.rw = rw;
 	}
 
 	/**
@@ -411,4 +415,13 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public String getHash() {
 		return hash;
 	}
+
+	/**
+	 * @return the read or write value, if a file node.
+	 */
+	public String getRw() {
+		return rw;
+	}
+
+
 }

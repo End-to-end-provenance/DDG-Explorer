@@ -17,7 +17,7 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptNode;
 import laser.ddg.Workflow;
 import laser.ddg.gui.DDGExplorer;
-
+import laser.ddg.persist.JenaWriter;
 import laser.ddg.r.RDataInstanceNode;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
@@ -38,7 +38,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent args0) {
-		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
+		
 		DataNodeVisitor dataNodeVisitor = new DataNodeVisitor();
 		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
 		ArrayList<String[]> matches = new ArrayList<String[]>();
@@ -49,6 +49,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			nodehashes.add(dins.get(i).getHash());
 		}
 
+		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
 		try {
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
 			generateFileNodes(matches);
@@ -60,30 +61,23 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
 
+		
 		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
 		flow.setFileNodeList(fileNodes);
 		flow.setScriptNodeList(scrnodes);
-		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		
-		
-		builder.drawGraph(new ProvenanceData("Test"));
-		flow.addNodes(builder);
-		
-		
+		JenaWriter jenaWriter = JenaWriter.getInstance();
+		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
+		builder.buildNodeAndEdgeTables();
+		int j = 0;
+		for (ScriptNode node : flow.getScriptNodeList()) {
+			builder.addNode(node, j);
+			j++;
+		} 
+		builder.drawGraph();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		ddgExplorer.addTab(builder.getPanel().getName() + " Script Workflow", builder.getPanel());
-		//DDGExplorer.doneLoadingDDG();
-		System.out.println("All done!");
+		ddgExplorer.addTab("Script Workflow", builder.getPanel());
 	}
-
-/*	
-	private static ProvenanceData loadFileNoPrefuse(String path) throws Exception {
-		File selectedFile = new File(path + "/ddg.json");
-		WorkflowParser parser = WorkflowParser.createParser(selectedFile, null);
-		ProvenanceData provData = parser.addNodesAndEdges();
-		return provData;
-	}
-*/
 
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
@@ -101,7 +95,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.replaceAll("\"", "").split(","); 
-			String hash = entries[4];
+			String hash = entries[5];
 			if (nodehashes.contains(hash)) {
 				csvmap.add(entries);
 			}
@@ -111,11 +105,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 
 	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
 		for (String[] match : matches) {
-			RDataInstanceNode file = new RDataInstanceNode("File", match[2], match[2], match[6], match[0], match[4]);
+			// This constructor information needs fixing
+			RDataInstanceNode file = new RDataInstanceNode("File", match[3], match[8], match[7], match[1], match[5], match[6]);
 			fileNodes.add(file);
-			String scriptname = match[1].substring(match[1].lastIndexOf('/') + 1, match[1].length() - 4) + ".R"; //Shortened script name
-			//String scriptname = match[1].substring(0, match[1].length() - 4) + ".R"; //Full script path
-			generateScriptNode(scrnodes, file, scriptname);
+			generateScriptNode(scrnodes, file, match[0]);
 		}
 		return fileNodes;
 	}
