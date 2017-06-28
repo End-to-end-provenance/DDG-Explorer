@@ -35,6 +35,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
 	private ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
 	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
+	private int index = 0;
 
 	@Override
 	public void actionPerformed(ActionEvent args0) {
@@ -69,14 +70,19 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
 		builder.buildNodeAndEdgeTables();
-		int j = 0;
 		for (ScriptNode node : flow.getScriptNodeList()) {
-			builder.addNode(node, j);
-			j++;
-		} 
+			builder.addNode(node, node.getId());
+		}
+		for (RDataInstanceNode node : flow.getFileNodeList()) {
+			builder.addNode(node.getType(), node.getId(), node.getName(), "Value????", 
+					node.getCreatedTime(), node.getLocation(), null);
+		}
+		addConnections(builder);
 		builder.drawGraph();
+		
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
+		
 	}
 
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
@@ -106,7 +112,22 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
 		for (String[] match : matches) {
 			// This constructor information needs fixing
-			RDataInstanceNode file = new RDataInstanceNode("File", match[3], match[8], match[7], match[1], match[5], match[6]);
+			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
+			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[6]);
+			file.setId(index++);
+			/*
+			boolean exists = false;
+			for (RDataInstanceNode node : fileNodes) {
+				if (node.getName().equals(file.getName()) && node.getHash().equals(file.getHash())) {
+					System.out.println("Extant.");
+					exists = true;
+				}
+			}
+			
+			if (!exists) {
+				fileNodes.add(file);
+			}
+			*/
 			fileNodes.add(file);
 			generateScriptNode(scrnodes, file, match[0]);
 		}
@@ -116,6 +137,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private ArrayList<ScriptNode> generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path) {
 		if (scrnodes.size() == 0) {
 			ScriptNode toAdd = new ScriptNode(0.0, path);
+			toAdd.setId(index++);
 			toAdd.addWorkflowNode(file);
 			scrnodes.add(toAdd);
 		} else {
@@ -129,11 +151,13 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			if (!added) {
 				ScriptNode toAdd = new ScriptNode(0.0, path);
 				toAdd.addWorkflowNode(file);
+				toAdd.setId(index++);
 				scrnodes.add(toAdd);
 			}
 		}
 		return scrnodes;
 	}
-
+	
+	
 
 }

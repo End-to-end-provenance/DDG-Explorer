@@ -67,6 +67,7 @@ public class RDDGBuilder extends DDGBuilder {
 		ArrayList<LegendEntry> legend = new ArrayList<>();
 		legend.add(new LegendEntry("Control Flow", PrefuseGraphBuilder.CONTROL_FLOW_COLOR));
 		legend.add(new LegendEntry("Data Flow", PrefuseGraphBuilder.DATA_FLOW_COLOR));
+		legend.add(new LegendEntry("Script Flow", PrefuseGraphBuilder.SCRIPT_FLOW_COLOR));
 		return legend;
 	}
 

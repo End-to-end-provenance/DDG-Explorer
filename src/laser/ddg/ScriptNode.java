@@ -17,7 +17,7 @@ public class ScriptNode implements Node {
 	private final String nameOfSN;
 	
 	// The id of the node is set to zero if no id is assigned.
-	private int scrid = 0;
+	private int id = 0;
 
 	private ArrayList<RDataInstanceNode> inputs;
 
@@ -65,7 +65,11 @@ public class ScriptNode implements Node {
 
 	@Override
 	public int getId() {
-		return scrid;
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	@Override

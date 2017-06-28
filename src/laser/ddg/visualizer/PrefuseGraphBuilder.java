@@ -74,6 +74,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
 																			// 255,
 																			// 0);
+	public static final int SCRIPT_FLOW_COLOR = ColorLib.rgb(0, 148, 0);
+	
 	private static final int SIMPLE_HANDLER_COLOR = ColorLib.rgb(140, 209, 207);
 	private static final int VIRTUAL_COLOR = ColorLib.rgb(217, 132, 181);
 	public static final int EXCEPTION_COLOR = ColorLib.rgb(209, 114, 110);
