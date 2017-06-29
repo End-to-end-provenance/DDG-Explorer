@@ -81,7 +81,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		builder.drawGraph();
-		builder.createLegend("Workflow");
+		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
