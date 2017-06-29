@@ -41,9 +41,11 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		DataNodeVisitor dataNodeVisitor = new DataNodeVisitor();
 		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
 		ArrayList<String[]> matches = new ArrayList<String[]>();
-		dataNodeVisitor.visitNodes();
-		
 		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		ProvenanceData currDDG = ddgExplorer.getCurrentDDG();
+		
+		dataNodeVisitor.visitNodes();
 		builder.buildNodeAndEdgeTables();
 		
 		ArrayList<String> nodehashes = new ArrayList<String>();
@@ -51,12 +53,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			nodehashes.add(dins.get(i).getHash());
 		}
 
-		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
 		try {
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
 			generateFileNodes(matches, builder);
 		} catch (Exception e) {
-			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			e.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(ddgExplorer,
 					"Unable to load the file: " + e.getMessage(),
@@ -72,11 +72,9 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		builder.drawGraph();
-		// Has some issues , it looks like it eliminates the legend for any other tabs.
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
 		
 	}
