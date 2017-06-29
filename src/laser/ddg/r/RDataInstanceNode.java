@@ -27,8 +27,8 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		this.type = type;
 	}
 	
-	public RDataInstanceNode(String type, String name, String value, String time, String location, String hash, String rw, String scrloc) {
-		super(value, name, time, location, hash, rw, scrloc);
+	public RDataInstanceNode(String type, String name, String value, String time, String location, String hash, String scrloc) {
+		super(value, name, time, location, hash, scrloc);
 		this.type = type;
 	}
 

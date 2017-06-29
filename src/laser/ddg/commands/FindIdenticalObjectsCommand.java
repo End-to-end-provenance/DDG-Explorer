@@ -44,7 +44,11 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
 		ArrayList<String[]> matches = new ArrayList<String[]>();
 		dataNodeVisitor.visitNodes();
-
+		
+		JenaWriter jenaWriter = JenaWriter.getInstance();
+		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
+		builder.buildNodeAndEdgeTables();
+		
 		ArrayList<String> nodehashes = new ArrayList<String>();
 		for (int i = 0; i < dins.size(); i++) {
 			nodehashes.add(dins.get(i).getHash());
@@ -53,7 +57,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ProvenanceData currDDG = DDGExplorer.getInstance().getCurrentDDG();
 		try {
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
-			generateFileNodes(matches);
+			generateFileNodes(matches, builder);
 		} catch (Exception e) {
 			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			e.printStackTrace(System.err);
@@ -67,9 +71,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		flow.setFileNodeList(fileNodes);
 		flow.setScriptNodeList(scrnodes);
 		
-		JenaWriter jenaWriter = JenaWriter.getInstance();
-		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
-		builder.buildNodeAndEdgeTables();
+		
 		for (ScriptNode node : flow.getScriptNodeList()) {
 			builder.addNode(node, node.getId());
 		}
@@ -77,7 +79,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			builder.addNode(node.getType(), node.getId(), node.getName(), "Value????", 
 					node.getCreatedTime(), node.getLocation(), null);
 		}
-		connectNodes(builder);
 		builder.drawGraph();
 		
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
@@ -109,45 +110,58 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.close();
 	}
 
-	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches) {
+	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches, WorkflowGraphBuilder builder) {
 		for (String[] match : matches) {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
-			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[6], match[0]);
-			// match[6] contains the rw value
-			if (match[6].equals("read")) {
-				System.out.println("read");
-			} else if (match[6].equals("write")) {
-				System.out.println("write");
-			} else {
-				System.out.println("error");
+			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
+			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0]);
+			
+			int foundindex = -1;
+			for (int i = 0; i < fileNodes.size(); i++) {
+				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
+						fileNodes.get(i).getName().equals(file.getName())) {
+					foundindex = i;
+					System.out.println("hashmatch");
+				}
 			}
-			
-			
-			// Essentially, we keep track of the inputs and outputs inside of each RDataInstanceNode.
-			// So right after we generate a script node, we shunt that script node into the inputs/outputs of
-			// a RDataInstanceNode. We decide whether to add the RDataInstanceNode to the list of them based
-			// on whether there is one with a matching hash and name that already exists in the list. Yeah!
-			
-			//....that did not work.
-			generateScriptNode(scrnodes, file, match[0]);
-			fileNodes.add(file);
-			file.setId(index++);
+			if (foundindex == -1) {
+				fileNodes.add(file);
+				file.setId(index++);
+				if (match[6].equals("read")) {
+					System.out.println("read");
+					builder.addEdge("SF", file.getId(), scrnode.getId());
+				} else if (match[6].equals("write")) {
+					System.out.println("write");
+					builder.addEdge("SF", scrnode.getId(), file.getId());
+				}
+			} else {
+				if (match[6].equals("read")) {
+					System.out.println("read");
+					builder.addEdge("SF", fileNodes.get(foundindex).getId(), scrnode.getId());
+				} else if (match[6].equals("write")) {
+					System.out.println("write");
+					builder.addEdge("SF", scrnode.getId(), fileNodes.get(foundindex).getId());
+				}
+			}
 		}
 		return fileNodes;
 	}
 
-	private ArrayList<ScriptNode> generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path) {
+	private ScriptNode generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path) {
+		ScriptNode ret = new ScriptNode(0.0, path);
 		if (scrnodes.size() == 0) {
 			ScriptNode toAdd = new ScriptNode(0.0, path);
 			toAdd.setId(index++);
 			toAdd.addWorkflowNode(file);
 			scrnodes.add(toAdd);
+			ret = toAdd;
 		} else {
 			boolean added = false;
 			for (ScriptNode scrnode : scrnodes) {
 				if (scrnode.getName().equals(path)) {
 					scrnode.addWorkflowNode(file);
 					added = true;
+					ret = scrnode;
 				}
 			}
 			if (!added) {
@@ -155,9 +169,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				toAdd.addWorkflowNode(file);
 				toAdd.setId(index++);
 				scrnodes.add(toAdd);
+				ret = toAdd;
 			}
 		}
-		return scrnodes;
+		return ret;
 	}
 
 	private void connectNodes(WorkflowGraphBuilder builder) {

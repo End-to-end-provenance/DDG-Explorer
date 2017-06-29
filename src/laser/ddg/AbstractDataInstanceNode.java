@@ -157,13 +157,12 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		}
 	}
 	
-	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String rw, String scrloc) {
+	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String scrloc) {
 		value = val;
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
 		this.hash = hash;
-		this.rw = rw;
 		this.scrloc = scrloc;
 	}
 
