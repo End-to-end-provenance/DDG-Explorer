@@ -15,9 +15,7 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.DataNodeVisitor;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptNode;
-import laser.ddg.Workflow;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.r.RDataInstanceNode;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
@@ -45,8 +43,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ArrayList<String[]> matches = new ArrayList<String[]>();
 		dataNodeVisitor.visitNodes();
 		
-		JenaWriter jenaWriter = JenaWriter.getInstance();
-		WorkflowGraphBuilder builder = new WorkflowGraphBuilder(false, jenaWriter);
+		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		builder.buildNodeAndEdgeTables();
 		
 		ArrayList<String> nodehashes = new ArrayList<String>();
@@ -65,22 +62,17 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
-
 		
-		Workflow flow = new Workflow(currDDG.getProcessName(), currDDG.getTimestamp());
-		flow.setFileNodeList(fileNodes);
-		flow.setScriptNodeList(scrnodes);
-		
-		
-		for (ScriptNode node : flow.getScriptNodeList()) {
+		for (ScriptNode node : scrnodes) {
 			builder.addNode(node, node.getId());
 		}
 		// The value could use some fixing
-		for (RDataInstanceNode node : flow.getFileNodeList()) {
+		for (RDataInstanceNode node : fileNodes) {
 			builder.addNode(node.getType(), node.getId(), node.getName(), "value", 
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		builder.drawGraph();
+		// Has some issues , it looks like it eliminates the legend for any other tabs.
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		
