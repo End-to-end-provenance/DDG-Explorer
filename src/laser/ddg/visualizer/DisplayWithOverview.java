@@ -62,7 +62,7 @@ public class DisplayWithOverview {
 		display.addControlListener(new ZoomControl());
 		// zoom with mouse wheel
 		display.addControlListener(new WheelZoomControl(true, true));
-		display.addControlListener(new ExpandCollapseWorkflowControl(builder));
+		display.addControlListener(new ExpandCollapseControl(builder));
 		display.addPaintListener(new PaintListener() {
 			@Override
 			public void prePaint(Display d, Graphics2D g) {

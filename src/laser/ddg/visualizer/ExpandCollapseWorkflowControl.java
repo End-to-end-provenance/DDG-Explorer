@@ -14,18 +14,18 @@ import prefuse.visual.VisualItem;
  */
 public class ExpandCollapseWorkflowControl extends ControlAdapter {
 	// The objec that is building the Prefuse graph
-	private PrefuseGraphBuilder builder;
+	private WorkflowGraphBuilder builder;
 
 	/**
 	 * Creates the controller
 	 * @param builder the object that is building the graph.
 	 */
-	public ExpandCollapseWorkflowControl(PrefuseGraphBuilder builder) {
+	public ExpandCollapseWorkflowControl(WorkflowGraphBuilder builder) {
 		this.builder = builder;
 	}
 
 	/**
-	 * When ther user left-clicks on a start node, the node is 
+	 * When the user left-clicks on a start node, the node is 
 	 * collapsed.  When the user left-clicks on a step node, the
 	 * node is expanded.
          * @param item

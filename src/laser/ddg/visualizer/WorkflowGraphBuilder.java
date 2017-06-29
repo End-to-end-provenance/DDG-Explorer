@@ -106,7 +106,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private final WorkflowVisualization vis = new WorkflowVisualization();
+	private final DDGVisualization vis = new DDGVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 

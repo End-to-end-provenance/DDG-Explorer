@@ -75,8 +75,9 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		for (ScriptNode node : flow.getScriptNodeList()) {
 			builder.addNode(node, node.getId());
 		}
+		// The value could use some fixing
 		for (RDataInstanceNode node : flow.getFileNodeList()) {
-			builder.addNode(node.getType(), node.getId(), node.getName(), "Value????", 
+			builder.addNode(node.getType(), node.getId(), node.getName(), "value", 
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		builder.drawGraph();
