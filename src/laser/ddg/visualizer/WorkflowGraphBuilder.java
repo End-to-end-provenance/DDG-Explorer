@@ -71,7 +71,8 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	/* Colors used in drawing the graph */
 	public static final int DATA_FLOW_COLOR = ColorLib.rgb(255, 0, 0);
-	public static final int SCRIPT_FLOW_COLOR = ColorLib.rgb(0, 148, 0);
+	public static final int SCRIPT_READ_COLOR = ColorLib.rgb(0, 148, 0);
+	public static final int SCRIPT_WRITE_COLOR = ColorLib.rgb(148, 0, 148);
 	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
 	// 255,
 	// 0);
@@ -786,14 +787,16 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		ColorAction edgeColors = new ColorAction(GRAPH_EDGES, VisualItem.STROKECOLOR, ColorLib.gray(0));
 		edgeColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
-		edgeColors.add(ExpressionParser.predicate("Type = 'SF'"), SCRIPT_FLOW_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'SFW'"), SCRIPT_WRITE_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'SFR'"), SCRIPT_READ_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
 
 		ColorAction arrowColors = new ColorAction(GRAPH_EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200));
 		arrowColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
-		arrowColors.add(ExpressionParser.predicate("Type = 'SF'"), SCRIPT_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'SFW'"), SCRIPT_WRITE_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'SFR'"), SCRIPT_READ_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'Step'"), CONTROL_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);

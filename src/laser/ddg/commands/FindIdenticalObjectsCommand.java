@@ -81,6 +81,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		builder.drawGraph();
+		builder.createLegend("Workflow");
+		builder.getPanel().addLegend();
 		
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
@@ -122,26 +124,21 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
 						fileNodes.get(i).getName().equals(file.getName())) {
 					foundindex = i;
-					System.out.println("hashmatch");
 				}
 			}
 			if (foundindex == -1) {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
-					System.out.println("read");
-					builder.addEdge("SF", file.getId(), scrnode.getId());
+					builder.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					System.out.println("write");
-					builder.addEdge("SF", scrnode.getId(), file.getId());
+					builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
-					System.out.println("read");
-					builder.addEdge("SF", fileNodes.get(foundindex).getId(), scrnode.getId());
+					builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					System.out.println("write");
-					builder.addEdge("SF", scrnode.getId(), fileNodes.get(foundindex).getId());
+					builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}
 			}
 		}
@@ -174,23 +171,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			}
 		}
 		return ret;
-	}
-
-	private void connectNodes(WorkflowGraphBuilder builder) {
-		// Institute some kind of check to see if a node similar to this one has been
-		// iterated through before.
-		
-		for (RDataInstanceNode filenode : fileNodes) {
-			for (ScriptNode scriptnode : scrnodes) {
-				if (filenode.getScrloc().equals(scriptnode.getName())) { // check if script is the same. May have to change if not doing full script path as name.
-					if (filenode.getRw().equals("read")) {
-						builder.addEdge("SF", filenode.getId(), scriptnode.getId());
-					} else {
-						builder.addEdge("SF", scriptnode.getId(), filenode.getId());
-					}
-				}
-			}
-		}
 	}
 	
 }
