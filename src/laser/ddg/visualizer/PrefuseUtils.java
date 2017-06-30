@@ -415,6 +415,15 @@ public class PrefuseUtils {
 	static boolean isCollapsedNode(Node n) {
 		return getNodeType(n).equals(STEP);
 	}
+	
+	/**
+	 * Returns true if the node is a script node
+	 * @param n the node to test
+	 * @return true if a script node
+	 */
+	static boolean isScriptNode(Node n) {
+		return getNodeType(n).equals(SCRIPT);
+	}
 
 	/**
 	 * Returns true if the node is a leaf node

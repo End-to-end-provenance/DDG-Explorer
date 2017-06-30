@@ -22,6 +22,7 @@ import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
+import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoScriptFileException;
@@ -2006,7 +2007,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 				layout(vis.getFinish(nodeItem));
 			}
 		}
-
+		else if (PrefuseUtils.isScriptNode(nodeItem)) {
+			System.out.println("Clicked on a script node.");
+		}
 	}
 
 	public void setProvData(ProvenanceData provData) {

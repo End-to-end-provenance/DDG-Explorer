@@ -38,22 +38,22 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent args0) {
 		
+		// Setup and Initialization
 		DataNodeVisitor dataNodeVisitor = new DataNodeVisitor();
-		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
-		ArrayList<String[]> matches = new ArrayList<String[]>();
 		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		ProvenanceData currDDG = ddgExplorer.getCurrentDDG();
-		
 		dataNodeVisitor.visitNodes();
 		builder.buildNodeAndEdgeTables();
 		
+		// Read in the hashtable and find nodes with matching hashes.
+		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
 		ArrayList<String> nodehashes = new ArrayList<String>();
 		for (int i = 0; i < dins.size(); i++) {
 			nodehashes.add(dins.get(i).getHash());
 		}
-
 		try {
+			ArrayList<String[]> matches = new ArrayList<String[]>();
+			ProvenanceData currDDG = ddgExplorer.getCurrentDDG();
 			readHashtable(currDDG.getSourcePath(), nodehashes, matches);
 			generateFileNodes(matches, builder);
 		} catch (Exception e) {
@@ -63,20 +63,20 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
 		
+		// Add nodes to the graph
 		for (ScriptNode node : scrnodes) {
 			builder.addNode(node, node.getId());
 		}
-		// The value could use some fixing
 		for (RDataInstanceNode node : fileNodes) {
-			builder.addNode(node.getType(), node.getId(), node.getName(), "value", 
+			builder.addNode(node.getType(), node.getId(), node.getName(), "value", // The value could use some fixing
 					node.getCreatedTime(), node.getLocation(), null);
 		}
+		
+		// Create graph and legend.
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
-		
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
-		
 	}
 
 	private void readHashtable(String currDDGDir, ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
@@ -162,5 +162,4 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		}
 		return ret;
 	}
-	
 }
