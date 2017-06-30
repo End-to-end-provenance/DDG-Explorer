@@ -120,15 +120,15 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
-					builder.addEdge("SFR", scrnode.getId(), file.getId());
+					builder.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					builder.addEdge("SFW", file.getId(), scrnode.getId());
+					builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
-					builder.addEdge("SFR", scrnode.getId(), fileNodes.get(foundindex).getId());
+					builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					builder.addEdge("SFW", fileNodes.get(foundindex).getId(), scrnode.getId());
+					builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}
 			}
 		}
@@ -140,21 +140,18 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		if (scrnodes.size() == 0) {
 			ScriptNode toAdd = new ScriptNode(0.0, path, json);
 			toAdd.setId(index++);
-			toAdd.addWorkflowNode(file);
 			scrnodes.add(toAdd);
 			ret = toAdd;
 		} else {
 			boolean added = false;
 			for (ScriptNode scrnode : scrnodes) {
 				if (scrnode.getName().equals(path)) {
-					scrnode.addWorkflowNode(file);
 					added = true;
 					ret = scrnode;
 				}
 			}
 			if (!added) {
 				ScriptNode toAdd = new ScriptNode(0.0, path, json);
-				toAdd.addWorkflowNode(file);
 				toAdd.setId(index++);
 				scrnodes.add(toAdd);
 				ret = toAdd;

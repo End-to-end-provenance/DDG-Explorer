@@ -17,18 +17,10 @@ public class ScriptNode implements Node {
 	
 	// The id of the node is set to zero if no id is assigned.
 	private int id = 0;
-
-	private ArrayList<RDataInstanceNode> inputs;
-
-	private ArrayList<RDataInstanceNode> outputs;
-
-	//private Map<String, SourcePos> sourcePositions;
 	
 	private String value;
 	
 	private String location;
-	
-	private List<RDataInstanceNode> fileNodes;
 	
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
@@ -43,9 +35,6 @@ public class ScriptNode implements Node {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;
 		this.nameOfSN = name;
-		this.inputs = new ArrayList<RDataInstanceNode>();
-		this.outputs = new ArrayList<RDataInstanceNode>();
-		this.fileNodes = new ArrayList<RDataInstanceNode>();
 		this.value = json;
 	}
 	
@@ -96,15 +85,7 @@ public class ScriptNode implements Node {
 	public Iterator<String> attributes() {
 		return attributeValues.keySet().iterator();
 	}
-
-	public List<RDataInstanceNode> getWorkflowNodes() {
-		return fileNodes;
-	}
-
-	public void addWorkflowNode(RDataInstanceNode toAdd) {
-		this.fileNodes.add(toAdd);
-	}
-
+	
 	public String getType() {
 		return "Script";
 	}
@@ -115,14 +96,6 @@ public class ScriptNode implements Node {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-	
-	public void addOutput(RDataInstanceNode file) {
-		outputs.add(file);
-	}
-	
-	public void addInput(RDataInstanceNode input) {
-		inputs.add(input);
 	}
 
 	public String getLocation() {

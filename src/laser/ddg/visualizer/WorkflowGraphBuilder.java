@@ -42,6 +42,7 @@ import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
+import prefuse.action.layout.graph.TreeLayout;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
@@ -120,7 +121,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	// private Object lock = new Object();
 	WorkflowPanel workflowPanel;
-	private DDGLayout ddgLayout;
+	private TreeLayout ddgLayout;
 
 	// The root of the provenance graph, where layout begins
 	private NodeItem root;
@@ -144,7 +145,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	// to what they are derived from. Many users find pointing from inputs to
 	// outputs more
 	// natural.
-	private static final int DEFAULT_ARROW_DIRECTION = prefuse.Constants.EDGE_ARROW_REVERSE;
+	private static final int DEFAULT_ARROW_DIRECTION = prefuse.Constants.EDGE_ARROW_FORWARD;
 
 	// True indicates that the graph is complete
 	private boolean processFinished = false;
@@ -1087,7 +1088,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	private void setCollapsedRoot(NodeItem collapsedRoot) {
-		ddgLayout.setLayoutCollapsedRoot(collapsedRoot);
+		ddgLayout.setLayoutRoot(collapsedRoot);
 	}
 
 	@Override
