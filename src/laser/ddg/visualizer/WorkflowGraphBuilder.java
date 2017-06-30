@@ -2008,7 +2008,12 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			}
 		}
 		else if (PrefuseUtils.isScriptNode(nodeItem)) {
-			System.out.println("Clicked on a script node.");
+			String name = PrefuseUtils.getValue(nodeItem);
+			try {
+				LoadFileCommand.loadFile(new File(name));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

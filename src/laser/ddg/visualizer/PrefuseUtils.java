@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import prefuse.data.Edge;
 import prefuse.data.Node;

@@ -107,7 +107,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		for (String[] match : matches) {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
 			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
-			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0]);
+			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");
 			
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
@@ -120,25 +120,25 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
-					builder.addEdge("SFR", file.getId(), scrnode.getId());
+					builder.addEdge("SFR", scrnode.getId(), file.getId());
 				} else if (match[6].equals("write")) {
-					builder.addEdge("SFW", scrnode.getId(), file.getId());
+					builder.addEdge("SFW", file.getId(), scrnode.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
-					builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
+					builder.addEdge("SFR", scrnode.getId(), fileNodes.get(foundindex).getId());
 				} else if (match[6].equals("write")) {
-					builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
+					builder.addEdge("SFW", fileNodes.get(foundindex).getId(), scrnode.getId());
 				}
 			}
 		}
 		return fileNodes;
 	}
 
-	private ScriptNode generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path) {
-		ScriptNode ret = new ScriptNode(0.0, path);
+	private ScriptNode generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path, String json) {
+		ScriptNode ret = new ScriptNode(0.0, path, json);
 		if (scrnodes.size() == 0) {
-			ScriptNode toAdd = new ScriptNode(0.0, path);
+			ScriptNode toAdd = new ScriptNode(0.0, path, json);
 			toAdd.setId(index++);
 			toAdd.addWorkflowNode(file);
 			scrnodes.add(toAdd);
@@ -153,7 +153,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				}
 			}
 			if (!added) {
-				ScriptNode toAdd = new ScriptNode(0.0, path);
+				ScriptNode toAdd = new ScriptNode(0.0, path, json);
 				toAdd.addWorkflowNode(file);
 				toAdd.setId(index++);
 				scrnodes.add(toAdd);

@@ -39,13 +39,14 @@ public class ScriptNode implements Node {
 	// CPU time that this opeartion took
 	private double elapsedTime;
 
-	public ScriptNode(double elapsedTime, String name) {
+	public ScriptNode(double elapsedTime, String name, String json) {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;
 		this.nameOfSN = name;
 		this.inputs = new ArrayList<RDataInstanceNode>();
 		this.outputs = new ArrayList<RDataInstanceNode>();
 		this.fileNodes = new ArrayList<RDataInstanceNode>();
+		this.value = json;
 	}
 	
 	public String getName() {
