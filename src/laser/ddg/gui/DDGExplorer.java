@@ -454,6 +454,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	public static DDGPanel getCurrentDDGPanel() {
 		Component selectedTab = tabbed.getSelectedComponent();
 		if (!(selectedTab instanceof DDGPanel)) {
+			System.out.println("Not ddg panel...");
 			return null;
 		}
 		return (DDGPanel) selectedTab;

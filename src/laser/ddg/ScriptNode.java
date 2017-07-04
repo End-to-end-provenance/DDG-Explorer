@@ -1,14 +1,10 @@
 package laser.ddg;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import laser.ddg.r.RDataInstanceNode;
 
 public class ScriptNode implements Node {
 
@@ -28,7 +24,7 @@ public class ScriptNode implements Node {
 	// Time when a Script Node is created
 	private final String timeCreated;
 
-	// CPU time that this opeartion took
+	// CPU time that this operation took
 	private double elapsedTime;
 
 	public ScriptNode(double elapsedTime, String name, String json) {

@@ -732,7 +732,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
-		ddgLayout = new DDGLayout(GRAPH, dataDerivation);
+		ddgLayout = new WorkflowLayout(GRAPH, dataDerivation);
 		layout.add(ddgLayout);
 
 		ActionList repaint = new ActionList();
