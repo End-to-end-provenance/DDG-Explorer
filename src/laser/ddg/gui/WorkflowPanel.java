@@ -28,11 +28,8 @@ import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGVisualization;
-import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.DisplayWorkflowWithOverview;
-import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
-import laser.ddg.visualizer.DDGVisualization;
 
 /**
  * The JPanel that holds the DDG graph and the widgets to interact with the

@@ -129,7 +129,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	// If true, execution pauses after each node is connected to the graph so
 	// the user
 	// can see the updates
-	private boolean incremental = true;
+	private boolean incremental = false;
 
 	// If true, means that we are drawing a data derivation, not a full DDG.
 	// The graph might not contain any control flow edges, which affects the way
@@ -652,6 +652,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public void addEdge(String type, int source, int target) {
 		try {
 			synchronized (vis) {
+				/*
 				if (getNode(source) == null) {
 					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
 					DDGExplorer.showErrMsg("*** ERROR:  source node " + source + " does not exist!!\n\n");
@@ -660,6 +661,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
 					DDGExplorer.showErrMsg("*** ERROR:  target node " + target + " does not exist!!\n\n");
 				}
+				*/
 				int rowNum = edges.addRow();
 				edges.setString(rowNum, PrefuseUtils.TYPE, type);
 				edges.setInt(rowNum, PrefuseUtils.SOURCE, source);

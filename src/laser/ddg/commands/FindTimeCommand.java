@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
+import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.search.OperationSearchElement;
 
 public class FindTimeCommand implements ActionListener {
@@ -14,9 +15,16 @@ public class FindTimeCommand implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
+		ArrayList<OperationSearchElement> nodeList;
 		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
-		ArrayList<OperationSearchElement> nodeList = 
+		if (panel != null) {
+		nodeList = 
 				(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
+		} else {
+			WorkflowPanel wfpanel = DDGExplorer.getCurrentWorkflowPanel();
+			nodeList = 
+					(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
+		}
 
 		// order nodelist and show in GUI.
 		Collections.sort(nodeList, (OperationSearchElement p1, OperationSearchElement p2) -> {

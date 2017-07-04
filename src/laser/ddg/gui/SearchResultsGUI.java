@@ -26,12 +26,12 @@ import laser.ddg.search.SearchElement;
 public class SearchResultsGUI extends JScrollPane {
 
 	private DefaultListModel<SearchElement> model;
-	
+
 	//Keep track of selected nodes from search results
 	private int prevNodeId; 
 	private boolean prevNodeHighlighted = false;
-	
-	
+
+
 
 	/**
 	 * Creates the search results
@@ -40,9 +40,9 @@ public class SearchResultsGUI extends JScrollPane {
 	public SearchResultsGUI(ArrayList<? extends SearchElement> resultList) {
 
 		model = new DefaultListModel<>();
-        resultList.stream().forEach((entry) -> {
-        	model.addElement(entry);
-        });
+		resultList.stream().forEach((entry) -> {
+			model.addElement(entry);
+		});
 
 		final JList<SearchElement> searchList;
 		searchList = new JList<>(model);
@@ -53,17 +53,17 @@ public class SearchResultsGUI extends JScrollPane {
 		// update the focus in the DDG to focus on selected node from search
 		// results
 		searchList.addListSelectionListener((ListSelectionEvent listener) -> {
-                    SearchElement entry = searchList.getSelectedValue();
-                    if (entry != null) {
-                        try {
-                            updateNodeFocus(entry); // could be overidden, but called from constructor
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(SearchResultsGUI.this,
-                                    "Can't display node: " + entry.getName(),
-                                    "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                });
+			SearchElement entry = searchList.getSelectedValue();
+			if (entry != null) {
+				try {
+					updateNodeFocus(entry); // could be overidden, but called from constructor
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(SearchResultsGUI.this,
+							"Can't display node: " + entry.getName(),
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 
 		setViewportView(searchList);
 		setMinimumSize(new Dimension(150, 200));
@@ -77,9 +77,9 @@ public class SearchResultsGUI extends JScrollPane {
 	public void updateSearchList(ArrayList<? extends SearchElement> resultList) {
 		model.clear();
 
-        resultList.stream().forEach((entry) -> {
-        	model.addElement(entry);
-        });
+		resultList.stream().forEach((entry) -> {
+			model.addElement(entry);
+		});
 	}
 
 	/**
@@ -88,24 +88,44 @@ public class SearchResultsGUI extends JScrollPane {
 	 */
 	public void updateNodeFocus(SearchElement entry) {
 		DDGPanel curDDGPanel = DDGExplorer.getCurrentDDGPanel();
-		
-		// if a search result was previously selected, then remove
-		// highlighting from node
-		if (prevNodeHighlighted) {
-			curDDGPanel.setHighlighted (prevNodeId, false);
+		if (curDDGPanel != null) {
+			// if a search result was previously selected, then remove
+			// highlighting from node
+			if (prevNodeHighlighted) {
+				curDDGPanel.setHighlighted (prevNodeId, false);
+			}
+
+			// get selected search result's node and highlight it
+			int entryId = entry.getId();
+			curDDGPanel.setHighlighted(entryId, true);
+
+			// bring node of graph into focus
+			curDDGPanel.focusOn(entry.getName());
+
+			// keep track of highlighted node to remove highlighting in the
+			// future
+			prevNodeId = entryId;
+			prevNodeHighlighted = true;
+		} else {
+			WorkflowPanel curwfPanel = DDGExplorer.getCurrentWorkflowPanel();
+			// if a search result was previously selected, then remove
+			// highlighting from node
+			if (prevNodeHighlighted) {
+				curwfPanel.setHighlighted (prevNodeId, false);
+			}
+
+			// get selected search result's node and highlight it
+			int entryId = entry.getId();
+			curwfPanel.setHighlighted(entryId, true);
+
+			// bring node of graph into focus
+			curwfPanel.focusOn(entry.getName());
+
+			// keep track of highlighted node to remove highlighting in the
+			// future
+			prevNodeId = entryId;
+			prevNodeHighlighted = true;
 		}
-
-		// get selected search result's node and highlight it
-		int entryId = entry.getId();
-		curDDGPanel.setHighlighted(entryId, true);
-
-		// bring node of graph into focus
-		curDDGPanel.focusOn(entry.getName());
-
-		// keep track of highlighted node to remove highlighting in the
-		// future
-		prevNodeId = entryId;
-		prevNodeHighlighted = true;
 	}
 
 	/**
@@ -116,10 +136,10 @@ public class SearchResultsGUI extends JScrollPane {
 	 */
 	static class NodeCellRenderer implements ListCellRenderer<Object> {
 		private Color HIGHLIGHT_COLOR = new Color(193, 253, 51); // 255,206,26
-																	// <- Nice
-																	// shade of
-																	// bright
-																	// orange
+		// <- Nice
+		// shade of
+		// bright
+		// orange
 
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -146,7 +166,7 @@ public class SearchResultsGUI extends JScrollPane {
 		}
 
 	}
-	
+
 
 
 }

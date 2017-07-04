@@ -11,14 +11,9 @@ import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
-import laser.ddg.DataInstanceNode;
-import laser.ddg.DataNodeVisitor;
-import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptNode;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.Parser;
 import laser.ddg.r.RDataInstanceNode;
-import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 /**
@@ -35,27 +30,20 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
 	private ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
 	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
-	private int index = 0;
+	private int index = 1;
 
 	@Override
 	public void actionPerformed(ActionEvent args0) {
 		
 		// Setup and Initialization
-		DataNodeVisitor dataNodeVisitor = new DataNodeVisitor();
 		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		dataNodeVisitor.visitNodes();
 		builder.buildNodeAndEdgeTables();
 		
 		// Read in the hashtable and find nodes with matching hashes.
-		ArrayList<DataInstanceNode> dins = dataNodeVisitor.getDins();
-		ArrayList<String> nodehashes = new ArrayList<String>();
-		for (int i = 0; i < dins.size(); i++) {
-			nodehashes.add(dins.get(i).getHash());
-		}
 		try {
 			ArrayList<String[]> matches = new ArrayList<String[]>();
-			readHashtable(nodehashes, matches);
+			readHashtable(matches);
 			generateFileNodes(matches, builder);
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
@@ -69,7 +57,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			builder.addNode(node, node.getId());
 		}
 		for (RDataInstanceNode node : fileNodes) {
-			builder.addNode(node.getType(), node.getId(), node.getName(), "value", // The value could use some fixing
+			builder.addNode(node.getType(), node.getId(), node.getName(), null,
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		
@@ -80,7 +68,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
 	}
 
-	private void readHashtable(ArrayList<String> nodehashes, ArrayList<String[]> csvmap) throws IOException {
+	private void readHashtable(ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
@@ -96,14 +84,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.readLine();
 		while((line = br.readLine()) != null) {
 			String[] entries = line.replaceAll("\"", "").split(","); 
-			String hash = entries[5];
-			// By commenting this if statement out, I can get part way to producing an entire
-			// workflow. I think I could basically read everything in, and then remove things
-			// that have no connections. It would cut down on some of the visitor overhead as
-			// well.
-			//if (nodehashes.contains(hash)) {
-				csvmap.add(entries);
-			//}
+			csvmap.add(entries);
 		}
 		br.close();
 	}
@@ -126,8 +107,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				file.setId(index++);
 				if (match[6].equals("read")) {
 					builder.addEdge("SFR", file.getId(), scrnode.getId());
-					// In here I could build up some sort of arraylist of script nodes and file
-					// nodes that have connections, and then only write those ones out?
 				} else if (match[6].equals("write")) {
 					builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
@@ -165,22 +144,5 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			}
 		}
 		return ret;
-	}
-	
-	private void recursiveTest() {
-		for (ScriptNode scrnode : scrnodes) {
-			String jsonfile = scrnode.getValue();
-			PrefuseGraphBuilder builder = new PrefuseGraphBuilder();
-			Parser parser;
-			ProvenanceData prov;
-			try {
-				parser = Parser.createParser(new File(jsonfile), builder);
-				prov = parser.addNodesAndEdges();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			//readHashtable();
-		}
 	}
 }

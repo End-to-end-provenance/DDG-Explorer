@@ -29,6 +29,7 @@ import laser.ddg.SourcePos;
 import laser.ddg.commands.ShowDataFlowCommand;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
+import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.ResultsQuery;
 import prefuse.Display;
@@ -313,7 +314,7 @@ public class WorkflowDisplay extends Display {
 
 		// Display the script highlighting the first line
 		// of the function.
-		DDGPanel curPanel = DDGExplorer.getCurrentDDGPanel();
+		WorkflowPanel curPanel = DDGExplorer.getCurrentWorkflowPanel();
 		curPanel.displaySourceCode(sourcePos);
 		
 	}
