@@ -122,22 +122,23 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	}
 
 	private ScriptNode generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path, String json) {
-		ScriptNode ret = new ScriptNode(0.0, path, json);
+		String name = path.substring(path.lastIndexOf('/') + 1);
+		ScriptNode ret = new ScriptNode(0.0, name, json, path);
 		if (scrnodes.size() == 0) {
-			ScriptNode toAdd = new ScriptNode(0.0, path, json);
+			ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 			toAdd.setId(index++);
 			scrnodes.add(toAdd);
 			ret = toAdd;
 		} else {
 			boolean added = false;
 			for (ScriptNode scrnode : scrnodes) {
-				if (scrnode.getName().equals(path)) {
+				if (scrnode.getFullpath().equals(path)) {
 					added = true;
 					ret = scrnode;
 				}
 			}
 			if (!added) {
-				ScriptNode toAdd = new ScriptNode(0.0, path, json);
+				ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 				toAdd.setId(index++);
 				scrnodes.add(toAdd);
 				ret = toAdd;

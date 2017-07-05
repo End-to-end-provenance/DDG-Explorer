@@ -27,11 +27,15 @@ public class ScriptNode implements Node {
 	// CPU time that this operation took
 	private double elapsedTime;
 
-	public ScriptNode(double elapsedTime, String name, String json) {
+	// The full path to the script
+	private String fullpath;
+
+	public ScriptNode(double elapsedTime, String name, String json, String fullpath) {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;
 		this.nameOfSN = name;
 		this.value = json;
+		this.setFullpath(fullpath);
 	}
 	
 	public String getName() {
@@ -100,6 +104,14 @@ public class ScriptNode implements Node {
 
 	public void setLocation(String location) {
 		this.location = location;
+	}
+
+	public String getFullpath() {
+		return fullpath;
+	}
+
+	public void setFullpath(String fullpath) {
+		this.fullpath = fullpath;
 	}
 
 }
