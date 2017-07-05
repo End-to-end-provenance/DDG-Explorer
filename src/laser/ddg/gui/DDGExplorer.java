@@ -235,7 +235,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				else {
 					openwfPanel.removeLegend();
 				}
-				openwfPanel.showLineNumbers(PREFERENCES.isShowLineNumbers());
+				// Because this flips arrows, it's currently commented out
+				//openwfPanel.showLineNumbers(PREFERENCES.isShowLineNumbers());
 			} else {
 				disableDDGCommands();
 				SearchPanel.disableSearch();
