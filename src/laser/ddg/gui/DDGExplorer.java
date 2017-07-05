@@ -323,6 +323,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem manageDB = new JMenuItem("Manage Database");
 		manageDB.addActionListener(new ManageDatabaseCommand());
 
+		// allow the user to view the file workflow
+		JMenuItem findObjs = new JMenuItem("Display File Workflow");
+		findObjs.addActionListener(new FindIdenticalObjectsCommand());
+		
 		// allow the user to quit ddg explorer
 		JMenuItem quit = new JMenuItem("Quit");
 		quit.addActionListener(new QuitCommand());
@@ -334,6 +338,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		fileMenu.add(compareR);
 		fileMenu.add(compareGraph);
 		fileMenu.add(manageDB);
+		fileMenu.add(findObjs);
 		fileMenu.add(quit);
 		return fileMenu;
 	}
@@ -356,11 +361,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 
-		hashesItem = new JMenuItem("Show objects with identical checksums");
-		hashesItem.addActionListener(new FindIdenticalObjectsCommand());
-		hashesItem.setEnabled(false);
-		DDGMenu.add(hashesItem);
-
 		return DDGMenu;
 	}
 
@@ -368,14 +368,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		saveDB.setEnabled(!getCurrentDDGPanel().alreadyInDB());
 		attributesItem.setEnabled(true);
 		showScriptItem.setEnabled(true);
-		hashesItem.setEnabled(true);
 	}
 
 	private void disableDDGCommands() {
 		saveDB.setEnabled(false);
 		attributesItem.setEnabled(false);
 		showScriptItem.setEnabled(false);
-		hashesItem.setEnabled(false);
 	}
 
 	private static JMenu createQueryMenu() {
@@ -494,6 +492,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		DDGPanel curDDGPanel = getCurrentDDGPanel();
 		if (curDDGPanel == null) {
 			WorkflowPanel wfPanel = getCurrentWorkflowPanel();
+			if (wfPanel == null) {
+				return null;
+			}
 			return wfPanel.getProvData();
 		} else {
 			return curDDGPanel.getProvData();
