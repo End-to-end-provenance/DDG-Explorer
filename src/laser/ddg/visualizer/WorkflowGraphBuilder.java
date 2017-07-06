@@ -91,7 +91,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public static final int LEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(176, 196, 222);
 	public static final int CHECKPOINT_COLOR = ColorLib.rgb(204, 255, 229);
 	public static final int RESTORE_COLOR = ColorLib.rgb(102, 255, 255);
-	public static final int SCRIPT_COLOR = ColorLib.rgb(229, 148, 0);
+	public static final int SCRIPT_COLOR = ColorLib.rgb(0, 206, 209);
 
 	// Colors for collapsed steps
 	public static final int STEP_COLOR = ColorLib.rgb(176, 226, 255);
@@ -109,7 +109,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private final DDGVisualization vis = new DDGVisualization();
+	private final WorkflowVisualization vis = new WorkflowVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 

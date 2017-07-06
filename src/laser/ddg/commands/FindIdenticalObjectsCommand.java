@@ -33,6 +33,9 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private int index = 1;
 
 	@Override
+	/**
+	 * Creates and displays a new workflow
+	 */
 	public void actionPerformed(ActionEvent args0) {
 		
 		// Setup and Initialization
@@ -68,6 +71,14 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
 	}
 
+	/**
+	 * Reads in the hashtable.csv from the user's home/.ddg directory. If this
+	 * directory does not exist, a file chooser will be displayed so that the
+	 * user can select the location of the hashtable.csv on their system.
+	 * 
+	 * @param csvmap the ArrayList of string arrays to be modified
+	 * @throws IOException
+	 */
 	private void readHashtable(ArrayList<String[]> csvmap) throws IOException {
 		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
 		String home = System.getProperty("user.home");
@@ -89,6 +100,14 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		br.close();
 	}
 
+	/**
+	 * Generates the file nodes to be used in the workflow. It also makes calls to
+	 * generateScriptNode.
+	 * 
+	 * @param matches a series of string arrays obtained from reading the hashtable.csv file.
+	 * @param builder a workflowGraphBuilder
+	 * @return a list of file nodes to add to the graph.
+	 */
 	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches, WorkflowGraphBuilder builder) {
 		for (String[] match : matches) {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
@@ -121,6 +140,15 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		return fileNodes;
 	}
 
+	/**
+	 * Generates a script node based off of a collection of information
+	 * 
+	 * @param scrnodes the list of script nodes
+	 * @param file the name of the file
+	 * @param path the full path to the file
+	 * @param json the location of the associated ddg.json file
+	 * @return the script node that was generated
+	 */
 	private ScriptNode generateScriptNode(ArrayList<ScriptNode> scrnodes, RDataInstanceNode file, String path, String json) {
 		String name = path.substring(path.lastIndexOf('/') + 1);
 		ScriptNode ret = new ScriptNode(0.0, name, json, path);
