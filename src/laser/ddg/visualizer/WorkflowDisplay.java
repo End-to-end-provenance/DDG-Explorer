@@ -572,23 +572,6 @@ public class WorkflowDisplay extends Display {
 
 		};
 		
-		private PopupCommand showHowComputedCommand = new PopupCommand("Show how value was computed") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new DerivationQuery());
-			}
-
-		};
-
-
-		private PopupCommand showWhatIsComputedCommand = new PopupCommand("Show what is computed using this value") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new ResultsQuery());
-			}
-
-		};
-		
 		class PopupListener extends MouseAdapter {
 
 			@Override
@@ -626,7 +609,7 @@ public class WorkflowDisplay extends Display {
 					}
 
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {
-						showPopup(e, showValueCommand, showHowComputedCommand, showWhatIsComputedCommand);
+						showPopup(e, showValueCommand);
 					}
 
 					else if (PrefuseUtils.isLeafNode((NodeItem) item)) {

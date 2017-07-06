@@ -23,7 +23,7 @@ import prefuse.util.display.PaintListener;
 /**
  * Toolbar to interact with the WorkflowDisplay
  * 
- * @author Nikki Hoffler
+ * @author Nikki Hoffler and Connor Gregorich-Trevor
  *
  */
 public class WorkflowToolbar extends JToolBar {

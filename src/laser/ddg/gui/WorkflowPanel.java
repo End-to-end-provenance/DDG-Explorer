@@ -35,8 +35,8 @@ import laser.ddg.visualizer.WorkflowVisualization;
  * The JPanel that holds the workflow graph and the widgets to interact with the
  * graph.
  * 
- * @author Barbara Lerner
- * @version Sep 10, 2013
+ * @author Barbara Lerner, Connor Gregorich-Trevor
+ * @version July 6, 2017
  * 
  */
 public class WorkflowPanel extends JPanel {

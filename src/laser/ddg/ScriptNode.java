@@ -11,11 +11,13 @@ public class ScriptNode implements Node {
 	// SIN name
 	private final String nameOfSN;
 	
-	// The id of the node is set to zero if no id is assigned.
+	// The id of the node is set to zero if no id is assigned
 	private int id = 0;
 	
+	// The value of the node
 	private String value;
 	
+	// The location of the file
 	private String location;
 	
 	// Attribute-value pairs to allow arbitrary extensions
@@ -30,6 +32,14 @@ public class ScriptNode implements Node {
 	// The full path to the script
 	private String fullpath;
 
+	/**
+	 * Constructs a script node
+	 * 
+	 * @param elapsedTime the amount of time elapsed
+	 * @param name the name of the file
+	 * @param json the associated json for the file
+	 * @param fullpath the full path to the file
+	 */
 	public ScriptNode(double elapsedTime, String name, String json, String fullpath) {
 		this.timeCreated = Calendar.getInstance().toString();
 		this.elapsedTime = elapsedTime;

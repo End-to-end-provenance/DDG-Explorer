@@ -53,7 +53,7 @@ public class WorkflowLayout extends TreeLayout {
 	private NodeItem collapsedRoot;
 	
 	/**
-	 * Create a new DDGLayout. A top-to-bottom orientation is assumed.
+	 * Create a new WorkflowLayout. A top-to-bottom orientation is assumed.
 	 * 
 	 * @param group
 	 *            the data group to layout. Must resolve to a Graph instance.

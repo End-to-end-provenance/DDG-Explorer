@@ -55,7 +55,7 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
 
 /**
- * Builds a visual DDG graph using prefuse.
+ * Builds a visual workflow graph using prefuse.
  *
  * @author Barbara Lerner, Antonia Miruna Oprescu
  *
@@ -237,14 +237,14 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * save DDG to the database (method called in DDGTab)
+	 * save workflow to the database (method called in DDGTab)
 	 */
 	public void saveToDB() {
 		workflowPanel.saveToDB();
 	}
 
 	/**
-	 * check if DDG is already in the database (needed for DDGTab)
+	 * check if workflow is already in the database (needed for DDGTab)
 	 * 
 	 * @return boolean inside DB
 	 */
@@ -256,9 +256,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 * Sets the title displayed in the window
 	 * 
 	 * @param name
-	 *            The name of the program that created the DDG
+	 *            The name of the program that created the workflow
 	 * @param timestamp
-	 *            the timestamp when the DDG was created
+	 *            the timestamp when the workflow was created
 	 */
 	public void setTitle(String name, String timestamp) {
 		workflowPanel.setTitle(name, timestamp);
@@ -301,7 +301,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * updates the focus group to the node which is being added to the DDG
+	 * updates the focus group to the node which is being added to the workflow
 	 *
 	 * @param nodeId
 	 */
@@ -354,9 +354,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Changes the focus of the current ddg to be a particular node. If the node
+	 * Changes the focus of the current workflow to be a particular node. If the node
 	 * is currently visible, it scrolls so the node is in the center. If the
-	 * node is not currently visible, it expands the entire ddg and then scrolls
+	 * node is not currently visible, it expands the entire workflow and then scrolls
 	 * to the desired node.
 	 * 
 	 * @param nodeName
@@ -407,32 +407,20 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public ScriptNode getScriptNode (String leafName) {
 		return provData.findSn (leafName);
 	}
-
-	/**
-	 * Build the visual graph
-	 *
-	 * @param ddg
-	 *            the data derivation graph data
-	 */
-
-	private void buildGraph(ProvenanceData ddg) {
-		provData = ddg;
-		addNodesAndEdges(ddg);
-
-		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-
-	}
 	
+	/**
+	 * builds the visual graph
+	 */
 	private void buildGraph() {
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
 
 	}
 
 	/**
-	 * Builds a visual ddg from a textual ddg in a file
+	 * Builds a visual workflow from a textual workflow in a file
 	 *
 	 * @param file
-	 *            the file containing the ddg
+	 *            the file containing the workflow
 	 * @throws IOException
 	 *             if the file cannot be read
 	 */
@@ -461,15 +449,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
 	}
-
-	private void addNodesAndEdges(ProvenanceData ddg) {
-		ddg.visitPins(this);
-		ddg.visitDins(this);
-		ddg.visitSns(this);
-		ddg.visitDataflowEdges(this);
-
-	}
-
 
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
@@ -640,7 +619,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Adds an edge to a prefuse ddg
+	 * Adds an edge to a prefuse workflow
 	 *
 	 * @param type
 	 *            the type of the edge
@@ -688,10 +667,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Display a DDG visually
-	 *
-	 * @param ddg
-	 *            the ddg to display
+	 * Display a workflow visually
 	 */
 	public void drawGraph() {
 
@@ -716,9 +692,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	/**
 	 * 
-	 * @param compareDDG true when drawing side-by-side graphs for comparison, otherwise false
+	 * @param compareWorkflow true when drawing side-by-side graphs for comparison, otherwise false
 	 */
-	private void initializeDisplay(boolean compareDDG) {
+	private void initializeDisplay(boolean compareWorkflow) {
 		// -- 2. the visualization --------------------------------------------
 
 		vis.add(GRAPH, graph);
@@ -730,7 +706,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// -- 4. the processing actions ---------------------------------------
 
-		ActionList color = assignColors(compareDDG);
+		ActionList color = assignColors(compareWorkflow);
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
@@ -747,7 +723,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// -- 5. the display and interactive controls -------------------------
 		// WorkflowDisplay
-		dispPlusOver.initialize(vis, compareDDG);
+		dispPlusOver.initialize(vis, compareWorkflow);
 
 		// focus action
 		ActionList animate = new ActionList();
@@ -766,10 +742,10 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	/**
 	 * Set the colors to use when drawing the graphs
-	 * @param compareDDG true if we are drawing side-by-side graphs for comparison, otherwise false
+	 * @param compareWorkflow true if we are drawing side-by-side graphs for comparison, otherwise false
 	 * @return
 	 */
-	private static ActionList assignColors(boolean compareDDG) {
+	private static ActionList assignColors(boolean compareWorkflow) {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -777,7 +753,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// highlight node if selected from search results
-		if (compareDDG) {
+		if (compareWorkflow) {
 			fill = fillComparisonPallette();
 		} else {
 			fill = fillDisplayPalette();
@@ -816,7 +792,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Fills the color palette for normal ddg display
+	 * Fills the color palette for normal workflow display
 	 * @return the palette to use
 	 */
 	private static ColorAction fillDisplayPalette() {
@@ -852,7 +828,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Fills the palette with colors to use when comparing 2 ddgs
+	 * Fills the palette with colors to use when comparing 2 workflows
 	 * @return the palette to use
 	 */
 	private static ColorAction fillComparisonPallette() {
@@ -892,11 +868,11 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 *            the language to add the legend for
 	 */
 	public void createLegend(String language) {
-		Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(language);
+		Class<DDGBuilder> wfBuilderClass = LanguageConfigurator.getDDGBuilder(language);
 		try {
-			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createNodeLegend")
+			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) wfBuilderClass.getMethod("createNodeLegend")
 					.invoke(null);
-			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend")
+			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) wfBuilderClass.getMethod("createEdgeLegend")
 					.invoke(null);
 			workflowPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
@@ -924,7 +900,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	/**
 	 * Initializes the prefuse tables.
 	 */
-	private void processStarted(ProvenanceData provData, boolean compareDDG) {
+	private void processStarted(ProvenanceData provData, boolean compareWorkflow) {
 		// initialize file
 		/* initFile(); */
 
@@ -935,7 +911,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		this.provData = provData;
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-		initializeDisplay(compareDDG);
+		initializeDisplay(compareWorkflow);
 	}
 
 	/**
@@ -952,7 +928,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Repaints the finished ddg
+	 * Repaints the finished workflow
 	 */
 	@Override
 	public void processFinished() {
@@ -960,7 +936,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		// close file
 		/* outFile.close(); */
 
-		// System.out.println("Drawing DDG");
+		// System.out.println("Drawing Workflow");
 		processFinished = true;
 		dispPlusOver.stopRefocusing();
 		if (!incremental) {
@@ -1665,7 +1641,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			hideCollapsedMembers(item);
 			if (PrefuseUtils.isStartNode(vis.getStart(item))) {
 				// If we have a Checkpoint node as the start node, we are
-				// in the middle of a walk up the DDG, not down it.
+				// in the middle of a walk up the workflow, not down it.
 				collapse(item.inNeighbors());
 			}
 		}
@@ -2026,7 +2002,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Displays a file chooser for textual DDGs and displays the result
+	 * Displays a file chooser for textual workflows and displays the result
 	 * visually.
 	 *
 	 * @param args
@@ -2096,14 +2072,23 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	public String getProcessName() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getProcessName();
 	}
 
 	public String getTimestamp() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getTimestamp();
 	}
 
 	public String getLanguage() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getLanguage();
 	}
 
