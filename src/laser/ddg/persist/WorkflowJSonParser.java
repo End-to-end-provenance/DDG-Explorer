@@ -21,7 +21,7 @@ import laser.ddg.ScriptInfo;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 /**
- * Parser for ddgs written in Json syntax.
+ * Parser for workflow written in Json syntax.
  * 
  * @author Barbara Lerner
  * @version Oct 20, 2016

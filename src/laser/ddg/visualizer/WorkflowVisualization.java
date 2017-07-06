@@ -17,7 +17,7 @@ import prefuse.visual.VisualItem;
  * track of the relationships between collapsed nodes and the
  * members of those collapsed nodes.
  * 
- * Collapsed nodes are what allow for the hierarchical drawing of DDGs.
+ * Collapsed nodes are what allow for the hierarchical drawing of workflows.
  * A collapsed node has a single entry point (a start node), a 
  * single exit point (a finish node), and multiple other member
  * nodes.  Members, other than the start and finish nodes, can 
@@ -172,7 +172,7 @@ public class WorkflowVisualization extends Visualization {
 	}
 
 	/**
-	 * @return the last restore node in the ddg
+	 * @return the last restore node in the workflow
 	 */
 	public NodeItem getLastRestore() {
 		return checkpointTable.getLastRestore();
@@ -180,7 +180,7 @@ public class WorkflowVisualization extends Visualization {
 
 	/**
 	 * @param n
-	 * @return the last restore node in the ddg that precedes n
+	 * @return the last restore node in the workflow that precedes n
 	 */
 	public NodeItem getLastRestoreBefore(Node n) {
 		if (PrefuseUtils.isCheckpointNode(n) || PrefuseUtils.isRestoreNode(n)) {

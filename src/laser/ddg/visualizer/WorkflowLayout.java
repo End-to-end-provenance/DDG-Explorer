@@ -20,7 +20,7 @@ import prefuse.visual.EdgeItem;
 import prefuse.visual.NodeItem;
 
 /**
- * Creates a layout for DDG graphs
+ * Creates a layout for workflow graphs
  * 
  * @author Antonia Miruna Oprescu
  * 
@@ -724,5 +724,5 @@ public class WorkflowLayout extends TreeLayout {
 	}
 
 
-} // end of class DDGLayout
+} // end of class WorkflowLayout.
 

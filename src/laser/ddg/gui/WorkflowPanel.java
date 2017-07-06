@@ -27,13 +27,12 @@ import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
-import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.DisplayWorkflowWithOverview;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 import laser.ddg.visualizer.WorkflowVisualization;
 
 /**
- * The JPanel that holds the DDG graph and the widgets to interact with the
+ * The JPanel that holds the workflow graph and the widgets to interact with the
  * graph.
  * 
  * @author Barbara Lerner
@@ -42,12 +41,12 @@ import laser.ddg.visualizer.WorkflowVisualization;
  */
 public class WorkflowPanel extends JPanel {
 
-	// Describes the main attributes of the ddg
+	// Describes the main attributes of the workflow
 	private JLabel descriptionArea;
 
 	// Panel holding ddgDisplays and everything else besides the toolbar.
 	// (needed for Legend's use)
-	private JPanel ddgMain;
+	private JPanel wfMain;
 	
 	// Where error messages are displayed.
 	private JTextArea errorLog;
@@ -67,7 +66,7 @@ public class WorkflowPanel extends JPanel {
 	// The panel containing the complete legend
 	private Legend legendBox = new Legend();
 
-	// The toolBar interacting with the main DDGDisplay
+	// The toolBar interacting with the main display
 	private WorkflowToolbar toolbar;
 
 	// enables the the search list to be horizontally resize by the user
@@ -89,14 +88,14 @@ public class WorkflowPanel extends JPanel {
 	private ArrayList<ScriptDisplayer> fileDisplayers = new ArrayList<>();
 	
 	/**
-	 * Create a frame to display the DDG graph in
+	 * Create a frame to display the workflow graph in
 	 */
 	public WorkflowPanel() {
 		super(new BorderLayout());
 	}
 
 	/**
-	 * Create a frame to display the DDG graph in
+	 * Create a frame to display the workflow graph in
 	 * 
 	 * @param dbWriter
 	 *            the object that knows how to write to a database
@@ -114,9 +113,9 @@ public class WorkflowPanel extends JPanel {
 	 * @param vis
 	 *            the visualization to display
 	 * @param dispPlusOver
-	 *            the combined ddg display and its overview
+	 *            the combined workflow display and its overview
 	 * @param provData
-	 *            the ddg data being displayed
+	 *            the workflow data being displayed
 	 */
 	public void displayDDG(WorkflowGraphBuilder builder, WorkflowVisualization vis, DisplayWorkflowWithOverview dispPlusOver, ProvenanceData provData) {
 		this.builder = builder;
@@ -127,7 +126,7 @@ public class WorkflowPanel extends JPanel {
 		// Set up toolbarPanel and inside, ddgPanel:
 		// ddgPanel to hold description, ddgDisplay, ddgOverview, legend,
 		// search...
-		ddgMain = dispPlusOver.createPanel(createDescription());
+		wfMain = dispPlusOver.createPanel(createDescription());
 		
 		toolbar = new WorkflowToolbar(dispPlusOver.getDisplay());
 
@@ -136,7 +135,7 @@ public class WorkflowPanel extends JPanel {
 
 		// set the DDG on the right of JSplitPane and later the DDG Search
 		// Results on the Left
-		splitPane.setRightComponent(ddgMain);
+		splitPane.setRightComponent(wfMain);
 
 		add(splitPane, BorderLayout.CENTER);
 		
@@ -227,7 +226,7 @@ public class WorkflowPanel extends JPanel {
 		if (attrList.contains("Script")) {
 			setTitleToScriptAndTime(attrList.get("Script"));
 		} else {
-			setName("DDG Viewer");
+			setName("Workflow Viewer");
 		}
 	}
 
@@ -296,10 +295,10 @@ public class WorkflowPanel extends JPanel {
 		if (descriptionArea != null) {
 			updateDescription();
 		}
-		// set the Title for DDGs opened by file. Otherwise they have no title
-		// DDGs opened from the DB will have the title set later.
-		// unlike ddgs opened from the DB, ddgs opened by file will have the
-		// Language filled in.
+		// set the Title for workflow opened by file. Otherwise it has no title
+		// Workflows opened from the DB will have the title set later.
+		// Unlike workflows opened from the DB, workflowss opened by file will have the
+		// language filled in.
 		if (this.getName() == null && provData.getLanguage() != null) {
 			// System.out.println("empty title and language = " +
 			// provData.getLanguage());
@@ -329,8 +328,8 @@ public class WorkflowPanel extends JPanel {
 	}
 
 	public void addLegend() {
-		ddgMain.add(legendBox, BorderLayout.WEST);
-		ddgMain.validate();
+		wfMain.add(legendBox, BorderLayout.WEST);
+		wfMain.validate();
 	}
 
 	public void drawLegend(ArrayList<LegendEntry> nodeLegend,
@@ -342,8 +341,8 @@ public class WorkflowPanel extends JPanel {
 	 * Remove the legend from the display
 	 */
 	public void removeLegend() {
-		ddgMain.remove(legendBox);
-		ddgMain.validate();
+		wfMain.remove(legendBox);
+		wfMain.validate();
 	}
 
 	public void setSearchIndex(SearchIndex searchIndex) {

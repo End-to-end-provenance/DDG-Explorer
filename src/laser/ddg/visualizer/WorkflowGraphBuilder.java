@@ -121,7 +121,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	// private Object lock = new Object();
 	WorkflowPanel workflowPanel;
-	private TreeLayout ddgLayout;
+	private TreeLayout wfLayout;
 
 	// The root of the provenance graph, where layout begins
 	private NodeItem root;
@@ -734,8 +734,8 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
-		ddgLayout = new WorkflowLayout(GRAPH, dataDerivation);
-		layout.add(ddgLayout);
+		wfLayout = new WorkflowLayout(GRAPH, dataDerivation);
+		layout.add(wfLayout);
 
 		ActionList repaint = new ActionList();
 		repaint.add(new RepaintAction());
@@ -1086,11 +1086,11 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			root = getTableNodeItem(1);
 			// System.out.println("setRoot: Root set to " + root);
 		}
-		ddgLayout.setLayoutRoot(root);
+		wfLayout.setLayoutRoot(root);
 	}
 
 	private void setCollapsedRoot(NodeItem collapsedRoot) {
-		ddgLayout.setLayoutRoot(collapsedRoot);
+		wfLayout.setLayoutRoot(collapsedRoot);
 	}
 
 	@Override
@@ -1101,7 +1101,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			root = getTableNodeItem(MIN_DATA_ID + rootNode.getId());
 		}
 		// System.out.println("rootSet: root set to " + rootNode);
-		ddgLayout.setLayoutRoot(root);
+		wfLayout.setLayoutRoot(root);
 	}
 
 	public void setSelectedProcedureNodeID(int pinID) {

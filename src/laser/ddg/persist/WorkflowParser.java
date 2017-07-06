@@ -84,7 +84,7 @@ public abstract class WorkflowParser {
 	
 	/**
 	 * Initializes the parser
-	 * @param file the file to read the DDG from
+	 * @param file the file to read the workflow from
 	 * @param builder the prefuse object that will build the graph
 	 */
 	protected WorkflowParser(File file, WorkflowGraphBuilder builder)  {
@@ -131,7 +131,7 @@ public abstract class WorkflowParser {
 		provData.setSourceDDGFile(fileBeingParsed.getAbsolutePath());
 		provData.setAttributes(attributes);
 		
-		provData.setQuery("Entire DDG");
+		provData.setQuery("Entire Workflow");
 		if (builder != null) {
 			builder.setProvData(provData);
 		}

@@ -28,7 +28,6 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
 import laser.ddg.commands.ShowDataFlowCommand;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.ResultsQuery;
@@ -43,7 +42,7 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
 /**
- * Displays a DDG using prefuse. Manages panning and zooming and things in the
+ * Displays a workflow using prefuse. Manages panning and zooming and things in the
  * right-click menu.
  * 
  * @author Antonia Miruna Oprescu
@@ -59,16 +58,16 @@ public class WorkflowDisplay extends Display {
 	private WorkflowGraphBuilder builder;
 
 	private static final int FILE_CURRENT = 0;
-	private static final int FILE_INCONSISTENT_WITH_DDG = 1;
-	private static final int FILE_INCONSISTENT_WITH_DDG_CANCEL = -1;
+	private static final int FILE_INCONSISTENT_WITH_WORKFLOW = 1;
+	private static final int FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL = -1;
 	private static final int FILE_MISSING = -2;
-	private static final String FUNCTION = "#ddg.function";
+	private static final String FUNCTION = "#workflow.function";
 
 	/**
-	 * Create a display for a prefuse DDG
+	 * Create a display for a prefuse workflow
 	 * 
 	 * @param builder
-	 *            the object that is building the Prefuse graph of the ddg
+	 *            the object that is building the Prefuse graph of the workflow
 	 */
 	public WorkflowDisplay(WorkflowGraphBuilder builder) {
 		this.builder = builder;
@@ -119,7 +118,7 @@ public class WorkflowDisplay extends Display {
 
 	private void openFile(final NodeItem n) throws IOException {
 		// Get timeStamp if one has been included
-		String ddgTime = PrefuseUtils.getTimestamp(n);
+		String workflowTime = PrefuseUtils.getTimestamp(n);
 
 		// Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
@@ -131,9 +130,9 @@ public class WorkflowDisplay extends Display {
 			if (valueExt.equals(".csv") || valueExt.equals(".txt")) {
 				// make sure it has the correct slashes in the path
 				value = getOS(value);
-				createFileFrame(value, ddgTime);
+				createFileFrame(value, workflowTime);
 			} else if (valueExt.equals(".jpeg") || valueExt.equals(".png") || valueExt.equals(".gif")) {
-				createPlotFrame(value, ddgTime);
+				createPlotFrame(value, workflowTime);
 			} else if (valueExt.equals(".RData")) {
 				JOptionPane.showMessageDialog(WorkflowDisplay.this, "R Checkpoint file: " + value);
 			} else { // if(valueExt.equals(".pdf") || valueExt.equals(".html")
@@ -141,7 +140,7 @@ public class WorkflowDisplay extends Display {
 						// Should work for all kinds of files. Uses a
 						// platform-specific
 						// application.
-				new FileViewer(value, ddgTime).displayFile();
+				new FileViewer(value, workflowTime).displayFile();
 			}
 			// else {
 			// JOptionPane.showMessageDialog(DDGDisplay.this,"This data does not
@@ -160,7 +159,7 @@ public class WorkflowDisplay extends Display {
 	 * @param path
 	 *            path of the file (either .csv or .txt)
 	 * @param time
-	 *            timestamp of the file given by the DDG
+	 *            timestamp of the file given by the workflow
 	 */
 	private void createFileFrame(String path, String time) throws IOException {
 		// Check the timestamps
@@ -170,15 +169,15 @@ public class WorkflowDisplay extends Display {
 			tChange = timeChanged(path, time);
 		}
 
-		// Timestamp of file is not consistent with the ddg and the
+		// Timestamp of file is not consistent with the workflow and the
 		// user canceled the request to view the file
-		if (tChange == FILE_INCONSISTENT_WITH_DDG_CANCEL || tChange == FILE_MISSING) {
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL || tChange == FILE_MISSING) {
 			return;
 		}
 
 		FileViewer fileViewer = new FileViewer(path, time);
-		if (tChange == FILE_INCONSISTENT_WITH_DDG) {
-			// Add warning border if file is inconsistent with the ddg
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW) {
+			// Add warning border if file is inconsistent with the workflow
 			fileViewer.addBorder(Color.RED);
 		}
 		fileViewer.displayFile();
@@ -193,7 +192,7 @@ public class WorkflowDisplay extends Display {
 	 *            path name that the image file is found or. Can be .jpeg, .gif,
 	 *            .png or a URL
 	 * @param time
-	 *            timestamp of the plot given by the DDG
+	 *            timestamp of the plot given by the workflow
 	 * @exception IOException if the image file cannot be read
 	 */
 	private void createPlotFrame(String path, String time) throws IOException {
@@ -204,15 +203,15 @@ public class WorkflowDisplay extends Display {
 			tChange = timeChanged(path, time);
 		}
 
-		// Timestamp of file is not consistent with the ddg and the
+		// Timestamp of file is not consistent with the workflow and the
 		// user canceled the request to view the file
-		if (tChange == FILE_INCONSISTENT_WITH_DDG_CANCEL || tChange == FILE_MISSING) {
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL || tChange == FILE_MISSING) {
 			return;
 		}
 
 		FileViewer fileViewer = new FileViewer(path, time);
-		if (tChange == FILE_INCONSISTENT_WITH_DDG) {
-			// Add warning border if file is inconsistent with the ddg
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW) {
+			// Add warning border if file is inconsistent with the workflow
 			fileViewer.addBorder(Color.RED);
 		}
 		fileViewer.displayFile();
@@ -225,9 +224,9 @@ public class WorkflowDisplay extends Display {
 	 * @param path
 	 *            the file/plot timestamp given by the system
 	 * @param time
-	 *            the timestamp associated with the file/plot given from the DDG
-	 * @return returns FILE_INCONSISTENT_WITH_DDG(conflict but viewable),
-	 *         FILE_CURRENT(no conflict) or FILE_INCONSISTENT_WITH_DDG_CANCEL
+	 *            the timestamp associated with the file/plot given from the workflow
+	 * @return returns FILE_INCONSISTENT_WITH_WORKFLOW(conflict but viewable),
+	 *         FILE_CURRENT(no conflict) or FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL
 	 *         (conflict but don't view)
 	 */
 	private int timeChanged(String path, String time) {
@@ -245,33 +244,33 @@ public class WorkflowDisplay extends Display {
 		// make a date object out of the original timestamp so they can be
 		// compared
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.sszzz");
-		Date ddgTime;
+		Date workflowTime;
 
 		try {
-			ddgTime = formatter.parse(time);
+			workflowTime = formatter.parse(time);
 
 			// find difference between the dates, acceptable if not more than a
 			// minute apart.
-			long diff = Math.abs(fileTime.getTime() - ddgTime.getTime());
+			long diff = Math.abs(fileTime.getTime() - workflowTime.getTime());
 			if (diff <= 6000) {
 				return FILE_CURRENT;
 			}
 
-			// Time on the file is after time stored in DDG
+			// Time on the file is after time stored in workflow
 			int choice = JOptionPane.showConfirmDialog(WorkflowDisplay.this,
 					"There is a conflict between the timestamps. File may be modified. Would you like to open the file anyway?",
 					"File Timestamps Warning", JOptionPane.OK_CANCEL_OPTION);
 			if (choice == JOptionPane.OK_OPTION) {
 				// conflict but still show file
-				return FILE_INCONSISTENT_WITH_DDG;
+				return FILE_INCONSISTENT_WITH_WORKFLOW;
 			} else {
 				// conflict but do not open file
-				return FILE_INCONSISTENT_WITH_DDG_CANCEL;
+				return FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL;
 			}
 		} catch (ParseException e) {
-			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. " + e.getMessage());
+			DDGExplorer.showErrMsg("Error with parsing the workflow timestamp. " + e.getMessage());
 			e.printStackTrace(System.err);
-			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
+			return FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL;
 		}
 	}
 
@@ -320,7 +319,7 @@ public class WorkflowDisplay extends Display {
 	}
 
 	/**
-	 * Allows the user to move to a desired portion of the DDG
+	 * Allows the user to move to a desired portion of the workflow
 	 */
 	class AutoPanAction extends Action {
 		private Point2D mCur = new Point2D.Double();

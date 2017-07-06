@@ -28,7 +28,7 @@ public class ViewWorkflowFinderBorders implements PaintListener {
 
 	@Override
 	/**
-	 * after both ddg displays have been drawn, create a rectangle in the
+	 * after both workflow displays have been drawn, create a rectangle in the
 	 * overview that represents the regular display's view.
 	 */
 	public void postPaint(Display overview, Graphics2D g) {

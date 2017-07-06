@@ -55,7 +55,7 @@ public class DisplayWorkflowWithOverview {
 		return displayOverview;
 	}
 
-	public void initialize(Visualization vis, boolean compareDDG) {
+	public void initialize(Visualization vis, boolean compareWorkflow) {
 		display.setVisualization(vis);
 
 		display.addControlListener(new DragControl());
@@ -75,7 +75,7 @@ public class DisplayWorkflowWithOverview {
 			}
 		});
 
-		if (!compareDDG) {
+		if (!compareWorkflow) {
 			display.addControlListener(new PanControl());
 			
 			// Pan control is set after both sides of the compare
@@ -96,10 +96,10 @@ public class DisplayWorkflowWithOverview {
 
 		displayOverview.setPreferredSize(new Dimension(175, 500));
 			
-		if (!compareDDG) {
+		if (!compareWorkflow) {
 			// keep track of mouse clicks to move the grey rectangle.
-			// When doing ddg comparisons, we do this later so that 
-			// both ddgs have the same view finder listener.
+			// When doing workflow comparisons, we do this later so that 
+			// both workflows have the same view finder listener.
 			ViewWorkflowFinderListener vwfL = new ViewWorkflowFinderListener(this);
 			displayOverview.addMouseMotionListener(vwfL);
 			displayOverview.addMouseListener(vwfL);
@@ -107,41 +107,39 @@ public class DisplayWorkflowWithOverview {
 	}
 
 	public JPanel createPanel(Component description) {
-		JPanel ddgMain = new JPanel();
-		ddgMain.setLayout(new BoxLayout(ddgMain, BoxLayout.X_AXIS));
-		ddgMain.setBackground(Color.WHITE);
+		JPanel wfMain = new JPanel();
+		wfMain.setLayout(new BoxLayout(wfMain, BoxLayout.X_AXIS));
+		wfMain.setBackground(Color.WHITE);
 		if (description != null) {
-			// Main display shows the ddg name here.
-			// When comparing ddgs, there is a panel above
-			// that shows the name.
+			// Main display shows the worklfo name here.
 			JPanel bigDisp = new JPanel();
 			bigDisp.setLayout(new BorderLayout());
 			bigDisp.add(description, BorderLayout.NORTH);
 			bigDisp.add(display, BorderLayout.CENTER);
-			ddgMain.add(bigDisp);
+			wfMain.add(bigDisp);
 		}
 		else {
-			ddgMain.add(display);
+			wfMain.add(display);
 		}
 
-		WorkflowDisplay ddgOverview = displayOverview;
-		ddgOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
-		ddgMain.add(ddgOverview);
+		WorkflowDisplay wfOverview = displayOverview;
+		wfOverview.setBorder(BorderFactory.createTitledBorder("Overview"));
+		wfMain.add(wfOverview);
 		
 		// legend added to WEST through preferences
 
 		
-		ddgOverview.addComponentListener(new ComponentAdapter() {
+		wfOverview.addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
 				//System.out.println("overview resized");
-				ddgOverview.zoomToExactFit();
+				wfOverview.zoomToExactFit();
 			}
 		});
 
 
-		return ddgMain;
+		return wfMain;
 	}
 
 	public Action getPanner() {
@@ -164,7 +162,7 @@ public class DisplayWorkflowWithOverview {
 	 * @param userDisplay
 	 *            larger, maleable user display
 	 * @param overview
-	 *            corner overview of DDG
+	 *            corner overview of workflow
 	 * @return rectangle transformed to place directly onto overview
 	 */
 	public Rectangle calcViewFinder() {
@@ -192,7 +190,7 @@ public class DisplayWorkflowWithOverview {
 	}
 	
 	/**
-	 * Keeps track of bounds of DDG so that Overview will accommodate changes
+	 * Keeps track of bounds of the workflow so that Overview will accommodate changes
 	 * @author Nicole
 	 */
 	 public static class FitOverviewListener implements ItemBoundsListener {

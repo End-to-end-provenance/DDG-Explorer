@@ -17,8 +17,7 @@ import laser.ddg.r.RDataInstanceNode;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 /**
- * Command to examine a DDG and determine if any of the MD5 hashes of its
- * file nodes match with the MD5 hashes contained in the hashtable.csv file.
+ * Command to examine the hashtable.csv and create a workflow from it.
  * 
  * @author Connor Gregorich-Trevor
  * @version June 13, 2017
@@ -45,9 +44,9 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		
 		// Read in the hashtable and find nodes with matching hashes.
 		try {
-			ArrayList<String[]> matches = new ArrayList<String[]>();
-			readHashtable(matches);
-			generateFileNodes(matches, builder);
+			ArrayList<String[]> entries = new ArrayList<String[]>();
+			readHashtable(entries);
+			generateFileNodes(entries, builder);
 		} catch (Exception e) {
 			e.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(ddgExplorer,
@@ -104,12 +103,12 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	 * Generates the file nodes to be used in the workflow. It also makes calls to
 	 * generateScriptNode.
 	 * 
-	 * @param matches a series of string arrays obtained from reading the hashtable.csv file.
+	 * @param entries a series of string arrays obtained from reading the hashtable.csv file.
 	 * @param builder a workflowGraphBuilder
 	 * @return a list of file nodes to add to the graph.
 	 */
-	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> matches, WorkflowGraphBuilder builder) {
-		for (String[] match : matches) {
+	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> entries, WorkflowGraphBuilder builder) {
+		for (String[] match : entries) {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
 			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
 			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");

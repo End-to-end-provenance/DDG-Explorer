@@ -39,7 +39,7 @@ public class WorkflowToolbar extends JToolBar {
 	}
 	
     public WorkflowToolbar(WorkflowDisplay WorkflowDisplay) {   
-    	super("DDG Tools", SwingConstants.HORIZONTAL);
+    	super("Workflow Tools", SwingConstants.HORIZONTAL);
     	WorkflowDisplays.add(WorkflowDisplay);
         addTools();
         
@@ -74,7 +74,7 @@ public class WorkflowToolbar extends JToolBar {
                 //System.out.println(zoomedScale + " slider/10");
                 
                 for (WorkflowDisplay WorkflowDisplay : WorkflowDisplays) {
-					scaleDDG(zoomedScale, WorkflowDisplay); 
+					scaleWorkflow(zoomedScale, WorkflowDisplay); 
 				}
             });
 	    	
@@ -93,7 +93,7 @@ public class WorkflowToolbar extends JToolBar {
 
     }
 
-	private void scaleDDG(double zoomedScale, WorkflowDisplay WorkflowDisplay) {
+	private void scaleWorkflow(double zoomedScale, WorkflowDisplay WorkflowDisplay) {
 		//current scale
 		double currentScale = WorkflowDisplay.getScale();
 		//System.out.println(currentScale + " current display scale");

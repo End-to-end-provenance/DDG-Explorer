@@ -65,6 +65,12 @@ public class ShowDataFlowCommand {
 		DDGExplorer.doneLoadingDDG();
 	}
 	
+	/**
+	 * Executes the query to display a dataflow path to a particular node
+	 * @param builder the workflow graph builder that holds the data for the ddg
+	 * @param node the node that the user wants to see the derivation of
+	 * @param query the query that Jena uses
+	 */
 	public static void execute(WorkflowGraphBuilder builder, Node node, DataQuery query) {
 		String processPath = builder.getProcessName();
 		String timestamp = builder.getTimestamp();

@@ -81,7 +81,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private static JMenuItem saveDB;   // Enabled when a ddg is read from a file
 	private JMenuItem attributesItem;  // Enabled on everything but the home panel
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
-	private JMenuItem hashesItem; // Enabled on everything but the home panel
 
 	private JCheckBoxMenuItem showLegendMenuItem;
 
@@ -468,7 +467,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 
 	/**
 	 * @return the DDGPanel that the user is currently viewing.  Returns
-	 *   null if the user is viewing the home panel (i.e., no DDG).
+	 *   null if the user is viewing the home panel (i.e., no DDG or viewing a workflow).
 	 */
 	public static DDGPanel getCurrentDDGPanel() {
 		Component selectedTab = tabbed.getSelectedComponent();
@@ -478,6 +477,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		return (DDGPanel) selectedTab;
 	}
 
+	/**
+	 * @return the WorkflowPanel that the user is currently viewing.  Returns
+	 *   null if the user is viewing the home panel (i.e., no workflow, or viewing a DDG).
+	 */
 	public static WorkflowPanel getCurrentWorkflowPanel() {
 		Component selectedTab = tabbed.getSelectedComponent();
 		if (!(selectedTab instanceof WorkflowPanel)) {
