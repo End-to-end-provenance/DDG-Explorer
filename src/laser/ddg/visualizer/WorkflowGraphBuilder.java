@@ -413,7 +413,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 */
 	private void buildGraph() {
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-
+		provData = new ProvenanceData("Workflow");
+		provData.setQuery("Entire Workflow");
+		setProvData(provData);
 	}
 
 	/**

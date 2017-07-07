@@ -12,6 +12,7 @@ import laser.ddg.AbstractDataInstanceNode;
 public class RDataInstanceNode extends AbstractDataInstanceNode{
 	// The node type. 
 	private String type;
+	private String value;
 	
 	/**
 	 * Creates a new data node
@@ -24,6 +25,7 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	 */
 	public RDataInstanceNode(String type, String name, String value, String time, String location){		
 		super(value, name, time, location);
+		this.value = value;
 		this.type = type;
 	}
 	
@@ -35,5 +37,10 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	@Override
 	public String getType() {
 		return type;
+	}
+	
+	@Override
+	public String getValue() {
+		return value;
 	}
 }

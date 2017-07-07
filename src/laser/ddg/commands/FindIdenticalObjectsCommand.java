@@ -36,8 +36,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	 * Creates and displays a new workflow
 	 */
 	public void actionPerformed(ActionEvent args0) {
-		
 		// Setup and Initialization
+		DDGExplorer.loadingDDG();
 		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		builder.buildNodeAndEdgeTables();
@@ -59,7 +59,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			builder.addNode(node, node.getId());
 		}
 		for (RDataInstanceNode node : fileNodes) {
-			builder.addNode(node.getType(), node.getId(), node.getName(), null,
+			// By changing the value field here, we can make file viewing possible.
+			builder.addNode(node.getType(), node.getId(), node.getName(), node.getValue(),
 					node.getCreatedTime(), node.getLocation(), null);
 		}
 		
@@ -68,6 +69,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		ddgExplorer.addTab("Script Workflow", builder.getPanel());
+		DDGExplorer.doneLoadingDDG();
 	}
 
 	/**
