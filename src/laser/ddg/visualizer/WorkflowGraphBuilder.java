@@ -1,6 +1,5 @@
 package laser.ddg.visualizer;
 
-import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +13,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
@@ -108,7 +104,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	private boolean rootDrawn = false;
 
 	// visualization and display tools
-	private final WorkflowVisualization vis = new WorkflowVisualization();
+	private final DDGVisualization vis = new DDGVisualization();
 	private BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 

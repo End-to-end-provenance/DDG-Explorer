@@ -111,7 +111,7 @@ public class DisplayWorkflowWithOverview {
 		wfMain.setLayout(new BoxLayout(wfMain, BoxLayout.X_AXIS));
 		wfMain.setBackground(Color.WHITE);
 		if (description != null) {
-			// Main display shows the worklfo name here.
+			// Main display shows the workflow name here.
 			JPanel bigDisp = new JPanel();
 			bigDisp.setLayout(new BorderLayout());
 			bigDisp.add(description, BorderLayout.NORTH);

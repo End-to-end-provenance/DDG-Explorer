@@ -32,7 +32,7 @@ public class WorkflowToolbar extends JToolBar {
 	private int sliderSetting = 10;
 	
 	public WorkflowToolbar() {
-    	super("DDG Tools", SwingConstants.HORIZONTAL);
+    	super("Workflow Tools", SwingConstants.HORIZONTAL);
         addTools();
         
 		this.addPropertyChangeListener(createListener());   

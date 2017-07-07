@@ -27,9 +27,9 @@ import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.DisplayWorkflowWithOverview;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
-import laser.ddg.visualizer.WorkflowVisualization;
 
 /**
  * The JPanel that holds the workflow graph and the widgets to interact with the
@@ -58,7 +58,7 @@ public class WorkflowPanel extends JPanel {
 	private DBWriter dbWriter;
 
 	// The visualization of the ddg
-	private WorkflowVisualization vis;
+	private DDGVisualization vis;
 	
 	// The object that manages the visible nodes
 	private WorkflowGraphBuilder builder;
@@ -117,7 +117,7 @@ public class WorkflowPanel extends JPanel {
 	 * @param provData
 	 *            the workflow data being displayed
 	 */
-	public void displayDDG(WorkflowGraphBuilder builder, WorkflowVisualization vis, DisplayWorkflowWithOverview dispPlusOver, ProvenanceData provData) {
+	public void displayDDG(WorkflowGraphBuilder builder, DDGVisualization vis, DisplayWorkflowWithOverview dispPlusOver, ProvenanceData provData) {
 		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;

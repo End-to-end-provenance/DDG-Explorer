@@ -223,10 +223,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				SearchPanel.enableSearch();
 				disableDDGCommands();
 				if (PREFERENCES.isArrowDirectionDown()) {
-					openwfPanel.setArrowDirectionDown();
+					openwfPanel.setArrowDirectionUp();
 				}
 				else {
-					openwfPanel.setArrowDirectionUp();
+					openwfPanel.setArrowDirectionDown();
 				}
 				if (PREFERENCES.isShowLegend()) {
 					openwfPanel.addLegend();
@@ -516,7 +516,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 		WorkflowPanel wfPanel = getCurrentWorkflowPanel();
 		if (wfPanel != null)  {
-			getCurrentWorkflowPanel().setArrowDirectionDown();
+			getCurrentWorkflowPanel().setArrowDirectionUp();
 		}
 		PREFERENCES.setArrowDirectionDown();
 	}
@@ -532,7 +532,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		}
 		WorkflowPanel wfPanel = getCurrentWorkflowPanel();
 		if (wfPanel != null) {
-			getCurrentWorkflowPanel().setArrowDirectionUp();
+			getCurrentWorkflowPanel().setArrowDirectionDown();
 		}
 		PREFERENCES.setArrowDirectionUp();
 	}
