@@ -36,7 +36,6 @@ import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.DBWriter;
-import laser.ddg.persist.WorkflowParser;
 import laser.ddg.search.SearchIndex;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -409,30 +408,17 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 	
 	/**
-	 * builds the visual graph
+	 * builds the visual graph and sets the title.
 	 */
 	private void buildGraph() {
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
 		provData = new ProvenanceData("Workflow");
 		provData.setQuery("Entire Workflow");
-		setProvData(provData);
 	}
 
 	/**
-	 * Builds a visual workflow from a textual workflow in a file
-	 *
-	 * @param file
-	 *            the file containing the workflow
-	 * @throws IOException
-	 *             if the file cannot be read
+	 * Builds the table of nodes and edges to be filled in.
 	 */
-	private void buildGraph(File file) throws IOException {
-		WorkflowParser parser = WorkflowParser.createParser(file, this);
-		parser.addNodesAndEdges();
-		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-
-	}
-
 	public void buildNodeAndEdgeTables() {
 		synchronized (vis) {
 			nodes.addColumn(PrefuseUtils.TYPE, String.class);
@@ -481,7 +467,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -505,7 +491,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -570,6 +556,13 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		/* outFile.println(id+" \""+name+"\" "+type); */
 	}
 	
+	/**
+	 * Adds a script node to the workflow graph
+	 * 
+	 * @param node the node to be added
+	 * @param id the node's id
+	 * @return the row of the table where the new node is added
+	 */
 	public int addNode(ScriptNode node, int id) {
 		try {
 			synchronized (vis) {
@@ -601,7 +594,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -708,7 +701,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// -- 4. the processing actions ---------------------------------------
 
-		ActionList color = assignColors(compareWorkflow);
+		ActionList color = assignColors();
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
@@ -744,10 +737,9 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	/**
 	 * Set the colors to use when drawing the graphs
-	 * @param compareWorkflow true if we are drawing side-by-side graphs for comparison, otherwise false
 	 * @return
 	 */
-	private static ActionList assignColors(boolean compareWorkflow) {
+	private static ActionList assignColors() {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -755,11 +747,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// highlight node if selected from search results
-		if (compareWorkflow) {
-			fill = fillComparisonPallette();
-		} else {
 			fill = fillDisplayPalette();
-		}
 		// use black for node text
 		ColorAction text = new ColorAction(GRAPH_NODES, VisualItem.TEXTCOLOR, ColorLib.gray(0));
 		// set text of highlighted node to black (or other color if you change
@@ -829,39 +817,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 		return fill;
 	}
 
-	/**
-	 * Fills the palette with colors to use when comparing 2 workflows
-	 * @return the palette to use
-	 */
-	private static ColorAction fillComparisonPallette() {
-		ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
-		fill.add("ingroup('left_group')", ColorLib.rgb(255, 175, 175));
-		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
-
-		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
-		fill.add(ExpressionParser.predicate("Type = 'Binding'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Start'"), ColorLib.rgb(160, 160, 160));
-		fill.add(ExpressionParser.predicate("Type = 'Finish'"), ColorLib.rgb(160, 160, 160));
-		fill.add(ExpressionParser.predicate("Type = 'Interm'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Operation'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Data'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'File'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'URL'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Exception'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VStart'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Script'"), ColorLib.rgb(255, 255, 255));
-		// color for Steps
-		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255, 255, 255));
-		return fill;
-	}
+	
 
 	/**
 	 * Adds a legend to the display for the given language.
@@ -885,7 +841,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Initializes the prefuse tables.
+	 * Initializes the workflow tables.
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
@@ -893,14 +849,7 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * Initializes the prefuse tables.
-	 */
-	public void processStartedForDiff() {
-		processStarted(null, true);
-	}
-
-	/**
-	 * Initializes the prefuse tables.
+	 * Initializes the workflow tables.
 	 */
 	private void processStarted(ProvenanceData provData, boolean compareWorkflow) {
 		// initialize file
@@ -2001,44 +1950,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public void setProvData(ProvenanceData provData) {
 		this.provData = provData;
 		workflowPanel.setProvData(provData);
-	}
-
-	/**
-	 * Displays a file chooser for textual workflows and displays the result
-	 * visually.
-	 *
-	 * @param args
-	 *            not used
-	 */
-	public static void main(String[] args) {
-		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
-		builder.buildNodeAndEdgeTables();
-
-		// -- 1. load the data ------------------------------------------------
-		if (args.length == 0) {
-			JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
-			try {
-				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					builder.setTitle(selectedFile.getName(), "");
-					builder.buildGraph(selectedFile);
-				}
-				builder.initializeDisplay(false);
-			} catch (HeadlessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Cannot read the file");
-			}
-		} else {
-			try {
-				builder.buildGraph(new File(args[0]));
-				builder.initializeDisplay(false);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			}
-		}
 	}
 
 	public void setHighlighted(int id, boolean value) {
