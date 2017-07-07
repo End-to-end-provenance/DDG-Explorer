@@ -31,10 +31,10 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
 	private int index = 1;
 
-	@Override
 	/**
 	 * Creates and displays a new workflow
 	 */
+	@Override
 	public void actionPerformed(ActionEvent args0) {
 		// Setup and Initialization
 		DDGExplorer.loadingDDG();

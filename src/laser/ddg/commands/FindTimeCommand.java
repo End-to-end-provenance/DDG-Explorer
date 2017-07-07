@@ -17,13 +17,14 @@ public class FindTimeCommand implements ActionListener {
 
 		ArrayList<OperationSearchElement> nodeList;
 		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
+		WorkflowPanel wfpanel = DDGExplorer.getCurrentWorkflowPanel();
 		if (panel != null) {
 		nodeList = 
 				(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
 		} else {
-			WorkflowPanel wfpanel = DDGExplorer.getCurrentWorkflowPanel();
+			wfpanel = DDGExplorer.getCurrentWorkflowPanel();
 			nodeList = 
-					(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
+					(ArrayList<OperationSearchElement>) wfpanel.getSearchIndex().getOperationList().clone();
 		}
 
 		// order nodelist and show in GUI.
@@ -36,7 +37,11 @@ public class FindTimeCommand implements ActionListener {
                     return 0;
                 });
 
-		panel.showSearchResults(nodeList);
+		if (panel != null) {
+			panel.showSearchResults(nodeList);
+		} else {
+			wfpanel.showSearchResults(nodeList);
+		}
 
 	}
 
