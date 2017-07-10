@@ -30,6 +30,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	private ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
 	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
 	private int index = 1;
+	private WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
+	private Workflow wf = new Workflow(builder);
 
 	/**
 	 * Creates and displays a new workflow
@@ -38,7 +40,6 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 	public void actionPerformed(ActionEvent args0) {
 		// Setup and Initialization
 		DDGExplorer.loadingDDG();
-		WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 		builder.buildNodeAndEdgeTables();
 		
@@ -126,14 +127,18 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
+					wf.addEdge("SFR", file.getId(), scrnode.getId());
 					builder.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
+					wf.addEdge("SFW", scrnode.getId(), file.getId());
 					builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
+					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 					builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
+					wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 					builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}
 			}
@@ -156,6 +161,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		if (scrnodes.size() == 0) {
 			ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 			toAdd.setId(index++);
+			wf.addScript(toAdd);
 			scrnodes.add(toAdd);
 			ret = toAdd;
 		} else {
@@ -169,6 +175,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			if (!added) {
 				ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 				toAdd.setId(index++);
+				wf.addScript(toAdd);
 				scrnodes.add(toAdd);
 				ret = toAdd;
 			}
