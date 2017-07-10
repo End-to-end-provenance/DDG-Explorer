@@ -54,7 +54,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
-		
+		/*
 		// Add nodes to the graph
 		for (ScriptNode node : scrnodes) {
 			builder.addNode(node, node.getId());
@@ -64,8 +64,9 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			builder.addNode(node.getType(), node.getId(), node.getName(), node.getValue(),
 					node.getCreatedTime(), node.getLocation(), null);
 		}
-		
+		*/
 		// Create graph and legend.
+		wf.assemble(builder, 1);
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
@@ -127,19 +128,23 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
-					//wf.addEdge("SFR", file.getId(), scrnode.getId());
-					builder.addEdge("SFR", file.getId(), scrnode.getId());
+					wf.addFile(file);
+					wf.addEdge("SFR", file.getId(), scrnode.getId());
+					//builder.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					//wf.addEdge("SFW", scrnode.getId(), file.getId());
-					builder.addEdge("SFW", scrnode.getId(), file.getId());
+					wf.addFile(file);
+					wf.addEdge("SFW", scrnode.getId(), file.getId());
+					//builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
-					//wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
-					builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
+					wf.addFile(file);
+					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
+					//builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					//wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
-					builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
+					wf.addFile(file);
+					wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
+					//builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}
 			}
 		}
@@ -161,7 +166,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 		if (scrnodes.size() == 0) {
 			ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 			toAdd.setId(index++);
-			//wf.addScript(toAdd);
+			wf.addScript(toAdd);
 			scrnodes.add(toAdd);
 			ret = toAdd;
 		} else {
@@ -175,7 +180,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			if (!added) {
 				ScriptNode toAdd = new ScriptNode(0.0, name, json, path);
 				toAdd.setId(index++);
-				//wf.addScript(toAdd);
+				wf.addScript(toAdd);
 				scrnodes.add(toAdd);
 				ret = toAdd;
 			}

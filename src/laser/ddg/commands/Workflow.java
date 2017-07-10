@@ -44,23 +44,28 @@ public class Workflow {
 			if (!addedScripts.contains(sn)) {
 				builder.addNode(sn, index);
 				addedScripts.add(sn);
+			} else {
+				return;
 			}
 		} else if (rdin != null) {
-			if (!addedScripts.contains(sn)) {
+			if (!addedFiles.contains(rdin)) {
 				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
 						rdin.getCreatedTime(), rdin.getLocation(), null);
 				addedFiles.add(rdin);
+			} else {
+				return;
 			}
-		} else {
-			return;
-		}
+		} 
 		
 		for (int j = 0; j <  edges.size(); j++) {
+			//Need to figure out how this works.
 			if (edges.get(j).getTarget() == index) {
 				assemble(builder, edges.get(j).getSource());
+				builder.addEdge(edges.get(j).getType(), edges.get(j).getSource(), index);
 			}
 			if (edges.get(j).getSource() == index) {
 				assemble(builder, edges.get(j).getTarget());
+				builder.addEdge(edges.get(j).getType(), index, edges.get(j).getTarget());
 			}
 		}
 	}
