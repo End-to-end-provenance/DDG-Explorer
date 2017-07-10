@@ -41,22 +41,27 @@ public class Workflow {
 		ScriptNode sn = scriptNodes.get(index);
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {
-			if (addedScripts.contains(sn)) {
+			if (!addedScripts.contains(sn)) {
 				builder.addNode(sn, index);
+				addedScripts.add(sn);
 			}
-			addedScripts.add(sn);
-			// Recursive call
-			// Add edge
 		} else if (rdin != null) {
-			if (addedScripts.contains(sn)) {
+			if (!addedScripts.contains(sn)) {
 				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
 						rdin.getCreatedTime(), rdin.getLocation(), null);
+				addedFiles.add(rdin);
 			}
-			addedFiles.add(rdin);
-			// Recursive call
-			// Add edge
+		} else {
+			return;
 		}
-		return;
-
+		
+		for (int j = 0; j <  edges.size(); j++) {
+			if (edges.get(j).getTarget() == index) {
+				assemble(builder, edges.get(j).getSource());
+			}
+			if (edges.get(j).getSource() == index) {
+				assemble(builder, edges.get(j).getTarget());
+			}
+		}
 	}
 }
