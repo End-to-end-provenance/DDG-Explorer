@@ -321,11 +321,6 @@ public class WorkflowPanel extends JPanel {
 		vis.setRenderer(prefuse.Constants.EDGE_ARROW_FORWARD, showLines);
 		vis.repaint();
 	}
-	
-	public void showLineNumbers(boolean show) {
-		vis.setRenderer(arrowDirection, show);
-		vis.repaint();
-	}
 
 	public void addLegend() {
 		wfMain.add(legendBox, BorderLayout.WEST);

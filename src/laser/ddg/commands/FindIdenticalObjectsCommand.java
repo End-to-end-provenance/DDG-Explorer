@@ -9,7 +9,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -29,7 +28,6 @@ import laser.ddg.visualizer.WorkflowGraphBuilder;
 
 public class FindIdenticalObjectsCommand extends MouseAdapter {
 
-	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
 	private ArrayList<ScriptNode> scrnodes;
 	private ArrayList<RDataInstanceNode> fileNodes;
 	private int index = 1;
@@ -100,10 +98,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.csv");
 		if (!hashtable.exists()) {
-			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-			if (FILE_CHOOSER.showOpenDialog(ddgExplorer) == JFileChooser.APPROVE_OPTION) {
-				hashtable = FILE_CHOOSER.getSelectedFile();
-			}
+			return;
 		}
 		String line = "";
 		FileReader fr = new FileReader(hashtable);

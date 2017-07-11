@@ -68,15 +68,17 @@ public class Workflow {
 		} 
 		
 		for (int j = 0; j <  edges.size(); j++) {
-			/*
-			if (edges.get(j).getTarget() == index) {
-				assembleRecursively(builder, edges.get(j).getSource());
-				builder.addEdge(edges.get(j).getType(), edges.get(j).getSource(), index);
+			
+			int sourceIndex = edges.get(j).getSource();
+			int targetIndex = edges.get(j).getTarget();
+			
+			if (targetIndex == index) {
+				assembleRecursively(builder, sourceIndex);
+				builder.addEdge(edges.get(j).getType(), sourceIndex, index);
 			}
-			*/
-			if (edges.get(j).getSource() == index) {
-				assembleRecursively(builder, edges.get(j).getTarget());
-				builder.addEdge(edges.get(j).getType(), index, edges.get(j).getTarget());
+			if (sourceIndex == index) {
+				assembleRecursively(builder, targetIndex);
+				builder.addEdge(edges.get(j).getType(), index, targetIndex);
 			}
 		}
 	}
