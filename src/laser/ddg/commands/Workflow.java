@@ -37,11 +37,17 @@ public class Workflow {
 		edges.add(we);
 	}
 
-	public void assemble(WorkflowGraphBuilder builder, String node) {
-		
+	public void walkBeginning(WorkflowGraphBuilder builder, int index) {
+		for (int j = 0; j <  edges.size(); j++) {
+			if (edges.get(j).getTarget() == index) {
+				walkBeginning(builder, edges.get(j).getSource());
+				return;
+			}
+		}
+		assembleRecursively(builder, index);
 	}
 	
-	public void assembleRecursively(WorkflowGraphBuilder builder, int index) {
+	private void assembleRecursively(WorkflowGraphBuilder builder, int index) {
 		ScriptNode sn = scriptNodes.get(index);
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {

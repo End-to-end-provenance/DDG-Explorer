@@ -79,11 +79,11 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 	private void load(DDGExplorer ddgExplorer, ScriptNode scrnode) {
 		DDGExplorer.loadingDDG();
 		builder.buildNodeAndEdgeTables();
-		wf.assembleRecursively(builder, scrnode.getId());
+		wf.walkBeginning(builder, scrnode.getId());
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
-		ddgExplorer.addTab("Script Workflow", builder.getPanel());
+		ddgExplorer.addTab(scrnode.getName() + " Workflow", builder.getPanel());
 		DDGExplorer.doneLoadingDDG();
 	}
 
