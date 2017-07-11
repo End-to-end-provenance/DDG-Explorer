@@ -46,7 +46,7 @@ public class Workflow {
 		}
 		assembleRecursively(builder, index);
 	}
-	
+
 	private void assembleRecursively(WorkflowGraphBuilder builder, int index) {
 		ScriptNode sn = scriptNodes.get(index);
 		RDataInstanceNode rdin = fileNodes.get(index);
@@ -66,15 +66,13 @@ public class Workflow {
 				return;
 			}
 		} 
-		
+
 		for (int j = 0; j <  edges.size(); j++) {
-			
 			int sourceIndex = edges.get(j).getSource();
 			int targetIndex = edges.get(j).getTarget();
-			
 			if (targetIndex == index) {
 				assembleRecursively(builder, sourceIndex);
-				builder.addEdge(edges.get(j).getType(), sourceIndex, index);
+				//builder.addEdge(edges.get(j).getType(), sourceIndex, index);
 			}
 			if (sourceIndex == index) {
 				assembleRecursively(builder, targetIndex);
