@@ -324,8 +324,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		manageDB.addActionListener(new ManageDatabaseCommand());
 
 		// allow the user to view the file workflow
-		JMenuItem findObjs = new JMenuItem("Display File Workflow");
-		findObjs.addActionListener(new FindIdenticalObjectsCommand());
+		JMenuItem findObjs = new JMenu("Display File Workflow");
+		findObjs.addMouseListener(new FindIdenticalObjectsCommand());
+		findObjs.setEnabled(true);
+		
 		
 		// allow the user to quit ddg explorer
 		JMenuItem quit = new JMenuItem("Quit");
@@ -360,7 +362,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		showScriptItem.addMouseListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
-
+		
 		return DDGMenu;
 	}
 

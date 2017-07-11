@@ -1,7 +1,8 @@
 package laser.ddg.commands;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import laser.ddg.ScriptNode;
@@ -24,38 +27,59 @@ import laser.ddg.visualizer.WorkflowGraphBuilder;
  *
  */
 
-public class FindIdenticalObjectsCommand implements ActionListener {
+public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 	private static final JFileChooser FILE_CHOOSER = new JFileChooser(System.getProperty("user.home"));
-	private ArrayList<ScriptNode> scrnodes = new ArrayList<ScriptNode>();
-	private ArrayList<RDataInstanceNode> fileNodes = new ArrayList<RDataInstanceNode>();
+	private ArrayList<ScriptNode> scrnodes;
+	private ArrayList<RDataInstanceNode> fileNodes;
 	private int index = 1;
-	private WorkflowGraphBuilder builder = new WorkflowGraphBuilder();
-	private Workflow wf = new Workflow(builder);
+	private WorkflowGraphBuilder builder;
+	private Workflow wf;
 
 	/**
-	 * Creates and displays a new workflow
+	 * Creates a drop down menu from the hashtable
 	 */
 	@Override
-	public void actionPerformed(ActionEvent args0) {
-		// Setup and Initialization
-		DDGExplorer.loadingDDG();
-		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		builder.buildNodeAndEdgeTables();
+	public void mouseEntered(MouseEvent e) {
+
+		scrnodes = new ArrayList<ScriptNode>();
+		fileNodes = new ArrayList<RDataInstanceNode>();
+		index = 1;
+		builder = new WorkflowGraphBuilder();
+		wf = new Workflow(builder);
 		
+		// Setup and Initialization
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+
 		// Read in the hashtable and find nodes with matching hashes.
 		try {
 			ArrayList<String[]> entries = new ArrayList<String[]>();
 			readHashtable(entries);
 			generateFileNodes(entries, builder);
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
+		} catch (Exception exception) {
+			exception.printStackTrace(System.err);
 			JOptionPane.showMessageDialog(ddgExplorer,
-					"Unable to load the file: " + e.getMessage(),
+					"Unable to load the file: " + exception.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
-		
-		wf.assembleRecursively(builder, 1);
+
+
+		JMenu scriptMenu = (JMenu) e.getSource();
+		scriptMenu.removeAll();
+		for (ScriptNode scrnode : scrnodes) {
+			JMenuItem scriptItem = new JMenuItem(scrnode.getFullpath());
+			scriptItem.addActionListener((ActionEvent event) -> {
+				load(ddgExplorer, scrnode);
+			}
+					);
+			scriptMenu.add(scriptItem);
+		}
+	}
+
+	private void load(DDGExplorer ddgExplorer, ScriptNode scrnode) {
+		DDGExplorer.loadingDDG();
+		builder.buildNodeAndEdgeTables();
+		wf.assembleRecursively(builder, scrnode.getId());
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
@@ -105,7 +129,7 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
 			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
 			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");
-			
+
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
