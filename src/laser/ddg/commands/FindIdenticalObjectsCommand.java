@@ -54,19 +54,8 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 					"Unable to load the file: " + e.getMessage(),
 					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
-		/*
-		// Add nodes to the graph
-		for (ScriptNode node : scrnodes) {
-			builder.addNode(node, node.getId());
-		}
-		for (RDataInstanceNode node : fileNodes) {
-			// By changing the value field here, we can make file viewing possible.
-			builder.addNode(node.getType(), node.getId(), node.getName(), node.getValue(),
-					node.getCreatedTime(), node.getLocation(), null);
-		}
-		*/
-		// Create graph and legend.
-		wf.assemble(builder, 1);
+		
+		wf.assembleRecursively(builder, 1);
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
@@ -130,21 +119,17 @@ public class FindIdenticalObjectsCommand implements ActionListener {
 				if (match[6].equals("read")) {
 					wf.addFile(file);
 					wf.addEdge("SFR", file.getId(), scrnode.getId());
-					//builder.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), file.getId());
-					//builder.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
 					wf.addFile(file);
 					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
-					//builder.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
-					//builder.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}
 			}
 		}

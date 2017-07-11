@@ -37,7 +37,11 @@ public class Workflow {
 		edges.add(we);
 	}
 
-	public void assemble(WorkflowGraphBuilder builder, int index) {
+	public void assemble(WorkflowGraphBuilder builder, String node) {
+		
+	}
+	
+	public void assembleRecursively(WorkflowGraphBuilder builder, int index) {
 		ScriptNode sn = scriptNodes.get(index);
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {
@@ -58,13 +62,12 @@ public class Workflow {
 		} 
 		
 		for (int j = 0; j <  edges.size(); j++) {
-			//Need to figure out how this works.
 			if (edges.get(j).getTarget() == index) {
-				assemble(builder, edges.get(j).getSource());
+				assembleRecursively(builder, edges.get(j).getSource());
 				builder.addEdge(edges.get(j).getType(), edges.get(j).getSource(), index);
 			}
 			if (edges.get(j).getSource() == index) {
-				assemble(builder, edges.get(j).getTarget());
+				assembleRecursively(builder, edges.get(j).getTarget());
 				builder.addEdge(edges.get(j).getType(), index, edges.get(j).getTarget());
 			}
 		}
