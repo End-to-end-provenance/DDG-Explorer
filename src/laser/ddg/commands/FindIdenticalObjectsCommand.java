@@ -74,6 +74,12 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		}
 	}
 
+	/**
+	 * Loads the workflow into DDGExplorer
+	 * 
+	 * @param ddgExplorer the relevant instance of ddgExplorer
+	 * @param scrnode the script node which the user selected
+	 */
 	private void load(DDGExplorer ddgExplorer, ScriptNode scrnode) {
 		DDGExplorer.loadingDDG();
 		builder.buildNodeAndEdgeTables();
