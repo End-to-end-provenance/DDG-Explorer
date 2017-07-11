@@ -117,26 +117,26 @@ public class WorkflowDisplay extends Display {
 		String workflowTime = PrefuseUtils.getTimestamp(n);
 
 		// Get the extension of the node's value
-		String value = PrefuseUtils.getValue(n);
-		String valueExt;
-		if (value != null) {
-			int index = value.lastIndexOf(".");
-			valueExt = value.substring(index);
+		String location = PrefuseUtils.getLocation(n);
+		String locationExt;
+		if (location != null) {
+			int index = location.lastIndexOf(".");
+			locationExt = location.substring(index);
 			// only works for .csv or .txt files now
-			if (valueExt.equals(".csv") || valueExt.equals(".txt")) {
+			if (locationExt.equals(".csv") || locationExt.equals(".txt")) {
 				// make sure it has the correct slashes in the path
-				value = getOS(value);
-				createFileFrame(value, workflowTime);
-			} else if (valueExt.equals(".jpeg") || valueExt.equals(".png") || valueExt.equals(".gif")) {
-				createPlotFrame(value, workflowTime);
-			} else if (valueExt.equals(".RData")) {
-				JOptionPane.showMessageDialog(WorkflowDisplay.this, "R Checkpoint file: " + value);
+				location = getOS(location);
+				createFileFrame(location, workflowTime);
+			} else if (locationExt.equals(".jpeg") || locationExt.equals(".png") || locationExt.equals(".gif")) {
+				createPlotFrame(location, workflowTime);
+			} else if (locationExt.equals(".RData")) {
+				JOptionPane.showMessageDialog(WorkflowDisplay.this, "R Checkpoint file: " + location);
 			} else { // if(valueExt.equals(".pdf") || valueExt.equals(".html")
 						// || valueExt.equals(".htm"))
 						// Should work for all kinds of files. Uses a
 						// platform-specific
 						// application.
-				new FileViewer(value, workflowTime).displayFile();
+				new FileViewer(location, workflowTime).displayFile();
 			}
 			// else {
 			// JOptionPane.showMessageDialog(DDGDisplay.this,"This data does not
