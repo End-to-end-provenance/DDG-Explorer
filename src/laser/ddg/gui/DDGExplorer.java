@@ -549,10 +549,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		if (curDDGPanel != null) { 
 			getCurrentDDGPanel().showLineNumbers(show);
 		}
-		// THIS IS CURRENTLY NOT WORKING
 		WorkflowPanel wfPanel = getCurrentWorkflowPanel();
 		if (wfPanel != null) {
-			getCurrentWorkflowPanel().showLineNumbers(show);
+			return;
 		}
 		PREFERENCES.showLineNumbers(show);
 	}
