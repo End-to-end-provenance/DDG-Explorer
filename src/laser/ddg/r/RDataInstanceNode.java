@@ -1,5 +1,8 @@
 package laser.ddg.r;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import laser.ddg.AbstractDataInstanceNode;
 
 /**
@@ -13,6 +16,8 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	// The node type. 
 	private String type;
 	private String value;
+	private Set<Integer> inputs = new HashSet<Integer>();;
+	private Set<Integer> outputs = new HashSet<Integer>();;
 	
 	/**
 	 * Creates a new data node
@@ -42,5 +47,21 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	@Override
 	public String getValue() {
 		return value;
+	}
+	
+	public Set<Integer> getInputs() {
+		return inputs;
+	}
+	
+	public Set<Integer> getOutput() {
+		return outputs;
+	}
+	
+	public void addNode(int index, String type) {
+		if (type == "input") {
+			inputs.add(index);
+		} else {
+			outputs.add(index);
+		}
 	}
 }

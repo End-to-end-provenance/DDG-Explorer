@@ -26,6 +26,8 @@ public class Workflow {
 	private Map<Integer, ScriptNode> scriptNodes;
 	private ArrayList<RDataInstanceNode> addedFiles;
 	private ArrayList<ScriptNode> addedScripts;
+	//private Set<Integer> fileIds;
+	//Set<Integer> scriptIds;
 
 	public Workflow(WorkflowGraphBuilder builder) {
 		edges = new ArrayList<WorkflowEdge>();
@@ -33,6 +35,8 @@ public class Workflow {
 		scriptNodes = new HashMap<Integer, ScriptNode>();
 		addedFiles = new ArrayList<RDataInstanceNode>();
 		addedScripts = new ArrayList<ScriptNode>();
+		//fileIds = fileNodes.keySet();
+		//scriptIds = scriptNodes.keySet();
 	}
 
 	public void addFile(RDataInstanceNode rdin) {
@@ -47,7 +51,20 @@ public class Workflow {
 		WorkflowEdge we = new WorkflowEdge(type, source, target);
 		edges.add(we);
 	}
-
+	
+	public void findRoots() {
+		for (ScriptNode node : addedScripts) {
+			if (node.getInputs().size() == 0) {
+				System.out.println(node.getName());
+			}
+		}
+		for (RDataInstanceNode node : addedFiles) {
+			if (node.getInputs().size() == 0) {
+				System.out.println(node.getName());
+			}
+		}
+	}
+	
 	/**
 	 * This function walks back to one of the root nodes before drawing the
 	 * workflow. This assists in the layout of the workflow.
@@ -62,6 +79,7 @@ public class Workflow {
 				return;
 			}
 		}
+		//System.out.println(index);
 		assembleRecursively(builder, index);
 	}
 
@@ -77,7 +95,6 @@ public class Workflow {
 		if (sn != null) {
 			if (!addedScripts.contains(sn)) {
 				builder.addNode(sn, index);
-				System.out.println(sn.getName());
 				addedScripts.add(sn);
 			} else {
 				return;
@@ -86,7 +103,6 @@ public class Workflow {
 			if (!addedFiles.contains(rdin)) {
 				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
 						rdin.getCreatedTime(), rdin.getLocation(), null);
-				System.out.println(rdin.getName());
 				addedFiles.add(rdin);
 			} else {
 				return;

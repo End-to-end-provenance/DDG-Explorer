@@ -81,6 +81,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		DDGExplorer.loadingDDG();
 		builder.buildNodeAndEdgeTables();
 		wf.walkBeginning(builder, scrnode.getId());
+		wf.findRoots();
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
@@ -139,17 +140,25 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 				fileNodes.add(file);
 				file.setId(index++);
 				if (match[6].equals("read")) {
+					file.addNode(scrnode.getId(), "output");
+					scrnode.addNode(file.getId(), "input");
 					wf.addFile(file);
 					wf.addEdge("SFR", file.getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
+					file.addNode(scrnode.getId(), "input");
+					scrnode.addNode(file.getId(), "output");
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), file.getId());
 				}
 			} else {
 				if (match[6].equals("read")) {
+					fileNodes.get(foundindex).addNode(file.getId(), "output");
+					scrnode.addNode(fileNodes.get(foundindex).getId(), "input");
 					wf.addFile(file);
 					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
+					fileNodes.get(foundindex).addNode(file.getId(), "input");
+					scrnode.addNode(fileNodes.get(foundindex).getId(), "output");
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
 				}

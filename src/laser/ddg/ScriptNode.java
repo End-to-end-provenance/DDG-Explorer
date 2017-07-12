@@ -1,6 +1,7 @@
 package laser.ddg;
 
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +32,9 @@ public class ScriptNode implements Node {
 
 	// The full path to the script
 	private String fullpath;
+	
+	private Set<Integer> inputs = new HashSet<Integer>();;
+	private Set<Integer> outputs = new HashSet<Integer>();;
 
 	/**
 	 * Constructs a script node
@@ -123,5 +127,20 @@ public class ScriptNode implements Node {
 	public void setFullpath(String fullpath) {
 		this.fullpath = fullpath;
 	}
-
+	
+	public Set<Integer> getInputs() {
+		return inputs;
+	}
+	
+	public Set<Integer> getOutput() {
+		return outputs;
+	}
+	
+	public void addNode(int index, String type) {
+		if (type == "input") {
+			inputs.add(index);
+		} else {
+			outputs.add(index);
+		}
+	}
 }
