@@ -77,6 +77,7 @@ public class Workflow {
 		if (sn != null) {
 			if (!addedScripts.contains(sn)) {
 				builder.addNode(sn, index);
+				System.out.println(sn.getName());
 				addedScripts.add(sn);
 			} else {
 				return;
@@ -85,18 +86,18 @@ public class Workflow {
 			if (!addedFiles.contains(rdin)) {
 				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
 						rdin.getCreatedTime(), rdin.getLocation(), null);
+				System.out.println(rdin.getName());
 				addedFiles.add(rdin);
 			} else {
 				return;
 			}
-		} 
+		}
 
 		for (int j = 0; j <  edges.size(); j++) {
 			int sourceIndex = edges.get(j).getSource();
 			int targetIndex = edges.get(j).getTarget();
 			if (targetIndex == index) {
 				assembleRecursively(builder, sourceIndex);
-				//builder.addEdge(edges.get(j).getType(), sourceIndex, index);
 			}
 			if (sourceIndex == index) {
 				assembleRecursively(builder, targetIndex);

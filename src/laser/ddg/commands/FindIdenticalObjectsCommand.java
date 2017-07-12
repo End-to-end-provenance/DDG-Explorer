@@ -45,7 +45,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		index = 1;
 		builder = new WorkflowGraphBuilder();
 		wf = new Workflow(builder);
-		
+
 		// Setup and Initialization
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
@@ -56,9 +56,6 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			generateFileNodes(entries, builder);
 		} catch (Exception exception) {
 			exception.printStackTrace(System.err);
-			JOptionPane.showMessageDialog(ddgExplorer,
-					"Unable to load the file: " + exception.getMessage(),
-					"Error loading file", JOptionPane.ERROR_MESSAGE);
 		}
 
 
