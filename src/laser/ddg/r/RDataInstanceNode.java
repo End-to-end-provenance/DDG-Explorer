@@ -1,5 +1,6 @@
 package laser.ddg.r;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,8 +17,9 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	// The node type. 
 	private String type;
 	private String value;
-	private Set<Integer> inputs = new HashSet<Integer>();;
-	private Set<Integer> outputs = new HashSet<Integer>();;
+	private ArrayList<Integer> inputs = new ArrayList<Integer>();
+	private ArrayList<Integer> outputs = new ArrayList<Integer>();
+	private int indegree;
 	
 	/**
 	 * Creates a new data node
@@ -32,6 +34,7 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		super(value, name, time, location);
 		this.value = value;
 		this.type = type;
+		this.indegree = 0;
 	}
 	
 	public RDataInstanceNode(String type, String name, String value, String time, String location, String hash, String scrloc) {
@@ -49,11 +52,11 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		return value;
 	}
 	
-	public Set<Integer> getInputs() {
+	public ArrayList<Integer> getInputs() {
 		return inputs;
 	}
 	
-	public Set<Integer> getOutput() {
+	public ArrayList<Integer> getOutput() {
 		return outputs;
 	}
 	
@@ -63,5 +66,13 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		} else {
 			outputs.add(index);
 		}
+	}
+
+	public int getIndegree() {
+		return indegree;
+	}
+
+	public void setIndegree(int indegree) {
+		this.indegree = indegree;
 	}
 }

@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import laser.ddg.ScriptNode;
 import laser.ddg.gui.DDGExplorer;
@@ -86,6 +85,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		ddgExplorer.addTab(scrnode.getName() + " Workflow", builder.getPanel());
+		System.out.println(wf.orderedNodes);
 		DDGExplorer.doneLoadingDDG();
 	}
 
@@ -129,6 +129,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
 			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");
 
+			// Checks to see if the node exists already.
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
@@ -136,6 +137,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 					foundindex = i;
 				}
 			}
+			// If the node does not exist already, add it.
 			if (foundindex == -1) {
 				fileNodes.add(file);
 				file.setId(index++);
@@ -150,17 +152,18 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), file.getId());
 				}
-			} else {
+			} 
+			// If the node does exist already, add connections.
+			else {
+				RDataInstanceNode sourcednode = fileNodes.get(foundindex);
 				if (match[6].equals("read")) {
-					fileNodes.get(foundindex).addNode(file.getId(), "output");
-					scrnode.addNode(fileNodes.get(foundindex).getId(), "input");
-					wf.addFile(file);
+					sourcednode.addNode(scrnode.getId(), "output");
+					scrnode.addNode(sourcednode.getId(), "input");
 					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
 				} else if (match[6].equals("write")) {
-					fileNodes.get(foundindex).addNode(file.getId(), "input");
-					scrnode.addNode(fileNodes.get(foundindex).getId(), "output");
-					wf.addFile(file);
-					wf.addEdge("SFW", scrnode.getId(), fileNodes.get(foundindex).getId());
+					sourcednode.addNode(scrnode.getId(), "input");
+					scrnode.addNode(sourcednode.getId(), "output");
+					wf.addEdge("SFW", scrnode.getId(), sourcednode.getId());
 				}
 			}
 		}

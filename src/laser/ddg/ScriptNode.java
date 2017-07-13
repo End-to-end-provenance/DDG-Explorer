@@ -33,8 +33,9 @@ public class ScriptNode implements Node {
 	// The full path to the script
 	private String fullpath;
 	
-	private Set<Integer> inputs = new HashSet<Integer>();;
-	private Set<Integer> outputs = new HashSet<Integer>();;
+	private Set<Integer> inputs = new HashSet<Integer>();
+	private Set<Integer> outputs = new HashSet<Integer>();
+	private int indegree;
 
 	/**
 	 * Constructs a script node
@@ -50,6 +51,7 @@ public class ScriptNode implements Node {
 		this.nameOfSN = name;
 		this.value = json;
 		this.setFullpath(fullpath);
+		this.indegree = 0; 
 	}
 	
 	public String getName() {
@@ -142,5 +144,13 @@ public class ScriptNode implements Node {
 		} else {
 			outputs.add(index);
 		}
+	}
+
+	public int getIndegree() {
+		return indegree;
+	}
+
+	public void setIndegree(int indegree) {
+		this.indegree = indegree;
 	}
 }
