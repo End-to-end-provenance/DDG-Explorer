@@ -52,7 +52,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		try {
 			ArrayList<String[]> entries = new ArrayList<String[]>();
 			readHashtable(entries);
-			generateFileNodes(entries, builder);
+			generateFileNodes(entries);
 		} catch (Exception exception) {
 			exception.printStackTrace(System.err);
 		}
@@ -86,6 +86,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		builder.getPanel().addLegend();
 		ddgExplorer.addTab(scrnode.getName() + " Workflow", builder.getPanel());
 		System.out.println(wf.orderedNodes);
+		System.out.println(wf.orderedNodes.poll());
 		DDGExplorer.doneLoadingDDG();
 	}
 
@@ -123,13 +124,12 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 	 * @param builder a workflowGraphBuilder
 	 * @return a list of file nodes to add to the graph.
 	 */
-	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> entries, WorkflowGraphBuilder builder) {
+	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> entries) {
 		for (String[] match : entries) {
 			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
 			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
 			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");
 
-			// Checks to see if the node exists already.
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
@@ -137,7 +137,6 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 					foundindex = i;
 				}
 			}
-			// If the node does not exist already, add it.
 			if (foundindex == -1) {
 				fileNodes.add(file);
 				file.setId(index++);
@@ -152,9 +151,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 					wf.addFile(file);
 					wf.addEdge("SFW", scrnode.getId(), file.getId());
 				}
-			} 
-			// If the node does exist already, add connections.
-			else {
+			} else {
 				RDataInstanceNode sourcednode = fileNodes.get(foundindex);
 				if (match[6].equals("read")) {
 					sourcednode.addNode(scrnode.getId(), "output");

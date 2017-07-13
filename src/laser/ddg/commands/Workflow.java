@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
-import java.util.Stack;
 
 import laser.ddg.ScriptNode;
 import laser.ddg.r.RDataInstanceNode;
@@ -59,23 +58,18 @@ public class Workflow {
 		for (ScriptNode node : addedScripts) {
 			node.setIndegree(node.getInputs().size());
 			if (node.getInputs().size() == 0) {
-				System.out.println(node.getId());
 				startNodes.add(node.getId());
 			}
 		}
 		for (RDataInstanceNode node : addedFiles) {
 			node.setIndegree(node.getInputs().size());
 			if (node.getInputs().size() == 0) {
-				System.out.println(node.getId());
 				startNodes.add(node.getId());
 			}
 		}
 		topoSortHelper();
 	}
 	
-
-	// This has a large issue, in that it's getting from the wrong part
-	// of the queue. ALso it keeps yielding a null pointer.
 	private void topoSortHelper() {
 		while (startNodes.size() > 0) {
 			int index = startNodes.poll();
@@ -84,7 +78,6 @@ public class Workflow {
 			RDataInstanceNode rdin = fileNodes.get(index);
 			if (sn != null) {
 				for (Integer out : sn.getOutput()) {
-					// Remove edge
 					RDataInstanceNode outfile = fileNodes.get(out);
 					outfile.setIndegree(outfile.getIndegree() - 1);
 					if (outfile.getIndegree() == 0) {
@@ -93,7 +86,6 @@ public class Workflow {
 				}
 			} else if (rdin != null) {
 				for (Integer out : rdin.getOutput()) {
-					// Remove edge
 					ScriptNode outscript = scriptNodes.get(out);
 					outscript.getIndegree();
 					outscript.setIndegree(outscript.getIndegree() - 1);
@@ -102,6 +94,13 @@ public class Workflow {
 					}
 				}
 			}
+		}
+	}
+	
+	public void topobuilder(Queue<Integer> nodeList) {
+		while (!nodeList.isEmpty()) {
+			int index = nodeList.poll();
+			
 		}
 	}
 
@@ -119,7 +118,6 @@ public class Workflow {
 				return;
 			}
 		}
-		//System.out.println(index);
 		assembleRecursively(builder, index);
 	}
 
@@ -129,13 +127,12 @@ public class Workflow {
 	 * @param builder the workflow graph builder being used.
 	 * @param index the id of the node currently being acted upon.
 	 */
-	private void assembleRecursively(WorkflowGraphBuilder builder, int index) {
+	public void assembleRecursively(WorkflowGraphBuilder builder, int index) {
 		ScriptNode sn = scriptNodes.get(index);
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {
 			if (!addedScripts.contains(sn)) {
 				builder.addNode(sn, index);
-				//System.out.println(sn.getId() + " " + sn.getName());
 				addedScripts.add(sn);
 			} else {
 				return;
@@ -144,7 +141,6 @@ public class Workflow {
 			if (!addedFiles.contains(rdin)) {
 				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
 						rdin.getCreatedTime(), rdin.getLocation(), null);
-				//System.out.println(rdin.getId() + " " + rdin.getName());
 				addedFiles.add(rdin);
 			} else {
 				return;
