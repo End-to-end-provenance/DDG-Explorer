@@ -80,13 +80,16 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		DDGExplorer.loadingDDG();
 		builder.buildNodeAndEdgeTables();
 		wf.walkBeginning(builder, scrnode.getId());
+		//------
 		wf.findRoots();
+		System.out.println(wf.orderedNodes);
+		wf.topobuilder(builder);
+		System.out.println(wf.orderedNodes);
+		//------
 		builder.drawGraph();
 		builder.createLegend("R");
 		builder.getPanel().addLegend();
 		ddgExplorer.addTab(scrnode.getName() + " Workflow", builder.getPanel());
-		System.out.println(wf.orderedNodes);
-		System.out.println(wf.orderedNodes.poll());
 		DDGExplorer.doneLoadingDDG();
 	}
 

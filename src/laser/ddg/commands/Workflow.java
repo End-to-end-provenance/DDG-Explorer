@@ -97,10 +97,25 @@ public class Workflow {
 		}
 	}
 	
-	public void topobuilder(Queue<Integer> nodeList) {
-		while (!nodeList.isEmpty()) {
-			int index = nodeList.poll();
-			
+	public void topobuilder(WorkflowGraphBuilder builder) {
+		while (!orderedNodes.isEmpty()) {
+			int index = orderedNodes.poll();
+			RDataInstanceNode rdin = fileNodes.get(index);
+			ScriptNode sn = scriptNodes.get(index);
+			if (sn != null) {
+				builder.addNode(sn, index);
+				for (int inputin : sn.getInputs()) {
+					builder.addEdge("SFR", inputin, index);
+					System.out.println("Adding SFR edge between " + inputin + " and " + index);
+				}
+			} else if (rdin != null) {
+				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
+						rdin.getCreatedTime(), rdin.getLocation(), null);
+				for (int inputin : rdin.getInputs()) {
+					builder.addEdge("SFW", inputin, index);
+					System.out.println("Adding SFW edge between " + inputin + " and " + index);
+				}
+			}
 		}
 	}
 
@@ -132,15 +147,15 @@ public class Workflow {
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {
 			if (!addedScripts.contains(sn)) {
-				builder.addNode(sn, index);
+				//builder.addNode(sn, index);
 				addedScripts.add(sn);
 			} else {
 				return;
 			}
 		} else if (rdin != null) {
 			if (!addedFiles.contains(rdin)) {
-				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
-						rdin.getCreatedTime(), rdin.getLocation(), null);
+				//builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
+				//		rdin.getCreatedTime(), rdin.getLocation(), null);
 				addedFiles.add(rdin);
 			} else {
 				return;
@@ -155,7 +170,7 @@ public class Workflow {
 			}
 			if (sourceIndex == index) {
 				assembleRecursively(builder, targetIndex);
-				builder.addEdge(edges.get(j).getType(), index, targetIndex);
+			//	builder.addEdge(edges.get(j).getType(), index, targetIndex);
 			}
 		}
 	}
