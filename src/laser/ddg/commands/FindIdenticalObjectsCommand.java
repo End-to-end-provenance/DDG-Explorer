@@ -81,10 +81,10 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		builder.buildNodeAndEdgeTables();
 		wf.walkBeginning(builder, scrnode.getId());
 		//------
-		wf.findRoots();
-		System.out.println(wf.orderedNodes);
-		wf.topobuilder(builder);
-		System.out.println(wf.orderedNodes);
+		//wf.findRoots();
+		//System.out.println(wf.orderedNodes);
+		//wf.topobuilder(builder);
+		//System.out.println(wf.orderedNodes);
 		//------
 		builder.drawGraph();
 		builder.createLegend("R");

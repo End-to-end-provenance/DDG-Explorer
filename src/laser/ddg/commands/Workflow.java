@@ -147,15 +147,15 @@ public class Workflow {
 		RDataInstanceNode rdin = fileNodes.get(index);
 		if (sn != null) {
 			if (!addedScripts.contains(sn)) {
-				//builder.addNode(sn, index);
+				builder.addNode(sn, index);
 				addedScripts.add(sn);
 			} else {
 				return;
 			}
 		} else if (rdin != null) {
 			if (!addedFiles.contains(rdin)) {
-				//builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
-				//		rdin.getCreatedTime(), rdin.getLocation(), null);
+				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
+						rdin.getCreatedTime(), rdin.getLocation(), null);
 				addedFiles.add(rdin);
 			} else {
 				return;
@@ -170,7 +170,7 @@ public class Workflow {
 			}
 			if (sourceIndex == index) {
 				assembleRecursively(builder, targetIndex);
-			//	builder.addEdge(edges.get(j).getType(), index, targetIndex);
+				builder.addEdge(edges.get(j).getType(), index, targetIndex);
 			}
 		}
 	}
