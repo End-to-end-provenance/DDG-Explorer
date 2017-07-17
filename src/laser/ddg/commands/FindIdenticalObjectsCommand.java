@@ -48,7 +48,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		// Setup and Initialization
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 
-		// Read in the hashtable and find nodes with matching hashes.
+		// Read in the hashtable and generate file nodes
 		try {
 			ArrayList<String[]> entries = new ArrayList<String[]>();
 			readHashtable(entries);
