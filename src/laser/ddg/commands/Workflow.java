@@ -2,9 +2,7 @@ package laser.ddg.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 import laser.ddg.ScriptNode;
 import laser.ddg.r.RDataInstanceNode;
@@ -28,8 +26,6 @@ public class Workflow {
 	private Map<Integer, ScriptNode> scriptNodes;
 	private ArrayList<RDataInstanceNode> addedFiles;
 	private ArrayList<ScriptNode> addedScripts;
-	private Queue<Integer> startNodes;
-	public Queue<Integer> orderedNodes;
 
 	public Workflow(WorkflowGraphBuilder builder) {
 		edges = new ArrayList<WorkflowEdge>();
@@ -37,86 +33,37 @@ public class Workflow {
 		scriptNodes = new HashMap<Integer, ScriptNode>();
 		addedFiles = new ArrayList<RDataInstanceNode>();
 		addedScripts = new ArrayList<ScriptNode>();
-		startNodes = new LinkedList<Integer>();
-		orderedNodes = new LinkedList<Integer>();
 	}
 
+	/**
+	 * adds a file node to the list of file nodes. 
+	 * 
+	 * @param rdin the RDataInstanceNode to be added.
+	 */
 	public void addFile(RDataInstanceNode rdin) {
 		fileNodes.put(rdin.getId(), rdin);
 	}
 
+	/**
+	 * adds a script node to the list of script nodes
+	 * 
+	 * @param sn the ScriptNode to be added.
+	 */
 	public void addScript(ScriptNode sn) {
 		scriptNodes.put(sn.getId(), sn);
 	}
 
+	/**
+	 * adds an edge to the list of edges.
+	 * 
+	 * @param type a string, either "SFW" or "SFR" indicating if this is a
+	 * 		script write or script read edge.
+	 * @param source the index of the source node of the edge
+	 * @param target the index of the target node of the edge
+	 */
 	public void addEdge(String type, int source, int target) {
 		WorkflowEdge we = new WorkflowEdge(type, source, target);
 		edges.add(we);
-	}
-
-	public void findRoots() {
-		for (ScriptNode node : addedScripts) {
-			node.setIndegree(node.getInputs().size());
-			if (node.getInputs().size() == 0) {
-				startNodes.add(node.getId());
-			}
-		}
-		for (RDataInstanceNode node : addedFiles) {
-			node.setIndegree(node.getInputs().size());
-			if (node.getInputs().size() == 0) {
-				startNodes.add(node.getId());
-			}
-		}
-		topoSortHelper();
-	}
-	
-	private void topoSortHelper() {
-		while (startNodes.size() > 0) {
-			int index = startNodes.poll();
-			orderedNodes.add(index);
-			ScriptNode sn = scriptNodes.get(index);
-			RDataInstanceNode rdin = fileNodes.get(index);
-			if (sn != null) {
-				for (Integer out : sn.getOutput()) {
-					RDataInstanceNode outfile = fileNodes.get(out);
-					outfile.setIndegree(outfile.getIndegree() - 1);
-					if (outfile.getIndegree() == 0) {
-						startNodes.add(outfile.getId());
-					}
-				}
-			} else if (rdin != null) {
-				for (Integer out : rdin.getOutput()) {
-					ScriptNode outscript = scriptNodes.get(out);
-					outscript.getIndegree();
-					outscript.setIndegree(outscript.getIndegree() - 1);
-					if (outscript.getIndegree() == 0) {
-						startNodes.add(outscript.getId());
-					}
-				}
-			}
-		}
-	}
-	
-	public void topobuilder(WorkflowGraphBuilder builder) {
-		while (!orderedNodes.isEmpty()) {
-			int index = orderedNodes.poll();
-			RDataInstanceNode rdin = fileNodes.get(index);
-			ScriptNode sn = scriptNodes.get(index);
-			if (sn != null) {
-				builder.addNode(sn, index);
-				for (int inputin : sn.getInputs()) {
-					builder.addEdge("SFR", inputin, index);
-					System.out.println("Adding SFR edge between " + inputin + " and " + index);
-				}
-			} else if (rdin != null) {
-				builder.addNode(rdin.getType(), index, rdin.getName(), rdin.getValue(),
-						rdin.getCreatedTime(), rdin.getLocation(), null);
-				for (int inputin : rdin.getInputs()) {
-					builder.addEdge("SFW", inputin, index);
-					System.out.println("Adding SFW edge between " + inputin + " and " + index);
-				}
-			}
-		}
 	}
 
 	/**
