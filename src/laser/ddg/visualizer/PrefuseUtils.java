@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import prefuse.data.Edge;
 import prefuse.data.Node;
@@ -414,6 +415,15 @@ public class PrefuseUtils {
 	 */
 	static boolean isCollapsedNode(Node n) {
 		return getNodeType(n).equals(STEP);
+	}
+	
+	/**
+	 * Returns true if the node is a script node
+	 * @param n the node to test
+	 * @return true if a script node
+	 */
+	static boolean isScriptNode(Node n) {
+		return getNodeType(n).equals(SCRIPT);
 	}
 
 	/**

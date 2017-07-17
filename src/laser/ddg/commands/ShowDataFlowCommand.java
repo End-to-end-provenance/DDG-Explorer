@@ -11,6 +11,7 @@ import laser.ddg.persist.JenaWriter;
 import laser.ddg.query.DataQuery;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.PrefuseUtils;
+import laser.ddg.visualizer.WorkflowGraphBuilder;
 import prefuse.data.Node;
 
 /**

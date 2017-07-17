@@ -1,5 +1,7 @@
 package laser.ddg;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -8,6 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import org.apache.commons.codec.binary.Hex;
 
 /**
  * The data instance node holds a state of a data entry whose processing is
@@ -50,13 +55,22 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// The date & time the DIN was created.
 	private String timeCreated;
-	
+
 	// The original location of a file.  Null if this is not a file node.
 	private String location;
 
+	// The hash of the original file. Null if this is not a file node.
+	private String hash;
+	
+	// The read/write status of the file. Null if this is not a file node.
+	private String rw;
+
+	// The message digest object for use in generating md5 hash values
+	private MessageDigest md;
+
 	// The procedure that created this data
 	private ProcedureInstanceNode producedBy;
-	
+
 	//Flag to ensure producer is only set once.
 	private int hasProducer;
 
@@ -68,6 +82,9 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 
 	// Attribute-value pairs to allow arbitrary extensions
 	private Map<String, Object> attributeValues = new TreeMap<>();
+	
+	// Script location
+	private String scrloc;
 
 	/**
 	 * Create a data instance node wrapping the value passed in the process.
@@ -128,6 +145,52 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
+		if (location != null) {
+			try {
+				this.hash = doFileHashing(location);
+			} catch (IOException e) {
+				this.hash = null;
+				e.printStackTrace();
+			}
+		} else {
+			this.hash = null;
+		}
+	}
+	
+	public AbstractDataInstanceNode(String val, String name, String time, String location, String hash, String scrloc) {
+		value = val;
+		nameOfDIN = name;
+		timeCreated = time;
+		this.location = location;
+		this.hash = hash;
+		this.scrloc = scrloc;
+	}
+
+	/**
+	 * Produces the MD5 hash of the file of the given node.
+	 * 
+	 * @param location
+	 * @return hexString, a hexadecimal string representation of the file's MD5 hash.
+	 * @throws IOException
+	 */
+	public String doFileHashing(String location) throws IOException {
+		try {
+			this.md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			return null;
+		}
+		//http://howtodoinjava.com/core-java/io/how-to-generate-sha-or-md5-file-checksum-hash-in-java/
+		FileInputStream in = new FileInputStream(location);
+		byte[] b = new byte[1024];
+		int numbytes = 0;
+		while ((numbytes = in.read(b)) != -1) {
+			md.update(b, 0, numbytes);
+		}
+		byte[] digest = md.digest();
+		String hexString = Hex.encodeHexString(digest);
+		in.close();
+		return hexString;
 	}
 
 	/**
@@ -169,8 +232,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		return nameOfDIN;
 	}
 
-	
-	
+
+
 	/**
 	 * @return the Java data produced by the running process
 	 */
@@ -179,7 +242,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public Serializable getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public void setValue(Serializable value) {
 		this.value = value;
@@ -189,7 +252,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public String getLocation() {
 		return location;
 	}
-	
+
 	/**
 	 * @return date & time the Data Instance Node was created
 	 */
@@ -198,8 +261,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public String getCreatedTime() {
 		return timeCreated;
 	}
-	
-        @Override
+
+	@Override
 	public double getElapsedTime() {
 		return 0.0;
 	}
@@ -312,8 +375,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		if (id == 0) {
 			id = newId;
 		} else {
-			throw new IdAlreadySetException(
-				"Cannot reset the ID of a node that has already been assigned an ID.");
+			throw new IdAlreadySetException("Cannot reset the ID of a node that has already been assigned an ID.");
 		}
 	}
 
@@ -349,5 +411,28 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	public void setAttribute(String name, Object value) {
 		attributeValues.put(name, value);
 	}
+
+	/**
+	 * @return the hash value, if a file node.
+	 */
+	public String getHash() {
+		return hash;
+	}
+
+	/**
+	 * @return the read or write value, if a file node.
+	 */
+	public String getRw() {
+		return rw;
+	}
+
+	public String getScrloc() {
+		return scrloc;
+	}
+
+	public void setScrloc(String scrloc) {
+		this.scrloc = scrloc;
+	}
+
 
 }
