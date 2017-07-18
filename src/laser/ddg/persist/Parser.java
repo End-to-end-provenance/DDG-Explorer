@@ -43,7 +43,7 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * <NodeDecl> -> <DataNode> | <ProcedureNode>
  * <ProcedureNode> -> <ProcedureNodeType> <ProcedureNodeID> <NAME> ["Time" "="�� <Timestamp >] <Attributes>*
  * <ProcedureNodeType> -> "Start" | "Finish" | "Interm" | "Leaf" | "Operation" | "SimpleHandler" | "VStart" | "VFinish" | "VInterm" | "Checkpoint" | "Restore"
- * <DataNode> -> <DataNodeType> <DataNodeID> <NAME> ["Value" "="<Value> ]["Time" "="�� <Timestamp >]["Location" "=" <FILENAME>]
+ * <DataNode> -> <DataNodeType> <DataNodeID> <NAME> ["Value" "="<Value> ]["ValType" "=" <ValType>]["Time" "="�� <Timestamp >]["Location" "=" <FILENAME>]
  * <DataNodeType> -> "Data" | "Exception" | "URL" | "File" | "Snapshot"
  * <Value> -> <URL> | <FILENAME> | <STRING>
  * <Timestamp> -> <YEAR>"-"<MONTH>"-"<DATE>["T"<HOUR>":"<MINUTE>[":"<SECOND>["."<FRACTIONAL>]]]
@@ -262,10 +262,11 @@ public abstract class Parser {
 	 * @param nodeId the node's unique id
 	 * @param name the label to display
 	 * @param value the data value
+	 * @param valType the type of the data value
 	 * @param timestamp the timestamp for the data
 	 * @param location the file location if the data is a file or snapshot
 	 */
-	protected void addDataNode (String nodeType, String nodeId, String name, String value, String timestamp, String location) {
+	protected void addDataNode (String nodeType, String nodeId, String name, String value, String valType, String timestamp, String location) {
 		//System.out.println("Adding data node " + nodeId + " with type " + nodeType);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 		if (ddgBuilder != null) {

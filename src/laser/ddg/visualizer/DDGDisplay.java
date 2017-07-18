@@ -1,6 +1,8 @@
 package laser.ddg.visualizer;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -660,4 +662,17 @@ public class DDGDisplay extends Display {
 		}
 
 	}
+	
+	/**
+	 * Print the DDG.  The graphics device determines the format.
+	 */
+    protected void printComponent(Graphics g) {
+    	
+    	// Make it believe it needs to draw the whole thing
+    	damageReport();
+
+    	// Paint directly to the print graphics context.
+        paintDisplay((Graphics2D) g, getSize());
+    }
+
 }

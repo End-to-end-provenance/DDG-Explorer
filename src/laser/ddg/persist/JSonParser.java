@@ -33,6 +33,7 @@ public class JSonParser extends Parser {
 
 	/**
 	 * Create a Json parser
+	 * 
 	 * @param file the json file to parser
 	 * @param builder the object that builds the visual graph
 	 * @throws IOException
@@ -58,6 +59,7 @@ public class JSonParser extends Parser {
 	
 	/**
 	 * Parses the attributes and their values and the pin counter.
+	 * 
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
@@ -112,6 +114,7 @@ public class JSonParser extends Parser {
 
 	/**
 	 * Parses the json attribute that contains the sourced script information
+	 * 
 	 * @param scriptDir the directory where the script is stored
 	 * @param sourcedScripts the json attribute for sourced scripts
 	 * @return a list of sourced script objects 
@@ -129,6 +132,7 @@ public class JSonParser extends Parser {
 
 	/**
 	 * Parses the installed packages information
+	 * 
 	 * @param packages the json attribute for the packages
 	 * @return a list of the packages
 	 */
@@ -175,19 +179,23 @@ public class JSonParser extends Parser {
 		}
     }
     
-	/** Parses all the procedural nodes and adds them to the provenance data and visual graph */
+	/** 
+	 * Parses all the procedural nodes and adds them to the provenance data and visual graph 
+	 */
 	private void parseProcNodes(JsonObject procNodes) {
-		// This is the Json syntax for a procedural node
-//		"p12" : {
-//		"rdt:name" : "SimpleFunction.R",
-//		"rdt:type" : "Finish",
-//		"rdt:elapsedTime" : "0.0869999999999997",
-//		"rdt:scriptNum" : "NA",
-//		"rdt:startLine" : "NA",
-//		"rdt:startCol" : "NA",
-//		"rdt:endLine" : "NA",
-//		"rdt:endCol" : "NA"
-//		} ,
+		/*
+		 * This is the Json syntax for a procedural node
+		 * "p12" : {
+		 * "rdt:name" : "SimpleFunction.R",
+		 * "rdt:type" : "Finish",
+		 * "rdt:elapsedTime" : "0.0869999999999997",
+		 * "rdt:scriptNum" : "NA",
+		 * "rdt:startLine" : "NA",
+		 * "rdt:startCol" : "NA",
+		 * "rdt:endLine" : "NA",
+		 * "rdt:endCol" : "NA"
+		 * } ,
+		 */
 
 		Set<Entry<String, JsonElement> > procNodeSet = procNodes.entrySet();
 		
@@ -214,19 +222,25 @@ public class JSonParser extends Parser {
 		}
 	}
 	
-	/** Parses all the data nodes and adds them to the provenance data and visual graph */
+	/** 
+	 * Parses all the data nodes and adds them to the provenance data and visual graph 
+	 */
 	private void parseDataNodes(JsonObject dataNodes) {
-		// This is the json syntax for a data node
-//		"d5" : {
-//		"rdt:name" : "y",
-//		"rdt:value" : "2",
-//		"rdt:type" : "Data",
-//		"rdt:scope" : "0x10c32da00",
-//		"rdt:fromEnv" : "FALSE",
-//		"rdt:timestamp" : "",
-//		"rdt:location" : ""
-//		} ,
-
+		/*
+		 * This is the json syntax for a data node
+		 *  
+		 * "d5" : {
+		 * "rdt:name" : "y",
+		 * "rdt:value" : "2",
+		 * "rdt:valType : "vector of length 1"
+		 * "rdt:type" : "Data",
+		 * "rdt:scope" : "0x10c32da00",
+		 * "rdt:fromEnv" : "FALSE",
+		 * "rdt:timestamp" : "",
+		 * "rdt:location" : ""
+		 * } ,
+		 */		
+		
 		Set<Entry<String, JsonElement> > dataNodeSet = dataNodes.entrySet();
 		
 		for (Entry <String, JsonElement> dataNode : dataNodeSet) {
@@ -244,6 +258,10 @@ public class JSonParser extends Parser {
 				}
 			}
 			
+			// If we ever want to do anything interesting with valType in DDG Explorer,
+			// we will need to parse ValType instead of just storing it as a string.
+			String valType = nodeDef.get("rdt:valType").toString();
+			
 			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
 			if (timestamp.equals("")) {
 				timestamp = null;
@@ -257,18 +275,22 @@ public class JSonParser extends Parser {
 			int idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
 			
-			addDataNode (type, id, label, value, timestamp, location);
+			addDataNode (type, id, label, value, valType, timestamp, location);
 		}
 
 	}
 
-	/** Parses all the control flow edges and adds them to the provenance data and visual graph */
+	/** 
+	 * Parses all the control flow edges and adds them to the provenance data and visual graph 
+	 */
 	private void parseControlFlowEdges(JsonObject cfEdges) {
-		// This is the json syntax for a control flow edge
-//		"e1" : {
-//		"prov:informant" : "p1",
-//		"prov:informed" : "p2"
-//		} ,
+		/*
+		 * This is the json syntax for a control flow edge
+		 * "e1" : {
+		 * "prov:informant" : "p1",
+		 * "prov:informed" : "p2"
+		 * } ,
+		 */
 		
 		Set<Entry<String, JsonElement> > cfEdgeSet = cfEdges.entrySet();
 		
@@ -282,13 +304,17 @@ public class JSonParser extends Parser {
 		}
 	}
 
-	/** Parses all the data output edges and adds them to the provenance data and visual graph */
+	/**
+	 * Parses all the data output edges and adds them to the provenance data and visual grap
+	 */
 	private void parseOutputEdges(JsonObject outputEdges) {
-		// This is the json syntax for a data out edge
-//		"e2" : {
-//		"prov:entity" : "d1",
-//		"prov:activity" : "p2"
-//		} ,
+		/*
+		 * This is the json syntax for a data out edge
+		 * "e2" : {
+		 * "prov:entity" : "d1",
+		 * "prov:activity" : "p2"
+		 * } ,
+		 */
 		
 		Set<Entry<String, JsonElement> > outputEdgeset = outputEdges.entrySet();
 		
@@ -309,11 +335,13 @@ public class JSonParser extends Parser {
 
 	/** Parses all the data input edges and adds them to the provenance data and visual graph */
 	private void parseInputEdges(JsonObject inputEdges) {
-		// This is the json syntax for a data in edge
-//		"e18" : {
-//		"prov:activity" : "p10",
-//		"prov:entity" : "d4"
-//		} ,
+		/*
+		 * This is the json syntax for a data in edge
+		 * "e18" : {
+		 * "prov:activity" : "p10",
+		 * "prov:entity" : "d4"
+		 * } ,
+		 */
 		
 		Set<Entry<String, JsonElement> > inputEdgeset = inputEdges.entrySet();
 		
