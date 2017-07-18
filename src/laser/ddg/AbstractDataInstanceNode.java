@@ -106,6 +106,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		timeCreated = Calendar.getInstance().toString();
 		id = 0;
 		this.provData = provData;
+		this.hash = null;
+		this.scrloc = null;
 	}
 
 	/**
@@ -124,6 +126,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		nameOfDIN = name;
 		id = 0;
 		this.provData = provData;
+		this.hash = null;
+		this.scrloc = null;
 	}
 
 	/**
@@ -413,23 +417,29 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	}
 
 	/**
-	 * @return the hash value, if a file node.
+	 * @return the hash value, if a file node. If not a file node, then return null.
 	 */
 	public String getHash() {
 		return hash;
 	}
 
 	/**
-	 * @return the read or write value, if a file node.
+	 * @return the read or write value, if a file node. If not a file node, then return null.
 	 */
 	public String getRw() {
 		return rw;
 	}
 
+	/**
+	 * @return the location of the script. If not a file node, then return null.
+	 */
 	public String getScrloc() {
 		return scrloc;
 	}
 
+	/**
+	 * @param scrloc the location of the script.
+	 */
 	public void setScrloc(String scrloc) {
 		this.scrloc = scrloc;
 	}

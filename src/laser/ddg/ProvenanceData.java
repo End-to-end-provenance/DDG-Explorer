@@ -55,21 +55,12 @@ public class ProvenanceData {
 
 	// All output DINs in the process
 	private List<DataInstanceNode> processOutputs;
-	
-	// All input Script Nodes in the process
-	private List<ScriptNode> scriptInputs;
-	
-	// All output Script Nodes in the process
-	private List<ScriptNode> scriptOutputs;
 
 	// All Data Instance Nodes in a DDG
 	private List<DataInstanceNode> dins;
 
 	// All Procedure Instance Nodes in a DDG
 	private List<ProcedureInstanceNode> pins;
-	
-	// All Script Nodes in a DDG
-	private List<ScriptNode> sns;
 
 	// The root procedure
 	private Node root;
@@ -119,11 +110,8 @@ public class ProvenanceData {
 		agentConfigurations = new TreeSet<>();
 		pins = new LinkedList<>();
 		dins = new LinkedList<>();
-		sns = new LinkedList<>();
 		processInputs = new LinkedList<>();
 		processOutputs = new LinkedList<>();
-		scriptInputs = new LinkedList<>();
-		scriptOutputs = new LinkedList<>();
 
 		nodesToResources = new ConcurrentHashMap<>();
 		resourcesToNodes = new ConcurrentHashMap<>();
@@ -193,28 +181,6 @@ public class ProvenanceData {
 	}
 	
 	/**
-	 * Add a SN to SNs set. This should be called when the node is being
-	 * read from a database.
-	 * 
-	 * @param sn
-	 * 			Script node to add
-	 * @param resURI
-	 * 			The URI of the resource for this pin
-	 */
-	public synchronized void addSN(ScriptNode sn, String resURI) {
-		if (!nodesToResources.containsKey(sn)) {
-			this.nodesToResources.put(sn, resURI);
-			this.resourcesToNodes.put(resURI, sn);
-		}
-
-		if (!sns.contains(sn)) {
-			sns.add(sn);
-			notifySnCreated(sn);
-		}
-		
-	}
-	
-	/**
 	 * Add a PIN to the PINs set and sets its id. This should be called when the node is being
 	 * created with the RDDGBuilder.
 	 * 
@@ -228,14 +194,6 @@ public class ProvenanceData {
 		p.setId(id);  // Using the one passed in as a parameter
 		notifyPinCreated(p);
 	}
-	
-	/*
-	public synchronized void addSN(ScriptNode s, int id) {
-		sns.add(s);
-		s.setId(id);  // Using the one passed in as a parameter
-		notifySnCreated(s);
-	}
-	*/
 	
 	/**
 	 * Add DIN to the process inputs set
@@ -361,14 +319,6 @@ public class ProvenanceData {
 	public String getResource(ProcedureInstanceNode pin) {
 		return nodesToResources.get(pin);
 	}
-	
-	/**
-	 * @param sn
-	 * @return resource corresponding to this SN
-	 */
-	public String getResource(ScriptNode sn) {
-		return nodesToResources.get(sn);
-	}
 
 	/**
 	 * @return an iterator through all input DINs in the process
@@ -395,15 +345,6 @@ public class ProvenanceData {
 	 * */
 	public Iterator<ProcedureInstanceNode> pinIter() {
 		return pins.iterator();
-	}
-	
-	/**
-	 * Create an iterator through the SNs
-	 * 
-	 * @return an interator through the SNs
-	 */
-	public Iterator<ScriptNode> scrIter() {
-		return sns.iterator();
 	}
 
 	/**
@@ -433,8 +374,6 @@ public class ProvenanceData {
 
 			// put root on top of list b/c prefuse visualizer expects root to
 			// be added to graph first
-			//pins.remove(sin);
-			//pins.add(0, sin);
 
 		} else {
 			throw new RootAlreadySetException("Root already set");
@@ -491,11 +430,6 @@ public class ProvenanceData {
 		// All Procedure Instance Nodes in a DDG
 		for (ProcedureInstanceNode procNode : pins) {
 			sb.append(procNode + "\n");
-		}
-		
-		// All Script Instance nodes in a DDG
-		for (ScriptNode scrNode : sns) {
-			sb.append(scrNode + "\n");
 		}
 
 		return sb.toString();
@@ -639,12 +573,6 @@ public class ProvenanceData {
 	private void notifyDinCreated(DataInstanceNode din) {
 		for (ProvenanceListener l : provListeners) {
 			l.dataNodeCreated(din);
-		}
-	}
-	
-	private void notifySnCreated(ScriptNode sn) {
-		for (ProvenanceListener l : provListeners) {
-			l.scriptNodeCreated(sn);
 		}
 	}
 
@@ -801,26 +729,6 @@ public class ProvenanceData {
 		}
 		return null;
 	}
-	
-	/**
-	 * Find the script node with the given name
-	 * @param nodeName the name of the node to search for
-	 * @return the script node with the given name. Returns null if
-	 * 	there is no node with that name.
-	 */
-	public ScriptNode findSn(String nodeName) {
-		Iterator<ScriptNode> scrIt = scrIter();
-		//System.out.println("Looking for data node " + data + "  Found:");
-		
-		while(scrIt.hasNext()) {
-			ScriptNode sCheck = scrIt.next();
-			//System.out.println("   " + dCheck.getId());
-			if(nodeName.equals(sCheck.getName())) {
-				return sCheck;
-			}
-		}
-		return null;
-	}
 
 	/**
 	 * @return the timestamp associated with the file that contains
@@ -915,19 +823,6 @@ public class ProvenanceData {
 		while (pinIterator.hasNext()) {
 			ProcedureInstanceNode nextPin = pinIterator.next();
 			visitor.visitPin(nextPin);
-		}
-	}
-
-	/**
-	 * Allows a visitor to operate on each sn in a ddg
-	 * @param visitor the object that will operate on the sn
-	 */
-	public void visitSns(ProvenanceDataVisitor visitor) {
-		Iterator<ScriptNode> snIterator = scrIter();
-
-		while (snIterator.hasNext()) {
-			ScriptNode nextSn = snIterator.next();
-			visitor.visitSn(nextSn);
 		}
 	}
 	

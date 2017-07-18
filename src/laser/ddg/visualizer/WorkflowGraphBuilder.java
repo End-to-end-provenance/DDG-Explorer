@@ -394,14 +394,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	public DataInstanceNode getDataNode (String leafName) {
 		return provData.findDin (leafName);
 	}
-
-	/**
-	 * @param leafName the name of a script node
-	 * @return the ScriptNode with that name
-	 */
-	public ScriptNode getScriptNode (String leafName) {
-		return provData.findSn (leafName);
-	}
 	
 	/**
 	 * builds the visual graph and sets the title.
@@ -2032,7 +2024,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	@Override
 	public void visitSn(ScriptNode sn) {
-		// TODO Auto-generated method stub
 
 	}
 
