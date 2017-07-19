@@ -41,7 +41,7 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 	 * @param time the time that the data was created or the timestamp associated
 	 * 		with a file used as input
 	 * @param location the original location for a file node, null if not a file node
-	 * @param hash the MD5 hash of the associated node's data, null if not a file node
+	 * @param hash the SHA-1 hash of the associated node's data, null if not a file node
 	 * @param scrloc the file path of the associated node, null if not a file node
 	 */
 	public RDataInstanceNode(String type, String name, String value, String time, String location, String hash, String scrloc) {

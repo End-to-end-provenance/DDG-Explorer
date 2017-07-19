@@ -12,8 +12,12 @@ import java.util.ArrayList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+
+import com.google.gson.Gson;
+
 import laser.ddg.ScriptNode;
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.persist.HashtableEntry;
 import laser.ddg.r.RDataInstanceNode;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 
@@ -50,8 +54,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 		// Read in the hashtable and generate file nodes
 		try {
-			ArrayList<String[]> entries = new ArrayList<String[]>();
-			readHashtable(entries);
+			HashtableEntry entries[] = readHashtable();
 			generateFileNodes(entries);
 		} catch (Exception exception) {
 			exception.printStackTrace(System.err);
@@ -95,38 +98,46 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 	 * @param csvmap the ArrayList of string arrays to be modified
 	 * @throws IOException
 	 */
-	private void readHashtable(ArrayList<String[]> csvmap) throws IOException {
-		// https://www.mkyong.com/java/how-to-read-and-parse-csv-file-in-java/
+	private HashtableEntry[] readHashtable() throws IOException {
 		String home = System.getProperty("user.home");
-		File hashtable = new File(home + "/.ddg/hashtable.csv");
+		File hashtable = new File(home + "/.ddg/hashtable.json");
 		if (!hashtable.exists()) {
-			return;
+			return null;
 		}
-		String line = "";
-		FileReader fr = new FileReader(hashtable);
-		BufferedReader br = new BufferedReader(fr);
-		br.readLine();
-		while((line = br.readLine()) != null) {
-			String[] entries = line.replaceAll("\"", "").split(","); 
-			csvmap.add(entries);
-		}
-		br.close();
+		BufferedReader reader = new BufferedReader (new FileReader(hashtable));
+    	
+    	// Adapted from the local file JsonParser.java
+    	StringBuffer s = new StringBuffer();
+    	String readline = reader.readLine();
+    	while (readline != null) {
+    		s.append(readline);
+    		readline = reader.readLine();
+    	}
+    	String json = s.toString();
+    	// https://stackoverflow.com/questions/27628096/json-array-to-java-objects
+    	Gson gson = new Gson();
+    	HashtableEntry[] entries = gson.fromJson(json, HashtableEntry[].class);
+        
+        reader.close();
+        return entries;
 	}
 
 	/**
 	 * Generates the file nodes to be used in the workflow. It also makes calls to
 	 * generateScriptNode.
 	 * 
-	 * @param entries a series of string arrays obtained from reading the hashtable.csv file.
+	 * @param entries a series of string arrays obtained from reading the hashtable.json file.
 	 * @param builder a workflowGraphBuilder
 	 * @return a list of file nodes to add to the graph.
 	 */
-	private ArrayList<RDataInstanceNode> generateFileNodes(ArrayList<String[]> entries) {
-		for (String[] match : entries) {
-			String name = match[1].substring(match[1].lastIndexOf('/') + 1);
-			RDataInstanceNode file = new RDataInstanceNode("File", name, match[8], match[7], match[1], match[5], match[0]);
-			ScriptNode scrnode = generateScriptNode(scrnodes, file, match[0], match[2] + "/ddg.json");
-
+	private ArrayList<RDataInstanceNode> generateFileNodes(HashtableEntry[] entries) {
+		for (HashtableEntry entry : entries) {
+			String name = entry.getFilePath().substring(entry.getFilePath().lastIndexOf('/') + 1);
+			RDataInstanceNode file = new RDataInstanceNode("File", name, entry.getValue(), entry.getTimestamp(), 
+					entry.getFilePath(), entry.getSHA1Hash(), entry.getScriptPath());
+			ScriptNode scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(), 
+					entry.getDDGPath() + "/ddg.json");
+			
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
@@ -137,12 +148,12 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			if (foundindex == -1) {
 				fileNodes.add(file);
 				file.setId(index++);
-				if (match[6].equals("read")) {
+				if (entry.getReadWrite().equals("read")) {
 					file.addNode(scrnode.getId(), "output");
 					scrnode.addNode(file.getId(), "input");
 					wf.addFile(file);
 					wf.addEdge("SFR", file.getId(), scrnode.getId());
-				} else if (match[6].equals("write")) {
+				} else if (entry.getReadWrite().equals("write")) {
 					file.addNode(scrnode.getId(), "input");
 					scrnode.addNode(file.getId(), "output");
 					wf.addFile(file);
@@ -150,16 +161,16 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 				}
 			} else {
 				RDataInstanceNode sourcednode = fileNodes.get(foundindex);
-				if (match[6].equals("read")) {
+				if (entry.getReadWrite().equals("read")) {
 					sourcednode.addNode(scrnode.getId(), "output");
 					scrnode.addNode(sourcednode.getId(), "input");
 					wf.addEdge("SFR", fileNodes.get(foundindex).getId(), scrnode.getId());
-				} else if (match[6].equals("write")) {
+				} else if (entry.getReadWrite().equals("write")) {
 					sourcednode.addNode(scrnode.getId(), "input");
 					scrnode.addNode(sourcednode.getId(), "output");
 					wf.addEdge("SFW", scrnode.getId(), sourcednode.getId());
 				}
-			}
+			}	
 		}
 		return fileNodes;
 	}

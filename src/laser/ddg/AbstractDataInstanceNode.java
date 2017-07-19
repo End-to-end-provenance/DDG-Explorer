@@ -65,7 +65,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	// The read/write status of the file. Null if this is not a file node.
 	private String rw;
 
-	// The message digest object for use in generating md5 hash values
+	// The message digest object for use in generating SHA-1 hash values
 	private MessageDigest md;
 
 	// The procedure that created this data
@@ -171,15 +171,15 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	}
 
 	/**
-	 * Produces the MD5 hash of the file of the given node.
+	 * Produces the SHA-1 hash of the file of the given node.
 	 * 
 	 * @param location
-	 * @return hexString, a hexadecimal string representation of the file's MD5 hash.
+	 * @return hexString, a hexadecimal string representation of the file's SHA-1 hash.
 	 * @throws IOException
 	 */
 	public String doFileHashing(String location) throws IOException {
 		try {
-			this.md = MessageDigest.getInstance("MD5");
+			this.md = MessageDigest.getInstance("SHA-1");
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 			return null;
