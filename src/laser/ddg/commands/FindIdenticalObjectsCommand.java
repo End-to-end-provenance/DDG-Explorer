@@ -55,7 +55,9 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		// Read in the hashtable and generate file nodes
 		try {
 			HashtableEntry entries[] = readHashtable();
-			generateFileNodes(entries);
+			if (entries.length > 0) {
+				generateFileNodes(entries);
+			}
 		} catch (Exception exception) {
 			exception.printStackTrace(System.err);
 		}
@@ -102,11 +104,12 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 		String home = System.getProperty("user.home");
 		File hashtable = new File(home + "/.ddg/hashtable.json");
 		if (!hashtable.exists()) {
-			return null;
+			HashtableEntry[] entries = {};
+			return entries;
 		}
+		
+		// Adapted from the local file JsonParser.java
 		BufferedReader reader = new BufferedReader (new FileReader(hashtable));
-    	
-    	// Adapted from the local file JsonParser.java
     	StringBuffer s = new StringBuffer();
     	String readline = reader.readLine();
     	while (readline != null) {
@@ -117,7 +120,6 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
     	// https://stackoverflow.com/questions/27628096/json-array-to-java-objects
     	Gson gson = new Gson();
     	HashtableEntry[] entries = gson.fromJson(json, HashtableEntry[].class);
-        
         reader.close();
         return entries;
 	}
