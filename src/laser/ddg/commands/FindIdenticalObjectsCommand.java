@@ -107,21 +107,21 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			HashtableEntry[] entries = {};
 			return entries;
 		}
-		
+
 		// Adapted from the local file JsonParser.java
 		BufferedReader reader = new BufferedReader (new FileReader(hashtable));
-    	StringBuffer s = new StringBuffer();
-    	String readline = reader.readLine();
-    	while (readline != null) {
-    		s.append(readline);
-    		readline = reader.readLine();
-    	}
-    	String json = s.toString();
-    	// https://stackoverflow.com/questions/27628096/json-array-to-java-objects
-    	Gson gson = new Gson();
-    	HashtableEntry[] entries = gson.fromJson(json, HashtableEntry[].class);
-        reader.close();
-        return entries;
+		StringBuffer s = new StringBuffer();
+		String readline = reader.readLine();
+		while (readline != null) {
+			s.append(readline);
+			readline = reader.readLine();
+		}
+		String json = s.toString();
+		// https://stackoverflow.com/questions/27628096/json-array-to-java-objects
+		Gson gson = new Gson();
+		HashtableEntry[] entries = gson.fromJson(json, HashtableEntry[].class);
+		reader.close();
+		return entries;
 	}
 
 	/**
@@ -138,14 +138,9 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			RDataInstanceNode file = new RDataInstanceNode("File", name, entry.getValue(), entry.getTimestamp(), 
 					entry.getFilePath(), entry.getSHA1Hash(), entry.getScriptPath());
 			ScriptNode scrnode = null; 
-			if (entry.getScriptPath().endsWith(".R")) {
-				scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(), 
-						entry.getDDGPath() + "/ddg.json");
-			} else {
-				scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(),
-						entry.getDDGPath());
-			}
-			
+			scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(),
+					entry.getDDGPath());
+
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
 				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
