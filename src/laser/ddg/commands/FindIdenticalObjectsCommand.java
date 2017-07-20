@@ -137,8 +137,14 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 			String name = entry.getFilePath().substring(entry.getFilePath().lastIndexOf('/') + 1);
 			RDataInstanceNode file = new RDataInstanceNode("File", name, entry.getValue(), entry.getTimestamp(), 
 					entry.getFilePath(), entry.getSHA1Hash(), entry.getScriptPath());
-			ScriptNode scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(), 
-					entry.getDDGPath() + "/ddg.json");
+			ScriptNode scrnode = null; 
+			if (entry.getScriptPath().endsWith(".R")) {
+				scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(), 
+						entry.getDDGPath() + "/ddg.json");
+			} else {
+				scrnode = generateScriptNode(scrnodes, file, entry.getScriptPath(),
+						entry.getDDGPath());
+			}
 			
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
@@ -147,6 +153,7 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 					foundindex = i;
 				}
 			}
+
 			if (foundindex == -1) {
 				fileNodes.add(file);
 				file.setId(index++);
