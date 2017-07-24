@@ -16,6 +16,7 @@ import javax.swing.JMenuItem;
 import com.google.gson.Gson;
 
 import laser.ddg.ScriptNode;
+import laser.ddg.Workflow;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.HashtableEntry;
 import laser.ddg.r.RDataInstanceNode;

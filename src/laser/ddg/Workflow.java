@@ -1,10 +1,9 @@
-package laser.ddg.commands;
+package laser.ddg;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import laser.ddg.ScriptNode;
 import laser.ddg.r.RDataInstanceNode;
 import laser.ddg.visualizer.WorkflowGraphBuilder;
 

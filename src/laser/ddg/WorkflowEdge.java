@@ -1,4 +1,4 @@
-package laser.ddg.commands;
+package laser.ddg;
 
 public class WorkflowEdge {
 

@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
@@ -13,7 +11,6 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
-import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
