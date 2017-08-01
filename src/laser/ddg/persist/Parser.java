@@ -118,7 +118,7 @@ public abstract class Parser {
 	 * Adds the nodes and edges from the DDG to the graph.
 	 * @throws IOException if there is a problem reading the file
 	 */
-	public void addNodesAndEdges() throws IOException {
+	public ProvenanceData addNodesAndEdges() throws IOException {
 		parseHeader();
 		
 		// If there was no script attribute, use the filename.
@@ -132,14 +132,18 @@ public abstract class Parser {
 		provData.setAttributes(attributes);
 		
 		provData.setQuery("Entire DDG");
-		builder.setProvData(provData);
+		if (builder != null) {
+			builder.setProvData(provData);
+		}
 		
 		try {
 			if (language == null) {
 				language = "Little-JIL";
 			}
 			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
-			builder.createLegend(language);
+			if (builder != null) {
+				builder.createLegend(language);
+			}
 
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
@@ -154,7 +158,10 @@ public abstract class Parser {
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
 		}
-		builder.processFinished();
+		if (builder != null) {
+			builder.processFinished();
+		}
+		return provData;
 	}
 
 	/**
@@ -186,10 +193,12 @@ public abstract class Parser {
 	protected void addProcNode (String nodeType, String nodeId, String name, String value, double elapsedTime, String script, String startLine, String startCol, String endLine, String endCol) {
 		//System.out.println("Adding proc node " + nodeId);
 		SourcePos sourcePos = buildSourcePos(script, startLine, startCol, endLine, endCol);
-		builder.addNode(nodeType, extractUID(nodeId), 
+		if (builder != null) {
+			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
+		}
 		int idNum = Integer.parseInt(nodeId.substring(1));
-			
+
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
 	
@@ -263,8 +272,10 @@ public abstract class Parser {
 		if (ddgBuilder != null) {
 			ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 		}
-		builder.addNode(nodeType, extractUID(nodeId), 
+		if (builder != null) {
+			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, timestamp, location, null);
+		}
 	}
 	
 
@@ -347,7 +358,9 @@ public abstract class Parser {
 	 * @param destination the node at the head
 	 */
 	private void addEdge(String edgeType, int source, int destination) {
-		builder.addEdge(edgeType, destination, source);
+		if (builder != null) {
+			builder.addEdge(edgeType, destination, source);
+		}
 	}
 
 	/**

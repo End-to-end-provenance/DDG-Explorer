@@ -252,8 +252,10 @@ public class JSonParser extends Parser {
 			String name = nodeDef.get("rdt:name").getAsString();
 			String value = nodeDef.get("rdt:value").getAsString();
 			if(type.equals("File") || type.equals("Snapshot")){
-				File relative = new File(builder.getSourceDDGDirectory(), value);
-				value = relative.getAbsolutePath();
+				if (builder != null) {
+					File relative = new File(builder.getSourceDDGDirectory(), value);
+					value = relative.getAbsolutePath();
+				}
 			}
 			
 			// If we ever want to do anything interesting with valType in DDG Explorer,

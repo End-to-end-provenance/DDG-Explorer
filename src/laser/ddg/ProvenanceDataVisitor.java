@@ -1,5 +1,7 @@
 package laser.ddg;
 
+import laser.ddg.workflow.ScriptNode;
+
 /**
  * This interfaces plays the role of the Visitor in the Visitor pattern.  It allows a class to be able
  * to opearte on all the elements of a DDG.
@@ -9,6 +11,11 @@ package laser.ddg;
  *
  */
 public interface ProvenanceDataVisitor {
+	/**
+	 * Visit an individual script node
+	 * @param sn the node
+	 */
+	public void visitSn(ScriptNode sn);
 	/**
 	 * Visit an individual procedure node.
 	 * @param pin the node

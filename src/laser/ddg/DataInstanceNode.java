@@ -83,5 +83,10 @@ public interface DataInstanceNode extends Node {
 	 * @return the original location of a file, or null if not a file node
 	 */
 	public String getLocation();
+	
+	/**
+	 * @return the SHA-1 hash of a file, or null if not a file node
+	 */
+	public String getHash();
 
 }

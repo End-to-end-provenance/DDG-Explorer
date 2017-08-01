@@ -1,7 +1,9 @@
-package laser.ddg.visualizer;
+package laser.ddg.workflow.visualizer;
 
 import java.awt.event.MouseEvent;
 
+import prefuse.Display;
+import prefuse.Visualization;
 import prefuse.controls.ControlAdapter;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
@@ -12,15 +14,15 @@ import prefuse.visual.VisualItem;
  * @version Jun 20, 2013
  *
  */
-public class ExpandCollapseControl extends ControlAdapter {
+public class ExpandCollapseWorkflowControl extends ControlAdapter {
 	// The objec that is building the Prefuse graph
-	private PrefuseGraphBuilder builder;
+	private WorkflowGraphBuilder builder;
 
 	/**
 	 * Creates the controller
 	 * @param builder the object that is building the graph.
 	 */
-	public ExpandCollapseControl(PrefuseGraphBuilder builder) {
+	public ExpandCollapseWorkflowControl(WorkflowGraphBuilder builder) {
 		this.builder = builder;
 	}
 
@@ -38,11 +40,11 @@ public class ExpandCollapseControl extends ControlAdapter {
 			return;
 		}
 		
-		DDGVisualization vis = (DDGVisualization) item.getVisualization();
+		Visualization vis = item.getVisualization();
 		synchronized(vis) {
 			// Sometimes the item passed in is an item not currently visible!
 			// This seems to get around that.
-			DDGDisplay d = (DDGDisplay) vis.getDisplay(0);
+			Display d = vis.getDisplay(0);
 			item = d.findItem(e.getPoint());
 			
 			if (item.isVisible()) {

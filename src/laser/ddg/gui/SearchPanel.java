@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.workflow.gui.WorkflowPanel;
 
 class SearchPanel extends JPanel {
 	private static final String ALL_OPTIONS = "All Options";
@@ -37,7 +38,7 @@ class SearchPanel extends JPanel {
 		// TODO:  Add other search options
 		//String[] options = { "Current DDG", "R Script", "Database" };
 		//JComboBox<String>optionsBox = new JComboBox<>(options);
-		
+
 		String[] ddgOptions = { ALL_OPTIONS, ERROR_OPTION, FILE_OPTION, URL_OPTION, DATA_OPTION, FUNCTION_OPTION };
 		ddgOptionsBox = createDDGOptionsBox(ddgOptions);
 
@@ -46,11 +47,11 @@ class SearchPanel extends JPanel {
 		preferences.fill = GridBagConstraints.BOTH;
 
 		// Add options box
-//		preferences.weightx = 0.0;
-//		preferences.weighty = 0.0;
-//		preferences.gridx = 0;
-//		preferences.gridy = 0;
-//		add(optionsBox, preferences);
+		//		preferences.weightx = 0.0;
+		//		preferences.weighty = 0.0;
+		//		preferences.gridx = 0;
+		//		preferences.gridy = 0;
+		//		add(optionsBox, preferences);
 
 		// Add ddg search options box
 		preferences.gridx = 1;
@@ -72,9 +73,9 @@ class SearchPanel extends JPanel {
 
 		// Submit Search if the enter button is pressed in the search field
 		searchField.addActionListener((ActionEvent e) -> {
-                    doSearch();
-                });
-		
+			doSearch();
+		});
+
 		searchField.addKeyListener (new KeyAdapter () {
 
 			@Override
@@ -85,8 +86,8 @@ class SearchPanel extends JPanel {
 
 		// Submit Search if the advanced search button is pressed
 		searchButton.addActionListener((ActionEvent e) -> {
-                    doSearch();
-                });
+			doSearch();
+		});
 
 	}
 
@@ -95,19 +96,24 @@ class SearchPanel extends JPanel {
 		// Changes text in search field in response to the selected ddgOptions
 		// box
 		box.addActionListener((ActionEvent select) -> {
-                    String ddgOption = box.getSelectedItem().toString();
-                    if (!searchTyped) {
-                        searchField.setText("Search for " + ddgOption);
-                    }
-                });
+			String ddgOption = box.getSelectedItem().toString();
+			if (!searchTyped) {
+				searchField.setText("Search for " + ddgOption);
+			}
+		});
 		return box;
 	}
-	
+
 	// Do a search
 	private void doSearch() {
 		DDGPanel panel = DDGExplorer.getCurrentDDGPanel();
-
-		SearchIndex searchIndex = panel.getSearchIndex();
+		SearchIndex searchIndex;
+		if (panel != null) {
+			searchIndex = panel.getSearchIndex();
+		} else {
+			WorkflowPanel wfpanel = DDGExplorer.getCurrentWorkflowPanel();
+			searchIndex = wfpanel.getSearchIndex();
+		}
 
 		// Gets which option was selected in the drop down
 		String ddgOption = ddgOptionsBox.getSelectedItem().toString();
@@ -127,11 +133,12 @@ class SearchPanel extends JPanel {
 
 	private void searchList(ArrayList<? extends SearchElement> nodesList) {
 		DDGPanel ddgPanel = DDGExplorer.getCurrentDDGPanel();
-		if (ddgPanel == null) {
+		WorkflowPanel wfPanel = DDGExplorer.getCurrentWorkflowPanel();
+		if (ddgPanel == null && wfPanel == null) {
 			DDGExplorer explorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(explorer,
-					"Need to load a DDG to search",
-					"No DDG to search",
+					"Need to load a DDG or workflow to search",
+					"No DDG or workflow to search",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -140,22 +147,30 @@ class SearchPanel extends JPanel {
 		// if user entered information into the search bar
 		if (searchTyped) {
 			String searchText = searchField.getText().toLowerCase();
-            nodesList.stream().filter((entry) -> (entry.getName().toLowerCase().contains(searchText))).forEach((entry) -> {
-            	newList.add(entry);
-            });
+			nodesList.stream().filter((entry) -> (entry.getName().toLowerCase().contains(searchText))).forEach((entry) -> {
+				newList.add(entry);
+			});
+			if (ddgPanel != null) {
 			ddgPanel.showSearchResults(newList);
+			} else {
+				wfPanel.showSearchResults(newList);
+			}
 		}
 
 		// if text in search is empty then give all associated information
 		else {
-			ddgPanel.showSearchResults(nodesList);
+			if (ddgPanel != null) {
+				ddgPanel.showSearchResults(nodesList);
+				} else {
+					wfPanel.showSearchResults(nodesList);
+				}
 		}
 	}
-	
+
 	public static void enableSearch() {
 		searchButton.setEnabled (true);
 	}
-	
+
 	public static void disableSearch() {
 		searchButton.setEnabled(false);
 	}

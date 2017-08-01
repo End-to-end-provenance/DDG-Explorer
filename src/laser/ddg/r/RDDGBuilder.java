@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JOptionPane;
-
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataInstanceNode;
@@ -13,7 +11,6 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
-import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
@@ -51,6 +48,7 @@ public class RDDGBuilder extends DDGBuilder {
 		legend.add(new LegendEntry("Parameter Binding", PrefuseGraphBuilder.INTERPRETER_COLOR));
 		legend.add(new LegendEntry("Checkpoint Operation", PrefuseGraphBuilder.CHECKPOINT_COLOR));
 		legend.add(new LegendEntry("Restore Operation", PrefuseGraphBuilder.RESTORE_COLOR));
+		legend.add(new LegendEntry("Script", PrefuseGraphBuilder.SCRIPT_COLOR));
 		legend.add(new LegendEntry("Data", PrefuseGraphBuilder.DATA_COLOR));
 		legend.add(new LegendEntry("Error", PrefuseGraphBuilder.EXCEPTION_COLOR));
 		legend.add(new LegendEntry("File", PrefuseGraphBuilder.FILE_COLOR));
@@ -66,6 +64,8 @@ public class RDDGBuilder extends DDGBuilder {
 		ArrayList<LegendEntry> legend = new ArrayList<>();
 		legend.add(new LegendEntry("Control Flow", PrefuseGraphBuilder.CONTROL_FLOW_COLOR));
 		legend.add(new LegendEntry("Data Flow", PrefuseGraphBuilder.DATA_FLOW_COLOR));
+		legend.add(new LegendEntry("Script Read", PrefuseGraphBuilder.SCRIPT_READ_COLOR));
+		legend.add(new LegendEntry("Script Write", PrefuseGraphBuilder.SCRIPT_WRITE_COLOR));
 		return legend;
 	}
 

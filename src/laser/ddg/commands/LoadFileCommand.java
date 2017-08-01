@@ -51,7 +51,7 @@ public class LoadFileCommand implements ActionListener {
 	 * @param selectedFile
 	 * @throws Exception
 	 */
-	public static void loadFile(File selectedFile) throws Exception{
+	public static void loadFile(File selectedFile) throws Exception {
 		JenaWriter jenaWriter = JenaWriter.getInstance();
 		PrefuseGraphBuilder builder = new PrefuseGraphBuilder(false, jenaWriter);
 		String selectedFileName = selectedFile.getName();

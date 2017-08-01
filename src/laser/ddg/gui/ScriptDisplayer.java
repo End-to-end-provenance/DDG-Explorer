@@ -19,6 +19,7 @@ import laser.ddg.NoScriptFileException;
 import laser.ddg.SourcePos;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.TextLineNumber;
+import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 
 /**
  * This class maintains the information needed to show source
@@ -49,6 +50,37 @@ public class ScriptDisplayer {
 	 * 		unknown or missing
 	 */
 	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) throws NoScriptFileException {
+		String fileName = builder.getScriptPath(scriptNum);
+		if (fileName == null) {
+			throw new NoScriptFileException (
+					"There is no script available for " + builder.getProcessName());
+		}
+		File theFile = new File(fileName);
+		if (!theFile.exists()) {
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
+		}
+
+		// System.out.println("Reading script from " + fileName);
+
+		try {
+			readFile(theFile);
+			displayFileContents();
+		} catch (FileNotFoundException e) {
+			throw new NoScriptFileException (
+					"There is no script available for " + fileName);
+
+		}
+	}
+	
+	/**
+	 * Create the display for a script using a workflow grpah builder
+	 * @param builder the object that knows about the visible graph
+	 * @param scriptNum the number of the script as referenced in the ddg
+	 * @throws NoScriptFileException if the file containing the script is either 
+	 * 		unknown or missing
+	 */
+	public ScriptDisplayer(WorkflowGraphBuilder builder, int scriptNum) throws NoScriptFileException {
 		String fileName = builder.getScriptPath(scriptNum);
 		if (fileName == null) {
 			throw new NoScriptFileException (
