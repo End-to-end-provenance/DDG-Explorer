@@ -54,6 +54,7 @@ import laser.ddg.query.DerivationQuery;
 import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
 import laser.ddg.query.ResultsQuery;
+import laser.ddg.workflow.gui.WorkflowPanel;
 
 /**
  * Class with a main program that allows the user to view DDGs previously stored
@@ -220,7 +221,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 					openDDGPanel.removeLegend();
 				}
 				openDDGPanel.showLineNumbers(PREFERENCES.isShowLineNumbers());
-			} else if (openTab instanceof laser.ddg.gui.WorkflowPanel) {
+			} else if (openTab instanceof laser.ddg.workflow.gui.WorkflowPanel) {
 				WorkflowPanel openwfPanel = (WorkflowPanel) openTab;
 				SearchPanel.enableSearch();
 				disableDDGCommands();

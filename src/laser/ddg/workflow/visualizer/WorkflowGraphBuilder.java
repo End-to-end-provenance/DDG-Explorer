@@ -1,4 +1,4 @@
-	package laser.ddg.visualizer;
+	package laser.ddg.workflow.visualizer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,13 +26,15 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
-import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.PrefuseUtils;
+import laser.ddg.workflow.ScriptNode;
+import laser.ddg.workflow.gui.WorkflowPanel;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;

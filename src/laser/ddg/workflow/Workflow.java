@@ -1,11 +1,11 @@
-package laser.ddg;
+package laser.ddg.workflow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import laser.ddg.r.RDataInstanceNode;
-import laser.ddg.visualizer.WorkflowGraphBuilder;
+import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 
 /**
  * This is a data structure that contains the file and script nodes to

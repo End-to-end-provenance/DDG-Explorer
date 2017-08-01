@@ -7,7 +7,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import prefuse.data.Edge;
 import prefuse.data.Node;
@@ -27,19 +26,19 @@ public class PrefuseUtils {
 	/*   Field names  */
 	
 	/** The field name to identify the name of an item */
-	static final String NAME = "name";
+	public static final String NAME = "name";
 
 	/** The field name that holds an item's type */
-	static final String TYPE = "Type";
+	public static final String TYPE = "Type";
 
 	/** The field name to identify the id of an item */
-	static final String ID = "id";
+	public static final String ID = "id";
 
 	/** The field name to identify the value of an item */
-	static final String VALUE = "Value";
+	public static final String VALUE = "Value";
 	
 	/** The field name to identify the timestamp of an item */
-	static final String TIMESTAMP = "Time";
+	public static final String TIMESTAMP = "Time";
 	
 	/** The field names to identify the line and column numbers in the script */
 	public static final String STARTLINE = "StartLine";
@@ -48,24 +47,24 @@ public class PrefuseUtils {
 	public static final String ENDCOL = "EndCol";
 
 	/** The field name to identify the script number  */
-	static final String SCRIPT = "Script";
+	public static final String SCRIPT = "Script";
 
 	/** The field name to identify the source of an edge */
-	static final String SOURCE = "source";
+	public static final String SOURCE = "source";
 
 	/** The field name to identify the target of an edge */
-	static final String TARGET = "target";
+	public static final String TARGET = "target";
 	
     /** Type of a control flow edge */
-	static final String CONTROL_FLOW = "CF";
+	public static final String CONTROL_FLOW = "CF";
 
 	/** Type of a data flow edge */
-	static final String DATA_FLOW = "DF";
+	public static final String DATA_FLOW = "DF";
 
 	/** Type of a collapsed step node  or  an edge that leads to a step node */
-	static final String STEP = "Step";
-	static final String STEPDF = "StepDF";
-	static final String STEPCF = "StepCF";
+	public static final String STEP = "Step";
+	public static final String STEPDF = "StepDF";
+	public static final String STEPCF = "StepCF";
 	
 	/** Type of a procedural node that represents the start of a non-leaf operation */
 	private static final String START = "Start";
@@ -81,22 +80,22 @@ public class PrefuseUtils {
 	
 	static final String RESTORE = "Restore";
 	static final String CHECKPOINT = "Checkpoint";
-	static final String CHECKPOINT_FILE = "CheckpointFile";
+	public static final String CHECKPOINT_FILE = "CheckpointFile";
 	
 	/** A synonym for LEAF that makes more sense to non computer scientists. */
 	static final String OPERATION = "Operation";
 	
 	/** Type of a data node */
-	static final String DATA_NODE = "Data";
+	public static final String DATA_NODE = "Data";
 	
-	static final String EXCEPTION = "Exception";
-	static final String FILE = "File";
-	static final String URL = "URL";
-	static final String SNAPSHOT = "Snapshot";
+	public static final String EXCEPTION = "Exception";
+	public static final String FILE = "File";
+	public static final String URL = "URL";
+	public static final String SNAPSHOT = "Snapshot";
 
-	static final String LOCATION = "Location";
+	public static final String LOCATION = "Location";
 	
-	static final DecimalFormat elapsedTimeFormat = new DecimalFormat("##.###");
+	public static final DecimalFormat elapsedTimeFormat = new DecimalFormat("##.###");
 
 
 	/**
@@ -395,7 +394,7 @@ public class PrefuseUtils {
 	 * @param n the node being tested
 	 * @return true if a start node
 	 */
-	static boolean isStartNode(Node n) {
+	public static boolean isStartNode(Node n) {
 		return getNodeType(n).equals(START);
 	}
 
@@ -413,7 +412,7 @@ public class PrefuseUtils {
 	 * @param n the node being tested
 	 * @return true if a collapsed node
 	 */
-	static boolean isCollapsedNode(Node n) {
+	public static boolean isCollapsedNode(Node n) {
 		return getNodeType(n).equals(STEP);
 	}
 	
@@ -422,7 +421,7 @@ public class PrefuseUtils {
 	 * @param n the node to test
 	 * @return true if a script node
 	 */
-	static boolean isScriptNode(Node n) {
+	public static boolean isScriptNode(Node n) {
 		return getNodeType(n).equals(SCRIPT);
 	}
 
@@ -431,12 +430,12 @@ public class PrefuseUtils {
 	 * @param n the node to test
 	 * @return true if a leaf node
 	 */
-	static boolean isLeafNode(Node n) {
+	public static boolean isLeafNode(Node n) {
 		String nodeType = n.getString(PrefuseUtils.TYPE);
 		return nodeType.equals(LEAF) || nodeType.equals(OPERATION);
 	}
 	
-	static boolean isIncompleteNode (Node n) {
+	public static boolean isIncompleteNode (Node n) {
 		String nodeType = n.getString(PrefuseUtils.TYPE);
 		return nodeType.equals(INCOMPLETE);
 	}
@@ -446,7 +445,7 @@ public class PrefuseUtils {
 	 * @param n the node being tested
 	 * @return true if a procedural node
 	 */
-	static boolean isProcNode(Node n) {
+	public static boolean isProcNode(Node n) {
 		return !isAnyDataNode(n);
 	}
 
@@ -506,7 +505,7 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return the id
 	 */
-	static int getId(Node n) {
+	public static int getId(Node n) {
 		return n.getInt(ID);
 	}
 	
@@ -524,15 +523,15 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return the timestamp
 	 */
-	static String getTimestamp(Node n) {
+	public static String getTimestamp(Node n) {
 		return n.getString(TIMESTAMP);
 	}
 
-	static void setTimestamp(Node n, String time) {
+	public static void setTimestamp(Node n, String time) {
 		n.setString(TIMESTAMP, time);
 	}
 
-	static void setTimestamp(Node n, double time) {
+	public static void setTimestamp(Node n, double time) {
 		String formattedTime = elapsedTimeFormat.format(time);
 		n.setString(TIMESTAMP, formattedTime);
 	}
@@ -567,7 +566,7 @@ public class PrefuseUtils {
 		return n.getString(TYPE).equals(DATA_NODE);
 	}
 	
-	static boolean isException(Node n) {
+	public static boolean isException(Node n) {
 		return n.getString(TYPE).equals(EXCEPTION);
 	}
 	
@@ -580,7 +579,7 @@ public class PrefuseUtils {
 	 * @param n
 	 * @return true if a data node
 	 */
-	static boolean isAnyDataNode(Node n) {
+	public static boolean isAnyDataNode(Node n) {
 		String nodeType = getNodeType(n);
 		if (nodeType.equals(DATA_NODE)) {
 			return true;
@@ -614,7 +613,7 @@ public class PrefuseUtils {
 	 * @param item the item being tested
 	 * @return true if a collapsed node
 	 */
-	static boolean isCollapsed(VisualItem item) {
+	public static boolean isCollapsed(VisualItem item) {
 		if (item instanceof NodeItem) {
 			return isCollapsedNode((NodeItem) item);
 		}
@@ -626,7 +625,7 @@ public class PrefuseUtils {
 	 * @param item the item being tested
 	 * @return true if a start node
 	 */
-	static boolean isStart(VisualItem item) {
+	public static boolean isStart(VisualItem item) {
 		if (item instanceof NodeItem) {
 			return isStartNode((NodeItem) item);
 		}
@@ -638,7 +637,7 @@ public class PrefuseUtils {
 	 * @param item the item being tested
 	 * @return true if a finish node
 	 */
-	static boolean isFinish(VisualItem item) {
+	public static boolean isFinish(VisualItem item) {
 		if (item instanceof NodeItem) {
 			return isFinishNode((NodeItem) item);
 		}
@@ -667,7 +666,7 @@ public class PrefuseUtils {
 	 * @return true if the item is a data flow edge where one of
 	 *    the endpoints is a collapsed node.
 	 */
-	static boolean isStepDFEdge (VisualItem item) {
+	public static boolean isStepDFEdge (VisualItem item) {
 		if (item instanceof Edge) {
 			return getEdgeType((Edge)item).equals(STEPDF);
 		}

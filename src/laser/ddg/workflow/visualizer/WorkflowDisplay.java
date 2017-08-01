@@ -1,4 +1,4 @@
-package laser.ddg.visualizer;
+package laser.ddg.workflow.visualizer;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -27,7 +27,9 @@ import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.WorkflowPanel;
+import laser.ddg.visualizer.FileViewer;
+import laser.ddg.visualizer.PrefuseUtils;
+import laser.ddg.workflow.gui.WorkflowPanel;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;

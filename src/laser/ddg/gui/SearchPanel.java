@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.workflow.gui.WorkflowPanel;
 
 class SearchPanel extends JPanel {
 	private static final String ALL_OPTIONS = "All Options";

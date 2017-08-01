@@ -1,5 +1,7 @@
 package laser.ddg;
 
+import laser.ddg.workflow.ScriptNode;
+
 /**
  * A provenance listener is notified of all changes to a DDG:
  * <ul>

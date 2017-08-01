@@ -1,4 +1,4 @@
-package laser.ddg.gui;
+package laser.ddg.workflow.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -16,7 +16,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 
-import laser.ddg.visualizer.WorkflowDisplay;
+import laser.ddg.workflow.visualizer.WorkflowDisplay;
 import prefuse.Display;
 import prefuse.util.display.PaintListener;
 

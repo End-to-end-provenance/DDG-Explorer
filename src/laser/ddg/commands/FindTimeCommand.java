@@ -7,8 +7,8 @@ import java.util.Collections;
 
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
-import laser.ddg.gui.WorkflowPanel;
 import laser.ddg.search.OperationSearchElement;
+import laser.ddg.workflow.gui.WorkflowPanel;
 
 public class FindTimeCommand implements ActionListener {
 

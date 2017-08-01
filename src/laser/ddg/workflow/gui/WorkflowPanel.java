@@ -1,4 +1,4 @@
-package laser.ddg.gui;
+package laser.ddg.workflow.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,14 +22,18 @@ import laser.ddg.NoScriptFileException;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
+import laser.ddg.gui.Legend;
+import laser.ddg.gui.LegendEntry;
+import laser.ddg.gui.ScriptDisplayer;
+import laser.ddg.gui.SearchResultsGUI;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGVisualization;
-import laser.ddg.visualizer.DisplayWorkflowWithOverview;
-import laser.ddg.visualizer.WorkflowGraphBuilder;
+import laser.ddg.workflow.visualizer.DisplayWorkflowWithOverview;
+import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 
 /**
  * The JPanel that holds the workflow graph and the widgets to interact with the

@@ -1,4 +1,11 @@
-package laser.ddg;
+package laser.ddg.workflow;
+
+/**
+ * This class contains information about an edge in a workflow: Its source, target, and type.
+ * 
+ * @author Connor Gregorich-Trevor
+ *
+ */
 
 public class WorkflowEdge {
 

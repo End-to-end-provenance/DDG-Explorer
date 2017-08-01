@@ -15,12 +15,12 @@ import javax.swing.JMenuItem;
 
 import com.google.gson.Gson;
 
-import laser.ddg.ScriptNode;
-import laser.ddg.Workflow;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.persist.HashtableEntry;
 import laser.ddg.r.RDataInstanceNode;
-import laser.ddg.visualizer.WorkflowGraphBuilder;
+import laser.ddg.workflow.ScriptNode;
+import laser.ddg.workflow.Workflow;
+import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 
 /**
  * Command to examine the hashtable.csv and create a workflow from it.

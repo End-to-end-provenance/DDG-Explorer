@@ -19,7 +19,7 @@ import laser.ddg.NoScriptFileException;
 import laser.ddg.SourcePos;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.TextLineNumber;
-import laser.ddg.visualizer.WorkflowGraphBuilder;
+import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 
 /**
  * This class maintains the information needed to show source

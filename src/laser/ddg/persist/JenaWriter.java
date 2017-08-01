@@ -20,9 +20,9 @@ import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.RemoveListenerException;
-import laser.ddg.ScriptNode;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.workflow.ScriptNode;
 
 /**
  * Writes an RDF model to a Jena database.  It does this incrementally as

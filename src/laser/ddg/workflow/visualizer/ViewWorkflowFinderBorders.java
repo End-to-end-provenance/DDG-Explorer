@@ -1,4 +1,4 @@
-package laser.ddg.visualizer;
+package laser.ddg.workflow.visualizer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

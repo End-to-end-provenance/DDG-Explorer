@@ -1,4 +1,4 @@
-package laser.ddg;
+package laser.ddg.workflow;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
+import laser.ddg.DataInstanceNode;
+import laser.ddg.Node;
 
 public class ScriptNode implements Node {
 

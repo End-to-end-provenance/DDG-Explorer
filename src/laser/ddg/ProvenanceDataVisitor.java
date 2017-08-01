@@ -1,5 +1,7 @@
 package laser.ddg;
 
+import laser.ddg.workflow.ScriptNode;
+
 /**
  * This interfaces plays the role of the Visitor in the Visitor pattern.  It allows a class to be able
  * to opearte on all the elements of a DDG.

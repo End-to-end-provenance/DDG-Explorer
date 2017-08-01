@@ -5,12 +5,12 @@ import java.util.Calendar;
 
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
+import laser.ddg.workflow.ScriptNode;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.Node;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
-import laser.ddg.ScriptNode;
 import edu.harvard.pass.cpl.CPL;
 import edu.harvard.pass.cpl.CPLObject;
 

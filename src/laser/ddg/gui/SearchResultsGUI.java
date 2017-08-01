@@ -15,6 +15,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 
 import laser.ddg.search.SearchElement;
+import laser.ddg.workflow.gui.WorkflowPanel;
 
 /**
  * Creates the GUI component to show search results.

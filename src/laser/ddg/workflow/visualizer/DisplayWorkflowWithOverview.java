@@ -1,4 +1,4 @@
-package laser.ddg.visualizer;
+package laser.ddg.workflow.visualizer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -16,8 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import laser.ddg.visualizer.WorkflowDisplay.AutoPanAction;
-import laser.ddg.visualizer.WorkflowDisplay.PopupMenu;
+import laser.ddg.workflow.visualizer.WorkflowDisplay.AutoPanAction;
+import laser.ddg.workflow.visualizer.WorkflowDisplay.PopupMenu;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;

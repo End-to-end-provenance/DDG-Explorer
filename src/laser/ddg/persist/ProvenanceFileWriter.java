@@ -12,7 +12,7 @@ import laser.ddg.Node;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceListener;
-import laser.ddg.ScriptNode;
+import laser.ddg.workflow.ScriptNode;
 
 /**
  * @author xiang
