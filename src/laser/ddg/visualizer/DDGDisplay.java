@@ -489,13 +489,14 @@ public class DDGDisplay extends Display {
 				// if the node is a data node only show dialog boxes with values
 				// and/or timestamps
 				String nodeType = node.getString(PrefuseUtils.TYPE);
+				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (nodeType.equals(PrefuseUtils.DATA_NODE) || nodeType.equals(PrefuseUtils.EXCEPTION)
-						|| nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)) {
+						|| nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)
+						|| (nodeType.equals(PrefuseUtils.URL) && value.startsWith("->"))) {
 					String valueClause = "";
 					String timestampClause = "";
 					String locationClause = "";
 
-					String value = PrefuseUtils.getValue((NodeItem) node);
 					if (value != null) {
 						if (nodeType.equals(PrefuseUtils.DATA_NODE)) {
 							valueClause = "Value = " + value + "\n";

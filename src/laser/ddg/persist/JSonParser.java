@@ -254,8 +254,9 @@ public class JSonParser extends Parser {
 			
 			// If we are loading from a local file, we need to get the full path
 			// to the file.  URL nodes that lack :// are saved copies of
-			// webpages.
-			if(type.equals("File") || type.equals("Snapshot") || (type.equals("URL") && value.indexOf("://") == -1)){
+			// webpages.  URLs that start with -> are actually socket connections.
+			if(type.equals("File") || type.equals("Snapshot") || 
+					(type.equals("URL") && value.indexOf("://") == -1 && value.indexOf("->") == -1)){
 				if (builder != null) {
 					File relative = new File(builder.getSourceDDGDirectory(), value);
 					value = relative.getAbsolutePath();
