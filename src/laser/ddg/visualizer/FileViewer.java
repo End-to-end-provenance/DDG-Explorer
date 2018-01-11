@@ -153,7 +153,13 @@ public class FileViewer {
 			try {
 				// create a URI with the given URL value and open in default
 				// browser
-				uri = new URI(path);
+				if (path.indexOf("://") == -1) {
+					uri = new File(path).toURI();
+				}
+				else {
+					uri = new URI(path);
+				}
+				
 				desktop.browse(uri);
 			} catch (URISyntaxException e) {
 				// Catch block that will print out exception for URI
