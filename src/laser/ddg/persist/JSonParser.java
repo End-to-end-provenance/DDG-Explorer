@@ -66,8 +66,8 @@ public class JSonParser extends Parser {
 	@Override
 	protected void parseHeader() throws IOException {
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
-        JsonObject activities = wholeThing.getAsJsonObject("activity");
-		JsonObject environment = activities.getAsJsonObject("environment");
+        JsonObject entity = wholeThing.getAsJsonObject("entity");		// changed to entity (from activities)
+		JsonObject environment = entity.getAsJsonObject("environment");
 
 		Set<Entry<String, JsonElement> > attributeSet = environment.entrySet();
 		for (Entry <String, JsonElement> attribute : attributeSet) {
@@ -87,6 +87,9 @@ public class JSonParser extends Parser {
 				timestamp = attributeValue.getAsString().replaceAll(":", ".");
 				attributes.set(Attributes.MAIN_SCRIPT_TIMESTAMP, timestamp);
 			}
+			
+			
+			/* EDIT - need a new way of handling sourced scripts
 			else if (attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS)) {
 				String scriptFile = attributes.get(Attributes.MAIN_SCRIPT_NAME);
 				String scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf(File.separator) + 1);
@@ -95,12 +98,15 @@ public class JSonParser extends Parser {
 					attributes.setSourcedScriptInfo(sourcedScriptInfo);
 				}
 			}
+			*/
+			/* EDIT - installed packages are in separate node
 			else if (attributeName.equals(Attributes.JSON_INSTALLED_PACKAGES)) {
 				if (attributeValue.isJsonArray()) {
 					List<String> packages = parsePackages(attributeValue.getAsJsonArray());
 					attributes.setPackages(packages);
 				}
 			}
+			*/
 			else {
 				try {
 					attributes.set(attributeName, attributeValue.getAsString());
@@ -184,41 +190,43 @@ public class JSonParser extends Parser {
 	 */
 	private void parseProcNodes(JsonObject procNodes) {
 		/*
+		 * EDIT
+		 * 
 		 * This is the Json syntax for a procedural node
-		 * "p12" : {
-		 * "rdt:name" : "SimpleFunction.R",
-		 * "rdt:type" : "Finish",
-		 * "rdt:elapsedTime" : "0.0869999999999997",
-		 * "rdt:scriptNum" : "NA",
-		 * "rdt:startLine" : "NA",
-		 * "rdt:startCol" : "NA",
-		 * "rdt:endLine" : "NA",
-		 * "rdt:endCol" : "NA"
-		 * } ,
+		 * 
+		 * 	"p6": {
+		 *		"rdt:name": "a <- c(1:10)",
+		 *		"rdt:type": "Operation",
+		 *		"rdt:elapsedTime": 0.95,
+		 *		"rdt:scriptNum": 0,
+		 *		"rdt:startLine": 19,
+		 *		"rdt:startCol": 1,
+		 *		"rdt:endLine": 19,
+		 *		"rdt:endCol": 12
+		 *	},
 		 */
 
-		Set<Entry<String, JsonElement> > procNodeSet = procNodes.entrySet();
+		Set<Entry<String, JsonElement>> procNodeSet = procNodes.entrySet();
 		
 		for (Entry <String, JsonElement> procNode : procNodeSet) {
 			String id = procNode.getKey();
-			if (!id.equals("environment")) {
-				JsonObject nodeDef = (JsonObject) procNode.getValue(); 
-				String type = nodeDef.get("rdt:type").getAsString();
-				//System.out.println("Found proc node: " + id + " with type " + type);
-				
-				String name = nodeDef.get("rdt:name").getAsString();
-				double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
-				
-				String script = nodeDef.get("rdt:scriptNum").getAsString();
-				String startLine = nodeDef.get("rdt:startLine").getAsString();
-				String startCol = nodeDef.get("rdt:startCol").getAsString();
-				String endLine = nodeDef.get("rdt:endLine").getAsString();
-				String endCol = nodeDef.get("rdt:endCol").getAsString();
-
-				int idNum = Integer.parseInt(id.substring(1));
-				String label = ""+idNum+"-"+name;
-				addProcNode (type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
-			}
+			
+			JsonObject nodeDef = (JsonObject) procNode.getValue(); 
+			String type = nodeDef.get("rdt:type").getAsString();
+			//System.out.println("Found proc node: " + id + " with type " + type);
+			
+			String name = nodeDef.get("rdt:name").getAsString();
+			double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
+			
+			String script = nodeDef.get("rdt:scriptNum").getAsString();
+			String startLine = nodeDef.get("rdt:startLine").getAsString();
+			String startCol = nodeDef.get("rdt:startCol").getAsString();
+			String endLine = nodeDef.get("rdt:endLine").getAsString();
+			String endCol = nodeDef.get("rdt:endCol").getAsString();
+			
+			int idNum = Integer.parseInt(id.substring(1));
+			String label = ""+idNum+"-"+name;
+			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
 	}
 	
@@ -227,25 +235,34 @@ public class JSonParser extends Parser {
 	 */
 	private void parseDataNodes(JsonObject dataNodes) {
 		/*
+		 * EDIT
+		 * 
 		 * This is the json syntax for a data node
 		 *  
-		 * "d5" : {
-		 * "rdt:name" : "y",
-		 * "rdt:value" : "2",
-		 * "rdt:valType : "vector of length 1"
-		 * "rdt:type" : "Data",
-		 * "rdt:scope" : "0x10c32da00",
-		 * "rdt:fromEnv" : "FALSE",
-		 * "rdt:timestamp" : "",
-		 * "rdt:location" : ""
-		 * } ,
+		 * 	"d2": {
+		 *		"rdt:name": "a",
+		 *		"rdt:value": "data/2-a.csv",
+		 *		"rdt:valType": "{\"container\":\"vector\", \"dimension\":[2], \"type\":[\"character\"]}",
+		 *		"rdt:type": "Snapshot",
+		 *		"rdt:scope": "R_GlobalEnv",
+		 *		"rdt:fromEnv": false,
+		 *		"rdt:MD5hash": "",
+		 *		"rdt:timestamp": "2018-01-31T09.36.39EST",
+		 *		"rdt:location": ""
+		 *	},
 		 */		
 		
 		Set<Entry<String, JsonElement> > dataNodeSet = dataNodes.entrySet();
 		
 		for (Entry <String, JsonElement> dataNode : dataNodeSet) {
+			
 			String id = dataNode.getKey();
+			
+			if( id.charAt(0) != 'd')
+				break;
+			
 			JsonObject nodeDef = (JsonObject) dataNode.getValue(); 
+			
 			String type = nodeDef.get("rdt:type").getAsString();
 			//System.out.println("Found data node: " + id + " with type " + type);
 			
@@ -290,17 +307,22 @@ public class JSonParser extends Parser {
 	 */
 	private void parseControlFlowEdges(JsonObject cfEdges) {
 		/*
-		 * This is the json syntax for a control flow edge
-		 * "e1" : {
-		 * "prov:informant" : "p1",
-		 * "prov:informed" : "p2"
-		 * } ,
+		 * EDIT
+		 * 
+		 * This is the json syntax for a control flow edge (procedure-to-procedure)
+		 * 
+		 * 	"pp1": {
+		 *		"prov:informant": "rdt:p1",
+		 *		"prov:informed": "rdt:p2"
+		 *	},
 		 */
 		
-		Set<Entry<String, JsonElement> > cfEdgeSet = cfEdges.entrySet();
+		Set<Entry<String, JsonElement>> cfEdgeSet = cfEdges.entrySet();
 		
-		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) {
-			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
+		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) 
+		{
+			JsonObject nodeDef = (JsonObject) cfEdge.getValue();
+			
 			String pred = nodeDef.get("prov:informant").getAsString();
 			String succ = nodeDef.get("prov:informed").getAsString();
 			//System.out.println("Found cf edge from " + pred + " to " + succ);
@@ -314,14 +336,17 @@ public class JSonParser extends Parser {
 	 */
 	private void parseOutputEdges(JsonObject outputEdges) {
 		/*
-		 * This is the json syntax for a data out edge
-		 * "e2" : {
-		 * "prov:entity" : "d1",
-		 * "prov:activity" : "p2"
-		 * } ,
+		 * EDIT
+		 * 
+		 * This is the json syntax for a data out edge (procedure-to-data)
+		 * 
+		 * 	"pd1": {
+		 *		"prov:activity": "rdt:p6",
+		 *		"prov:entity": "rdt:d1"
+		 *	},
 		 */
 		
-		Set<Entry<String, JsonElement> > outputEdgeset = outputEdges.entrySet();
+		Set<Entry<String, JsonElement>> outputEdgeset = outputEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : outputEdgeset) {
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
@@ -335,26 +360,33 @@ public class JSonParser extends Parser {
 				// Nothing to do.  The error message is produced inside addDataProducerEdge.
 			}
 		}
-
 	}
 
 	/** Parses all the data input edges and adds them to the provenance data and visual graph */
 	private void parseInputEdges(JsonObject inputEdges) {
 		/*
-		 * This is the json syntax for a data in edge
-		 * "e18" : {
-		 * "prov:activity" : "p10",
-		 * "prov:entity" : "d4"
-		 * } ,
+		 * EDIT
+		 * 
+		 * This is the json syntax for a data in edge (data-to-procedure)
+		 * 
+		 * 	"dp1": {
+		 *		"prov:entity": "rdt:d1",
+		 *		"prov:activity": "rdt:p7"
+		 *	},
 		 */
 		
-		Set<Entry<String, JsonElement> > inputEdgeset = inputEdges.entrySet();
+		Set<Entry<String, JsonElement>> inputEdgeset = inputEdges.entrySet();
 		
-		for (Entry <String, JsonElement> cfEdge : inputEdgeset) {
-			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
+		for (Entry <String, JsonElement> edge : inputEdgeset) 
+		{	
+			// data-to-procedure edges occur before function-to-procedure edges
+			if( edge.getKey().substring(0,2).equals("fp") )
+				break ;
+			
+			JsonObject nodeDef = (JsonObject) edge.getValue(); 
 			String proc = nodeDef.get("prov:activity").getAsString();
 			String data = nodeDef.get("prov:entity").getAsString();
-			//System.out.println("Found cf edge from " + data + " to " + proc);
+			//System.out.println("Found input edge from " + data + " to " + proc);
 			
 			try {
 				addDataConsumerEdge(proc, data);
@@ -362,7 +394,5 @@ public class JSonParser extends Parser {
 				// Nothing to do.  The error message is produced inside addDataConsumerEdge.
 			}
 		}
-		
 	}
-
 }

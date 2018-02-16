@@ -370,8 +370,8 @@ public abstract class Parser {
 	 */
 	protected void addControlFlowEdge(String predId, String succId) {
 		//System.out.println("Adding CF edge from " + predId + " to " + succId);
-		int pred = Integer.parseInt(predId.substring(1));
-		int succ = Integer.parseInt(succId.substring(1));
+		int pred = Integer.parseInt(predId.substring(5));
+		int succ = Integer.parseInt(succId.substring(5));
 		ddgBuilder.addPredSuccLink(pred, succ);
 		addEdge ("CF", pred, succ);
 	}
@@ -386,8 +386,8 @@ public abstract class Parser {
 	 */
 	protected void addDataConsumerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException {
 		//System.out.println("Adding DF consumer edge from " + dataId + " to " + procId);
-		int data = Integer.parseInt(dataId.substring(1));
-		int consumer = Integer.parseInt(procId.substring(1));
+		int data = Integer.parseInt(dataId.substring(5));
+		int consumer = Integer.parseInt(procId.substring(5));
 		try {
 			ddgBuilder.addDataConsumer(consumer, data);
 			addEdge ("DF", data + numPins, consumer);
@@ -418,8 +418,8 @@ public abstract class Parser {
 	 */
 	protected void addDataProducerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException, ReportErrorException {
 		//System.out.println("Adding DF producer edge from " + procId + " to " + dataId);
-		int data = Integer.parseInt(dataId.substring(1));
-		int producer = Integer.parseInt(procId.substring(1));
+		int data = Integer.parseInt(dataId.substring(5));
+		int producer = Integer.parseInt(procId.substring(5));
 		try {
 			ddgBuilder.addDataProducer(data, producer);
 			addEdge ("DF", producer, data + numPins);
