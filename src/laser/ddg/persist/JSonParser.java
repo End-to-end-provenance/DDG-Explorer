@@ -375,6 +375,10 @@ public class JSonParser extends Parser {
 		 *	},
 		 */
 		
+		// base case: no edges
+		if( inputEdges == null )
+			return ;
+		
 		Set<Entry<String, JsonElement>> inputEdgeset = inputEdges.entrySet();
 		
 		for (Entry <String, JsonElement> edge : inputEdgeset) 
