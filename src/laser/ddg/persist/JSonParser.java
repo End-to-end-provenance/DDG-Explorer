@@ -66,7 +66,7 @@ public class JSonParser extends Parser {
 	@Override
 	protected void parseHeader() throws IOException {
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
-        JsonObject entity = wholeThing.getAsJsonObject("entity");		// changed to entity (from activities)
+        JsonObject entity = wholeThing.getAsJsonObject("entity");
 		JsonObject environment = entity.getAsJsonObject("environment");
 
 		Set<Entry<String, JsonElement> > attributeSet = environment.entrySet();
@@ -127,12 +127,16 @@ public class JSonParser extends Parser {
 	 */
 	private static List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
 		List<ScriptInfo> sourcedScriptInfo = new ArrayList<>();
-		for (JsonElement sourcedScriptElem : sourcedScripts) {
+		
+		
+		/*for (JsonElement sourcedScriptElem : sourcedScripts) {
 			JsonObject sourcedScript = sourcedScriptElem.getAsJsonObject();
 			String name = sourcedScript.get("name").getAsString();
 			String timestamp = sourcedScript.get("timestamp").getAsString();
 			sourcedScriptInfo.add(new ScriptInfo(scriptDir + File.separator + name, timestamp));
-		}
+		}*/
+		
+		
 		return sourcedScriptInfo;
 	}
 
@@ -190,8 +194,6 @@ public class JSonParser extends Parser {
 	 */
 	private void parseProcNodes(JsonObject procNodes) {
 		/*
-		 * EDIT
-		 * 
 		 * This is the Json syntax for a procedural node
 		 * 
 		 * 	"p6": {
@@ -235,8 +237,6 @@ public class JSonParser extends Parser {
 	 */
 	private void parseDataNodes(JsonObject dataNodes) {
 		/*
-		 * EDIT
-		 * 
 		 * This is the json syntax for a data node
 		 *  
 		 * 	"d2": {
@@ -307,8 +307,6 @@ public class JSonParser extends Parser {
 	 */
 	private void parseControlFlowEdges(JsonObject cfEdges) {
 		/*
-		 * EDIT
-		 * 
 		 * This is the json syntax for a control flow edge (procedure-to-procedure)
 		 * 
 		 * 	"pp1": {
@@ -336,8 +334,6 @@ public class JSonParser extends Parser {
 	 */
 	private void parseOutputEdges(JsonObject outputEdges) {
 		/*
-		 * EDIT
-		 * 
 		 * This is the json syntax for a data out edge (procedure-to-data)
 		 * 
 		 * 	"pd1": {
@@ -365,8 +361,6 @@ public class JSonParser extends Parser {
 	/** Parses all the data input edges and adds them to the provenance data and visual graph */
 	private void parseInputEdges(JsonObject inputEdges) {
 		/*
-		 * EDIT
-		 * 
 		 * This is the json syntax for a data in edge (data-to-procedure)
 		 * 
 		 * 	"dp1": {
