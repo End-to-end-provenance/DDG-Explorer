@@ -5,11 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -64,97 +63,84 @@ public class JSonParser extends Parser {
 	 *   a problem reading from the input stream.
 	 */
 	@Override
-	protected void parseHeader() throws IOException {
+	protected void parseHeader() throws IOException 
+	{
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
         JsonObject entity = wholeThing.getAsJsonObject("entity");
 		JsonObject environment = entity.getAsJsonObject("environment");
-
+		
 		Set<Entry<String, JsonElement> > attributeSet = environment.entrySet();
-		for (Entry <String, JsonElement> attribute : attributeSet) {
+		//System.out.println( attributeSet ) ;
+		
+		String scriptDir = null ;
+		Iterator<JsonElement> sourcedScripts = null ;
+		Iterator<JsonElement> ssTimestamps = null ;
+		
+		// parsing the environment node
+		for (Entry <String, JsonElement> attribute : attributeSet) 
+		{
 			String attributeName = attribute.getKey();
 			JsonElement attributeValue = attribute.getValue();
 
-			if(attributeName.equals(Attributes.JSON_LANGUAGE)){
+			if(attributeName.equals(Attributes.JSON_LANGUAGE))
+			{
 				language = attributeValue.getAsString();
 				attributes.set(Attributes.LANGUAGE, language);
 			}
-			else if(attributeName.equals(Attributes.JSON_MAIN_SCRIPT_NAME)){
+			else if(attributeName.equals(Attributes.JSON_MAIN_SCRIPT_NAME))
+			{
 				scrpt = attributeValue.getAsString();
 				attributes.set(Attributes.MAIN_SCRIPT_NAME, scrpt);
 			}
-			else if(attributeName.equals(Attributes.JSON_EXECUTION_TIME)){
+			else if(attributeName.equals(Attributes.JSON_EXECUTION_TIME))
+			{
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				timestamp = attributeValue.getAsString().replaceAll(":", ".");
 				attributes.set(Attributes.MAIN_SCRIPT_TIMESTAMP, timestamp);
 			}
-			
-			
-			/* EDIT - need a new way of handling sourced scripts
-			else if (attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS)) {
+			// sourced scripts, if any. 
+			else if( attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS) )
+			{
 				String scriptFile = attributes.get(Attributes.MAIN_SCRIPT_NAME);
-				String scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf(File.separator) + 1);
-				if (attributeValue.isJsonArray()) {
-					List<ScriptInfo> sourcedScriptInfo = parseSourcedScripts(scriptDir, attributeValue.getAsJsonArray());
-					attributes.setSourcedScriptInfo(sourcedScriptInfo);
-				}
+				scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf('/') + 1);
+				
+				if( attributeValue.isJsonArray() )
+					sourcedScripts = attributeValue.getAsJsonArray().iterator() ;
 			}
-			*/
-			/* EDIT - installed packages are in separate node
-			else if (attributeName.equals(Attributes.JSON_INSTALLED_PACKAGES)) {
-				if (attributeValue.isJsonArray()) {
-					List<String> packages = parsePackages(attributeValue.getAsJsonArray());
-					attributes.setPackages(packages);
-				}
+			// sourced script timestamps, if any.
+			else if( attributeName.equals(Attributes.JSON_SOURCED_SCRIPT_TIMESTAMPS) && attributeValue.isJsonArray() )
+			{
+				ssTimestamps = attributeValue.getAsJsonArray().iterator() ;
 			}
-			*/
-			else {
-				try {
+			else 
+			{
+				try 
+				{
 					attributes.set(attributeName, attributeValue.getAsString());
-				} catch (IllegalStateException | UnsupportedOperationException e) {
+				} 
+				catch (IllegalStateException | UnsupportedOperationException e) 
+				{
 					// Ignore any other attributes that are not simple strings
 				}
 
 			}
 		}
-	}
-
-	/**
-	 * Parses the json attribute that contains the sourced script information
-	 * 
-	 * @param scriptDir the directory where the script is stored
-	 * @param sourcedScripts the json attribute for sourced scripts
-	 * @return a list of sourced script objects 
-	 */
-	private static List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
-		List<ScriptInfo> sourcedScriptInfo = new ArrayList<>();
 		
+		// parse source script information, if any
+		if( sourcedScripts == null )
+			return;
 		
-		/*for (JsonElement sourcedScriptElem : sourcedScripts) {
-			JsonObject sourcedScript = sourcedScriptElem.getAsJsonObject();
-			String name = sourcedScript.get("name").getAsString();
-			String timestamp = sourcedScript.get("timestamp").getAsString();
-			sourcedScriptInfo.add(new ScriptInfo(scriptDir + File.separator + name, timestamp));
-		}*/
+		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
 		
-		
-		return sourcedScriptInfo;
-	}
-
-	/**
-	 * Parses the installed packages information
-	 * 
-	 * @param packages the json attribute for the packages
-	 * @return a list of the packages
-	 */
-	private static List<String> parsePackages(JsonArray packages) {
-		List<String> packageInfo = new ArrayList<>();
-		for (JsonElement packageElem : packages) {
-			JsonObject packageObj = packageElem.getAsJsonObject();
-			String name = packageObj.get("package").getAsString();
-			String version = packageObj.get("version").getAsString();
-			packageInfo.add(name + " " + version);
+		while( sourcedScripts.hasNext() )
+		{
+			String filepath = scriptDir + "/" + sourcedScripts.next().getAsString() ;
+			String timestamp = ssTimestamps.next().getAsString() ;
+			
+			sourcedScriptInfo.add( new ScriptInfo(filepath, timestamp) ) ;
 		}
-		return packageInfo;
+		
+		attributes.setSourcedScriptInfo(sourcedScriptInfo) ;
 	}
 
 	/**
@@ -169,8 +155,8 @@ public class JSonParser extends Parser {
             JsonObject procNodes = wholeThing.getAsJsonObject("activity");
             parseProcNodes (procNodes);
             
-            JsonObject dataNodes = wholeThing.getAsJsonObject("entity");
-            parseDataNodes (dataNodes);
+            JsonObject entity = wholeThing.getAsJsonObject("entity");
+            parseDataAndLibraryNodes(entity);
             
             JsonObject cfEdges = wholeThing.getAsJsonObject("wasInformedBy");
             parseControlFlowEdges (cfEdges);
@@ -235,9 +221,9 @@ public class JSonParser extends Parser {
 	/** 
 	 * Parses all the data nodes and adds them to the provenance data and visual graph 
 	 */
-	private void parseDataNodes(JsonObject dataNodes) {
+	private void parseDataAndLibraryNodes(JsonObject entity) {
 		/*
-		 * This is the json syntax for a data node
+		 * json syntax for a data node:
 		 *  
 		 * 	"d2": {
 		 *		"rdt:name": "a",
@@ -250,56 +236,91 @@ public class JSonParser extends Parser {
 		 *		"rdt:timestamp": "2018-01-31T09.36.39EST",
 		 *		"rdt:location": ""
 		 *	},
+		 *
+		 * json syntax for a library node:
+		 * 
+		 * 	"l1": {
+		 *		"name": "base",
+		 *		"version": "3.4.3",
+		 *		"prov:type": {
+		 *			"$": "prov:Collection",
+		 *			"type": "xsd:QName"
+		 *		}
+		 *	},
 		 */		
 		
-		Set<Entry<String, JsonElement> > dataNodeSet = dataNodes.entrySet();
+		Set<Entry<String, JsonElement> > nodeSet = entity.entrySet();
+		ArrayList<String> libraries = new ArrayList<String>();
 		
-		for (Entry <String, JsonElement> dataNode : dataNodeSet) {
+		for (Entry<String, JsonElement> node : nodeSet) 
+		{	
+			String id = node.getKey();
 			
-			String id = dataNode.getKey();
-			
-			if( id.charAt(0) != 'd')
-				break;
-			
-			JsonObject nodeDef = (JsonObject) dataNode.getValue(); 
-			
-			String type = nodeDef.get("rdt:type").getAsString();
-			//System.out.println("Found data node: " + id + " with type " + type);
-			
-			String name = nodeDef.get("rdt:name").getAsString();
-			String value = nodeDef.get("rdt:value").getAsString();
-			
-			// If we are loading from a local file, we need to get the full path
-			// to the file.  URL nodes that lack :// are saved copies of
-			// webpages.  URLs that start with -> are actually socket connections.
-			if(type.equals("File") || type.equals("Snapshot") || 
-					(type.equals("URL") && value.indexOf("://") == -1 && value.indexOf("->") == -1)){
-				if (builder != null) {
-					File relative = new File(builder.getSourceDDGDirectory(), value);
-					value = relative.getAbsolutePath();
+			// data nodes
+			if( id.charAt(0) == 'd' )
+			{
+				JsonObject nodeDef = (JsonObject) node.getValue(); 
+				
+				String type = nodeDef.get("rdt:type").getAsString();
+				//System.out.println("Found data node: " + id + " with type " + type);
+				
+				String name = nodeDef.get("rdt:name").getAsString();
+				String value = nodeDef.get("rdt:value").getAsString();
+				
+				// If we are loading from a local file, we need to get the full path
+				// to the file.  URL nodes that lack :// are saved copies of
+				// webpages.  URLs that start with -> are actually socket connections.
+				if(type.equals("File") || type.equals("Snapshot") || 
+						(type.equals("URL") && value.indexOf("://") == -1 && value.indexOf("->") == -1)){
+					if (builder != null) {
+						File relative = new File(builder.getSourceDDGDirectory(), value);
+						value = relative.getAbsolutePath();
+					}
 				}
+				
+				// If we ever want to do anything interesting with valType in DDG Explorer,
+				// we will need to parse ValType instead of just storing it as a string.
+				String valType = nodeDef.get("rdt:valType").toString();
+				
+				String timestamp = nodeDef.get("rdt:timestamp").getAsString();
+				if (timestamp.equals("")) {
+					timestamp = null;
+				}
+				
+				String location = nodeDef.get("rdt:location").getAsString();
+				if (location.equals("")) {
+					location = null;
+				}
+				
+				int idNum = Integer.parseInt(id.substring(1));
+				String label = ""+idNum+"-"+name;
+			
+				addDataNode (type, id, label, value, valType, timestamp, location);
 			}
-			
-			// If we ever want to do anything interesting with valType in DDG Explorer,
-			// we will need to parse ValType instead of just storing it as a string.
-			String valType = nodeDef.get("rdt:valType").toString();
-			
-			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
-			if (timestamp.equals("")) {
-				timestamp = null;
+			// environment node: skip!
+			else if( id.equals("environment") )
+			{
+				continue;
 			}
-			
-			String location = nodeDef.get("rdt:location").getAsString();
-			if (location.equals("")) {
-				location = null;
+			// library nodes: add library nodes to list
+			else if( id.charAt(0) == 'l' )
+			{
+				JsonObject obj = (JsonObject) node.getValue() ;
+				
+				String name = obj.get("name").getAsString() ;
+				String version = obj.get("version").getAsString() ;
+				
+				libraries.add(name + " " + version) ;
 			}
-
-			int idNum = Integer.parseInt(id.substring(1));
-			String label = ""+idNum+"-"+name;
-			
-			addDataNode (type, id, label, value, valType, timestamp, location);
-		}
-
+			// exit loop for everything else (function nodes)
+			else
+			{
+				break;
+			}
+		}	// end for
+		
+		// set list of libraries in attributes
+		attributes.setPackages(libraries) ;
 	}
 
 	/** 

@@ -21,7 +21,7 @@ public class Attributes {
 	public static final String MAIN_SCRIPT_NAME = "Script";
 	public static final String MAIN_SCRIPT_TIMESTAMP = "ProcessFileTimestamp";
 	public static final String SOURCED_SCRIPT_NAMES = "SourcedScripts";
-	public static final String SCRIPT_TIMESTAMPS = "SourcedScriptTimestamps";
+	public static final String SCRIPT_TIMESTAMPS = "ScriptTimestamp";
 
 	// Names of attributes describing the entire DDG as used in JSON
 	public static final String JSON_LANGUAGE = "rdt:language";
