@@ -29,8 +29,8 @@ public class Attributes {
 	public static final String JSON_MAIN_SCRIPT_NAME = "rdt:script";
 	public static final String JSON_MAIN_SCRIPT_TIMESTAMP = "rdt:scriptTimeStamp";
 	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
-	public static final Object JSON_INSTALLED_PACKAGES = "rdt:InstalledPackages";
-
+	public static final String JSON_SOURCED_SCRIPT_TIMESTAMPS = "rdt:sourcedScriptTimeStamps";
+	
 	// Information about the sourced scripts as recorded in Json attributes
 	private List<ScriptInfo> sourcedScriptInfo;
 
