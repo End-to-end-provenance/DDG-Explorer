@@ -132,7 +132,7 @@ public class JSonParser extends Parser {
 		
 		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
 		
-		while( sourcedScripts.hasNext() )
+		while( sourcedScripts.hasNext() && ssTimestamps != null && ssTimestamps.hasNext())
 		{
 			String filepath = scriptDir + "/" + sourcedScripts.next().getAsString() ;
 			String timestamp = ssTimestamps.next().getAsString() ;
