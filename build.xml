@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  To build the .jar file, in the command line, navigate into the directory
+  where this file is in and run the following command:
+  
+  ant -file build.xml ddg-explorer
+  
+-->
+
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
-	<property name="version" value="2.9.0"/>
+	<property name="version" value="2.9.1"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
