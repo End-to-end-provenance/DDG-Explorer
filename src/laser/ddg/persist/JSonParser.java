@@ -67,7 +67,7 @@ public class JSonParser extends Parser {
 	{
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
         JsonObject entity = wholeThing.getAsJsonObject("entity");
-		JsonObject environment = entity.getAsJsonObject("environment");
+		JsonObject environment = entity.getAsJsonObject(PREFIX+"environment");
 		
 		Set<Entry<String, JsonElement> > attributeSet = environment.entrySet();
 		//System.out.println( attributeSet ) ;
@@ -182,7 +182,7 @@ public class JSonParser extends Parser {
 		/*
 		 * This is the Json syntax for a procedural node
 		 * 
-		 * 	"p6": {
+		 * 	"rdt:p6": {
 		 *		"rdt:name": "a <- c(1:10)",
 		 *		"rdt:type": "Operation",
 		 *		"rdt:elapsedTime": 0.95,
@@ -197,20 +197,20 @@ public class JSonParser extends Parser {
 		Set<Entry<String, JsonElement>> procNodeSet = procNodes.entrySet();
 		
 		for (Entry <String, JsonElement> procNode : procNodeSet) {
-			String id = procNode.getKey();
+			String id = procNode.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
 			
 			JsonObject nodeDef = (JsonObject) procNode.getValue(); 
-			String type = nodeDef.get("rdt:type").getAsString();
+			String type = nodeDef.get(PREFIX+"type").getAsString();
 			//System.out.println("Found proc node: " + id + " with type " + type);
 			
-			String name = nodeDef.get("rdt:name").getAsString();
-			double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
+			String name = nodeDef.get(PREFIX+"name").getAsString();
+			double elapsedTime = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
 			
-			String script = nodeDef.get("rdt:scriptNum").getAsString();
-			String startLine = nodeDef.get("rdt:startLine").getAsString();
-			String startCol = nodeDef.get("rdt:startCol").getAsString();
-			String endLine = nodeDef.get("rdt:endLine").getAsString();
-			String endCol = nodeDef.get("rdt:endCol").getAsString();
+			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
+			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
+			String startCol = nodeDef.get(PREFIX+"startCol").getAsString();
+			String endLine = nodeDef.get(PREFIX+"endLine").getAsString();
+			String endCol = nodeDef.get(PREFIX+"endCol").getAsString();
 			
 			int idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
@@ -225,7 +225,7 @@ public class JSonParser extends Parser {
 		/*
 		 * json syntax for a data node:
 		 *  
-		 * 	"d2": {
+		 * 	"rdt:d2": {
 		 *		"rdt:name": "a",
 		 *		"rdt:value": "data/2-a.csv",
 		 *		"rdt:valType": "{\"container\":\"vector\", \"dimension\":[2], \"type\":[\"character\"]}",
@@ -239,7 +239,7 @@ public class JSonParser extends Parser {
 		 *
 		 * json syntax for a library node:
 		 * 
-		 * 	"l1": {
+		 * 	"rdt:l1": {
 		 *		"name": "base",
 		 *		"version": "3.4.3",
 		 *		"prov:type": {
@@ -254,18 +254,18 @@ public class JSonParser extends Parser {
 		
 		for (Entry<String, JsonElement> node : nodeSet) 
 		{	
-			String id = node.getKey();
+			String id = node.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
 			
 			// data nodes
 			if( id.charAt(0) == 'd' )
 			{
 				JsonObject nodeDef = (JsonObject) node.getValue(); 
 				
-				String type = nodeDef.get("rdt:type").getAsString();
+				String type = nodeDef.get(PREFIX+"type").getAsString();
 				//System.out.println("Found data node: " + id + " with type " + type);
 				
-				String name = nodeDef.get("rdt:name").getAsString();
-				String value = nodeDef.get("rdt:value").getAsString();
+				String name = nodeDef.get(PREFIX+"name").getAsString();
+				String value = nodeDef.get(PREFIX+"value").getAsString();
 				
 				// If we are loading from a local file, we need to get the full path
 				// to the file.  URL nodes that lack :// are saved copies of
@@ -280,14 +280,14 @@ public class JSonParser extends Parser {
 				
 				// If we ever want to do anything interesting with valType in DDG Explorer,
 				// we will need to parse ValType instead of just storing it as a string.
-				String valType = nodeDef.get("rdt:valType").toString();
+				String valType = nodeDef.get(PREFIX+"valType").toString();
 				
-				String timestamp = nodeDef.get("rdt:timestamp").getAsString();
+				String timestamp = nodeDef.get(PREFIX+"timestamp").getAsString();
 				if (timestamp.equals("")) {
 					timestamp = null;
 				}
 				
-				String location = nodeDef.get("rdt:location").getAsString();
+				String location = nodeDef.get(PREFIX+"location").getAsString();
 				if (location.equals("")) {
 					location = null;
 				}
@@ -330,7 +330,7 @@ public class JSonParser extends Parser {
 		/*
 		 * This is the json syntax for a control flow edge (procedure-to-procedure)
 		 * 
-		 * 	"pp1": {
+		 * 	"rdt:pp1": {
 		 *		"prov:informant": "rdt:p1",
 		 *		"prov:informed": "rdt:p2"
 		 *	},
@@ -342,8 +342,8 @@ public class JSonParser extends Parser {
 		{
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue();
 			
-			String pred = nodeDef.get("prov:informant").getAsString();
-			String succ = nodeDef.get("prov:informed").getAsString();
+			String pred = nodeDef.get("prov:informant").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from referenced node name
+			String succ = nodeDef.get("prov:informed").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from referenced node name
 			//System.out.println("Found cf edge from " + pred + " to " + succ);
 			
 			addControlFlowEdge(pred, succ);
@@ -357,7 +357,7 @@ public class JSonParser extends Parser {
 		/*
 		 * This is the json syntax for a data out edge (procedure-to-data)
 		 * 
-		 * 	"pd1": {
+		 * 	"rdt:pd1": {
 		 *		"prov:activity": "rdt:p6",
 		 *		"prov:entity": "rdt:d1"
 		 *	},
@@ -367,8 +367,8 @@ public class JSonParser extends Parser {
 		
 		for (Entry <String, JsonElement> cfEdge : outputEdgeset) {
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
-			String proc = nodeDef.get("prov:activity").getAsString();
-			String data = nodeDef.get("prov:entity").getAsString();
+			String proc = nodeDef.get("prov:activity").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
+			String data = nodeDef.get("prov:entity").getAsString().substring(PREFIX.length());		// strip off prefix `rdt:` from node name
 			//System.out.println("Found df edge from " + proc + " to " + data);
 			
 			try {
@@ -384,7 +384,7 @@ public class JSonParser extends Parser {
 		/*
 		 * This is the json syntax for a data in edge (data-to-procedure)
 		 * 
-		 * 	"dp1": {
+		 * 	"rdt:dp1": {
 		 *		"prov:entity": "rdt:d1",
 		 *		"prov:activity": "rdt:p7"
 		 *	},
@@ -399,12 +399,12 @@ public class JSonParser extends Parser {
 		for (Entry <String, JsonElement> edge : inputEdgeset) 
 		{	
 			// data-to-procedure edges occur before function-to-procedure edges
-			if( edge.getKey().substring(0,2).equals("fp") )
+			if( edge.getKey().substring(0,2).equals(PREFIX+"fp") )
 				break ;
 			
 			JsonObject nodeDef = (JsonObject) edge.getValue(); 
-			String proc = nodeDef.get("prov:activity").getAsString();
-			String data = nodeDef.get("prov:entity").getAsString();
+			String proc = nodeDef.get("prov:activity").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
+			String data = nodeDef.get("prov:entity").getAsString().substring(PREFIX.length());		// strip off prefix `rdt:` from node name
 			//System.out.println("Found input edge from " + data + " to " + proc);
 			
 			try {

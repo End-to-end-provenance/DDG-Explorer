@@ -58,6 +58,10 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * @author Barbara Lerner
  */
 public abstract class Parser {
+	
+	/** The prefix that is appended to the name of each node*/
+	public static String PREFIX = "rdt:" ;
+	
 	/** The object that builds the prefuse graph */
 	protected PrefuseGraphBuilder builder;
 	
@@ -197,7 +201,7 @@ public abstract class Parser {
 			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
 		}
-		int idNum = Integer.parseInt(nodeId.substring(1));
+		int idNum = Integer.parseInt( nodeId.substring(1) );
 
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
@@ -340,7 +344,7 @@ public abstract class Parser {
 	 * @return the numeric value of the id
 	 */
 	 private int extractUID(String idToken) {
-		int uid = Integer.parseInt(idToken.substring(1));
+		int uid = Integer.parseInt( idToken.substring(1) );
 		
 		// Prefuse requires each entry to have a unique id, but our data nodes and
 		// step nodes both start at 1.  We therefore offset the uid for the data nodes
@@ -370,8 +374,8 @@ public abstract class Parser {
 	 */
 	protected void addControlFlowEdge(String predId, String succId) {
 		//System.out.println("Adding CF edge from " + predId + " to " + succId);
-		int pred = Integer.parseInt(predId.substring(5));
-		int succ = Integer.parseInt(succId.substring(5));
+		int pred = Integer.parseInt(predId.substring(1));
+		int succ = Integer.parseInt(succId.substring(1));
 		ddgBuilder.addPredSuccLink(pred, succ);
 		addEdge ("CF", pred, succ);
 	}
@@ -386,8 +390,8 @@ public abstract class Parser {
 	 */
 	protected void addDataConsumerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException {
 		//System.out.println("Adding DF consumer edge from " + dataId + " to " + procId);
-		int data = Integer.parseInt(dataId.substring(5));
-		int consumer = Integer.parseInt(procId.substring(5));
+		int data = Integer.parseInt(dataId.substring(1));
+		int consumer = Integer.parseInt(procId.substring(1));
 		try {
 			ddgBuilder.addDataConsumer(consumer, data);
 			addEdge ("DF", data + numPins, consumer);
@@ -418,8 +422,8 @@ public abstract class Parser {
 	 */
 	protected void addDataProducerEdge(String procId, String dataId) throws NoSuchDataNodeException, NoSuchProcNodeException, ReportErrorException {
 		//System.out.println("Adding DF producer edge from " + procId + " to " + dataId);
-		int data = Integer.parseInt(dataId.substring(5));
-		int producer = Integer.parseInt(procId.substring(5));
+		int data = Integer.parseInt(dataId.substring(1));
+		int producer = Integer.parseInt(procId.substring(1));
 		try {
 			ddgBuilder.addDataProducer(data, producer);
 			addEdge ("DF", producer, data + numPins);
