@@ -59,9 +59,6 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  */
 public abstract class Parser {
 	
-	/** The prefix that is appended to the name of each node*/
-	public static String PREFIX = "rdt:" ;
-	
 	/** The object that builds the prefuse graph */
 	protected PrefuseGraphBuilder builder;
 	

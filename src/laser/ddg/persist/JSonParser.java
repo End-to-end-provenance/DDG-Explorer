@@ -27,6 +27,10 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  *
  */
 public class JSonParser extends Parser {
+	
+	/** The prefix that is appended to the name of each node*/
+	private static String PREFIX = "rdt:" ;
+	
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
 
