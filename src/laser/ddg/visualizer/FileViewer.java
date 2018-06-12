@@ -109,6 +109,9 @@ public class FileViewer {
 		else if (path.endsWith(".htm") || path.endsWith(".html") || path.startsWith("http")){
 			// Nothing to do.  Will launch browser
 		}
+		else if (path.endsWith(".rds")) {
+			throw (new BinaryFileException ());
+		}
 		else { // pdf or any other type of file
 			// Nothing to do.  Will try to launch a platform application  
 		}
