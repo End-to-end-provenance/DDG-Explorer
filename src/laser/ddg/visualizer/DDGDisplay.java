@@ -551,9 +551,13 @@ public class DDGDisplay extends Display {
 				else if (PrefuseUtils.isFile(node)) {
 					try {
 						openFile((NodeItem) node);
+			    	} catch (BinaryFileException e1) {
+			    		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
+								"Could not load the binary file copied from " + 
+								 PrefuseUtils.getLocation((NodeItem) node));
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
-								"Could not find the file " + PrefuseUtils.getValue((NodeItem) node));
+								"Could not display the file " + PrefuseUtils.getValue((NodeItem) node));
 					}
 
 				}
