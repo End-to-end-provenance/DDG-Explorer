@@ -1,8 +1,11 @@
 package laser.ddg;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,8 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import org.apache.commons.codec.binary.Hex;
 
 /**
@@ -149,14 +151,25 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		nameOfDIN = name;
 		timeCreated = time;
 		this.location = location;
+		File locationFile = null;
 		if (location != null) {
+			locationFile = new File (location);
+			
+			// If no file exists at the location, check the val attribute.
+			// It could be the file was deleted, but the saved copy 
+			// still exists.
+			if (!locationFile.exists() && val != null) {
+				locationFile = new File (val);				
+			}
+			
 			try {
-				this.hash = doFileHashing(location);
+				this.hash = doFileHashing(locationFile);
 			} catch (IOException e) {
 				this.hash = null;
 				e.printStackTrace();
 			}
-		} else {
+		}
+		else {
 			this.hash = null;
 		}
 	}
@@ -177,7 +190,7 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 	 * @return hexString, a hexadecimal string representation of the file's SHA-1 hash.
 	 * @throws IOException
 	 */
-	public String doFileHashing(String location) throws IOException {
+	public String doFileHashing(File location) throws IOException {
 		try {
 			this.md = MessageDigest.getInstance("SHA-1");
 		} catch (NoSuchAlgorithmException e) {
