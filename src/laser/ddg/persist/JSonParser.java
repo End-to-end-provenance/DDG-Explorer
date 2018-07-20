@@ -403,7 +403,7 @@ public class JSonParser extends Parser {
 		for (Entry <String, JsonElement> edge : inputEdgeset) 
 		{	
 			// data-to-procedure edges occur before function-to-procedure edges
-			if( edge.getKey().substring(0,2).equals(PREFIX+"fp") )
+			if( edge.getKey().startsWith(PREFIX+"fp") )
 				break ;
 			
 			JsonObject nodeDef = (JsonObject) edge.getValue(); 
