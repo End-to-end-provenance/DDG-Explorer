@@ -340,6 +340,11 @@ public class JSonParser extends Parser {
 		 *	},
 		 */
 		
+		// Edge case
+		if (cfEdges == null) {
+			return;
+		}
+		
 		Set<Entry<String, JsonElement>> cfEdgeSet = cfEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) 
