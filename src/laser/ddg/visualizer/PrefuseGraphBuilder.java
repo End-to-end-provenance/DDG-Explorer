@@ -1340,6 +1340,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				edgesAddedFrom.add(neighbor);
 			}
 
+			// If it is an exception, always add the edge
+			else if (PrefuseUtils.isException((NodeItem)neighbor)) {
+				addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
+				edgesAddedFrom.add(neighbor);
+			}
+
 			// Check that the edge comes from a data node
 			else if (PrefuseUtils.isAnyDataNode(neighbor)) {
 				Iterator<Node> dataConsumers = neighbor.inNeighbors();
@@ -1758,6 +1764,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	private static void setDataNodeVisibility(NodeItem node) {
 		// Always make files visible
 		if (PrefuseUtils.isFile(node) && !PrefuseUtils.isSnapshot(node)) {
+			node.setVisible (true);
+			return;
+		}
+		
+		// Always make errors visible
+		if (PrefuseUtils.isException(node)) {
 			node.setVisible (true);
 			return;
 		}
