@@ -91,6 +91,7 @@ public class PrefuseUtils {
 	public static final String EXCEPTION = "Exception";
 	public static final String FILE = "File";
 	public static final String URL = "URL";
+	public static final String DEVICE = "Device";
 	public static final String SNAPSHOT = "Snapshot";
 
 	public static final String LOCATION = "Location";
@@ -594,6 +595,10 @@ public class PrefuseUtils {
 		}
 		
 		if (nodeType.equals(URL)) {
+			return true;
+		}
+		
+		if (nodeType.equals(DEVICE)) {
 			return true;
 		}
 		
