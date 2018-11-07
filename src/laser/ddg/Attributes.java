@@ -25,7 +25,7 @@ public class Attributes {
 
 	// Names of attributes describing the entire DDG as used in JSON
 	public static final String JSON_LANGUAGE = "rdt:language";
-	public static final String JSON_EXECUTION_TIME = "rdt:ddgTimeStamp";
+	public static final String JSON_EXECUTION_TIME = "rdt:provTimestamp";
 	public static final String JSON_MAIN_SCRIPT_NAME = "rdt:script";
 	public static final String JSON_MAIN_SCRIPT_TIMESTAMP = "rdt:scriptTimeStamp";
 	public static final String JSON_SOURCED_SCRIPTS = "rdt:sourcedScripts";
