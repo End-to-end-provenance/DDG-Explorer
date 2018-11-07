@@ -43,7 +43,7 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * <NodeDecl> -> <DataNode> | <ProcedureNode>
  * <ProcedureNode> -> <ProcedureNodeType> <ProcedureNodeID> <NAME> ["Time" "="�� <Timestamp >] <Attributes>*
  * <ProcedureNodeType> -> "Start" | "Finish" | "Interm" | "Leaf" | "Operation" | "SimpleHandler" | "VStart" | "VFinish" | "VInterm" | "Checkpoint" | "Restore"
- * <DataNode> -> <DataNodeType> <DataNodeID> <NAME> ["Value" "="<Value> ]["Time" "="�� <Timestamp >]["Location" "=" <FILENAME>]
+ * <DataNode> -> <DataNodeType> <DataNodeID> <NAME> ["Value" "="<Value> ]["ValType" "=" <ValType>]["Time" "="�� <Timestamp >]["Location" "=" <FILENAME>]
  * <DataNodeType> -> "Data" | "Exception" | "URL" | "File" | "Snapshot"
  * <Value> -> <URL> | <FILENAME> | <STRING>
  * <Timestamp> -> <YEAR>"-"<MONTH>"-"<DATE>["T"<HOUR>":"<MINUTE>[":"<SECOND>["."<FRACTIONAL>]]]
@@ -58,6 +58,7 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  * @author Barbara Lerner
  */
 public abstract class Parser {
+	
 	/** The object that builds the prefuse graph */
 	protected PrefuseGraphBuilder builder;
 	
@@ -118,7 +119,7 @@ public abstract class Parser {
 	 * Adds the nodes and edges from the DDG to the graph.
 	 * @throws IOException if there is a problem reading the file
 	 */
-	public void addNodesAndEdges() throws IOException {
+	public ProvenanceData addNodesAndEdges() throws IOException {
 		parseHeader();
 		
 		// If there was no script attribute, use the filename.
@@ -132,14 +133,18 @@ public abstract class Parser {
 		provData.setAttributes(attributes);
 		
 		provData.setQuery("Entire DDG");
-		builder.setProvData(provData);
+		if (builder != null) {
+			builder.setProvData(provData);
+		}
 		
 		try {
 			if (language == null) {
 				language = "Little-JIL";
 			}
 			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
-			builder.createLegend(language);
+			if (builder != null) {
+				builder.createLegend(language);
+			}
 
 			//System.out.println("Using " + ddgBuilder.getClass().getName());
 		} catch (Exception e) {
@@ -154,7 +159,10 @@ public abstract class Parser {
 		if (ddgBuilder != null) {
 			ddgBuilder.ddgBuilt();
 		}
-		builder.processFinished();
+		if (builder != null) {
+			builder.processFinished();
+		}
+		return provData;
 	}
 
 	/**
@@ -186,10 +194,12 @@ public abstract class Parser {
 	protected void addProcNode (String nodeType, String nodeId, String name, String value, double elapsedTime, String script, String startLine, String startCol, String endLine, String endCol) {
 		//System.out.println("Adding proc node " + nodeId);
 		SourcePos sourcePos = buildSourcePos(script, startLine, startCol, endLine, endCol);
-		builder.addNode(nodeType, extractUID(nodeId), 
+		if (builder != null) {
+			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, elapsedTime, null, sourcePos);
-		int idNum = Integer.parseInt(nodeId.substring(1));
-			
+		}
+		int idNum = Integer.parseInt( nodeId.substring(1) );
+
 		ddgBuilder.addProceduralNode(nodeType, idNum, name, value, elapsedTime, sourcePos);
 	}
 	
@@ -253,17 +263,20 @@ public abstract class Parser {
 	 * @param nodeId the node's unique id
 	 * @param name the label to display
 	 * @param value the data value
+	 * @param valType the type of the data value
 	 * @param timestamp the timestamp for the data
 	 * @param location the file location if the data is a file or snapshot
 	 */
-	protected void addDataNode (String nodeType, String nodeId, String name, String value, String timestamp, String location) {
+	protected void addDataNode (String nodeType, String nodeId, String name, String value, String valType, String timestamp, String location) {
 		//System.out.println("Adding data node " + nodeId + " with type " + nodeType);
 		int idNum = Integer.parseInt(nodeId.substring(1));
 		if (ddgBuilder != null) {
 			ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 		}
-		builder.addNode(nodeType, extractUID(nodeId), 
+		if (builder != null) {
+			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, timestamp, location, null);
+		}
 	}
 	
 
@@ -328,7 +341,7 @@ public abstract class Parser {
 	 * @return the numeric value of the id
 	 */
 	 private int extractUID(String idToken) {
-		int uid = Integer.parseInt(idToken.substring(1));
+		int uid = Integer.parseInt( idToken.substring(1) );
 		
 		// Prefuse requires each entry to have a unique id, but our data nodes and
 		// step nodes both start at 1.  We therefore offset the uid for the data nodes
@@ -346,7 +359,9 @@ public abstract class Parser {
 	 * @param destination the node at the head
 	 */
 	private void addEdge(String edgeType, int source, int destination) {
-		builder.addEdge(edgeType, destination, source);
+		if (builder != null) {
+			builder.addEdge(edgeType, destination, source);
+		}
 	}
 
 	/**

@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
+import laser.ddg.workflow.ScriptNode;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.Node;
 import laser.ddg.ProcedureInstanceNode;
@@ -119,6 +120,12 @@ public class CPLWriter implements ProvenanceListener {
 
 	@Override
 	public void rootSet(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void scriptNodeCreated(ScriptNode sn) {
 		// TODO Auto-generated method stub
 		
 	}

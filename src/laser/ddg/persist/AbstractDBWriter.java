@@ -112,12 +112,12 @@ public abstract class AbstractDBWriter implements DBWriter, ProvenanceDataVisito
 	 */
 	@Override
 	public void visitPin(ProcedureInstanceNode pin) {
-		persistSin(pin);
+		persistSn(pin);
 		provData.visitControlFlowEdges(pin, this);
 	}
 
 	/**
-	 * Makes the node psersistent
+	 * Makes the node persistent
 	 */
 	@Override
 	public void visitDin(DataInstanceNode din) {

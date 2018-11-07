@@ -1,8 +1,6 @@
-package laser.ddg.visualizer;
+package laser.ddg.workflow.visualizer;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -28,15 +26,13 @@ import laser.ddg.DataInstanceNode;
 import laser.ddg.NoScriptFileException;
 import laser.ddg.ProcedureInstanceNode;
 import laser.ddg.SourcePos;
-import laser.ddg.commands.ShowDataFlowCommand;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.DDGPanel;
-import laser.ddg.query.DerivationQuery;
-import laser.ddg.query.ResultsQuery;
+import laser.ddg.visualizer.FileViewer;
+import laser.ddg.visualizer.PrefuseUtils;
+import laser.ddg.workflow.gui.WorkflowPanel;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
-import prefuse.data.Node;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
@@ -44,34 +40,34 @@ import prefuse.visual.NodeItem;
 import prefuse.visual.VisualItem;
 
 /**
- * Displays a DDG using prefuse. Manages panning and zooming and things in the
+ * Displays a workflow using prefuse. Manages panning and zooming and things in the
  * right-click menu.
  * 
  * @author Antonia Miruna Oprescu
  * 
  */
-public class DDGDisplay extends Display {
+public class WorkflowDisplay extends Display {
 
 	// proportions for the position of the focus center
 	private double proportionX = 0;
 	private double proportionY = 0.25;
 
 	// Builds the nodes and edges that comprise the graph
-	private PrefuseGraphBuilder builder;
+	private WorkflowGraphBuilder builder;
 
 	private static final int FILE_CURRENT = 0;
-	private static final int FILE_INCONSISTENT_WITH_DDG = 1;
-	private static final int FILE_INCONSISTENT_WITH_DDG_CANCEL = -1;
+	private static final int FILE_INCONSISTENT_WITH_WORKFLOW = 1;
+	private static final int FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL = -1;
 	private static final int FILE_MISSING = -2;
-	private static final String FUNCTION = "#ddg.function";
+	private static final String FUNCTION = "#workflow.function";
 
 	/**
-	 * Create a display for a prefuse DDG
+	 * Create a display for a prefuse workflow
 	 * 
 	 * @param builder
-	 *            the object that is building the Prefuse graph of the ddg
+	 *            the object that is building the Prefuse graph of the workflow
 	 */
-	public DDGDisplay(PrefuseGraphBuilder builder) {
+	public WorkflowDisplay(WorkflowGraphBuilder builder) {
 		this.builder = builder;
 		this.setHighQuality(true); // higher quality rendering, aka anti-aliased
 									// lines
@@ -120,36 +116,36 @@ public class DDGDisplay extends Display {
 
 	private void openFile(final NodeItem n) throws IOException {
 		// Get timeStamp if one has been included
-		String ddgTime = PrefuseUtils.getTimestamp(n);
+		String workflowTime = PrefuseUtils.getTimestamp(n);
 
 		// Get the extension of the node's value
-		String value = PrefuseUtils.getValue(n);
-		String valueExt;
-		if (value != null) {
-			int index = value.lastIndexOf(".");
-			valueExt = value.substring(index);
+		String location = PrefuseUtils.getLocation(n);
+		String locationExt;
+		if (location != null) {
+			int index = location.lastIndexOf(".");
+			locationExt = location.substring(index);
 			// only works for .csv or .txt files now
-			if (valueExt.equals(".csv") || valueExt.equals(".txt")) {
+			if (locationExt.equals(".csv") || locationExt.equals(".txt")) {
 				// make sure it has the correct slashes in the path
-				value = getOS(value);
-				createFileFrame(value, ddgTime);
-			} else if (valueExt.equals(".jpeg") || valueExt.equals(".png") || valueExt.equals(".gif")) {
-				createPlotFrame(value, ddgTime);
-			} else if (valueExt.equals(".RData")) {
-				JOptionPane.showMessageDialog(DDGDisplay.this, "R Checkpoint file: " + value);
+				location = getOS(location);
+				createFileFrame(location, workflowTime);
+			} else if (locationExt.equals(".jpeg") || locationExt.equals(".png") || locationExt.equals(".gif")) {
+				createPlotFrame(location, workflowTime);
+			} else if (locationExt.equals(".RData")) {
+				JOptionPane.showMessageDialog(WorkflowDisplay.this, "R Checkpoint file: " + location);
 			} else { // if(valueExt.equals(".pdf") || valueExt.equals(".html")
 						// || valueExt.equals(".htm"))
 						// Should work for all kinds of files. Uses a
 						// platform-specific
 						// application.
-				new FileViewer(value, ddgTime).displayFile();
+				new FileViewer(location, workflowTime).displayFile();
 			}
 			// else {
 			// JOptionPane.showMessageDialog(DDGDisplay.this,"This data does not
 			// have an associated file");
 			// }
 		} else {
-			JOptionPane.showMessageDialog(DDGDisplay.this, "This data does not have an associated file");
+			JOptionPane.showMessageDialog(WorkflowDisplay.this, "This data does not have an associated file");
 		}
 	}
 
@@ -161,7 +157,7 @@ public class DDGDisplay extends Display {
 	 * @param path
 	 *            path of the file (either .csv or .txt)
 	 * @param time
-	 *            timestamp of the file given by the DDG
+	 *            timestamp of the file given by the workflow
 	 */
 	private void createFileFrame(String path, String time) throws IOException {
 		// Check the timestamps
@@ -171,15 +167,15 @@ public class DDGDisplay extends Display {
 			tChange = timeChanged(path, time);
 		}
 
-		// Timestamp of file is not consistent with the ddg and the
+		// Timestamp of file is not consistent with the workflow and the
 		// user canceled the request to view the file
-		if (tChange == FILE_INCONSISTENT_WITH_DDG_CANCEL || tChange == FILE_MISSING) {
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL || tChange == FILE_MISSING) {
 			return;
 		}
 
 		FileViewer fileViewer = new FileViewer(path, time);
-		if (tChange == FILE_INCONSISTENT_WITH_DDG) {
-			// Add warning border if file is inconsistent with the ddg
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW) {
+			// Add warning border if file is inconsistent with the workflow
 			fileViewer.addBorder(Color.RED);
 		}
 		fileViewer.displayFile();
@@ -194,7 +190,7 @@ public class DDGDisplay extends Display {
 	 *            path name that the image file is found or. Can be .jpeg, .gif,
 	 *            .png or a URL
 	 * @param time
-	 *            timestamp of the plot given by the DDG
+	 *            timestamp of the plot given by the workflow
 	 * @exception IOException if the image file cannot be read
 	 */
 	private void createPlotFrame(String path, String time) throws IOException {
@@ -205,15 +201,15 @@ public class DDGDisplay extends Display {
 			tChange = timeChanged(path, time);
 		}
 
-		// Timestamp of file is not consistent with the ddg and the
+		// Timestamp of file is not consistent with the workflow and the
 		// user canceled the request to view the file
-		if (tChange == FILE_INCONSISTENT_WITH_DDG_CANCEL || tChange == FILE_MISSING) {
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL || tChange == FILE_MISSING) {
 			return;
 		}
 
 		FileViewer fileViewer = new FileViewer(path, time);
-		if (tChange == FILE_INCONSISTENT_WITH_DDG) {
-			// Add warning border if file is inconsistent with the ddg
+		if (tChange == FILE_INCONSISTENT_WITH_WORKFLOW) {
+			// Add warning border if file is inconsistent with the workflow
 			fileViewer.addBorder(Color.RED);
 		}
 		fileViewer.displayFile();
@@ -226,9 +222,9 @@ public class DDGDisplay extends Display {
 	 * @param path
 	 *            the file/plot timestamp given by the system
 	 * @param time
-	 *            the timestamp associated with the file/plot given from the DDG
-	 * @return returns FILE_INCONSISTENT_WITH_DDG(conflict but viewable),
-	 *         FILE_CURRENT(no conflict) or FILE_INCONSISTENT_WITH_DDG_CANCEL
+	 *            the timestamp associated with the file/plot given from the workflow
+	 * @return returns FILE_INCONSISTENT_WITH_WORKFLOW(conflict but viewable),
+	 *         FILE_CURRENT(no conflict) or FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL
 	 *         (conflict but don't view)
 	 */
 	private int timeChanged(String path, String time) {
@@ -246,33 +242,33 @@ public class DDGDisplay extends Display {
 		// make a date object out of the original timestamp so they can be
 		// compared
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.sszzz");
-		Date ddgTime;
+		Date workflowTime;
 
 		try {
-			ddgTime = formatter.parse(time);
+			workflowTime = formatter.parse(time);
 
 			// find difference between the dates, acceptable if not more than a
 			// minute apart.
-			long diff = Math.abs(fileTime.getTime() - ddgTime.getTime());
+			long diff = Math.abs(fileTime.getTime() - workflowTime.getTime());
 			if (diff <= 6000) {
 				return FILE_CURRENT;
 			}
 
-			// Time on the file is after time stored in DDG
-			int choice = JOptionPane.showConfirmDialog(DDGDisplay.this,
+			// Time on the file is after time stored in workflow
+			int choice = JOptionPane.showConfirmDialog(WorkflowDisplay.this,
 					"There is a conflict between the timestamps. File may be modified. Would you like to open the file anyway?",
 					"File Timestamps Warning", JOptionPane.OK_CANCEL_OPTION);
 			if (choice == JOptionPane.OK_OPTION) {
 				// conflict but still show file
-				return FILE_INCONSISTENT_WITH_DDG;
+				return FILE_INCONSISTENT_WITH_WORKFLOW;
 			} else {
 				// conflict but do not open file
-				return FILE_INCONSISTENT_WITH_DDG_CANCEL;
+				return FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL;
 			}
 		} catch (ParseException e) {
-			DDGExplorer.showErrMsg("Error with parsing the DDG timestamp. " + e.getMessage());
+			DDGExplorer.showErrMsg("Error with parsing the workflow timestamp. " + e.getMessage());
 			e.printStackTrace(System.err);
-			return FILE_INCONSISTENT_WITH_DDG_CANCEL;
+			return FILE_INCONSISTENT_WITH_WORKFLOW_CANCEL;
 		}
 	}
 
@@ -315,13 +311,13 @@ public class DDGDisplay extends Display {
 
 		// Display the script highlighting the first line
 		// of the function.
-		DDGPanel curPanel = DDGExplorer.getCurrentDDGPanel();
+		WorkflowPanel curPanel = DDGExplorer.getCurrentWorkflowPanel();
 		curPanel.displaySourceCode(sourcePos);
 		
 	}
 
 	/**
-	 * Allows the user to move to a desired portion of the DDG
+	 * Allows the user to move to a desired portion of the workflow
 	 */
 	class AutoPanAction extends Action {
 		private Point2D mCur = new Point2D.Double();
@@ -422,9 +418,9 @@ public class DDGDisplay extends Display {
 				VisualItem item = findItem(p);
 				String timestamp = PrefuseUtils.getTimestamp((NodeItem) item);
 				if (timestamp != null) {
-					JOptionPane.showMessageDialog(DDGDisplay.this, timestamp + " seconds");
+					JOptionPane.showMessageDialog(WorkflowDisplay.this, timestamp + " seconds");
 				} else {
-					JOptionPane.showMessageDialog(DDGDisplay.this,
+					JOptionPane.showMessageDialog(WorkflowDisplay.this,
 							"There is no elapsed time associated with this node.");
 				}
 			}
@@ -463,7 +459,7 @@ public class DDGDisplay extends Display {
 			private void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
 				// display source code between those lines
 				if (sourcePos == null || sourcePos.getStartLine() == -1) {
-					JOptionPane.showMessageDialog(DDGDisplay.this,
+					JOptionPane.showMessageDialog(WorkflowDisplay.this,
 							"There are no line numbers associated with this node.");
 					return;
 				}
@@ -489,14 +485,13 @@ public class DDGDisplay extends Display {
 				// if the node is a data node only show dialog boxes with values
 				// and/or timestamps
 				String nodeType = node.getString(PrefuseUtils.TYPE);
-				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (nodeType.equals(PrefuseUtils.DATA_NODE) || nodeType.equals(PrefuseUtils.EXCEPTION)
-						|| nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)
-						|| (nodeType.equals(PrefuseUtils.URL) && value.startsWith("->"))) {
+						|| nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)) {
 					String valueClause = "";
 					String timestampClause = "";
 					String locationClause = "";
 
+					String value = PrefuseUtils.getValue((NodeItem) node);
 					if (value != null) {
 						if (nodeType.equals(PrefuseUtils.DATA_NODE)) {
 							valueClause = "Value = " + value + "\n";
@@ -515,15 +510,15 @@ public class DDGDisplay extends Display {
 					}
 
 					if (value == null && time == null && location == null) {
-						JOptionPane.showMessageDialog(DDGDisplay.this, "There is no information about this file.");
+						JOptionPane.showMessageDialog(WorkflowDisplay.this, "There is no information about this file.");
 					} else if (value != null && value.equals(FUNCTION)) {
 						try {
 							displayFunc(node);
 						} catch (NoScriptFileException e1) {
-							JOptionPane.showMessageDialog(DDGDisplay.this, e1.getMessage());
+							JOptionPane.showMessageDialog(WorkflowDisplay.this, e1.getMessage());
 						}
 					} else {
-						JOptionPane.showMessageDialog(DDGDisplay.this, valueClause + timestampClause + locationClause);
+						JOptionPane.showMessageDialog(WorkflowDisplay.this, valueClause + timestampClause + locationClause);
 					}
 				}
 
@@ -533,7 +528,7 @@ public class DDGDisplay extends Display {
 								&& (PrefuseUtils.getValue((NodeItem) node).endsWith(".html")
 										|| PrefuseUtils.getValue((NodeItem) node).endsWith(".htm")))) {
 					int choice = JOptionPane
-							.showConfirmDialog(DDGDisplay.this,
+							.showConfirmDialog(WorkflowDisplay.this,
 									"The referenced URL is \n" + PrefuseUtils.getValue((NodeItem) node)
 											+ "\nDo you want to view it?\n",
 									"URL destination", JOptionPane.OK_CANCEL_OPTION);
@@ -551,13 +546,9 @@ public class DDGDisplay extends Display {
 				else if (PrefuseUtils.isFile(node)) {
 					try {
 						openFile((NodeItem) node);
-			    	} catch (BinaryFileException e1) {
-			    		JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
-								"Could not load the binary file copied from " + 
-								 PrefuseUtils.getLocation((NodeItem) node));
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(DDGExplorer.getInstance(), 
-								"Could not display the file " + PrefuseUtils.getValue((NodeItem) node));
+								"Could not find the file " + PrefuseUtils.getValue((NodeItem) node));
 					}
 
 				}
@@ -571,27 +562,10 @@ public class DDGDisplay extends Display {
 
 				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (value == null) {
-					JOptionPane.showMessageDialog(DDGDisplay.this, "There is no information about this file.");
+					JOptionPane.showMessageDialog(WorkflowDisplay.this, "There is no information about this file.");
 				} else {
-					JOptionPane.showMessageDialog(DDGDisplay.this, value);
+					JOptionPane.showMessageDialog(WorkflowDisplay.this, value);
 				}
-			}
-
-		};
-		
-		private PopupCommand showHowComputedCommand = new PopupCommand("Show how value was computed") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new DerivationQuery());
-			}
-
-		};
-
-
-		private PopupCommand showWhatIsComputedCommand = new PopupCommand("Show what is computed using this value") {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new ResultsQuery());
 			}
 
 		};
@@ -633,7 +607,7 @@ public class DDGDisplay extends Display {
 					}
 
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {
-						showPopup(e, showValueCommand, showHowComputedCommand, showWhatIsComputedCommand);
+						showPopup(e, showValueCommand);
 					}
 
 					else if (PrefuseUtils.isLeafNode((NodeItem) item)) {
@@ -667,17 +641,4 @@ public class DDGDisplay extends Display {
 		}
 
 	}
-	
-	/**
-	 * Print the DDG.  The graphics device determines the format.
-	 */
-    protected void printComponent(Graphics g) {
-    	
-    	// Make it believe it needs to draw the whole thing
-    	damageReport();
-
-    	// Paint directly to the print graphics context.
-        paintDisplay((Graphics2D) g, getSize());
-    }
-
 }

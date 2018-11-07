@@ -7,7 +7,9 @@ package laser.ddg.commands;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JCheckBoxMenuItem;
+
 import laser.ddg.gui.DDGExplorer;
 
 /**

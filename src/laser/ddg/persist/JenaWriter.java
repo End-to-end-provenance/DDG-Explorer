@@ -22,6 +22,7 @@ import laser.ddg.ProvenanceListener;
 import laser.ddg.RemoveListenerException;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
+import laser.ddg.workflow.ScriptNode;
 
 /**
  * Writes an RDF model to a Jena database.  It does this incrementally as
@@ -336,7 +337,7 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 		dataset.begin(ReadWrite.WRITE);
 		// System.out.println("JenaWriter.procedureNodeCreated got write lock.");
 		try {
-			persistSin(pin);
+			persistSn(pin);
 			dataset.commit();
 		} finally {
 			// System.out.println("JenaWriter.procedureNodeCreated releasing write lock.");
@@ -348,27 +349,27 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	 * @param sin
 	 */
 	@Override
-	public void persistSin(ProcedureInstanceNode sin) {
+	public void persistSn(ProcedureInstanceNode sn) {
 		Model model = dataset.getDefaultModel();
-		Resource newSin = model.createResource(props.getSinResourceId(sin));
+		Resource newSin = model.createResource(props.getSinResourceId(sn));
 			
-		getProvData().bindNodeToResource(sin, newSin.getURI());
+		getProvData().bindNodeToResource(sn, newSin.getURI());
 		//System.out.println("Adding name " + sin.getName()
 		//			+ " to resource" + newSin);
 
 		newSin.addProperty(props.getDDG(model), ddgURI);
-		newSin.addProperty(props.getSinName(model), sin.getName());
-		newSin.addProperty(props.getSinType(model), sin.getType());
-		newSin.addLiteral (props.getSinDDGId(model), sin.getId());
-		newSin.addLiteral (props.getSinElapsedTime(model), sin.getElapsedTime());
-		SourcePos sourcePos = sin.getSourcePos();
+		newSin.addProperty(props.getSinName(model), sn.getName());
+		newSin.addProperty(props.getSinType(model), sn.getType());
+		newSin.addLiteral (props.getSinDDGId(model), sn.getId());
+		newSin.addLiteral (props.getSinElapsedTime(model), sn.getElapsedTime());
+		SourcePos sourcePos = sn.getSourcePos();
 		newSin.addLiteral (props.getSinStartLineNumber(model), sourcePos.getStartLine());
 		newSin.addLiteral (props.getSinStartColNumber(model), sourcePos.getStartCol());
 		newSin.addLiteral (props.getSinEndLineNumber(model), sourcePos.getEndLine());
 		newSin.addLiteral (props.getSinEndColNumber(model), sourcePos.getEndCol());
 		newSin.addLiteral (props.getSinScriptNumber(model), sourcePos.getScriptNumber());
 			
-		Object procDef = sin.getProcedureDefinition();
+		Object procDef = sn.getProcedureDefinition();
 		if (procDef == null) {
 			newSin.addProperty(props.getStepProperty(model), "Dummy Step Def");
 		}
@@ -502,6 +503,18 @@ public class JenaWriter extends AbstractDBWriter implements ProvenanceListener {
 	/** No-op  */
 	@Override
 	public void rootSet(Node root) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitSn(ScriptNode sn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void scriptNodeCreated(ScriptNode sn) {
 		// TODO Auto-generated method stub
 		
 	}

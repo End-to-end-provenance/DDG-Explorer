@@ -194,7 +194,7 @@ public class ProvenanceData {
 		p.setId(id);  // Using the one passed in as a parameter
 		notifyPinCreated(p);
 	}
-
+	
 	/**
 	 * Add DIN to the process inputs set
 	 * 
@@ -374,8 +374,6 @@ public class ProvenanceData {
 
 			// put root on top of list b/c prefuse visualizer expects root to
 			// be added to graph first
-			//pins.remove(sin);
-			//pins.add(0, sin);
 
 		} else {
 			throw new RootAlreadySetException("Root already set");
@@ -827,7 +825,7 @@ public class ProvenanceData {
 			visitor.visitPin(nextPin);
 		}
 	}
-
+	
 	/**
 	 * Allows a visitor to operate on each din in a ddg
 	 * @param visitor the object that will operate on the din

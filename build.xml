@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  To build the .jar file, in the command line, navigate into the directory
+  where this file is in and run the following command:
+  
+  ant -file build.xml ddg-explorer
+  
+-->
+
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
-	<property name="version" value="2.8.5"/>
+	<property name="version" value="2.9.3"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -25,6 +33,13 @@
         <pathelement location="lib/CPL.jar"/>
     	<pathelement location="lib/jdiff.jar"/>
     	<pathelement location="lib/gson-2.6.2.jar"/>
+    	<pathelement location="lib/freehep-graphics2d-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphics2d-export-example-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsbase-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsio-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsio-pdf-2.4.jar"/>
+        <pathelement location="lib/freehep-graphicsio-ps-2.4.jar"/>
+        <pathelement location="lib/freehep-graphicsio-swf-2.4.jar"/>
        <!--pathelement location="lib/jxbrowser-6.0.jar"/>
        <pathelement location="lib/jxbrowser-linux64-6.0.jar"/>
        <pathelement location="lib/evaluation.jar"/-->
@@ -116,6 +131,18 @@
 
   		<!-- Code to support parsing json -->
   		<zipfileset includes="**/*" src="lib/gson-2.6.2.jar" />
+  		
+  		<!-- Code to support file output of the graphics -->
+    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-export-example-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphicsbase-2.4.jar"/>
+    	<zipfileset includes="**/*" src="lib/freehep-graphicsio-2.4.jar"/>
+        <zipfileset includes="**/*" src="lib/freehep-graphicsio-ps-2.4.jar"/> 
+  		
+  		<!-- We can only include one of ps, pdf, or swf.  To get multiple formats, they need to 
+  		     be loaded from separate jar files, not packaged together into a single file like this. -->
+    	<!--<zipfileset includes="**/*" src="lib/freehep-graphicsio-pdf-2.4.jar"/> -->
+        <!-- <zipfileset includes="**/*" src="lib/freehep-graphicsio-swf-2.4.jar"/> -->
   	
   	</jar>
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>

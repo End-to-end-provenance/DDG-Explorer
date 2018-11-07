@@ -5,11 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -28,11 +27,16 @@ import laser.ddg.visualizer.PrefuseGraphBuilder;
  *
  */
 public class JSonParser extends Parser {
+	
+	/** The prefix that is appended to the name of each node*/
+	private static String PREFIX = "rdt:" ;
+	
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
 
 	/**
 	 * Create a Json parser
+	 * 
 	 * @param file the json file to parser
 	 * @param builder the object that builds the visual graph
 	 * @throws IOException
@@ -58,89 +62,89 @@ public class JSonParser extends Parser {
 	
 	/**
 	 * Parses the attributes and their values and the pin counter.
+	 * 
 	 * @throws IOException if the header is not formatted properly or there is
 	 *   a problem reading from the input stream.
 	 */
 	@Override
-	protected void parseHeader() throws IOException {
+	protected void parseHeader() throws IOException 
+	{
         JsonObject wholeThing = jsonRoot.getAsJsonObject();
-        JsonObject activities = wholeThing.getAsJsonObject("activity");
-		JsonObject environment = activities.getAsJsonObject("environment");
-
+        JsonObject entity = wholeThing.getAsJsonObject("entity");
+		JsonObject environment = entity.getAsJsonObject(PREFIX+"environment");
+		
 		Set<Entry<String, JsonElement> > attributeSet = environment.entrySet();
-		for (Entry <String, JsonElement> attribute : attributeSet) {
+		//System.out.println( attributeSet ) ;
+		
+		String scriptDir = null ;
+		Iterator<JsonElement> sourcedScripts = null ;
+		Iterator<JsonElement> ssTimestamps = null ;
+		
+		// parsing the environment node
+		for (Entry <String, JsonElement> attribute : attributeSet) 
+		{
 			String attributeName = attribute.getKey();
 			JsonElement attributeValue = attribute.getValue();
 
-			if(attributeName.equals(Attributes.JSON_LANGUAGE)){
+			if(attributeName.equals(Attributes.JSON_LANGUAGE))
+			{
 				language = attributeValue.getAsString();
 				attributes.set(Attributes.LANGUAGE, language);
 			}
-			else if(attributeName.equals(Attributes.JSON_MAIN_SCRIPT_NAME)){
+			else if(attributeName.equals(Attributes.JSON_MAIN_SCRIPT_NAME))
+			{
 				scrpt = attributeValue.getAsString();
 				attributes.set(Attributes.MAIN_SCRIPT_NAME, scrpt);
 			}
-			else if(attributeName.equals(Attributes.JSON_EXECUTION_TIME)){
+			else if(attributeName.equals(Attributes.JSON_EXECUTION_TIME))
+			{
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
 				timestamp = attributeValue.getAsString().replaceAll(":", ".");
 				attributes.set(Attributes.MAIN_SCRIPT_TIMESTAMP, timestamp);
 			}
-			else if (attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS)) {
+			// sourced scripts, if any. 
+			else if( attributeName.equals(Attributes.JSON_SOURCED_SCRIPTS) )
+			{
 				String scriptFile = attributes.get(Attributes.MAIN_SCRIPT_NAME);
-				String scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf(File.separator) + 1);
-				if (attributeValue.isJsonArray()) {
-					List<ScriptInfo> sourcedScriptInfo = parseSourcedScripts(scriptDir, attributeValue.getAsJsonArray());
-					attributes.setSourcedScriptInfo(sourcedScriptInfo);
-				}
+				scriptDir = scriptFile.substring(0, scriptFile.lastIndexOf('/') + 1);
+				
+				if( attributeValue.isJsonArray() )
+					sourcedScripts = attributeValue.getAsJsonArray().iterator() ;
 			}
-			else if (attributeName.equals(Attributes.JSON_INSTALLED_PACKAGES)) {
-				if (attributeValue.isJsonArray()) {
-					List<String> packages = parsePackages(attributeValue.getAsJsonArray());
-					attributes.setPackages(packages);
-				}
+			// sourced script timestamps, if any.
+			else if( attributeName.equals(Attributes.JSON_SOURCED_SCRIPT_TIMESTAMPS) && attributeValue.isJsonArray() )
+			{
+				ssTimestamps = attributeValue.getAsJsonArray().iterator() ;
 			}
-			else {
-				try {
+			else 
+			{
+				try 
+				{
 					attributes.set(attributeName, attributeValue.getAsString());
-				} catch (IllegalStateException | UnsupportedOperationException e) {
+				} 
+				catch (IllegalStateException | UnsupportedOperationException e) 
+				{
 					// Ignore any other attributes that are not simple strings
 				}
 
 			}
 		}
-	}
-
-	/**
-	 * Parses the json attribute that contains the sourced script information
-	 * @param scriptDir the directory where the script is stored
-	 * @param sourcedScripts the json attribute for sourced scripts
-	 * @return a list of sourced script objects 
-	 */
-	private static List<ScriptInfo> parseSourcedScripts(String scriptDir, JsonArray sourcedScripts) {
-		List<ScriptInfo> sourcedScriptInfo = new ArrayList<>();
-		for (JsonElement sourcedScriptElem : sourcedScripts) {
-			JsonObject sourcedScript = sourcedScriptElem.getAsJsonObject();
-			String name = sourcedScript.get("name").getAsString();
-			String timestamp = sourcedScript.get("timestamp").getAsString();
-			sourcedScriptInfo.add(new ScriptInfo(scriptDir + File.separator + name, timestamp));
+		
+		// parse source script information, if any
+		if( sourcedScripts == null )
+			return;
+		
+		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
+		
+		while( sourcedScripts.hasNext() && ssTimestamps != null && ssTimestamps.hasNext())
+		{
+			String filepath = scriptDir + "/" + sourcedScripts.next().getAsString() ;
+			String timestamp = ssTimestamps.next().getAsString() ;
+			
+			sourcedScriptInfo.add( new ScriptInfo(filepath, timestamp) ) ;
 		}
-		return sourcedScriptInfo;
-	}
-
-	/**
-	 * Parses the installed packages information
-	 * @param packages the json attribute for the packages
-	 * @return a list of the packages
-	 */
-	private static List<String> parsePackages(JsonArray packages) {
-		List<String> packageInfo = new ArrayList<>();
-		for (JsonElement packageElem : packages) {
-			JsonObject packageObj = packageElem.getAsJsonObject();
-			String name = packageObj.get("package").getAsString();
-			String version = packageObj.get("version").getAsString();
-			packageInfo.add(name + " " + version);
-		}
-		return packageInfo;
+		
+		attributes.setSourcedScriptInfo(sourcedScriptInfo) ;
 	}
 
 	/**
@@ -155,8 +159,8 @@ public class JSonParser extends Parser {
             JsonObject procNodes = wholeThing.getAsJsonObject("activity");
             parseProcNodes (procNodes);
             
-            JsonObject dataNodes = wholeThing.getAsJsonObject("entity");
-            parseDataNodes (dataNodes);
+            JsonObject entity = wholeThing.getAsJsonObject("entity");
+            parseDataAndLibraryNodes(entity);
             
             JsonObject cfEdges = wholeThing.getAsJsonObject("wasInformedBy");
             parseControlFlowEdges (cfEdges);
@@ -175,125 +179,209 @@ public class JSonParser extends Parser {
 		}
     }
     
-	/** Parses all the procedural nodes and adds them to the provenance data and visual graph */
+	/** 
+	 * Parses all the procedural nodes and adds them to the provenance data and visual graph 
+	 */
 	private void parseProcNodes(JsonObject procNodes) {
-		// This is the Json syntax for a procedural node
-//		"p12" : {
-//		"rdt:name" : "SimpleFunction.R",
-//		"rdt:type" : "Finish",
-//		"rdt:elapsedTime" : "0.0869999999999997",
-//		"rdt:scriptNum" : "NA",
-//		"rdt:startLine" : "NA",
-//		"rdt:startCol" : "NA",
-//		"rdt:endLine" : "NA",
-//		"rdt:endCol" : "NA"
-//		} ,
+		/*
+		 * This is the Json syntax for a procedural node
+		 * 
+		 * 	"rdt:p6": {
+		 *		"rdt:name": "a <- c(1:10)",
+		 *		"rdt:type": "Operation",
+		 *		"rdt:elapsedTime": 0.95,
+		 *		"rdt:scriptNum": 0,
+		 *		"rdt:startLine": 19,
+		 *		"rdt:startCol": 1,
+		 *		"rdt:endLine": 19,
+		 *		"rdt:endCol": 12
+		 *	},
+		 */
 
-		Set<Entry<String, JsonElement> > procNodeSet = procNodes.entrySet();
+		Set<Entry<String, JsonElement>> procNodeSet = procNodes.entrySet();
 		
 		for (Entry <String, JsonElement> procNode : procNodeSet) {
-			String id = procNode.getKey();
-			if (!id.equals("environment")) {
-				JsonObject nodeDef = (JsonObject) procNode.getValue(); 
-				String type = nodeDef.get("rdt:type").getAsString();
-				//System.out.println("Found proc node: " + id + " with type " + type);
-				
-				String name = nodeDef.get("rdt:name").getAsString();
-				double elapsedTime = Double.parseDouble(nodeDef.get("rdt:elapsedTime").getAsString());
-				
-				String script = nodeDef.get("rdt:scriptNum").getAsString();
-				String startLine = nodeDef.get("rdt:startLine").getAsString();
-				String startCol = nodeDef.get("rdt:startCol").getAsString();
-				String endLine = nodeDef.get("rdt:endLine").getAsString();
-				String endCol = nodeDef.get("rdt:endCol").getAsString();
-
-				int idNum = Integer.parseInt(id.substring(1));
-				String label = ""+idNum+"-"+name;
-				addProcNode (type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
-			}
+			String id = procNode.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
+			
+			JsonObject nodeDef = (JsonObject) procNode.getValue(); 
+			String type = nodeDef.get(PREFIX+"type").getAsString();
+			//System.out.println("Found proc node: " + id + " with type " + type);
+			
+			String name = nodeDef.get(PREFIX+"name").getAsString();
+			double elapsedTime = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			
+			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
+			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
+			String startCol = nodeDef.get(PREFIX+"startCol").getAsString();
+			String endLine = nodeDef.get(PREFIX+"endLine").getAsString();
+			String endCol = nodeDef.get(PREFIX+"endCol").getAsString();
+			
+			int idNum = Integer.parseInt(id.substring(1));
+			String label = ""+idNum+"-"+name;
+			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
 	}
 	
-	/** Parses all the data nodes and adds them to the provenance data and visual graph */
-	private void parseDataNodes(JsonObject dataNodes) {
-		// This is the json syntax for a data node
-//		"d5" : {
-//		"rdt:name" : "y",
-//		"rdt:value" : "2",
-//		"rdt:type" : "Data",
-//		"rdt:scope" : "0x10c32da00",
-//		"rdt:fromEnv" : "FALSE",
-//		"rdt:timestamp" : "",
-//		"rdt:location" : ""
-//		} ,
-
-		Set<Entry<String, JsonElement> > dataNodeSet = dataNodes.entrySet();
+	/** 
+	 * Parses all the data nodes and adds them to the provenance data and visual graph 
+	 */
+	private void parseDataAndLibraryNodes(JsonObject entity) {
+		/*
+		 * json syntax for a data node:
+		 *  
+		 * 	"rdt:d2": {
+		 *		"rdt:name": "a",
+		 *		"rdt:value": "data/2-a.csv",
+		 *		"rdt:valType": "{\"container\":\"vector\", \"dimension\":[2], \"type\":[\"character\"]}",
+		 *		"rdt:type": "Snapshot",
+		 *		"rdt:scope": "R_GlobalEnv",
+		 *		"rdt:fromEnv": false,
+		 *		"rdt:MD5hash": "",
+		 *		"rdt:timestamp": "2018-01-31T09.36.39EST",
+		 *		"rdt:location": ""
+		 *	},
+		 *
+		 * json syntax for a library node:
+		 * 
+		 * 	"rdt:l1": {
+		 *		"name": "base",
+		 *		"version": "3.4.3",
+		 *		"prov:type": {
+		 *			"$": "prov:Collection",
+		 *			"type": "xsd:QName"
+		 *		}
+		 *	},
+		 */		
 		
-		for (Entry <String, JsonElement> dataNode : dataNodeSet) {
-			String id = dataNode.getKey();
-			JsonObject nodeDef = (JsonObject) dataNode.getValue(); 
-			String type = nodeDef.get("rdt:type").getAsString();
-			//System.out.println("Found data node: " + id + " with type " + type);
+		Set<Entry<String, JsonElement> > nodeSet = entity.entrySet();
+		ArrayList<String> libraries = new ArrayList<String>();
+		
+		for (Entry<String, JsonElement> node : nodeSet) 
+		{	
+			String id = node.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
 			
-			String name = nodeDef.get("rdt:name").getAsString();
-			String value = nodeDef.get("rdt:value").getAsString();
-			if(type.equals("File") || type.equals("Snapshot")){
-				File relative = new File(builder.getSourceDDGDirectory(), value);
-				value = relative.getAbsolutePath();
+			// data nodes
+			if( id.charAt(0) == 'd' )
+			{
+				JsonObject nodeDef = (JsonObject) node.getValue(); 
+				
+				String type = nodeDef.get(PREFIX+"type").getAsString();
+				//System.out.println("Found data node: " + id + " with type " + type);
+				
+				String name = nodeDef.get(PREFIX+"name").getAsString();
+				String value = nodeDef.get(PREFIX+"value").getAsString();
+				
+				// If we are loading from a local file, we need to get the full path
+				// to the file.  URL nodes that lack :// are saved copies of
+				// webpages.  URLs that start with -> are actually socket connections.
+				if(type.equals("File") || type.equals("Snapshot") || 
+						(type.equals("URL") && value.indexOf("://") == -1 && value.indexOf("->") == -1)){
+					if (builder != null) {
+						File relative = new File(builder.getSourceDDGDirectory(), value);
+						value = relative.getAbsolutePath();
+					}
+				}
+				
+				// If we ever want to do anything interesting with valType in DDG Explorer,
+				// we will need to parse ValType instead of just storing it as a string.
+				String valType = nodeDef.get(PREFIX+"valType").toString();
+				
+				String timestamp = nodeDef.get(PREFIX+"timestamp").getAsString();
+				if (timestamp.equals("")) {
+					timestamp = null;
+				}
+				
+				String location = nodeDef.get(PREFIX+"location").getAsString();
+				if (location.equals("")) {
+					location = null;
+				}
+				
+				int idNum = Integer.parseInt(id.substring(1));
+				String label = ""+idNum+"-"+name;
+			
+				addDataNode (type, id, label, value, valType, timestamp, location);
 			}
-			
-			String timestamp = nodeDef.get("rdt:timestamp").getAsString();
-			if (timestamp.equals("")) {
-				timestamp = null;
+			// environment node: skip!
+			else if( id.equals("environment") )
+			{
+				continue;
 			}
-			
-			String location = nodeDef.get("rdt:location").getAsString();
-			if (location.equals("")) {
-				location = null;
+			// library nodes: add library nodes to list
+			else if( id.charAt(0) == 'l' )
+			{
+				JsonObject obj = (JsonObject) node.getValue() ;
+				
+				String name = obj.get("name").getAsString() ;
+				String version = obj.get("version").getAsString() ;
+				
+				libraries.add(name + " " + version) ;
 			}
-
-			int idNum = Integer.parseInt(id.substring(1));
-			String label = ""+idNum+"-"+name;
-			
-			addDataNode (type, id, label, value, timestamp, location);
-		}
-
+			// exit loop for everything else (function nodes)
+			else
+			{
+				break;
+			}
+		}	// end for
+		
+		// set list of libraries in attributes
+		attributes.setPackages(libraries) ;
 	}
 
-	/** Parses all the control flow edges and adds them to the provenance data and visual graph */
+	/** 
+	 * Parses all the control flow edges and adds them to the provenance data and visual graph 
+	 */
 	private void parseControlFlowEdges(JsonObject cfEdges) {
-		// This is the json syntax for a control flow edge
-//		"e1" : {
-//		"prov:informant" : "p1",
-//		"prov:informed" : "p2"
-//		} ,
+		/*
+		 * This is the json syntax for a control flow edge (procedure-to-procedure)
+		 * 
+		 * 	"rdt:pp1": {
+		 *		"prov:informant": "rdt:p1",
+		 *		"prov:informed": "rdt:p2"
+		 *	},
+		 */
 		
-		Set<Entry<String, JsonElement> > cfEdgeSet = cfEdges.entrySet();
+		// Edge case
+		if (cfEdges == null) {
+			return;
+		}
 		
-		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) {
-			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
-			String pred = nodeDef.get("prov:informant").getAsString();
-			String succ = nodeDef.get("prov:informed").getAsString();
+		Set<Entry<String, JsonElement>> cfEdgeSet = cfEdges.entrySet();
+		
+		for (Entry <String, JsonElement> cfEdge : cfEdgeSet) 
+		{
+			JsonObject nodeDef = (JsonObject) cfEdge.getValue();
+			
+			String pred = nodeDef.get("prov:informant").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from referenced node name
+			String succ = nodeDef.get("prov:informed").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from referenced node name
 			//System.out.println("Found cf edge from " + pred + " to " + succ);
 			
 			addControlFlowEdge(pred, succ);
 		}
 	}
 
-	/** Parses all the data output edges and adds them to the provenance data and visual graph */
+	/**
+	 * Parses all the data output edges and adds them to the provenance data and visual grap
+	 */
 	private void parseOutputEdges(JsonObject outputEdges) {
-		// This is the json syntax for a data out edge
-//		"e2" : {
-//		"prov:entity" : "d1",
-//		"prov:activity" : "p2"
-//		} ,
+		/*
+		 * This is the json syntax for a data out edge (procedure-to-data)
+		 * 
+		 * 	"rdt:pd1": {
+		 *		"prov:activity": "rdt:p6",
+		 *		"prov:entity": "rdt:d1"
+		 *	},
+		 */
 		
-		Set<Entry<String, JsonElement> > outputEdgeset = outputEdges.entrySet();
+		// base case: no edges
+		if( outputEdges == null )
+			return ;
+		
+		Set<Entry<String, JsonElement>> outputEdgeset = outputEdges.entrySet();
 		
 		for (Entry <String, JsonElement> cfEdge : outputEdgeset) {
 			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
-			String proc = nodeDef.get("prov:activity").getAsString();
-			String data = nodeDef.get("prov:entity").getAsString();
+			String proc = nodeDef.get("prov:activity").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
+			String data = nodeDef.get("prov:entity").getAsString().substring(PREFIX.length());		// strip off prefix `rdt:` from node name
 			//System.out.println("Found df edge from " + proc + " to " + data);
 			
 			try {
@@ -302,24 +390,35 @@ public class JSonParser extends Parser {
 				// Nothing to do.  The error message is produced inside addDataProducerEdge.
 			}
 		}
-
 	}
 
 	/** Parses all the data input edges and adds them to the provenance data and visual graph */
 	private void parseInputEdges(JsonObject inputEdges) {
-		// This is the json syntax for a data in edge
-//		"e18" : {
-//		"prov:activity" : "p10",
-//		"prov:entity" : "d4"
-//		} ,
+		/*
+		 * This is the json syntax for a data in edge (data-to-procedure)
+		 * 
+		 * 	"rdt:dp1": {
+		 *		"prov:entity": "rdt:d1",
+		 *		"prov:activity": "rdt:p7"
+		 *	},
+		 */
 		
-		Set<Entry<String, JsonElement> > inputEdgeset = inputEdges.entrySet();
+		// base case: no edges
+		if( inputEdges == null )
+			return ;
 		
-		for (Entry <String, JsonElement> cfEdge : inputEdgeset) {
-			JsonObject nodeDef = (JsonObject) cfEdge.getValue(); 
-			String proc = nodeDef.get("prov:activity").getAsString();
-			String data = nodeDef.get("prov:entity").getAsString();
-			//System.out.println("Found cf edge from " + data + " to " + proc);
+		Set<Entry<String, JsonElement>> inputEdgeset = inputEdges.entrySet();
+		
+		for (Entry <String, JsonElement> edge : inputEdgeset) 
+		{	
+			// data-to-procedure edges occur before function-to-procedure edges
+			if( edge.getKey().startsWith(PREFIX+"fp") )
+				break ;
+			
+			JsonObject nodeDef = (JsonObject) edge.getValue(); 
+			String proc = nodeDef.get("prov:activity").getAsString().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
+			String data = nodeDef.get("prov:entity").getAsString().substring(PREFIX.length());		// strip off prefix `rdt:` from node name
+			//System.out.println("Found input edge from " + data + " to " + proc);
 			
 			try {
 				addDataConsumerEdge(proc, data);
@@ -327,7 +426,5 @@ public class JSonParser extends Parser {
 				// Nothing to do.  The error message is produced inside addDataConsumerEdge.
 			}
 		}
-		
 	}
-
 }

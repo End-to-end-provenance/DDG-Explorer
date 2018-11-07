@@ -1,6 +1,5 @@
-package laser.ddg.visualizer;
+	package laser.ddg.workflow.visualizer;
 
-import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +14,11 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-
 import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
+import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoScriptFileException;
@@ -31,16 +28,18 @@ import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
 import laser.ddg.persist.DBWriter;
-import laser.ddg.persist.Parser;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.visualizer.DDGVisualization;
+import laser.ddg.visualizer.PrefuseUtils;
 import laser.ddg.workflow.ScriptNode;
+import laser.ddg.workflow.gui.WorkflowPanel;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
+import prefuse.action.layout.graph.TreeLayout;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Table;
@@ -53,12 +52,12 @@ import prefuse.visual.VisualItem;
 import prefuse.visual.tuple.TableNodeItem;
 
 /**
- * Builds a visual DDG graph using prefuse.
+ * Builds a visual workflow graph using prefuse.
  *
  * @author Barbara Lerner, Antonia Miruna Oprescu
  *
  */
-public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVisitor {
+public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataVisitor {
 	// Smallest value used for a data node
 	private static final int MIN_DATA_ID = ((Integer.MAX_VALUE) / 3) * 2;
 
@@ -71,19 +70,17 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/* Colors used in drawing the graph */
 	public static final int DATA_FLOW_COLOR = ColorLib.rgb(255, 0, 0);
-	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
-																			// 255,
-																			// 0);
 	public static final int SCRIPT_READ_COLOR = ColorLib.rgb(0, 148, 0);
 	public static final int SCRIPT_WRITE_COLOR = ColorLib.rgb(148, 0, 148);
-	
+	public static final int CONTROL_FLOW_COLOR = ColorLib.rgb(0, 0, 148); // ColorLib.rgb(0,
+	// 255,
+	// 0);
 	private static final int SIMPLE_HANDLER_COLOR = ColorLib.rgb(140, 209, 207);
 	private static final int VIRTUAL_COLOR = ColorLib.rgb(217, 132, 181);
 	public static final int EXCEPTION_COLOR = ColorLib.rgb(209, 114, 110);
 	public static final int LEAF_COLOR = ColorLib.rgb(255, 255, 98);
 	public static final int INCOMPLETE_COLOR = ColorLib.rgb(255, 255, 255);
 	public static final int DATA_COLOR = ColorLib.rgb(175, 184, 233);
-	public static final int DEVICE_COLOR = ColorLib.rgb(221, 223, 233);  // For graphics devices
 	public static final int FILE_COLOR = ColorLib.rgb(255, 204, 153);
 	public static final int URL_COLOR = ColorLib.rgb(255, 204, 229);
 	public static final int NONLEAF_COLOR = ColorLib.rgb(175, 217, 123);
@@ -114,14 +111,14 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// private PINClickControl pinClickControl = new PINClickControl(this);
 
 	// display
-	private DisplayWithOverview dispPlusOver = new DisplayWithOverview(this);
+	private DisplayWorkflowWithOverview dispPlusOver = new DisplayWorkflowWithOverview(this);
 	private String group = Visualization.FOCUS_ITEMS;
 	private int pinID;
 
 
 	// private Object lock = new Object();
-	DDGPanel ddgPanel;
-	private DDGLayout ddgLayout;
+	WorkflowPanel workflowPanel;
+	private TreeLayout wfLayout;
 
 	// The root of the provenance graph, where layout begins
 	private NodeItem root;
@@ -129,7 +126,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// If true, execution pauses after each node is connected to the graph so
 	// the user
 	// can see the updates
-	private boolean incremental = true;
+	private boolean incremental = false;
 
 	// If true, means that we are drawing a data derivation, not a full DDG.
 	// The graph might not contain any control flow edges, which affects the way
@@ -145,7 +142,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	// to what they are derived from. Many users find pointing from inputs to
 	// outputs more
 	// natural.
-	private static final int DEFAULT_ARROW_DIRECTION = prefuse.Constants.EDGE_ARROW_REVERSE;
+	private static final int DEFAULT_ARROW_DIRECTION = prefuse.Constants.EDGE_ARROW_FORWARD;
 
 	// True indicates that the graph is complete
 	private boolean processFinished = false;
@@ -162,9 +159,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
 	 */
-	public PrefuseGraphBuilder() {
-		ddgPanel = new DDGPanel();
-		ddgPanel.setSearchIndex(searchIndex);
+	public WorkflowGraphBuilder() {
+		workflowPanel = new WorkflowPanel();
+		workflowPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
@@ -177,11 +174,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param jenaWriter
 	 *            the object used to write to the DB
 	 */
-	public PrefuseGraphBuilder(boolean incremental, DBWriter jenaWriter) {
+	public WorkflowGraphBuilder(boolean incremental, DBWriter jenaWriter) {
 		this.incremental = incremental;
 		this.dbWriter = jenaWriter;
-		ddgPanel = new DDGPanel(jenaWriter);
-		ddgPanel.setSearchIndex(searchIndex);
+		workflowPanel = new WorkflowPanel(jenaWriter);
+		workflowPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
@@ -195,21 +192,21 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *            if true, indicates that the graph being drawn represents a
 	 *            data derivation, not a full DDG.
 	 */
-	public PrefuseGraphBuilder(boolean incremental, boolean dataDerivation) {
+	public WorkflowGraphBuilder(boolean incremental, boolean dataDerivation) {
 		this.incremental = incremental;
 		this.dataDerivation = dataDerivation;
-		ddgPanel = new DDGPanel();
-		ddgPanel.setSearchIndex(searchIndex);
+		workflowPanel = new WorkflowPanel();
+		workflowPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
 
 	/**
-	 * return the DDGPanel to place into the DDGExplorer's tabbed pane
+	 * return the WorkflowPanel to place into the DDGExplorer's tabbed pane
 	 * 
-	 * @return ddgPanel
+	 * @return WorkflowPanel
 	 */
-	public DDGPanel getPanel() {
-		return ddgPanel;
+	public WorkflowPanel getPanel() {
+		return workflowPanel;
 	}
 
 	/**
@@ -218,7 +215,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return display
 	 */
 
-	public DDGDisplay getDisplay() {
+	public WorkflowDisplay getDisplay() {
 		return dispPlusOver.getDisplay();
 	}
 
@@ -228,40 +225,40 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * 
 	 * @return displayOverview
 	 */
-	public DDGDisplay getOverview() {
+	public WorkflowDisplay getOverview() {
 		return dispPlusOver.getOverview();
 	}
-	
-	public DisplayWithOverview getDispPlusOver() {
+
+	public DisplayWorkflowWithOverview getDispPlusOver() {
 		return dispPlusOver;
 	}
 
 	/**
-	 * save DDG to the database (method called in DDGTab)
+	 * save workflow to the database (method called in DDGTab)
 	 */
 	public void saveToDB() {
-		ddgPanel.saveToDB();
+		workflowPanel.saveToDB();
 	}
 
 	/**
-	 * check if DDG is already in the database (needed for DDGTab)
+	 * check if workflow is already in the database (needed for DDGTab)
 	 * 
 	 * @return boolean inside DB
 	 */
 	public boolean alreadyInDB() {
-		return ddgPanel.alreadyInDB();
+		return workflowPanel.alreadyInDB();
 	}
 
 	/**
 	 * Sets the title displayed in the window
 	 * 
 	 * @param name
-	 *            The name of the program that created the DDG
+	 *            The name of the program that created the workflow
 	 * @param timestamp
-	 *            the timestamp when the DDG was created
+	 *            the timestamp when the workflow was created
 	 */
 	public void setTitle(String name, String timestamp) {
-		ddgPanel.setTitle(name, timestamp);
+		workflowPanel.setTitle(name, timestamp);
 	}
 
 	/**
@@ -301,7 +298,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * updates the focus group to the node which is being added to the DDG
+	 * updates the focus group to the node which is being added to the workflow
 	 *
 	 * @param nodeId
 	 */
@@ -354,9 +351,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Changes the focus of the current ddg to be a particular node. If the node
+	 * Changes the focus of the current workflow to be a particular node. If the node
 	 * is currently visible, it scrolls so the node is in the center. If the
-	 * node is not currently visible, it expands the entire ddg and then scrolls
+	 * node is not currently visible, it expands the entire workflow and then scrolls
 	 * to the desired node.
 	 * 
 	 * @param nodeName
@@ -391,7 +388,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		}
 		return null;
 	}
-	
+
 	/**
 	 * @param leafName the name of a data node
 	 * @return the DataInstanceNode with that name
@@ -399,38 +396,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public DataInstanceNode getDataNode (String leafName) {
 		return provData.findDin (leafName);
 	}
-
+	
 	/**
-	 * Build the visual graph
-	 *
-	 * @param ddg
-	 *            the data derivation graph data
+	 * builds the visual graph and sets the title.
 	 */
-
-	private void buildGraph(ProvenanceData ddg) {
-		provData = ddg;
-		addNodesAndEdges(ddg);
-
+	private void buildGraph() {
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-
+		provData = new ProvenanceData("Workflow");
+		provData.setQuery("Entire Workflow");
 	}
 
 	/**
-	 * Builds a visual ddg from a textual ddg in a file
-	 *
-	 * @param file
-	 *            the file containing the ddg
-	 * @throws IOException
-	 *             if the file cannot be read
+	 * Builds the table of nodes and edges to be filled in.
 	 */
-	private void buildGraph(File file) throws IOException {
-		Parser parser = Parser.createParser(file, this);
-		parser.addNodesAndEdges();
-		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-
-	}
-
-	private void buildNodeAndEdgeTables() {
+	public void buildNodeAndEdgeTables() {
 		synchronized (vis) {
 			nodes.addColumn(PrefuseUtils.TYPE, String.class);
 			nodes.addColumn(PrefuseUtils.ID, int.class);
@@ -447,13 +426,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			edges.addColumn(PrefuseUtils.SOURCE, int.class);
 			edges.addColumn(PrefuseUtils.TARGET, int.class);
 		}
-	}
-
-	private void addNodesAndEdges(ProvenanceData ddg) {
-		ddg.visitPins(this);
-		ddg.visitDins(this);
-		ddg.visitDataflowEdges(this);
-
 	}
 
 	@Override
@@ -485,7 +457,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -509,7 +481,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -573,9 +545,46 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// write to a file
 		/* outFile.println(id+" \""+name+"\" "+type); */
 	}
+	
+	/**
+	 * Adds a script node to the workflow graph
+	 * 
+	 * @param node the node to be added
+	 * @param id the node's id
+	 * @return the row of the table where the new node is added
+	 */
+	public int addNode(ScriptNode node, int id) {
+		try {
+			synchronized (vis) {
+				if (id < 1) {
+					DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+					DDGExplorer.showErrMsg("*** ERROR negative id " + id + " for node " + node.getName() + " !!\n\n");
+				}
+				if (getNode(id) != null) {
+					DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + node.getName() + " already in use!!\n\n");
+				}
+				int rowNum = nodes.addRow();
+				// System.out.println(node.getType());
+				nodes.setString(rowNum, PrefuseUtils.TYPE, node.getType());
+				nodes.setInt(rowNum, PrefuseUtils.ID, id);
+				nodes.setString(rowNum, PrefuseUtils.NAME, node.getName());
+				nodes.setString(rowNum, PrefuseUtils.VALUE, node.getValue());
+				nodes.setString(rowNum, PrefuseUtils.TIMESTAMP, node.getCreatedTime());
+				nodes.setString(rowNum, PrefuseUtils.LOCATION, node.getLocation());
+
+				searchIndex.addToSearchIndex(node.getType(), id, node.getName(), node.getCreatedTime());
+				return rowNum;
+			}
+		} catch (Exception e) {
+			DDGExplorer.showErrMsg("Adding node " + id + " " + node.getName() + "\n");
+			DDGExplorer.showErrMsg("*** Error adding node *** \n ");
+			throw new IllegalArgumentException(e);
+		}
+	}
 
 	/**
-	 * Adds a node to the prefuse graph
+	 * Adds a node to the workflow graph
 	 *
 	 * @param type
 	 *            the type of node
@@ -595,7 +604,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Adds an edge to a prefuse ddg
+	 * Adds an edge to a prefuse workflow
 	 *
 	 * @param type
 	 *            the type of the edge
@@ -607,6 +616,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public void addEdge(String type, int source, int target) {
 		try {
 			synchronized (vis) {
+				/*
 				if (getNode(source) == null) {
 					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
 					DDGExplorer.showErrMsg("*** ERROR:  source node " + source + " does not exist!!\n\n");
@@ -615,6 +625,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("Adding edge between " + source + " and " + target + "\n");
 					DDGExplorer.showErrMsg("*** ERROR:  target node " + target + " does not exist!!\n\n");
 				}
+				*/
 				int rowNum = edges.addRow();
 				edges.setString(rowNum, PrefuseUtils.TYPE, type);
 				edges.setInt(rowNum, PrefuseUtils.SOURCE, source);
@@ -641,21 +652,15 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Display a DDG visually
-	 *
-	 * @param ddg
-	 *            the ddg to display
+	 * Display a workflow visually
 	 */
-	public void drawGraph(ProvenanceData ddg) {
+	public void drawGraph() {
 
 		// -- 1. load the data ------------------------------------------------
 
 		synchronized (vis) {
-			// System.out.println("Building node and edge tables.");
-			buildNodeAndEdgeTables();
-
 			// System.out.println("Building graph");
-			buildGraph(ddg);
+			buildGraph();
 
 			// System.out.println("Drawing graph");
 			initializeDisplay(false);
@@ -672,9 +677,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	/**
 	 * 
-	 * @param compareDDG true when drawing side-by-side graphs for comparison, otherwise false
+	 * @param compareWorkflow true when drawing side-by-side graphs for comparison, otherwise false
 	 */
-	private void initializeDisplay(boolean compareDDG) {
+	private void initializeDisplay(boolean compareWorkflow) {
 		// -- 2. the visualization --------------------------------------------
 
 		vis.add(GRAPH, graph);
@@ -686,12 +691,12 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// -- 4. the processing actions ---------------------------------------
 
-		ActionList color = assignColors(compareDDG);
+		ActionList color = assignColors();
 
 		// create an action list with an animated layout
 		ActionList layout = new ActionList();
-		ddgLayout = new DDGLayout(GRAPH, dataDerivation);
-		layout.add(ddgLayout);
+		wfLayout = new WorkflowLayout(GRAPH, 2, 75, 20, 50);
+		layout.add(wfLayout);
 
 		ActionList repaint = new ActionList();
 		repaint.add(new RepaintAction());
@@ -702,8 +707,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		vis.putAction("repaint", repaint);
 
 		// -- 5. the display and interactive controls -------------------------
-		// DDGDisplay
-		dispPlusOver.initialize(vis, compareDDG);
+		// WorkflowDisplay
+		dispPlusOver.initialize(vis, compareWorkflow);
 
 		// focus action
 		ActionList animate = new ActionList();
@@ -715,17 +720,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// {
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// }
-		ddgPanel.displayDDG(this, vis, dispPlusOver, provData);
-		
+		workflowPanel.displayDDG(this, vis, dispPlusOver, provData);
+
 		dispPlusOver.createPopupMenu();
 	}
 
 	/**
 	 * Set the colors to use when drawing the graphs
-	 * @param compareDDG true if we are drawing side-by-side graphs for comparison, otherwise false
 	 * @return
 	 */
-	private static ActionList assignColors(boolean compareDDG) {
+	private static ActionList assignColors() {
 		ColorAction stroke = new ColorAction(GRAPH_NODES, VisualItem.STROKECOLOR);
 
 		// map data values to colors using our provided palette
@@ -733,11 +737,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 		// root.setFillColor(ColorLib.rgb(255,51,255));
 		// highlight node if selected from search results
-		if (compareDDG) {
-			fill = fillComparisonPallette();
-		} else {
 			fill = fillDisplayPalette();
-		}
 		// use black for node text
 		ColorAction text = new ColorAction(GRAPH_NODES, VisualItem.TEXTCOLOR, ColorLib.gray(0));
 		// set text of highlighted node to black (or other color if you change
@@ -747,12 +747,16 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		ColorAction edgeColors = new ColorAction(GRAPH_EDGES, VisualItem.STROKECOLOR, ColorLib.gray(0));
 		edgeColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'SFW'"), SCRIPT_WRITE_COLOR);
+		edgeColors.add(ExpressionParser.predicate("Type = 'SFR'"), SCRIPT_READ_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);
 		edgeColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
 
 		ColorAction arrowColors = new ColorAction(GRAPH_EDGES, VisualItem.FILLCOLOR, ColorLib.gray(200));
 		arrowColors.add(ExpressionParser.predicate("Type = 'CF'"), CONTROL_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'DF'"), DATA_FLOW_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'SFW'"), SCRIPT_WRITE_COLOR);
+		arrowColors.add(ExpressionParser.predicate("Type = 'SFR'"), SCRIPT_READ_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'Step'"), CONTROL_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'StepDF'"), DATA_FLOW_COLOR);
 		arrowColors.add(ExpressionParser.predicate("Type = 'StepCF'"), CONTROL_FLOW_COLOR);
@@ -768,7 +772,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Fills the color palette for normal ddg display
+	 * Fills the color palette for normal workflow display
 	 * @return the palette to use
 	 */
 	private static ColorAction fillDisplayPalette() {
@@ -790,52 +794,20 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Device'"), DEVICE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), SIMPLE_HANDLER_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'VStart'"), VIRTUAL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), VIRTUAL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), VIRTUAL_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'Script'"), SCRIPT_COLOR);
 		// color for Steps
 		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), CHECKPOINT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Restore'"), RESTORE_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Script'"), SCRIPT_COLOR);
 		return fill;
 	}
 
-	/**
-	 * Fills the palette with colors to use when comparing 2 ddgs
-	 * @return the palette to use
-	 */
-	private static ColorAction fillComparisonPallette() {
-		ColorAction fill = new ColorAction(GRAPH_NODES, VisualItem.FILLCOLOR);
-		fill.add("ingroup('left_group')", ColorLib.rgb(255, 175, 175));
-		fill.add("ingroup('right_group')", ColorLib.rgb(0, 255, 0));
-
-		fill.add("_highlight", ColorLib.rgb(193, 253, 51));
-		fill.add(ExpressionParser.predicate("Type = 'Binding'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Start'"), ColorLib.rgb(160, 160, 160));
-		fill.add(ExpressionParser.predicate("Type = 'Finish'"), ColorLib.rgb(160, 160, 160));
-		fill.add(ExpressionParser.predicate("Type = 'Interm'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Leaf'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Operation'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Data'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'File'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'URL'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Exception'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'SimpleHandler'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VStart'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VFinish'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'VInterm'"), ColorLib.rgb(255, 255, 255));
-		// color for Steps
-		fill.add(ExpressionParser.predicate("Type = 'Step'"), STEP_COLOR);
-		fill.add(ExpressionParser.predicate("Type = 'Checkpoint'"), ColorLib.rgb(255, 255, 255));
-		fill.add(ExpressionParser.predicate("Type = 'Restore'"), ColorLib.rgb(255, 255, 255));
-		return fill;
-	}
+	
 
 	/**
 	 * Adds a legend to the display for the given language.
@@ -844,13 +816,13 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 *            the language to add the legend for
 	 */
 	public void createLegend(String language) {
-		Class<DDGBuilder> ddgBuilderClass = LanguageConfigurator.getDDGBuilder(language);
+		Class<DDGBuilder> wfBuilderClass = LanguageConfigurator.getDDGBuilder(language);
 		try {
-			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createNodeLegend")
+			ArrayList<LegendEntry> nodeLegend = (ArrayList<LegendEntry>) wfBuilderClass.getMethod("createNodeLegend")
 					.invoke(null);
-			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) ddgBuilderClass.getMethod("createEdgeLegend")
+			ArrayList<LegendEntry> edgeLegend = (ArrayList<LegendEntry>) wfBuilderClass.getMethod("createEdgeLegend")
 					.invoke(null);
-			ddgPanel.drawLegend(nodeLegend, edgeLegend);
+			workflowPanel.drawLegend(nodeLegend, edgeLegend);
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException e) {
 			System.err.println("Can't create legend");
@@ -859,7 +831,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Initializes the prefuse tables.
+	 * Initializes the workflow tables.
 	 */
 	@Override
 	public void processStarted(String processName, ProvenanceData provData) {
@@ -867,16 +839,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Initializes the prefuse tables.
+	 * Initializes the workflow tables.
 	 */
-	public void processStartedForDiff() {
-		processStarted(null, true);
-	}
-
-	/**
-	 * Initializes the prefuse tables.
-	 */
-	private void processStarted(ProvenanceData provData, boolean compareDDG) {
+	private void processStarted(ProvenanceData provData, boolean compareWorkflow) {
 		// initialize file
 		/* initFile(); */
 
@@ -887,7 +852,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		this.provData = provData;
 		buildNodeAndEdgeTables();
 		graph = new Graph(nodes, edges, true, PrefuseUtils.ID, PrefuseUtils.SOURCE, PrefuseUtils.TARGET);
-		initializeDisplay(compareDDG);
+		initializeDisplay(compareWorkflow);
 	}
 
 	/**
@@ -904,7 +869,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * Repaints the finished ddg
+	 * Repaints the finished workflow
 	 */
 	@Override
 	public void processFinished() {
@@ -912,7 +877,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// close file
 		/* outFile.close(); */
 
-		// System.out.println("Drawing DDG");
+		// System.out.println("Drawing Workflow");
 		processFinished = true;
 		dispPlusOver.stopRefocusing();
 		if (!incremental) {
@@ -1011,7 +976,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param attrList
 	 */
 	public void drawFullGraph(Attributes attrList) {
-		ddgPanel.setAttributes(attrList);
+		workflowPanel.setAttributes(attrList);
 		synchronized (vis) {
 			drawFullGraph();
 		}
@@ -1038,11 +1003,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			root = getTableNodeItem(1);
 			// System.out.println("setRoot: Root set to " + root);
 		}
-		ddgLayout.setLayoutRoot(root);
+		wfLayout.setLayoutRoot(root);
 	}
 
 	private void setCollapsedRoot(NodeItem collapsedRoot) {
-		ddgLayout.setLayoutCollapsedRoot(collapsedRoot);
+		wfLayout.setLayoutRoot(collapsedRoot);
 	}
 
 	@Override
@@ -1053,7 +1018,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			root = getTableNodeItem(MIN_DATA_ID + rootNode.getId());
 		}
 		// System.out.println("rootSet: root set to " + rootNode);
-		ddgLayout.setLayoutRoot(root);
+		wfLayout.setLayoutRoot(root);
 	}
 
 	public void setSelectedProcedureNodeID(int pinID) {
@@ -1286,7 +1251,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		while (outNeighbors.hasNext()) {
 			Set<Node> edgesAddedTo = new HashSet<>();
 			Node neighbor = outNeighbors.next();
-			
+
 			// If it is a file, always add the edge
 			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
 				addEdge(PrefuseUtils.STEPDF, collapsedNodeId, PrefuseUtils.getId(neighbor));
@@ -1335,15 +1300,9 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		Iterator<Node> inNeighbors = member.inNeighbors();
 		while (inNeighbors.hasNext()) {
 			Node neighbor = inNeighbors.next();
-			
+
 			// If the edge comes from a file node, always add the edge
 			if (PrefuseUtils.isFile((NodeItem)neighbor) && !PrefuseUtils.isSnapshot((NodeItem)neighbor)) {
-				addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
-				edgesAddedFrom.add(neighbor);
-			}
-
-			// If it is an exception, always add the edge
-			else if (PrefuseUtils.isException((NodeItem)neighbor)) {
 				addEdge(PrefuseUtils.STEPDF, PrefuseUtils.getId(neighbor), collapsedNodeId);
 				edgesAddedFrom.add(neighbor);
 			}
@@ -1623,7 +1582,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			hideCollapsedMembers(item);
 			if (PrefuseUtils.isStartNode(vis.getStart(item))) {
 				// If we have a Checkpoint node as the start node, we are
-				// in the middle of a walk up the DDG, not down it.
+				// in the middle of a walk up the workflow, not down it.
 				collapse(item.inNeighbors());
 			}
 		}
@@ -1769,13 +1728,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			node.setVisible (true);
 			return;
 		}
-		
-		// Always make errors visible
-		if (PrefuseUtils.isException(node)) {
-			node.setVisible (true);
-			return;
-		}
-		
+
 		// Find the producer and the consumers of the data node
 		Iterator<NodeItem> dataNeighbors = node.neighbors();
 		boolean visible = false;
@@ -1794,7 +1747,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		// PrefuseUtils.getName(node));
 		// }
 		// else {
-		// System.out.println("Making data Invisible: " +
+		// System.out.println("Making data INvisible: " +
 		// PrefuseUtils.getName(node));
 		// }
 		node.setVisible(visible);
@@ -1974,50 +1927,19 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				layout(vis.getFinish(nodeItem));
 			}
 		}
-
+		else if (PrefuseUtils.isScriptNode(nodeItem)) {
+			String name = PrefuseUtils.getValue(nodeItem);
+			try {
+				LoadFileCommand.loadFile(new File(name));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void setProvData(ProvenanceData provData) {
 		this.provData = provData;
-		ddgPanel.setProvData(provData);
-	}
-
-	/**
-	 * Displays a file chooser for textual DDGs and displays the result
-	 * visually.
-	 *
-	 * @param args
-	 *            not used
-	 */
-	public static void main(String[] args) {
-		PrefuseGraphBuilder builder = new PrefuseGraphBuilder();
-		builder.buildNodeAndEdgeTables();
-
-		// -- 1. load the data ------------------------------------------------
-		if (args.length == 0) {
-			JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
-			try {
-				if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = fileChooser.getSelectedFile();
-					builder.setTitle(selectedFile.getName(), "");
-					builder.buildGraph(selectedFile);
-				}
-				builder.initializeDisplay(false);
-			} catch (HeadlessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(null, "Cannot read the file");
-			}
-		} else {
-			try {
-				builder.buildGraph(new File(args[0]));
-				builder.initializeDisplay(false);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(System.err);
-			}
-		}
+		workflowPanel.setProvData(provData);
 	}
 
 	public void setHighlighted(int id, boolean value) {
@@ -2053,14 +1975,23 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	public String getProcessName() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getProcessName();
 	}
 
 	public String getTimestamp() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getTimestamp();
 	}
 
 	public String getLanguage() {
+		if (provData == null) {
+			return "None";
+		}
 		return provData.getLanguage();
 	}
 
@@ -2090,19 +2021,33 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @throws NoScriptFileException if there is no script references in sourcePos
 	 */
 	public void displaySourceCode(SourcePos sourcePos) throws NoScriptFileException {
-		ddgPanel.displaySourceCode(sourcePos);
+		workflowPanel.displaySourceCode(sourcePos);
 	}
 
 	@Override
 	public void visitSn(ScriptNode sn) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void scriptNodeCreated(ScriptNode sn) {
-		// TODO Auto-generated method stub
-		
+		synchronized (vis) {
+			int dinId = sn.getId() + MIN_DATA_ID;
+			// add the data node, passing in the optional associated value and
+			// timestamp
+			Object value = sn.getValue();
+			if (value == null) {
+				addNode(sn.getType(), dinId, sn.getName(), null, sn.getCreatedTime(), null);
+			} else {
+				addNode(sn.getType(), dinId, sn.getName(), sn.getValue().toString(), sn.getCreatedTime(), null);
+			}
+			NodeItem dataNode = getNode(dinId);
+
+			if (dataDerivation && (root == null)) {
+				root = dataNode;
+				// System.out.println("dataNodeCreated: root set to " + root);
+			}
+		}
 	}
 
 
