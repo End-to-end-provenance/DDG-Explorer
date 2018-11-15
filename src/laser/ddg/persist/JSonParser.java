@@ -34,6 +34,9 @@ public class JSonParser extends Parser {
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
 
+	// Time of the last procedure node encountered
+	private double lastProcElapsedTime = 0.0;
+
 	/**
 	 * Create a Json parser
 	 * 
@@ -208,7 +211,12 @@ public class JSonParser extends Parser {
 			//System.out.println("Found proc node: " + id + " with type " + type);
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
-			double elapsedTime = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			double time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			double elapsedTime = 0.0;
+			if (type.equals("Operation")) {
+				elapsedTime = time - lastProcElapsedTime;
+				lastProcElapsedTime = time;
+			}
 			
 			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
 			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
