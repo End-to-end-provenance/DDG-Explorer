@@ -6,6 +6,7 @@ DDG Explorer is a tool that allows the user to view and query Data Derivation Gr
 * Ability to [compare R scripts](#compare) used to generate different provenance graphs
 * Ability to [query the provenance](#query) to discover how an input data value gets used, or what data and processing steps lead to the derivation of a particular output value
 * Ability to [search](#search) for where a particular data file is used or generated, or where an error was generated
+* Ability to [find out what the slow parts of your script are](#execution-time)
 
 <a name="visualize"></a>
 
@@ -65,6 +66,13 @@ If you would like to know how a value is used in later computation, right-click 
 ## Searching the provenance
 
 Another useful feature is to search the provenance.  You can search by typing in a node label, or part of a label.  Using the Options menu to the left of the search bar, you can limit the search based on the type of node (Error, File, URL, Data, Function).  Combining the search and query features can be powerful.  For example, if you select Error from the Options menu and leave the search field empty, you will get a list of all the error nodes.  Clicking on an entry in the list will scroll to its location in the DDG.  Then, you can right-click on the node, select "Show how the value was computed" and you will see a subgraph showing the operations that led to the error.
+
+<a name="execution-time"></a>
+
+## Finding the slow parts of your script
+
+Are you curious why your script runs slowly?  Use the "Display execution time of operations" command in the Query menu.  It will list all the operations sorted from slowest to fastest.
+
 
 ## Build Instructions on Ubuntu (> 16.04)
 
