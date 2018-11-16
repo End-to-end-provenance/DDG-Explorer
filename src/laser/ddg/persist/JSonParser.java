@@ -34,6 +34,9 @@ public class JSonParser extends Parser {
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
 
+	// Time of the last procedure node encountered
+	private double lastProcElapsedTime = 0.0;
+
 	/**
 	 * Create a Json parser
 	 * 
@@ -199,7 +202,7 @@ public class JSonParser extends Parser {
 		 */
 
 		Set<Entry<String, JsonElement>> procNodeSet = procNodes.entrySet();
-		
+		int idNum = 0;
 		for (Entry <String, JsonElement> procNode : procNodeSet) {
 			String id = procNode.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
 			
@@ -208,7 +211,12 @@ public class JSonParser extends Parser {
 			//System.out.println("Found proc node: " + id + " with type " + type);
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
-			double elapsedTime = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			double time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			double elapsedTime = 0.0;
+			if (type.equals("Operation")) {
+				elapsedTime = time - lastProcElapsedTime;
+				lastProcElapsedTime = time;
+			}
 			
 			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
 			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
@@ -216,10 +224,11 @@ public class JSonParser extends Parser {
 			String endLine = nodeDef.get(PREFIX+"endLine").getAsString();
 			String endCol = nodeDef.get(PREFIX+"endCol").getAsString();
 			
-			int idNum = Integer.parseInt(id.substring(1));
+			idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
 			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
+		numPins = idNum;
 	}
 	
 	/** 
