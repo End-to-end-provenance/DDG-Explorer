@@ -202,7 +202,7 @@ public class JSonParser extends Parser {
 		 */
 
 		Set<Entry<String, JsonElement>> procNodeSet = procNodes.entrySet();
-		
+		int idNum = 0;
 		for (Entry <String, JsonElement> procNode : procNodeSet) {
 			String id = procNode.getKey().substring(PREFIX.length());	// strip off prefix `rdt:` from node name
 			
@@ -224,10 +224,11 @@ public class JSonParser extends Parser {
 			String endLine = nodeDef.get(PREFIX+"endLine").getAsString();
 			String endCol = nodeDef.get(PREFIX+"endCol").getAsString();
 			
-			int idNum = Integer.parseInt(id.substring(1));
+			idNum = Integer.parseInt(id.substring(1));
 			String label = ""+idNum+"-"+name;
 			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
+		numPins = idNum;
 	}
 	
 	/** 

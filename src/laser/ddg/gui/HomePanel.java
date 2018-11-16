@@ -40,8 +40,8 @@ public class HomePanel extends JPanel {
 		compareButton.addActionListener(new CompareScriptsCommand());
 
 		// Create a button to allow the user to compare 2 DDGs
-		/*JButton compareDDGButton = new JButton("Compare DDGs");
-		compareDDGButton.addActionListener(new CompareGraphsCommand());*/
+		JButton compareDDGButton = new JButton("Compare DDGs");
+		compareDDGButton.addActionListener(new CompareGraphsCommand());
 
 		// Create a button to allow the user to load a DDG from the database
 		JButton findFilesButton = new JButton("Find Data Files");
@@ -56,7 +56,7 @@ public class HomePanel extends JPanel {
 		buttonPanel.add(loadFileButton);
 		buttonPanel.add(loadFromDBButton);
 		buttonPanel.add(compareButton);
-		//buttonPanel.add(compareDDGButton);
+		buttonPanel.add(compareDDGButton);
 		buttonPanel.add(findFilesButton);
 		buttonPanel.add(manageButton);
 		add(buttonPanel, BorderLayout.PAGE_START);
