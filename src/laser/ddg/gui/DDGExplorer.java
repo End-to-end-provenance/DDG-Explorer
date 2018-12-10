@@ -34,7 +34,6 @@ import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.ExportDDGCommand;
-import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.FindIdenticalObjectsCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
@@ -386,10 +385,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private static JMenu createQueryMenu() {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
-
-		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
-		findFilesItem.addActionListener(new FindFilesCommand());
-		queryMenu.add(findFilesItem);
 
 		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
 		timeItem.addActionListener(new FindTimeCommand());
