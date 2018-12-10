@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DiffTab;
-import laser.ddg.persist.JenaLoader;
 
 /**
  * Command to load two R scripts and do a diff on them.
@@ -24,9 +23,8 @@ public class CompareScriptsCommand implements ActionListener {
 	 * to create 2 different DDGs.
 	 */
 	private static void execute() {
-		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		JPanel diffPanel = new DiffTab(ddgExplorer, jenaLoader);
+		JPanel diffPanel = new DiffTab();
 		/*diffFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		diffFrame.setSize(800,600);
 		DialogUtilities.centerWindow(diffFrame, frame);	*/
