@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 import laser.ddg.diff.gui.DDGDiffTab;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.JenaLoader;
 
 /**
  * Command to load two DDGs and display the comparison result
@@ -23,9 +22,8 @@ public class CompareGraphsCommand implements ActionListener {
 	 * Creates the window that allows the user to compare 2 DDGs
 	 */
 	private static void execute() {
-		JenaLoader jenaLoader = JenaLoader.getInstance();
 		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-		JPanel diffPanel = new DDGDiffTab(ddgExplorer, jenaLoader);
+		JPanel diffPanel = new DDGDiffTab();
 		ddgExplorer.addTab("Comparing DDGs", diffPanel);
 	}
 
