@@ -8,8 +8,6 @@ import javax.swing.JPanel;
 import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.LoadFileCommand;
-import laser.ddg.commands.LoadFromDBCommand;
-import laser.ddg.commands.ManageDatabaseCommand;
 
 /**
  * The empty panel that is displayed as the first tab. It contains buttons
@@ -31,10 +29,6 @@ public class HomePanel extends JPanel {
 		loadFileButton.addActionListener(new LoadFileCommand());
 
 		// Create a button to allow the user to load a DDG from the database
-		JButton loadFromDBButton = new JButton("Open from database");
-		loadFromDBButton.addActionListener(new LoadFromDBCommand());
-
-		// Create a button to allow the user to load a DDG from the database
 		JButton compareButton = new JButton("Compare R Scripts");
 		compareButton.addActionListener(new CompareScriptsCommand());
 
@@ -42,17 +36,11 @@ public class HomePanel extends JPanel {
 		JButton compareDDGButton = new JButton("Compare DDGs");
 		compareDDGButton.addActionListener(new CompareGraphsCommand());
 
-		// Create a button to allow the user to manage the database
-		JButton manageButton = new JButton("Manage Database");
-		manageButton.addActionListener(new ManageDatabaseCommand());
-
 		// For layout purposes, put the buttons in a separate panel
 		JPanel buttonPanel = new JPanel(); // use FlowLayout
 		buttonPanel.add(loadFileButton);
-		buttonPanel.add(loadFromDBButton);
 		buttonPanel.add(compareButton);
 		buttonPanel.add(compareDDGButton);
-		buttonPanel.add(manageButton);
 		add(buttonPanel, BorderLayout.PAGE_START);
 
 	}

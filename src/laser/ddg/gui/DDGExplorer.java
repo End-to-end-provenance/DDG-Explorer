@@ -37,8 +37,6 @@ import laser.ddg.commands.ExportDDGCommand;
 import laser.ddg.commands.FindIdenticalObjectsCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
-import laser.ddg.commands.LoadFromDBCommand;
-import laser.ddg.commands.ManageDatabaseCommand;
 import laser.ddg.commands.QuitCommand;
 import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
@@ -299,10 +297,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem openFile = new JMenuItem("Open from File");
 		openFile.addActionListener(new LoadFileCommand());
 
-		// allow the user to load a DDG from the database
-		JMenuItem openDB = new JMenuItem("Open from Database");
-		openDB.addActionListener(new LoadFromDBCommand());
-
 		saveDB = new JMenuItem("Save to Database");
 		saveDB.addActionListener(new SaveToDBCommand());
 		saveDB.setEnabled(false);
@@ -316,10 +310,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem compareGraph = new JMenuItem("Compare DDGs");
 		compareGraph.addActionListener(new CompareGraphsCommand());
 
-		// allow the user to manage the database
-		JMenuItem manageDB = new JMenuItem("Manage Database");
-		manageDB.addActionListener(new ManageDatabaseCommand());
-
 		// allow the user to view the file workflow
 		JMenuItem findObjs = new JMenu("Display File Workflow");
 		findObjs.addMouseListener(new FindIdenticalObjectsCommand());
@@ -331,12 +321,10 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
-		fileMenu.add(openDB);
 		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
 		fileMenu.add(compareGraph);
-		fileMenu.add(manageDB);
 		fileMenu.add(findObjs);
 		fileMenu.add(quit);
 		return fileMenu;
