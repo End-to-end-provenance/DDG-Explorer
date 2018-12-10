@@ -44,16 +44,11 @@ import laser.ddg.commands.QuitCommand;
 import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
-import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowLineNumbersCommand;
 import laser.ddg.commands.ShowScriptCommand;
-import laser.ddg.commands.ShowValueDerivationCommand;
 import laser.ddg.commands.SystemLookAndFeelCommand;
-import laser.ddg.query.DerivationQuery;
-import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
-import laser.ddg.query.ResultsQuery;
 import laser.ddg.workflow.gui.WorkflowPanel;
 
 /**
@@ -171,7 +166,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * Load look and feel based on user preference.
 	 * @param system
 	 */
-	public void loadLookAndFeel(boolean system) {
+	public static void loadLookAndFeel(boolean system) {
 		try{
 			String lookAndFeel;
 			if(system) {
@@ -400,16 +395,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
 
-		final Query derivationQuery = new DerivationQuery();
-		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
-		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
-		queryMenu.add(showValueDerivationItem);
-
-		final Query computedFromQuery = new ResultsQuery();
-		JMenuItem computedFromItem = new JMenuItem(computedFromQuery.getMenuItem());
-		computedFromItem.addActionListener(new ShowComputedFromValueCommand());
-		queryMenu.add(computedFromItem);
-
 		return queryMenu;
 	}
 
@@ -512,9 +497,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				return null;
 			}
 			return wfPanel.getProvData();
-		} else {
-			return curDDGPanel.getProvData();
 		}
+		
+		return curDDGPanel.getProvData();
 	}
 
 	/**
@@ -677,6 +662,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			super(portNumber);
 		}
 
+		@Override
 		public void run() {
 			//accept multiple clients 
 			try {
@@ -691,9 +677,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			}
 		}
 
-		public ClientConnection getClientConnection(){
-			return this.clientConnection;
-		}
 	}
 
 	/**
@@ -704,13 +687,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	static private class ClientConnection implements Runnable{
 
 		private String fileName;
-		private String timeStamp;
 		private Socket clientSocket;
-		private String language;
 		private BufferedReader in;
 
 
-		public ClientConnection(Socket clientSocket) throws IOException{
+		public ClientConnection(Socket clientSocket) {
 			this.clientSocket = clientSocket;
 		}
 
@@ -731,24 +712,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			}
 		}
 
-		public Socket getClientSocket(){
-			return clientSocket;
-		}
-		public String getFileName(){
-			return fileName;
-		}
-
-		public String getTimeStamp(){
-			return timeStamp;
-		}
-
-		public BufferedReader getClientReader() {
-			return in;
-		}
-
-		public String getLanguage() {
-			return language;
-		}
 	}
 
 }
