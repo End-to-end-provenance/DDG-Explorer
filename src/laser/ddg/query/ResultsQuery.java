@@ -6,6 +6,9 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import laser.ddg.DataInstanceNode;
+import laser.ddg.ProcedureInstanceNode;
+
 /**
  * Asks the user which variable and which value of the variable to
  * show the uses of.  Extracts the partial DDG from the database
@@ -37,27 +40,25 @@ public class ResultsQuery extends DataQuery {
 	 * down from the given resource.
 	 */
 	@Override
-	protected void loadNodes(Resource qResource) {
+	protected void loadNodes(DataInstanceNode qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
-			Resource nextDataResource = getDin(i);
-			Iterator<Resource> procResources = getConsumers(nextDataResource);
+			DataInstanceNode nextDataResource = getDin(i);
+			Iterator<ProcedureInstanceNode> procResources = nextDataResource.users();
 			while (procResources.hasNext()) {
-				Resource nextProcResource = procResources.next();
+				ProcedureInstanceNode nextProcResource = procResources.next();
 				showPin(nextProcResource);
 				addAllOutputs(nextProcResource);
 			}
 		}
 	}
 	
-	private void addAllOutputs(Resource procRes) {
-		String queryVarName = "out";
-		ResultSet outputs = getAllOutputs(procRes, queryVarName);
+	private void addAllOutputs(ProcedureInstanceNode procRes) {
+		Iterator<DataInstanceNode> outputs = procRes.outputParamValues();
 		while (outputs.hasNext()) {
-			QuerySolution outputSolution = outputs.next();
-			Resource outputResource = outputSolution.getResource(queryVarName);
-			showDin(outputResource);
+			DataInstanceNode nextOutput = outputs.next();
+			showDin(nextOutput);
 		}
 	}
 	

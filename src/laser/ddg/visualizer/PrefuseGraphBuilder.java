@@ -528,6 +528,8 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @return the row of the table where the new node is added
 	 */
 	public int addNode(String type, int id, String name, String value, String time, String location, SourcePos sourcePos) {
+		System.out.println("PrefuseGraphBuilder.addNode " + id);
+		Thread.dumpStack();
 		try {
 			synchronized (vis) {
 				if (id < 1) {
@@ -537,9 +539,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 				if (getNode(id) != null) {
 					DDGExplorer.showErrMsg("Adding node " + id + " " + name + "\n");
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
+					System.out.println("id already in use!!!");
 				}
 				int rowNum = nodes.addRow();
-				// System.out.println(type);
+				System.out.println("rowNum =" + rowNum);
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
 				nodes.setInt(rowNum, PrefuseUtils.ID, id);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
@@ -675,6 +678,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param compareDDG true when drawing side-by-side graphs for comparison, otherwise false
 	 */
 	private void initializeDisplay(boolean compareDDG) {
+		System.out.println("In PrefuseGraphBuilder.initializeDisplay");
 		// -- 2. the visualization --------------------------------------------
 
 		vis.add(GRAPH, graph);
@@ -945,8 +949,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			addNode(pin.getType(), pinId, pin.getNameAndType(), procName, pin.getElapsedTime(), "", pin.getSourcePos());
 			if (root == null) {
 				root = getNode(pinId);
-				// System.out.println("procedureNodeCreated: root set to " +
-				// root);
+				System.out.println("procedureNodeCreated: root set to " + root);
 			}
 
 			// Draw the root node immediately, but delay drawing the other nodes
@@ -1036,7 +1039,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		laser.ddg.Node rootNode = provData.getRoot();
 		if (rootNode == null) {
 			root = getTableNodeItem(1);
-			// System.out.println("setRoot: Root set to " + root);
+			System.out.println("setRoot: Root set to " + root);
 		}
 		ddgLayout.setLayoutRoot(root);
 	}
@@ -1052,7 +1055,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		} else {
 			root = getTableNodeItem(MIN_DATA_ID + rootNode.getId());
 		}
-		// System.out.println("rootSet: root set to " + rootNode);
+		System.out.println("rootSet: root set to " + rootNode);
 		ddgLayout.setLayoutRoot(root);
 	}
 
@@ -1821,7 +1824,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			if (dataDerivation && (root == null)) {
 				root = dataNode;
-				// System.out.println("dataNodeCreated: root set to " + root);
+				System.out.println("dataNodeCreated: root set to " + root);
 			}
 		}
 	}

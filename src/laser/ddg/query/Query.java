@@ -2,8 +2,6 @@ package laser.ddg.query;
 
 import java.awt.Component;
 
-import laser.ddg.persist.JenaLoader;
-
 /**
  * The interface that classes should implement to perform queries on 
  * persistent DDGs
@@ -21,16 +19,15 @@ public interface Query {
 	
 	/**
 	 * Execute the query
-	 * @param dbLoader the object that can read from the database
-	 * @param processName the name of the process being queried
-	 * @param timestamp the timestamp of the ddg being queried
 	 * @param visualization
 	 */
-	public void performQuery(JenaLoader dbLoader, String processName, String timestamp, Component visualization);
+	public void performQuery(Component visualization);
 
 	/**
 	 * Add a listener to be notified when a query completes.
 	 * @param listener the object to notify
 	 */
 	public void addQueryListener(QueryListener listener);
+
+	void setLanguage(String language);
 }

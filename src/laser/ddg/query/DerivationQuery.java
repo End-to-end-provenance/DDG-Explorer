@@ -1,8 +1,9 @@
 package laser.ddg.query;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
+import java.util.Iterator;
+
+import laser.ddg.DataInstanceNode;
+import laser.ddg.ProcedureInstanceNode;
 
 /**
  * Asks the user which variable and which value of the variable to
@@ -14,6 +15,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
  *
  */
 public class DerivationQuery extends DataQuery {
+	
 	/**
 	 * The value to display in the query menu
      * @return 
@@ -33,27 +35,27 @@ public class DerivationQuery extends DataQuery {
 	 * up from the given resource.
 	 */
 	@Override
-	protected void loadNodes(Resource qResource) {
+	protected void loadNodes(DataInstanceNode qResource) {
+		System.out.println("DerivationQuery.loadNodes called");
+		System.out.println("Adding Data " + qResource.getName());
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
-			Resource nextDataResource = getDin(i);
-			Resource nextProcResource = getProducer(nextDataResource);
+			DataInstanceNode nextDataResource = getDin(i);
+			ProcedureInstanceNode nextProcResource = nextDataResource.getProducer();
 			if (nextProcResource != null) {
 				showPin(nextProcResource);
+				System.out.println("Adding Proc " + nextProcResource.getName());
 				addAllInputs(nextProcResource);
 			}
 		}
 	}
 
 	
-	private void addAllInputs(Resource procRes) {
-		String queryVarName = "in";
-		ResultSet inputs = getAllInputs(procRes, queryVarName);
+	private void addAllInputs(ProcedureInstanceNode procRes) {
+		Iterator<DataInstanceNode> inputs = procRes.inputParamValues();
 		while (inputs.hasNext()) {
-			QuerySolution inputSolution = inputs.next();
-			Resource inputResource = inputSolution.getResource(queryVarName);
-			showDin(inputResource);
+			showDin (inputs.next());
 		}
 	}
 	
@@ -67,4 +69,5 @@ public class DerivationQuery extends DataQuery {
 	protected String getQuery(String name, String value) {
 		return "Show derivation of " + name;
 	}
+
 }

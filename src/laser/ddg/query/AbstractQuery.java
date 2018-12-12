@@ -12,7 +12,9 @@ import javax.swing.JComponent;
 public abstract class AbstractQuery implements Query {
 
 	private List<QueryListener> listeners = new ArrayList<>();
-
+	
+	protected String language;
+	
 	public AbstractQuery() {
 		super();
 	}
@@ -26,6 +28,11 @@ public abstract class AbstractQuery implements Query {
     	listeners.stream().forEach((l) -> {
         	l.queryFinished(name, panel);
         });
+	}
+	
+	@Override
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 }

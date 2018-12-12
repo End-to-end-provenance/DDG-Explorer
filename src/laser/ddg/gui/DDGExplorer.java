@@ -38,7 +38,6 @@ import laser.ddg.commands.FindIdenticalObjectsCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.commands.QuitCommand;
-import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
@@ -72,7 +71,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
 	// Menu items that get enabled and disabled during execution
-	private static JMenuItem saveDB;   // Enabled when a ddg is read from a file
 	private JMenuItem attributesItem;  // Enabled on everything but the home panel
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
 	private JMenuItem exportDDGItem;  // Enabled on everything but the home panel
@@ -85,6 +83,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	// Added to the corresponding DDG panel's error log when 
 	// loading is complete.
 	private static String errors = "";
+
+	private static JMenuItem timeItem;
 
 	/**
 	 * Initializes the DDG Explorer by loading the preference file and
@@ -297,10 +297,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem openFile = new JMenuItem("Open from File");
 		openFile.addActionListener(new LoadFileCommand());
 
-		saveDB = new JMenuItem("Save to Database");
-		saveDB.addActionListener(new SaveToDBCommand());
-		saveDB.setEnabled(false);
-
 		// allow the user to compare two R scripts
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
@@ -321,7 +317,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
-		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
 		fileMenu.add(compareGraph);
@@ -357,14 +352,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 	private void enableDDGCommands() {
-		saveDB.setEnabled(!getCurrentDDGPanel().alreadyInDB());
+		timeItem.setEnabled(true);
 		attributesItem.setEnabled(true);
 		showScriptItem.setEnabled(true);
 		exportDDGItem.setEnabled(true);
 	}
 
 	private void disableDDGCommands() {
-		saveDB.setEnabled(false);
+		timeItem.setEnabled(false);
 		attributesItem.setEnabled(false);
 		showScriptItem.setEnabled(false);
 		exportDDGItem.setEnabled(false);
@@ -374,7 +369,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
 
-		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
+		timeItem = new JMenuItem("Display Execution Time of Operations"); 
 		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
 

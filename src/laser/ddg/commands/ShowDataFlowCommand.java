@@ -1,17 +1,11 @@
 package laser.ddg.commands;
 
-import java.util.SortedSet;
-
-import com.hp.hpl.jena.rdf.model.Resource;
-
+import laser.ddg.DataInstanceNode;
+import laser.ddg.ProvenanceData;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.DBWriter;
-import laser.ddg.persist.JenaLoader;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.query.DataQuery;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 import laser.ddg.visualizer.PrefuseUtils;
-import laser.ddg.workflow.visualizer.WorkflowGraphBuilder;
 import prefuse.data.Node;
 
 /**
@@ -28,41 +22,39 @@ public class ShowDataFlowCommand {
 	 * @param node the node that the user wants to see the derivation of
 	 * @param query the query that Jena uses
 	 */
-	public static void execute(PrefuseGraphBuilder builder, Node node, DataQuery query) {
-		String processPath = builder.getProcessName();
-		String timestamp = builder.getTimestamp();
-		String language = builder.getLanguage();
-		
-		// For now, we are using the existing code from Jena to perform the query.
-		// We need to save the ddg in the database if it is not already there.
-		DBWriter dbWriter = builder.getDBWriter();
-		if (!((JenaWriter) dbWriter).alreadyInDB(processPath,
-			timestamp, language)) {
-			//System.out.println("Saving to DB");
-			SaveToDBCommand.execute();
-		}
+//	public static void execute(PrefuseGraphBuilder builder, Node node, DataQuery query) {
+//        DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+//        
+//        // Attach a listener so that the resulting graph is displayed when
+//        // the query is complete.
+//        DDGExplorer.loadingDDG();
+//		query.addQueryListener(ddgExplorer);
+//
+//		// Execute the query
+//		query.doQuery(selectedResource, nodeName, nodeValue);
+//		DDGExplorer.doneLoadingDDG();
+//	}
 
-        DDGExplorer ddgExplorer = DDGExplorer.getInstance();
-        
-        // Attach a listener so that the resulting graph is displayed when
-        // the query is complete.
-        DDGExplorer.loadingDDG();
+	public static void execute(PrefuseGraphBuilder builder, Node rootNode, DataQuery query) {
+		DDGExplorer ddgExplorer = DDGExplorer.getInstance();
+		ProvenanceData origProvData = ddgExplorer.getCurrentDDG();
+		query.setLanguage(origProvData.getLanguage());
+
+		// Attach a listener so that the resulting graph is displayed when
+		// the query is complete.
+		DDGExplorer.loadingDDG();
 		query.addQueryListener(ddgExplorer);
 
-        JenaLoader dbLoader = JenaLoader.getInstance();
-        String processName = processPath.substring(processPath.lastIndexOf('/') + 1);
-		String nodeName = PrefuseUtils.getName(node);
-		String nodeValue = PrefuseUtils.getValue(node);
-		//System.out.println("Search for node " + nodeName);
-		//System.out.println("All node names: " + dbLoader.getAllDinNames(processName, timestamp));
-		SortedSet<Resource> dins = dbLoader.getDinsNamed(processName, timestamp, nodeName);
-		assert dins.size() == 1;
-		Resource selectedResource = dins.first();
-		query.initQuery(dbLoader, processName, timestamp);
-		
+		// Find the DIN clicked on
+		String nodeName = PrefuseUtils.getName(rootNode);
+		// String nodeId = nodeName.substring(0, nodeName.indexOf('-'));
+		System.out.println("nodeName = " + nodeName);
+		DataInstanceNode din = origProvData.findDin(nodeName);
+
 		// Execute the query
-		query.doQuery(selectedResource, nodeName, nodeValue);
+		query.doQuery(din, nodeName, "value");
 		DDGExplorer.doneLoadingDDG();
+
 	}
 
 }
