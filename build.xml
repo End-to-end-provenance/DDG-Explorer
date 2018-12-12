@@ -9,7 +9,7 @@
 -->
 
 <project name="ddg-explorer" default="ddg-explorer" basedir="."> 
-	<property name="version" value="2.9.3"/>
+	<property name="version" value="3.0"/>
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
@@ -17,20 +17,20 @@
     <path id="ddg-git.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/commons-codec-1.6.jar"/>
-        <pathelement location="lib/httpclient-4.2.3.jar"/>
-        <pathelement location="lib/httpcore-4.2.2.jar"/>
+       <!-- <pathelement location="lib/httpclient-4.2.3.jar"/> -->
+       <!-- <pathelement location="lib/httpcore-4.2.2.jar"/> -->
         <pathelement location="lib/icu4j-3.4.4.jar"/>
-        <pathelement location="lib/jena-arq-2.10.1.jar"/>
+       <!-- <pathelement location="lib/jena-arq-2.10.1.jar"/>
         <pathelement location="lib/jena-core-2.10.1.jar"/>
         <pathelement location="lib/jena-iri-0.9.6.jar"/>
-        <pathelement location="lib/jena-tdb-0.10.1.jar"/>
-        <pathelement location="lib/log4j-1.2.16.jar"/>
+        <pathelement location="lib/jena-tdb-0.10.1.jar"/> -->
+        <!--<pathelement location="lib/log4j-1.2.16.jar"/>-->
         <pathelement location="lib/prefuse.jar"/>
-        <pathelement location="lib/slf4j-api-1.6.4.jar"/>
-        <pathelement location="lib/slf4j-log4j12-1.6.4.jar"/>
-        <pathelement location="lib/xercesImpl-2.11.0.jar"/>
-        <pathelement location="lib/xml-apis-1.4.01.jar"/>
-        <pathelement location="lib/CPL.jar"/>
+        <!--<pathelement location="lib/slf4j-api-1.6.4.jar"/>
+        <pathelement location="lib/slf4j-log4j12-1.6.4.jar"/>-->
+        <!--<pathelement location="lib/xercesImpl-2.11.0.jar"/>-->
+        <!--<pathelement location="lib/xml-apis-1.4.01.jar"/>-->
+        <!--<pathelement location="lib/CPL.jar"/>-->
     	<pathelement location="lib/jdiff.jar"/>
     	<pathelement location="lib/gson-2.6.2.jar"/>
     	<pathelement location="lib/freehep-graphics2d-2.4.jar"/>
@@ -110,7 +110,7 @@
   		
   		<!-- The code to make DDGs persistent with Jena.  It's important to include all files,
   		     not just the class files -->
-  		<zipfileset includes="**/*" src="lib/jena-tdb-0.10.1.jar"/>
+  		<!--<zipfileset includes="**/*" src="lib/jena-tdb-0.10.1.jar"/>
   		<zipfileset includes="**/*" src="lib/jena-arq-2.10.1.jar"/>
   		<zipfileset includes="**/*" src="lib/jena-core-2.10.1.jar"/>
   		<zipfileset includes="**/*" src="lib/slf4j-api-1.6.4.jar"/>
@@ -118,10 +118,12 @@
   		<zipfileset includes="**/*" src="lib/log4j-1.2.16.jar"/>
   		<zipfileset includes="**/*" src="lib/xercesImpl-2.11.0.jar"/>
   		<zipfileset includes="**/*" src="lib/xml-apis-1.4.01.jar"/>
-  		<zipfileset includes="**/*" src="lib/commons-codec-1.6.jar"/>
   		<zipfileset includes="**/*" src="lib/httpclient-4.2.3.jar"/>
   		<zipfileset includes="**/*" src="lib/httpcore-4.2.2.jar"/>
-  		<zipfileset includes="**/*" src="lib/jena-iri-0.9.6.jar"/>
+  		<zipfileset includes="**/*" src="lib/jena-iri-0.9.6.jar"/>-->
+  		
+  		<!-- Provides Hex class -->
+  		<zipfileset includes="**/*" src="lib/commons-codec-1.6.jar"/>
   		
   		<!-- Using Harvard's Core Provenance Library -->
   		<!-- <zipfileset includes="**/*" src="${cpl}/CPL.jar" /> -->
