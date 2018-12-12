@@ -781,9 +781,7 @@ public class ProvenanceData {
 	}
 	
 	/**
-	 * @param which the position if the script in the Sourced Files
-	 *   attribute.  Position 0 is the main script.  Sourced files
-	 *   begin at position 1.
+	 * @param the position of the script in the list
 	 * @return the full path to the script
 	 */
 	public String getScriptPath(int which) {

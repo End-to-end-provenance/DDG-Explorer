@@ -121,8 +121,6 @@ public class TabComp extends JPanel {
         
         /**
          * if button is clicked, close the tab
-         * (and if this is a DDG, first ask if the
-         *  current DDG should be saved to the database)
          */
         @Override
 		public void actionPerformed(ActionEvent e) {

@@ -391,7 +391,7 @@ public class DDGPanel extends JPanel {
 		List<ScriptInfo> scripts = provData.scripts();
 		int pos = scripts.indexOf(script);
 		assert pos >= 0;
-		displaySourceCode (pos);
+		displaySourceCode (pos+1);
 	}
 
 }

@@ -48,9 +48,7 @@ import laser.ddg.query.QueryListener;
 import laser.ddg.workflow.gui.WorkflowPanel;
 
 /**
- * Class with a main program that allows the user to view DDGs previously stored
- * in a Jena database. The user selects which execution of which process to see
- * a DDG of.
+ * The main class to start the ddg explorer.
  * 
  * @author Barbara Lerner
  * @version Jul 25, 2012

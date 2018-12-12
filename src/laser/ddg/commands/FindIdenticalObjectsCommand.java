@@ -65,14 +65,15 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 
 		JMenu scriptMenu = (JMenu) e.getSource();
-		scriptMenu.removeAll();
-		for (ScriptNode scrnode : scrnodes) {
-			JMenuItem scriptItem = new JMenuItem(scrnode.getFullpath());
-			scriptItem.addActionListener((ActionEvent event) -> {
-				load(ddgExplorer, scrnode);
+		if (scriptMenu.getItemCount() == 0) {
+			for (ScriptNode scrnode : scrnodes) {
+				JMenuItem scriptItem = new JMenuItem(scrnode.getFullpath());
+				scriptItem.addActionListener((ActionEvent event) -> {
+					load(ddgExplorer, scrnode);
+				}
+						);
+				scriptMenu.add(scriptItem);
 			}
-					);
-			scriptMenu.add(scriptItem);
 		}
 	}
 

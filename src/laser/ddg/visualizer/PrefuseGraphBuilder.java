@@ -2017,11 +2017,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * @param scriptNum the position of the script in the script list
+	 * @param which the position of the script in the script list
 	 * @return the full path to the script file
 	 */
-	public String getScriptPath(int scriptNum) {
-		return provData.getScriptPath(scriptNum);
+	public String getScriptPath(int which) {
+		return provData.getScriptPath(which);
 	}
 
 	public String getProcessName() {

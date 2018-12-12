@@ -26,7 +26,7 @@ public class DiffTab extends JPanel {
 	// The panel that shows the side-by-side files and their differences
 	private DiffPanel diffPanel = new DiffPanel("");
 	
-	// The object used to load R scripts that are not in the database
+	// The object used to load R scripts.
 	private static JFileChooser chooser;
 	
 	// The file shown on the left side

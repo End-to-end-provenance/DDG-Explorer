@@ -28,7 +28,7 @@ public class HomePanel extends JPanel {
 		JButton loadFileButton = new JButton("Open from file");
 		loadFileButton.addActionListener(new LoadFileCommand());
 
-		// Create a button to allow the user to load a DDG from the database
+		// Create a button to allow the user to compare 2 R scripts
 		JButton compareButton = new JButton("Compare R Scripts");
 		compareButton.addActionListener(new CompareScriptsCommand());
 
