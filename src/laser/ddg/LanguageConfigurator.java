@@ -35,10 +35,9 @@ public class LanguageConfigurator {
 		try {
 			Class<DDGBuilder> builderClass = getDDGBuilder(language);
 			Class<?> stringClass = Class.forName("java.lang.String");
-			Class<?> dbWriterClass = Class.forName("laser.ddg.persist.JenaWriter");
 			Constructor<DDGBuilder> builderConstructor;
-			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class, dbWriterClass);
-			return builderConstructor.newInstance(scrpt, provData, dbWriter);
+			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class);
+			return builderConstructor.newInstance(scrpt, provData);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create DB loader for " + language, e);

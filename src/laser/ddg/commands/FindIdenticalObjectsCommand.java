@@ -144,7 +144,8 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
-				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
+				String hash = fileNodes.get(i).getHash();
+				if (hash != null && hash.equals(file.getHash()) && 
 						fileNodes.get(i).getName().equals(file.getName())) {
 					foundindex = i;
 				}

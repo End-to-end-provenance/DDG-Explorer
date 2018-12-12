@@ -174,13 +174,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param incremental
 	 *            if true, pauses after adding each node to the graph so that
 	 *            the user can see the updates
-	 * @param jenaWriter
-	 *            the object used to write to the DB
 	 */
-	public PrefuseGraphBuilder(boolean incremental, DBWriter jenaWriter) {
+	public PrefuseGraphBuilder(boolean incremental) {
 		this.incremental = incremental;
-		this.dbWriter = jenaWriter;
-		ddgPanel = new DDGPanel(jenaWriter);
+		ddgPanel = new DDGPanel();
 		ddgPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
@@ -241,15 +238,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 */
 	public void saveToDB() {
 		ddgPanel.saveToDB();
-	}
-
-	/**
-	 * check if DDG is already in the database (needed for DDGTab)
-	 * 
-	 * @return boolean inside DB
-	 */
-	public boolean alreadyInDB() {
-		return ddgPanel.alreadyInDB();
 	}
 
 	/**

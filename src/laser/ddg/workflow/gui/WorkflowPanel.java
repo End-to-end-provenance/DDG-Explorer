@@ -28,7 +28,6 @@ import laser.ddg.gui.ScriptDisplayer;
 import laser.ddg.gui.SearchResultsGUI;
 import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGVisualization;
@@ -197,27 +196,6 @@ public class WorkflowPanel extends JPanel {
 	 */
 	public void saveToDB() {
 		dbWriter.persistDDG(provData);
-	}
-
-	/**
-	 * find whether this DDG is already saved in the database
-	 * 
-	 * @return boolean for saved/unsaved
-	 */
-	public boolean alreadyInDB() {
-		if (dbWriter == null) {
-			dbWriter = JenaWriter.getInstance();
-		}
-		try {
-			String processPathName = provData.getProcessName();
-			String executionTimestamp = provData.getTimestamp();
-			String language = provData.getLanguage();
-			return ((JenaWriter) dbWriter).alreadyInDB(processPathName,
-					executionTimestamp, language);
-		} catch (Exception e) {
-			System.err.println("DDGPanel's alreadyInDB unsuccessful");
-			return false;
-		}
 	}
 
 	/**

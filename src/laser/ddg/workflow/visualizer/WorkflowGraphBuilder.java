@@ -241,15 +241,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	}
 
 	/**
-	 * check if workflow is already in the database (needed for DDGTab)
-	 * 
-	 * @return boolean inside DB
-	 */
-	public boolean alreadyInDB() {
-		return workflowPanel.alreadyInDB();
-	}
-
-	/**
 	 * Sets the title displayed in the window
 	 * 
 	 * @param name
