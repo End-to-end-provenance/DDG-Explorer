@@ -169,16 +169,10 @@ public class ProvenanceData {
 	 */
 	public synchronized void addPIN(ProcedureInstanceNode pin, ProcedureInstanceNode newPin) {
 		if (!nodesToResources.containsKey(pin)) {
-			System.out.println("ProvenanceData.addPIN adding mapping for pin " + pin.getId());
 			this.nodesToResources.put(pin, newPin);
 			this.resourcesToNodes.put(newPin, pin);
 		}
 
-//		if (!pins.contains(pin)) {
-//			pins.add(pin);
-//			notifyPinCreated(pin);
-//		}
-		
 	}
 	
 	/**
@@ -240,15 +234,10 @@ public class ProvenanceData {
 	 */
 	public synchronized void addDIN(DataInstanceNode d, DataInstanceNode newNode) {
 		if (!nodesToResources.containsKey(d)) {
-			System.out.println("ProvenanceData.addDIN adding mapping for pin " + d.getId());
 			resourcesToNodes.put(newNode, d);
 			this.nodesToResources.put(d, newNode);
 		}
 		
-//		if (!dins.contains(d)) {
-//			dins.add(d);
-//			notifyDinCreated(d);
-//		}
 	}
 	
 	/**
@@ -289,7 +278,6 @@ public class ProvenanceData {
 	 *            the URI for the rdf resource
 	 */
 	public void bindNodeToResource(Node node, Node newNode) {
-		System.out.println("ProvenanceData.bindNodeToResource adding mapping for pin " + node.getId());
 		nodesToResources.put(node, newNode);
 	}
 
@@ -301,7 +289,6 @@ public class ProvenanceData {
 	 * @return true if the rdf resource exists in the provenance data
 	 */
 	public boolean containsResource(Node node) {
-		System.out.println("ProvenanceData.containsKey checking for mapping for " + node.getId());
 		return nodesToResources.containsKey(node);
 	}
 
@@ -313,7 +300,6 @@ public class ProvenanceData {
 	 * @return the associated DDG node
 	 */
 	public Node getNewNodeFor(Node oldNode) {
-		System.out.println("ProvenanceData.getNewNodeFor getting " + oldNode);
 		return resourcesToNodes.get(oldNode);
 	}
 
@@ -322,7 +308,6 @@ public class ProvenanceData {
 	 * @return resource corresponding to this PIN
 	 */
 	public ProcedureInstanceNode getResource(ProcedureInstanceNode pin) {
-		System.out.println("ProvenanceData.getResource getting " + pin);
 		return (ProcedureInstanceNode) nodesToResources.get(pin);
 	}
 
@@ -724,11 +709,9 @@ public class ProvenanceData {
 	 */
 	public DataInstanceNode findDin(String nodeName) {
 		Iterator<DataInstanceNode> dinIt = dinIter();
-		System.out.println("Looking for data node " + nodeName + "  Found:");
 		
 		while(dinIt.hasNext()){
 			DataInstanceNode dCheck = dinIt.next();
-			System.out.println("   " + dCheck.getName());
 			if(nodeName.equals(dCheck.getName())){
 				return dCheck;
 			}

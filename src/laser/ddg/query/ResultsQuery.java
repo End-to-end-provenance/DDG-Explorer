@@ -2,10 +2,6 @@ package laser.ddg.query;
 
 import java.util.Iterator;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
-
 import laser.ddg.DataInstanceNode;
 import laser.ddg.ProcedureInstanceNode;
 
@@ -16,24 +12,10 @@ import laser.ddg.ProcedureInstanceNode;
  * value as input transitively until output is reached.
  * 
  * @author Barbara Lerner
- * @version August 1, 2013
+ * @version December 12, 2018
  *
  */
 public class ResultsQuery extends DataQuery {
-
-	/**
-	 * The value to display in the query menu
-         * @return 
-	 */
-	@Override
-	public String getMenuItem() {
-		return "Show Values Computed From";
-	}
-
-	@Override
-	protected String getFrameTitle() {
-		return "Values computed from query";
-	}
 
 	/**
 	 * Loads nodes that are reachable by following dataflow paths
@@ -41,10 +23,14 @@ public class ResultsQuery extends DataQuery {
 	 */
 	@Override
 	protected void loadNodes(DataInstanceNode qResource) {
+		// Add the data node to the query result
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
 			DataInstanceNode nextDataResource = getDin(i);
+			
+			// Add all procedure nodes that use the data node and all
+			// outputs of those procedure nodes.
 			Iterator<ProcedureInstanceNode> procResources = nextDataResource.users();
 			while (procResources.hasNext()) {
 				ProcedureInstanceNode nextProcResource = procResources.next();
@@ -54,6 +40,10 @@ public class ResultsQuery extends DataQuery {
 		}
 	}
 	
+	/**
+	 * Add all the outputs of a procedure node to the query result
+	 * @param procRes the procedure node whose outputs are added
+	 */
 	private void addAllOutputs(ProcedureInstanceNode procRes) {
 		Iterator<DataInstanceNode> outputs = procRes.outputParamValues();
 		while (outputs.hasNext()) {
