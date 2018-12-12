@@ -22,7 +22,6 @@ import laser.ddg.NoScriptFileException;
 import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
-import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
@@ -52,9 +51,6 @@ public class DDGPanel extends JPanel {
 
 	// The DDG data
 	private ProvenanceData provData;
-
-	// The object used to write to the DB
-	private DBWriter dbWriter;
 
 	// The visualization of the ddg
 	private DDGVisualization vis;
@@ -91,17 +87,6 @@ public class DDGPanel extends JPanel {
 	 */
 	public DDGPanel() {
 		super(new BorderLayout());
-	}
-
-	/**
-	 * Create a frame to display the DDG graph in
-	 * 
-	 * @param dbWriter
-	 *            the object that knows how to write to a database
-	 */
-	public DDGPanel(DBWriter dbWriter) {
-		super(new BorderLayout());
-		this.dbWriter = dbWriter;
 	}
 
 	/**
@@ -185,13 +170,6 @@ public class DDGPanel extends JPanel {
 	 */
 	private void updateDescription() {
 		descriptionArea.setText(provData.getQuery());
-	}
-
-	/**
-	 * save this DDG to the Database
-	 */
-	public void saveToDB() {
-		dbWriter.persistDDG(provData);
 	}
 
 	/**

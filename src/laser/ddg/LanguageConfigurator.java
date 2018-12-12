@@ -5,8 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import laser.ddg.persist.DBWriter;
-
 /**
  * Keeps track of the classes that implement language-specific parts of the DDG. 
  * @author Barbara Lerner
@@ -26,12 +24,10 @@ public class LanguageConfigurator {
 	 * @param language the language we want a builder for
 	 * @param scrpt the program that created the ddg being built
 	 * @param provData 
-	 * @param dbWriter an object that can write DDGs to a database.  If null, the DDGs created will
-	 *    not be saved in the DB.
 	 * @return a DDG builder to construct the DDG
 	 */
 	public static DDGBuilder createDDGBuilder(String language, String scrpt,
-			ProvenanceData provData, DBWriter dbWriter)  {
+			ProvenanceData provData)  {
 		try {
 			Class<DDGBuilder> builderClass = getDDGBuilder(language);
 			Class<?> stringClass = Class.forName("java.lang.String");

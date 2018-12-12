@@ -141,7 +141,7 @@ public abstract class Parser {
 			if (language == null) {
 				language = "Little-JIL";
 			}
-			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData, null);
+			ddgBuilder = LanguageConfigurator.createDDGBuilder(language, scrpt, provData);
 			if (builder != null) {
 				builder.createLegend(language);
 			}

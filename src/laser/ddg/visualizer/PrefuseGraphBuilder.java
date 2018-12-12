@@ -33,7 +33,6 @@ import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
-import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.Parser;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.workflow.ScriptNode;
@@ -156,8 +155,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private SearchIndex searchIndex = new SearchIndex();
 
-	private DBWriter dbWriter;
-
 	/**
 	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
@@ -231,13 +228,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	
 	public DisplayWithOverview getDispPlusOver() {
 		return dispPlusOver;
-	}
-
-	/**
-	 * save DDG to the database (method called in DDGTab)
-	 */
-	public void saveToDB() {
-		ddgPanel.saveToDB();
 	}
 
 	/**
@@ -2044,10 +2034,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	public String getLanguage() {
 		return provData.getLanguage();
-	}
-
-	public DBWriter getDBWriter() {
-		return dbWriter;
 	}
 
 	public NodeItem getFirstMember(VisualItem collapsedNode) {

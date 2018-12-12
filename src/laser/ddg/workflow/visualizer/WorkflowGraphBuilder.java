@@ -18,7 +18,6 @@ import laser.ddg.Attributes;
 import laser.ddg.DDGBuilder;
 import laser.ddg.DataBindingEvent;
 import laser.ddg.DataBindingEvent.BindingEvent;
-import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.DataInstanceNode;
 import laser.ddg.LanguageConfigurator;
 import laser.ddg.NoScriptFileException;
@@ -27,9 +26,9 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.ProvenanceDataVisitor;
 import laser.ddg.ProvenanceListener;
 import laser.ddg.SourcePos;
+import laser.ddg.commands.LoadFileCommand;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.LegendEntry;
-import laser.ddg.persist.DBWriter;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.PrefuseUtils;
@@ -153,8 +152,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	private SearchIndex searchIndex = new SearchIndex();
 
-	private DBWriter dbWriter;
-
 	/**
 	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
@@ -171,13 +168,10 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 	 * @param incremental
 	 *            if true, pauses after adding each node to the graph so that
 	 *            the user can see the updates
-	 * @param jenaWriter
-	 *            the object used to write to the DB
 	 */
-	public WorkflowGraphBuilder(boolean incremental, DBWriter jenaWriter) {
+	public WorkflowGraphBuilder(boolean incremental) {
 		this.incremental = incremental;
-		this.dbWriter = jenaWriter;
-		workflowPanel = new WorkflowPanel(jenaWriter);
+		workflowPanel = new WorkflowPanel();
 		workflowPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
@@ -231,13 +225,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 
 	public DisplayWorkflowWithOverview getDispPlusOver() {
 		return dispPlusOver;
-	}
-
-	/**
-	 * save workflow to the database (method called in DDGTab)
-	 */
-	public void saveToDB() {
-		workflowPanel.saveToDB();
 	}
 
 	/**
@@ -1984,10 +1971,6 @@ public class WorkflowGraphBuilder implements ProvenanceListener, ProvenanceDataV
 			return "None";
 		}
 		return provData.getLanguage();
-	}
-
-	public DBWriter getDBWriter() {
-		return dbWriter;
 	}
 
 	public NodeItem getFirstMember(VisualItem collapsedNode) {

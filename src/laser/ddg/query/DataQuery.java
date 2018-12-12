@@ -79,7 +79,7 @@ public abstract class DataQuery extends AbstractQuery {
 			public void run() {
 				// Load the query result in a separate thread so that it does not tie
 				// up the Swing thread.  
-				DataQuery.this.builder = LanguageConfigurator.createDDGBuilder(language, "Query result", provData, null);
+				DataQuery.this.builder = LanguageConfigurator.createDDGBuilder(language, "Query result", provData);
 				graphBuilder.createLegend(language);
 				DDGExplorer.loadingDDG();
 				loadQueryResult(provData, rootNode);
