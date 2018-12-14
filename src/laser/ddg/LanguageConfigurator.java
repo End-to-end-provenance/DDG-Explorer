@@ -5,8 +5,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import laser.ddg.persist.DBWriter;
-
 /**
  * Keeps track of the classes that implement language-specific parts of the DDG. 
  * @author Barbara Lerner
@@ -26,19 +24,16 @@ public class LanguageConfigurator {
 	 * @param language the language we want a builder for
 	 * @param scrpt the program that created the ddg being built
 	 * @param provData 
-	 * @param dbWriter an object that can write DDGs to a database.  If null, the DDGs created will
-	 *    not be saved in the DB.
 	 * @return a DDG builder to construct the DDG
 	 */
 	public static DDGBuilder createDDGBuilder(String language, String scrpt,
-			ProvenanceData provData, DBWriter dbWriter)  {
+			ProvenanceData provData)  {
 		try {
 			Class<DDGBuilder> builderClass = getDDGBuilder(language);
 			Class<?> stringClass = Class.forName("java.lang.String");
-			Class<?> dbWriterClass = Class.forName("laser.ddg.persist.JenaWriter");
 			Constructor<DDGBuilder> builderConstructor;
-			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class, dbWriterClass);
-			return builderConstructor.newInstance(scrpt, provData, dbWriter);
+			builderConstructor = builderClass.getConstructor(stringClass, ProvenanceData.class);
+			return builderConstructor.newInstance(scrpt, provData);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace(System.err);
 			throw new IllegalStateException("Can't create DB loader for " + language, e);

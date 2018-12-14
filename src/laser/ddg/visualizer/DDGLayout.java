@@ -556,6 +556,10 @@ public class DDGLayout extends TreeLayout {
 			return;
 		}
 		
+		if (depth < 0) {
+			return;
+		}
+		
 		secondWalkDone.add(node);
 
 		Params nodeParams = getParams(node);

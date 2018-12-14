@@ -1,6 +1,7 @@
 package laser.ddg.r;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 import laser.ddg.AbstractDataInstanceNode;
 
@@ -48,7 +49,7 @@ public class RDataInstanceNode extends AbstractDataInstanceNode{
 		super(value, name, time, location, hash, scrloc);
 		this.type = type;
 	}
-
+	
 	/**
 	 * Getter for type
 	 */

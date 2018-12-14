@@ -33,7 +33,6 @@ import laser.ddg.SourcePos;
 import laser.ddg.gui.DDGExplorer;
 import laser.ddg.gui.DDGPanel;
 import laser.ddg.gui.LegendEntry;
-import laser.ddg.persist.DBWriter;
 import laser.ddg.persist.Parser;
 import laser.ddg.search.SearchIndex;
 import laser.ddg.workflow.ScriptNode;
@@ -156,8 +155,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	private SearchIndex searchIndex = new SearchIndex();
 
-	private DBWriter dbWriter;
-
 	/**
 	 * Creates an object that builds a visual graph. Creates a window in which
 	 * to display error messages.
@@ -174,13 +171,10 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	 * @param incremental
 	 *            if true, pauses after adding each node to the graph so that
 	 *            the user can see the updates
-	 * @param jenaWriter
-	 *            the object used to write to the DB
 	 */
-	public PrefuseGraphBuilder(boolean incremental, DBWriter jenaWriter) {
+	public PrefuseGraphBuilder(boolean incremental) {
 		this.incremental = incremental;
-		this.dbWriter = jenaWriter;
-		ddgPanel = new DDGPanel(jenaWriter);
+		ddgPanel = new DDGPanel();
 		ddgPanel.setSearchIndex(searchIndex);
 		Logger.getLogger("prefuse").setLevel(Level.WARNING);
 	}
@@ -234,22 +228,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	
 	public DisplayWithOverview getDispPlusOver() {
 		return dispPlusOver;
-	}
-
-	/**
-	 * save DDG to the database (method called in DDGTab)
-	 */
-	public void saveToDB() {
-		ddgPanel.saveToDB();
-	}
-
-	/**
-	 * check if DDG is already in the database (needed for DDGTab)
-	 * 
-	 * @return boolean inside DB
-	 */
-	public boolean alreadyInDB() {
-		return ddgPanel.alreadyInDB();
 	}
 
 	/**
@@ -539,7 +517,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 					DDGExplorer.showErrMsg("*** ERROR node id " + id + " for node " + name + " already in use!!\n\n");
 				}
 				int rowNum = nodes.addRow();
-				// System.out.println(type);
 				nodes.setString(rowNum, PrefuseUtils.TYPE, type);
 				nodes.setInt(rowNum, PrefuseUtils.ID, id);
 				nodes.setString(rowNum, PrefuseUtils.NAME, name);
@@ -945,8 +922,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 			addNode(pin.getType(), pinId, pin.getNameAndType(), procName, pin.getElapsedTime(), "", pin.getSourcePos());
 			if (root == null) {
 				root = getNode(pinId);
-				// System.out.println("procedureNodeCreated: root set to " +
-				// root);
 			}
 
 			// Draw the root node immediately, but delay drawing the other nodes
@@ -1036,7 +1011,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		laser.ddg.Node rootNode = provData.getRoot();
 		if (rootNode == null) {
 			root = getTableNodeItem(1);
-			// System.out.println("setRoot: Root set to " + root);
 		}
 		ddgLayout.setLayoutRoot(root);
 	}
@@ -1052,7 +1026,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		} else {
 			root = getTableNodeItem(MIN_DATA_ID + rootNode.getId());
 		}
-		// System.out.println("rootSet: root set to " + rootNode);
 		ddgLayout.setLayoutRoot(root);
 	}
 
@@ -1821,7 +1794,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 			if (dataDerivation && (root == null)) {
 				root = dataNode;
-				// System.out.println("dataNodeCreated: root set to " + root);
 			}
 		}
 	}
@@ -2045,11 +2017,11 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	}
 
 	/**
-	 * @param scriptNum the position of the script in the script list
+	 * @param which the position of the script in the script list
 	 * @return the full path to the script file
 	 */
-	public String getScriptPath(int scriptNum) {
-		return provData.getScriptPath(scriptNum);
+	public String getScriptPath(int which) {
+		return provData.getScriptPath(which);
 	}
 
 	public String getProcessName() {
@@ -2062,10 +2034,6 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 
 	public String getLanguage() {
 		return provData.getLanguage();
-	}
-
-	public DBWriter getDBWriter() {
-		return dbWriter;
 	}
 
 	public NodeItem getFirstMember(VisualItem collapsedNode) {

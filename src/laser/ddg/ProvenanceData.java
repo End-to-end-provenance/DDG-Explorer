@@ -67,10 +67,10 @@ public class ProvenanceData {
 
 	// Map to/from resource URIs
 	// private Hashtable<Node, Resource> nodesToResources;
-	private Map<Node, String> nodesToResources;
+	private Map<Node, Node> nodesToResources;
 
 	// private Hashtable<Resource, Node> resourcesToNodes;
-	private Map<String, Node> resourcesToNodes;
+	private Map<Node, Node> resourcesToNodes;
 
 	// The ID of the DIN that is incremented when the DIN is added to the dins
 	// set
@@ -167,17 +167,12 @@ public class ProvenanceData {
 	 * @param resURI
 	 *            The URI of the resource for this pin
 	 */
-	public synchronized void addPIN(ProcedureInstanceNode pin, String resURI) {
+	public synchronized void addPIN(ProcedureInstanceNode pin, ProcedureInstanceNode newPin) {
 		if (!nodesToResources.containsKey(pin)) {
-			this.nodesToResources.put(pin, resURI);
-			this.resourcesToNodes.put(resURI, pin);
+			this.nodesToResources.put(pin, newPin);
+			this.resourcesToNodes.put(newPin, pin);
 		}
 
-		if (!pins.contains(pin)) {
-			pins.add(pin);
-			notifyPinCreated(pin);
-		}
-		
 	}
 	
 	/**
@@ -237,16 +232,12 @@ public class ProvenanceData {
 	 *            the URI of the JENA resource
 	 * 
 	 */
-	public synchronized void addDIN(DataInstanceNode d, String resURI) {
+	public synchronized void addDIN(DataInstanceNode d, DataInstanceNode newNode) {
 		if (!nodesToResources.containsKey(d)) {
-			resourcesToNodes.put(resURI, d);
-			this.nodesToResources.put(d, resURI);
+			resourcesToNodes.put(newNode, d);
+			this.nodesToResources.put(d, newNode);
 		}
 		
-		if (!dins.contains(d)) {
-			dins.add(d);
-			notifyDinCreated(d);
-		}
 	}
 	
 	/**
@@ -274,8 +265,8 @@ public class ProvenanceData {
 	 * @param din
 	 * @return resource corresponding to this DIN
 	 */
-	public String getResource(DataInstanceNode din) {
-		return nodesToResources.get(din);
+	public DataInstanceNode getResource(DataInstanceNode din) {
+		return (DataInstanceNode) nodesToResources.get(din);
 	}
 
 	/**
@@ -286,8 +277,8 @@ public class ProvenanceData {
 	 * @param resURI
 	 *            the URI for the rdf resource
 	 */
-	public void bindNodeToResource(Node node, String resURI) {
-		nodesToResources.put(node, resURI);
+	public void bindNodeToResource(Node node, Node newNode) {
+		nodesToResources.put(node, newNode);
 	}
 
 	/**
@@ -297,8 +288,8 @@ public class ProvenanceData {
 	 *            the URI for the rdf resource
 	 * @return true if the rdf resource exists in the provenance data
 	 */
-	public boolean containsResource(String resURI) {
-		return nodesToResources.containsValue(resURI);
+	public boolean containsResource(Node node) {
+		return nodesToResources.containsKey(node);
 	}
 
 	/**
@@ -308,16 +299,16 @@ public class ProvenanceData {
 	 *            the URI of the resource to look up
 	 * @return the associated DDG node
 	 */
-	public Node getNodeForResource(String resURI) {
-		return resourcesToNodes.get(resURI);
+	public Node getNewNodeFor(Node oldNode) {
+		return resourcesToNodes.get(oldNode);
 	}
 
 	/**
 	 * @param pin
 	 * @return resource corresponding to this PIN
 	 */
-	public String getResource(ProcedureInstanceNode pin) {
-		return nodesToResources.get(pin);
+	public ProcedureInstanceNode getResource(ProcedureInstanceNode pin) {
+		return (ProcedureInstanceNode) nodesToResources.get(pin);
 	}
 
 	/**
@@ -718,11 +709,9 @@ public class ProvenanceData {
 	 */
 	public DataInstanceNode findDin(String nodeName) {
 		Iterator<DataInstanceNode> dinIt = dinIter();
-		//System.out.println("Looking for data node " + data + "  Found:");
 		
 		while(dinIt.hasNext()){
 			DataInstanceNode dCheck = dinIt.next();
-			//System.out.println("   " + dCheck.getId());
 			if(nodeName.equals(dCheck.getName())){
 				return dCheck;
 			}
@@ -792,9 +781,7 @@ public class ProvenanceData {
 	}
 	
 	/**
-	 * @param which the position if the script in the Sourced Files
-	 *   attribute.  Position 0 is the main script.  Sourced files
-	 *   begin at position 1.
+	 * @param the position of the script in the list
 	 * @return the full path to the script
 	 */
 	public String getScriptPath(int which) {

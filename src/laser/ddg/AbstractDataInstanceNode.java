@@ -183,6 +183,22 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		this.scrloc = scrloc;
 	}
 
+	@Override
+	public Object clone()  {
+		try {
+			AbstractDataInstanceNode copy = (AbstractDataInstanceNode) super.clone();
+			copy.producedBy = null;
+			copy.hasProducer = 0;
+			copy.usedByPIN = new LinkedHashSet<>();
+			copy.provData = null;
+			return copy;
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
 	 * Produces the SHA-1 hash of the file of the given node.
 	 * 
@@ -391,7 +407,8 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 		assert newId != 0;
 		if (id == 0) {
 			id = newId;
-		} else {
+		} 
+		else if (id != newId){
 			throw new IdAlreadySetException("Cannot reset the ID of a node that has already been assigned an ID.");
 		}
 	}

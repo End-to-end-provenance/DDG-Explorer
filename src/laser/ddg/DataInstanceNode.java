@@ -13,7 +13,9 @@ import java.util.Iterator;
  * @author Sophia
  * 
  */
-public interface DataInstanceNode extends Node {
+public interface DataInstanceNode extends Node, Cloneable {
+	
+	public Object clone ();
 
 	/**
 	 * Record that a procedure is using this value

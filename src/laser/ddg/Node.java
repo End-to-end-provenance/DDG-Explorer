@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Sophia
  * 
  */
-public interface Node {
+public interface Node extends Cloneable {
 
 	/**
 	 * 

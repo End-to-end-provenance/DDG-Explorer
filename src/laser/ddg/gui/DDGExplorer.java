@@ -34,32 +34,21 @@ import laser.ddg.commands.CommandOverviewCommand;
 import laser.ddg.commands.CompareGraphsCommand;
 import laser.ddg.commands.CompareScriptsCommand;
 import laser.ddg.commands.ExportDDGCommand;
-import laser.ddg.commands.FindFilesCommand;
 import laser.ddg.commands.FindIdenticalObjectsCommand;
 import laser.ddg.commands.FindTimeCommand;
 import laser.ddg.commands.LoadFileCommand;
-import laser.ddg.commands.LoadFromDBCommand;
-import laser.ddg.commands.ManageDatabaseCommand;
 import laser.ddg.commands.QuitCommand;
-import laser.ddg.commands.SaveToDBCommand;
 import laser.ddg.commands.SetArrowDirectionCommand;
 import laser.ddg.commands.ShowAttributesCommand;
-import laser.ddg.commands.ShowComputedFromValueCommand;
 import laser.ddg.commands.ShowLegendMenuItem;
 import laser.ddg.commands.ShowLineNumbersCommand;
 import laser.ddg.commands.ShowScriptCommand;
-import laser.ddg.commands.ShowValueDerivationCommand;
 import laser.ddg.commands.SystemLookAndFeelCommand;
-import laser.ddg.query.DerivationQuery;
-import laser.ddg.query.Query;
 import laser.ddg.query.QueryListener;
-import laser.ddg.query.ResultsQuery;
 import laser.ddg.workflow.gui.WorkflowPanel;
 
 /**
- * Class with a main program that allows the user to view DDGs previously stored
- * in a Jena database. The user selects which execution of which process to see
- * a DDG of.
+ * The main class to start the ddg explorer.
  * 
  * @author Barbara Lerner
  * @version Jul 25, 2012
@@ -80,7 +69,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	private static final Color MENU_COLOR = new Color(171, 171, 171);
 
 	// Menu items that get enabled and disabled during execution
-	private static JMenuItem saveDB;   // Enabled when a ddg is read from a file
 	private JMenuItem attributesItem;  // Enabled on everything but the home panel
 	private JMenuItem showScriptItem;  // Enabled on everything but the home panel
 	private JMenuItem exportDDGItem;  // Enabled on everything but the home panel
@@ -93,6 +81,8 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	// Added to the corresponding DDG panel's error log when 
 	// loading is complete.
 	private static String errors = "";
+
+	private static JMenuItem timeItem;
 
 	/**
 	 * Initializes the DDG Explorer by loading the preference file and
@@ -171,7 +161,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * Load look and feel based on user preference.
 	 * @param system
 	 */
-	public void loadLookAndFeel(boolean system) {
+	public static void loadLookAndFeel(boolean system) {
 		try{
 			String lookAndFeel;
 			if(system) {
@@ -305,14 +295,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		JMenuItem openFile = new JMenuItem("Open from File");
 		openFile.addActionListener(new LoadFileCommand());
 
-		// allow the user to load a DDG from the database
-		JMenuItem openDB = new JMenuItem("Open from Database");
-		openDB.addActionListener(new LoadFromDBCommand());
-
-		saveDB = new JMenuItem("Save to Database");
-		saveDB.addActionListener(new SaveToDBCommand());
-		saveDB.setEnabled(false);
-
 		// allow the user to compare two R scripts
 		JMenuItem compareR = new JMenuItem("Compare R Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
@@ -321,10 +303,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		//allow the user to compare 2 DDGs
 		JMenuItem compareGraph = new JMenuItem("Compare DDGs");
 		compareGraph.addActionListener(new CompareGraphsCommand());
-
-		// allow the user to manage the database
-		JMenuItem manageDB = new JMenuItem("Manage Database");
-		manageDB.addActionListener(new ManageDatabaseCommand());
 
 		// allow the user to view the file workflow
 		JMenuItem findObjs = new JMenu("Display File Workflow");
@@ -337,12 +315,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		quit.addActionListener(new QuitCommand());
 
 		fileMenu.add(openFile);
-		fileMenu.add(openDB);
-		fileMenu.add(saveDB);
 		fileMenu.addSeparator();
 		fileMenu.add(compareR);
 		fileMenu.add(compareGraph);
-		fileMenu.add(manageDB);
 		fileMenu.add(findObjs);
 		fileMenu.add(quit);
 		return fileMenu;
@@ -375,14 +350,14 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	}
 
 	private void enableDDGCommands() {
-		saveDB.setEnabled(!getCurrentDDGPanel().alreadyInDB());
+		timeItem.setEnabled(true);
 		attributesItem.setEnabled(true);
 		showScriptItem.setEnabled(true);
 		exportDDGItem.setEnabled(true);
 	}
 
 	private void disableDDGCommands() {
-		saveDB.setEnabled(false);
+		timeItem.setEnabled(false);
 		attributesItem.setEnabled(false);
 		showScriptItem.setEnabled(false);
 		exportDDGItem.setEnabled(false);
@@ -392,23 +367,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
 
-		JMenuItem findFilesItem = new JMenuItem("Find Data Files");
-		findFilesItem.addActionListener(new FindFilesCommand());
-		queryMenu.add(findFilesItem);
-
-		JMenuItem timeItem = new JMenuItem("Display Execution Time of Operations"); 
+		timeItem = new JMenuItem("Display Execution Time of Operations"); 
 		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
-
-		final Query derivationQuery = new DerivationQuery();
-		JMenuItem showValueDerivationItem = new JMenuItem(derivationQuery.getMenuItem());
-		showValueDerivationItem.addActionListener(new ShowValueDerivationCommand());
-		queryMenu.add(showValueDerivationItem);
-
-		final Query computedFromQuery = new ResultsQuery();
-		JMenuItem computedFromItem = new JMenuItem(computedFromQuery.getMenuItem());
-		computedFromItem.addActionListener(new ShowComputedFromValueCommand());
-		queryMenu.add(computedFromItem);
 
 		return queryMenu;
 	}
@@ -512,9 +473,9 @@ public class DDGExplorer extends JFrame implements QueryListener {
 				return null;
 			}
 			return wfPanel.getProvData();
-		} else {
-			return curDDGPanel.getProvData();
 		}
+		
+		return curDDGPanel.getProvData();
 	}
 
 	/**
@@ -677,6 +638,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			super(portNumber);
 		}
 
+		@Override
 		public void run() {
 			//accept multiple clients 
 			try {
@@ -691,9 +653,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			}
 		}
 
-		public ClientConnection getClientConnection(){
-			return this.clientConnection;
-		}
 	}
 
 	/**
@@ -704,13 +663,11 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	static private class ClientConnection implements Runnable{
 
 		private String fileName;
-		private String timeStamp;
 		private Socket clientSocket;
-		private String language;
 		private BufferedReader in;
 
 
-		public ClientConnection(Socket clientSocket) throws IOException{
+		public ClientConnection(Socket clientSocket) {
 			this.clientSocket = clientSocket;
 		}
 
@@ -731,24 +688,6 @@ public class DDGExplorer extends JFrame implements QueryListener {
 			}
 		}
 
-		public Socket getClientSocket(){
-			return clientSocket;
-		}
-		public String getFileName(){
-			return fileName;
-		}
-
-		public String getTimeStamp(){
-			return timeStamp;
-		}
-
-		public BufferedReader getClientReader() {
-			return in;
-		}
-
-		public String getLanguage() {
-			return language;
-		}
 	}
 
 }

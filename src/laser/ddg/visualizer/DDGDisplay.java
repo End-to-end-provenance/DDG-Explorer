@@ -582,7 +582,7 @@ public class DDGDisplay extends Display {
 		private PopupCommand showHowComputedCommand = new PopupCommand("Show how value was computed") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new DerivationQuery());
+                ShowDataFlowCommand.execute((Node) findItem(p), new DerivationQuery());
 			}
 
 		};
@@ -591,7 +591,7 @@ public class DDGDisplay extends Display {
 		private PopupCommand showWhatIsComputedCommand = new PopupCommand("Show what is computed using this value") {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-                ShowDataFlowCommand.execute(builder, (Node) findItem(p), new ResultsQuery());
+                ShowDataFlowCommand.execute((Node) findItem(p), new ResultsQuery());
 			}
 
 		};
