@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.commons.codec.binary.Hex;
-
 /**
  * The data instance node holds a state of a data entry whose processing is
  * being recorded with the use of a DDG. Similarly to the data it wraps, it can
@@ -221,9 +219,21 @@ public abstract class AbstractDataInstanceNode implements DataInstanceNode {
 			md.update(b, 0, numbytes);
 		}
 		byte[] digest = md.digest();
-		String hexString = Hex.encodeHexString(digest);
+		String hexString = bytesToHex(digest);
 		in.close();
 		return hexString;
+	}
+	
+	/* Converts a string of bytes to a hexadecimal string. */
+	private final static char[] hexArray = "0123456789abcdef".toCharArray();
+	private static String bytesToHex(byte[] bytes) {
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 
 	/**

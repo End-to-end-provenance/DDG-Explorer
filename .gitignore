@@ -18,3 +18,5 @@ ddg-explorer*.jar
 /.DS_Store
 /eclispe-build.xml
 >>>>>>> refs/heads/MissingScript
+/export.jardesc
+/manifest

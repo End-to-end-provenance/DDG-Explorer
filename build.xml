@@ -4,7 +4,7 @@
   To build the .jar file, in the command line, navigate into the directory
   where this file is in and run the following command:
   
-  ant -file build.xml ddg-explorer
+  ant ddg-explorer
   
 -->
 
@@ -16,21 +16,7 @@
     <property name="source" value="1.8"/>
     <path id="ddg-git.classpath">
         <pathelement location="bin"/>
-        <pathelement location="lib/commons-codec-1.6.jar"/>
-       <!-- <pathelement location="lib/httpclient-4.2.3.jar"/> -->
-       <!-- <pathelement location="lib/httpcore-4.2.2.jar"/> -->
-        <pathelement location="lib/icu4j-3.4.4.jar"/>
-       <!-- <pathelement location="lib/jena-arq-2.10.1.jar"/>
-        <pathelement location="lib/jena-core-2.10.1.jar"/>
-        <pathelement location="lib/jena-iri-0.9.6.jar"/>
-        <pathelement location="lib/jena-tdb-0.10.1.jar"/> -->
-        <!--<pathelement location="lib/log4j-1.2.16.jar"/>-->
         <pathelement location="lib/prefuse.jar"/>
-        <!--<pathelement location="lib/slf4j-api-1.6.4.jar"/>
-        <pathelement location="lib/slf4j-log4j12-1.6.4.jar"/>-->
-        <!--<pathelement location="lib/xercesImpl-2.11.0.jar"/>-->
-        <!--<pathelement location="lib/xml-apis-1.4.01.jar"/>-->
-        <!--<pathelement location="lib/CPL.jar"/>-->
     	<pathelement location="lib/jdiff.jar"/>
     	<pathelement location="lib/gson-2.6.2.jar"/>
     	<pathelement location="lib/freehep-graphics2d-2.4.jar"/>
@@ -40,12 +26,9 @@
     	<pathelement location="lib/freehep-graphicsio-pdf-2.4.jar"/>
         <pathelement location="lib/freehep-graphicsio-ps-2.4.jar"/>
         <pathelement location="lib/freehep-graphicsio-swf-2.4.jar"/>
-       <!--pathelement location="lib/jxbrowser-6.0.jar"/>
-       <pathelement location="lib/jxbrowser-linux64-6.0.jar"/>
-       <pathelement location="lib/evaluation.jar"/-->
-       
     </path>
-    <target name="init">
+
+	<target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
@@ -54,12 +37,15 @@
             </fileset>
         </copy>
     </target>
+	
     <target name="clean">
         <delete dir="bin"/>
     </target>
+	
     <target depends="clean" name="cleanall"/>
     <target depends="build-subprojects,build-project" name="build"/>
     <target name="build-subprojects"/>
+	
     <target depends="init" name="build-project">
         <echo message="${ant.project.name}: ${ant.file}"/>
         <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
@@ -67,12 +53,14 @@
             <classpath refid="ddg-git.classpath"/>
         </javac>
     </target>
+	
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target name="DDGExplorer (1)">
         <java classname="laser.ddg.gui.DDGExplorer" failonerror="true" fork="yes">
             <classpath refid="ddg-git.classpath"/>
         </java>
     </target>
+	
 	<target name="buildinfo">
 	    <tstamp>
 	        <format property="builtat" pattern="MM/dd/yyyy hh:mm aa" timezone="America/New_York"/>
@@ -93,59 +81,18 @@
   		<manifest>
   		  <attribute name="Main-Class"
   		  		value="laser.ddg.gui.DDGExplorer"/>
-  		</manifest>
-  		
+          <attribute name="Class-Path" 
+          	  value="prefuse.jar jdiff.jar gson-2.6.2.jar freehep-graphics2d-2.4.jar freehep-graphics2d-export-example-2.4.jar freehep-graphicsbase-2.4.jar freehep-graphicsio-2.4.jar freehep-graphicsio-pdf-2.4.jar freehep-graphicsio-ps-2.4.jar freehep-graphicsio-swf-2.4.jar"/>
+        </manifest>
+
   		<!-- The properties files containing build information and log4j properties -->
   		<fileset dir="bin" includes=".properties, log4j.properties" />
   		
   		<!-- The code within the project -->
-  		<fileset dir="bin" includes="**/*.class" />  		
+  		<fileset dir="bin" includes="**/*.class" />  
   		
-  		<!-- The display package that is used -->
-        <zipfileset includes="**/*.class" src="lib/prefuse.jar"/>
-  		
-  		<!-- The agent that interfaces with R -->
-  		<!--fileset dir="${ragent}" includes="**/*.class" /-->
-  		<!--zipfileset includes="**/*" src="lib/JRI.jar" /-->
-  		
-  		<!-- The code to make DDGs persistent with Jena.  It's important to include all files,
-  		     not just the class files -->
-  		<!--<zipfileset includes="**/*" src="lib/jena-tdb-0.10.1.jar"/>
-  		<zipfileset includes="**/*" src="lib/jena-arq-2.10.1.jar"/>
-  		<zipfileset includes="**/*" src="lib/jena-core-2.10.1.jar"/>
-  		<zipfileset includes="**/*" src="lib/slf4j-api-1.6.4.jar"/>
-  		<zipfileset includes="**/*" src="lib/slf4j-log4j12-1.6.4.jar"/>
-  		<zipfileset includes="**/*" src="lib/log4j-1.2.16.jar"/>
-  		<zipfileset includes="**/*" src="lib/xercesImpl-2.11.0.jar"/>
-  		<zipfileset includes="**/*" src="lib/xml-apis-1.4.01.jar"/>
-  		<zipfileset includes="**/*" src="lib/httpclient-4.2.3.jar"/>
-  		<zipfileset includes="**/*" src="lib/httpcore-4.2.2.jar"/>
-  		<zipfileset includes="**/*" src="lib/jena-iri-0.9.6.jar"/>-->
-  		
-  		<!-- Provides Hex class -->
-  		<zipfileset includes="**/*" src="lib/commons-codec-1.6.jar"/>
-  		
-  		<!-- Using Harvard's Core Provenance Library -->
-  		<!-- <zipfileset includes="**/*" src="${cpl}/CPL.jar" /> -->
-  		
-  		<!-- Code to support text file differences -->
-  		<zipfileset includes="**/*" src="lib/jdiff.jar" />
-
-  		<!-- Code to support parsing json -->
-  		<zipfileset includes="**/*" src="lib/gson-2.6.2.jar" />
-  		
-  		<!-- Code to support file output of the graphics -->
-    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-2.4.jar"/>
-    	<zipfileset includes="**/*" src="lib/freehep-graphics2d-export-example-2.4.jar"/>
-    	<zipfileset includes="**/*" src="lib/freehep-graphicsbase-2.4.jar"/>
-    	<zipfileset includes="**/*" src="lib/freehep-graphicsio-2.4.jar"/>
-        <zipfileset includes="**/*" src="lib/freehep-graphicsio-ps-2.4.jar"/> 
-  		
-  		<!-- We can only include one of ps, pdf, or swf.  To get multiple formats, they need to 
-  		     be loaded from separate jar files, not packaged together into a single file like this. -->
-    	<!--<zipfileset includes="**/*" src="lib/freehep-graphicsio-pdf-2.4.jar"/> -->
-        <!-- <zipfileset includes="**/*" src="lib/freehep-graphicsio-swf-2.4.jar"/> -->
-  	
+  		<!-- The source code -->
+  		<fileset dir="src" includes="**/*.java" />  
   	</jar>
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>
     <chmod file="ddg-explorer_${version}.jar" perm="755"/>
