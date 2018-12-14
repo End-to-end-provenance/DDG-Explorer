@@ -367,7 +367,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		final JMenu queryMenu = new JMenu("Query");
 		queryMenu.setBackground(MENU_COLOR);
 
-		timeItem = new JMenuItem("Display Execution Time of Operations"); 
+		timeItem = new JMenuItem("Sort Operations by Execution Times"); 
 		timeItem.addActionListener(new FindTimeCommand());
 		queryMenu.add(timeItem); 
 
