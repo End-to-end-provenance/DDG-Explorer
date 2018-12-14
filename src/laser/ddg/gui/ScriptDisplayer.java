@@ -50,7 +50,8 @@ public class ScriptDisplayer {
 	 * 		unknown or missing
 	 */
 	public ScriptDisplayer(PrefuseGraphBuilder builder, int scriptNum) throws NoScriptFileException {
-		String fileName = builder.getScriptPath(scriptNum);
+		// Script numbers start at 1, but here we need an array index.
+		String fileName = builder.getScriptPath(scriptNum-1);
 		if (fileName == null) {
 			throw new NoScriptFileException (
 					"There is no script available for " + builder.getProcessName());

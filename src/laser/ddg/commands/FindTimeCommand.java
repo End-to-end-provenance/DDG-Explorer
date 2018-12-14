@@ -23,6 +23,9 @@ public class FindTimeCommand implements ActionListener {
 				(ArrayList<OperationSearchElement>) panel.getSearchIndex().getOperationList().clone();
 		} else {
 			wfpanel = DDGExplorer.getCurrentWorkflowPanel();
+			if (wfpanel == null) {
+				return;
+			}
 			nodeList = 
 					(ArrayList<OperationSearchElement>) wfpanel.getSearchIndex().getOperationList().clone();
 		}

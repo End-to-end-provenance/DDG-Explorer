@@ -1,59 +1,49 @@
 package laser.ddg.query;
 
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Resource;
+import java.util.Iterator;
+
+import laser.ddg.DataInstanceNode;
+import laser.ddg.ProcedureInstanceNode;
 
 /**
- * Asks the user which variable and which value of the variable to
- * show the derivation for.  Extracts the partial DDG from the database
- * and displays it.
+ * Extracts the partial DDG that corresponds to a data node and the
+ * procedure and data nodes that led to its value.
  * 
  * @author Barbara Lerner
- * @version Aug 2, 2012
+ * @version December 12, 2018
  *
  */
 public class DerivationQuery extends DataQuery {
-	/**
-	 * The value to display in the query menu
-     * @return 
-	 */
-	@Override
-	public String getMenuItem() {
-		return "Show Value Derivation";
-	}
-
-	@Override
-	protected String getFrameTitle() {
-		return "Derivation query";
-	}
 	
 	/**
 	 * Loads the nodes that are reachable by following data flow paths
 	 * up from the given resource.
 	 */
 	@Override
-	protected void loadNodes(Resource qResource) {
+	protected void loadNodes(DataInstanceNode qResource) {
 		showDin(qResource);
 
 		for (int i = 0; i < numDinsToShow(); i++) {
-			Resource nextDataResource = getDin(i);
-			Resource nextProcResource = getProducer(nextDataResource);
+			DataInstanceNode nextDataResource = getDin(i);
+			ProcedureInstanceNode nextProcResource = nextDataResource.getProducer();
 			if (nextProcResource != null) {
+				// Add the procedure node to the query result
 				showPin(nextProcResource);
+				
+				// Add all the inputs of the procedure node to the query result
 				addAllInputs(nextProcResource);
 			}
 		}
 	}
 
-	
-	private void addAllInputs(Resource procRes) {
-		String queryVarName = "in";
-		ResultSet inputs = getAllInputs(procRes, queryVarName);
+	/**
+	 * Add all it the inputs of a procedure node to the query result
+	 * @param procRes the procedure node whose inputs are added
+	 */
+	private void addAllInputs(ProcedureInstanceNode procRes) {
+		Iterator<DataInstanceNode> inputs = procRes.inputParamValues();
 		while (inputs.hasNext()) {
-			QuerySolution inputSolution = inputs.next();
-			Resource inputResource = inputSolution.getResource(queryVarName);
-			showDin(inputResource);
+			showDin (inputs.next());
 		}
 	}
 	
@@ -67,4 +57,5 @@ public class DerivationQuery extends DataQuery {
 	protected String getQuery(String name, String value) {
 		return "Show derivation of " + name;
 	}
+
 }

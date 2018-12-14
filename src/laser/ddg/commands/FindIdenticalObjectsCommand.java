@@ -65,14 +65,15 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 
 		JMenu scriptMenu = (JMenu) e.getSource();
-		scriptMenu.removeAll();
-		for (ScriptNode scrnode : scrnodes) {
-			JMenuItem scriptItem = new JMenuItem(scrnode.getFullpath());
-			scriptItem.addActionListener((ActionEvent event) -> {
-				load(ddgExplorer, scrnode);
+		if (scriptMenu.getItemCount() == 0) {
+			for (ScriptNode scrnode : scrnodes) {
+				JMenuItem scriptItem = new JMenuItem(scrnode.getFullpath());
+				scriptItem.addActionListener((ActionEvent event) -> {
+					load(ddgExplorer, scrnode);
+				}
+						);
+				scriptMenu.add(scriptItem);
 			}
-					);
-			scriptMenu.add(scriptItem);
 		}
 	}
 
@@ -144,7 +145,8 @@ public class FindIdenticalObjectsCommand extends MouseAdapter {
 
 			int foundindex = -1;
 			for (int i = 0; i < fileNodes.size(); i++) {
-				if (fileNodes.get(i).getHash().equals(file.getHash()) && 
+				String hash = fileNodes.get(i).getHash();
+				if (hash != null && hash.equals(file.getHash()) && 
 						fileNodes.get(i).getName().equals(file.getName())) {
 					foundindex = i;
 				}

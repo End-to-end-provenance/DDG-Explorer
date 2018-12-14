@@ -12,7 +12,6 @@ import laser.ddg.ProvenanceData;
 import laser.ddg.ScriptInfo;
 import laser.ddg.SourcePos;
 import laser.ddg.gui.LegendEntry;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
 /**
@@ -28,11 +27,9 @@ public class RDDGBuilder extends DDGBuilder {
 	 * Creates the builder for R scripts
 	 * @param script the filename containing the script that was executed
 	 * @param provData the object that holds the ddg
-	 * @param dbWriter the object used to write to the database.  If null,
-	 * 	  the ddg being built will not be saved
 	 */
-	public RDDGBuilder(String script, ProvenanceData provData, JenaWriter dbWriter){
-		super(script, provData, dbWriter);
+	public RDDGBuilder(String script, ProvenanceData provData){
+		super(script, provData);
 	}
 	
 	/**

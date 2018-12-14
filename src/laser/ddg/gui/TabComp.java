@@ -121,33 +121,13 @@ public class TabComp extends JPanel {
         
         /**
          * if button is clicked, close the tab
-         * (and if this is a DDG, first ask if the
-         *  current DDG should be saved to the database)
          */
         @Override
 		public void actionPerformed(ActionEvent e) {
-        	//if object is a DDG and is not in the database, ask if user wants the DDG to be saved to the database.
-        	if (tabObject instanceof PrefuseGraphBuilder && !((PrefuseGraphBuilder)tabObject).alreadyInDB()){
-				int answer = JOptionPane.showConfirmDialog(null, "Do you want to save the DDG in the database?", 
-						"Save DDG?", JOptionPane.YES_NO_CANCEL_OPTION); //null used to be DDGPanel.this??
-				if (answer == JOptionPane.YES_OPTION) {
-					try {
-						((PrefuseGraphBuilder) tabObject).saveToDB();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(TabComp.this, 
-								"Unable to save the DDG: " + e1.getMessage(), 
-								"Error saving the DDG", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				else if (answer == JOptionPane.CANCEL_OPTION){
-					//if user presses Cancel, return method and don't close tab.
-					return;
-				}
-			}
         	//close tab
 	        int i = pane.indexOfTabComponent(TabComp.this);
 	        if (i != -1) {
-	        pane.remove(i);
+	        	pane.remove(i);
         	}
         }
  

@@ -3,7 +3,6 @@ package laser.ddg;
 import java.util.ArrayList;
 
 import laser.ddg.gui.LegendEntry;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.ReportErrorException;
 
 /**
@@ -21,16 +20,9 @@ public abstract class DDGBuilder {
 	 * Creates a ddg builder 
 	 * @param script the program that the ddg is for
 	 * @param provData the provenance object that holds the ddg
-	 * @param dbWriter the object to use to write to the DB.  If null, 
-	 *    the ddg will not be written to the DB as it is built
 	 */
-	public DDGBuilder(String script, ProvenanceData provData, JenaWriter dbWriter) {
+	public DDGBuilder(String script, ProvenanceData provData) {
 		provObject = provData;
-		
-		//write to database
-		if (dbWriter != null) {
-			provObject.addProvenanceListener(dbWriter);
-		}
 		provObject.notifyProcessStarted(script);
 	}
 	

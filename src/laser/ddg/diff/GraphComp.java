@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 
 import laser.ddg.diff.gui.DDGDiffPanel;
 import laser.ddg.gui.DDGExplorer;
-import laser.ddg.persist.JenaWriter;
 import laser.ddg.persist.Parser;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
 
@@ -29,12 +28,10 @@ public class GraphComp extends JPanel {
 	 * right ddgs are colored white.
 	 */
 	public static void doDiff(DDGDiffPanel diffPanel, File leftFile, File rightFile) throws IOException {
-		JenaWriter jenaWriter = JenaWriter.getInstance();
-
-		PrefuseGraphBuilder leftBuilder = new PrefuseGraphBuilder(false, jenaWriter);
+		PrefuseGraphBuilder leftBuilder = new PrefuseGraphBuilder(false);
 		String[] leftText = prepareForDiff(leftBuilder, "left_group", leftFile);
 
-		PrefuseGraphBuilder rightBuilder = new PrefuseGraphBuilder(false, jenaWriter);
+		PrefuseGraphBuilder rightBuilder = new PrefuseGraphBuilder(false);
 		String[] rightText = prepareForDiff(rightBuilder, "right_group", rightFile);
 
 		ArrayList<String> diffResult = computeTextDiffResult(leftText, rightText);
