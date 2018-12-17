@@ -20,12 +20,12 @@
     	<pathelement location="lib/jdiff.jar"/>
     	<pathelement location="lib/gson-2.6.2.jar"/>
     	<pathelement location="lib/freehep-graphics2d-2.4.jar"/>
-    	<pathelement location="lib/freehep-graphics2d-export-example-2.4.jar"/>
     	<pathelement location="lib/freehep-graphicsbase-2.4.jar"/>
     	<pathelement location="lib/freehep-graphicsio-2.4.jar"/>
     	<pathelement location="lib/freehep-graphicsio-pdf-2.4.jar"/>
         <pathelement location="lib/freehep-graphicsio-ps-2.4.jar"/>
-        <pathelement location="lib/freehep-graphicsio-swf-2.4.jar"/>
+    	<pathelement location="lib/freehep-graphicsio-swf-2.4.jar"/>
+    	<pathelement location="lib/freehep-io-2.0.4.jar"/>
     </path>
 
 	<target name="init">
@@ -82,7 +82,7 @@
   		  <attribute name="Main-Class"
   		  		value="laser.ddg.gui.DDGExplorer"/>
           <attribute name="Class-Path" 
-          	  value="prefuse.jar jdiff.jar gson-2.6.2.jar freehep-graphics2d-2.4.jar freehep-graphics2d-export-example-2.4.jar freehep-graphicsbase-2.4.jar freehep-graphicsio-2.4.jar freehep-graphicsio-pdf-2.4.jar freehep-graphicsio-ps-2.4.jar freehep-graphicsio-swf-2.4.jar"/>
+          	  value="prefuse.jar jdiff.jar gson-2.6.2.jar freehep-graphics2d-2.4.jar freehep-graphicsbase-2.4.jar freehep-graphicsio-2.4.jar freehep-graphicsio-pdf-2.4.jar freehep-graphicsio-ps-2.4.jar freehep-graphicsio-swf-2.4.jar freehep-io-2.0.4.jar "/>
         </manifest>
 
   		<!-- The properties files containing build information and log4j properties -->
@@ -97,5 +97,5 @@
   	<move file="tmp_ddg-explorer.jar" tofile="ddg-explorer_${version}.jar"/>
     <chmod file="ddg-explorer_${version}.jar" perm="755"/>
   </target>
-		
+
 </project>
