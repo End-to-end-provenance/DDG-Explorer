@@ -17,15 +17,17 @@ public class ExportDDGCommand implements ActionListener {
 	@Override
     public void actionPerformed( ActionEvent e ) {
         ExportDialog export = new ExportDialog();
-        export.showExportDialog( frame, "Export view as ...", DDGExplorer.getCurrentDDGPanel(), "export" );
+        export.showExportDialog( frame, "Export view as ...", DDGExplorer.getCurrentDDGPanel().getDDGDisplay(), "export" );
 //	    Properties p = new Properties();
 //	    p.setProperty("PageSize","A5");
 //	    try {
-//			//VectorGraphics g = new PSGraphics2D(new File("Output.eps"), new Dimension(400,300)); 
-//	    	VectorGraphics g = new PDFGraphics2D(new File("Output.eps"), new Dimension(400,300)); 
+//			DDGPanel currentDDGPanel = DDGExplorer.getCurrentDDGPanel();
+//			DDGDisplay currentDDGDisplay = currentDDGPanel.getDDGDisplay();
+//			//VectorGraphics g = new PSGraphics2D(new File("Output.eps"), currentDDGPanel.getSize()); 
+//	    	VectorGraphics g = new PDFGraphics2D(new File("Output.pdf"), currentDDGDisplay.getSize()); 
 //			g.setProperties(p); 
 //			g.startExport(); 
-//			DDGExplorer.getCurrentDDGPanel().print(g); 
+//			currentDDGDisplay.print(g); 
 //			g.endExport();
 //		} catch (FileNotFoundException e1) {
 //			// TODO Auto-generated catch block
