@@ -25,6 +25,7 @@ import laser.ddg.SourcePos;
 import laser.ddg.persist.FileUtil;
 import laser.ddg.search.SearchElement;
 import laser.ddg.search.SearchIndex;
+import laser.ddg.visualizer.DDGDisplay;
 import laser.ddg.visualizer.DDGVisualization;
 import laser.ddg.visualizer.DisplayWithOverview;
 import laser.ddg.visualizer.PrefuseGraphBuilder;
@@ -41,6 +42,9 @@ public class DDGPanel extends JPanel {
 
 	// Describes the main attributes of the ddg
 	private JLabel descriptionArea;
+	
+	// The panel holding the actual ddg
+	private DDGDisplay ddgDisplay;
 
 	// Panel holding ddgDisplays and everything else besides the toolbar.
 	// (needed for Legend's use)
@@ -105,6 +109,7 @@ public class DDGPanel extends JPanel {
 		this.builder = builder;
 		this.vis = vis;
 		this.provData = provData;
+		this.ddgDisplay = dispPlusOver.getDisplay();
 		setBackground(Color.WHITE);
 
 		// Set up toolbarPanel and inside, ddgPanel:
@@ -392,6 +397,13 @@ public class DDGPanel extends JPanel {
 		int pos = scripts.indexOf(script);
 		assert pos >= 0;
 		displaySourceCode (pos+1);
+	}
+
+	/**
+	 * @return the panel holding just the ddg
+	 */
+	public DDGDisplay getDDGDisplay() {
+		return ddgDisplay;
 	}
 
 }
