@@ -211,7 +211,24 @@ public class JSonParser extends Parser {
 			//System.out.println("Found proc node: " + id + " with type " + type);
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
-			double time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			
+			// convert elapsedTime to string before double
+			// to account for the use of ',' and '.' as the radix
+			double time = 0.0;
+			
+			try {
+				// '.' as the radix lets the string convert to double easily.
+				time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+			}
+			catch(NumberFormatException nfe) {
+				// For ',' as the radix. Convert to use '.' as the radix.
+				String strTime = nodeDef.get(PREFIX+"elapsedTime").getAsString();
+				int radix = strTime.lastIndexOf(',');
+				strTime = strTime.substring(0,radix) + '.' + strTime.substring(radix+1);
+				
+				time = Double.parseDouble(strTime);
+			}
+			
 			double elapsedTime = 0.0;
 			if (type.equals("Operation")) {
 				elapsedTime = time - lastProcElapsedTime;
