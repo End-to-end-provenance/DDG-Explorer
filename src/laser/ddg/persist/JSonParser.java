@@ -251,29 +251,21 @@ public class JSonParser extends Parser {
 			// ',' or '.' used to group digits, and/or
 			// ',' or '.' is used as a decimal separator
 			
-			String left = "";	// left of the decimal separator
-			String right = "";	// right of the decimal separator
+			String regex = "(,|\\.)";	// regular expression for ',' and/or '.'
 			
-			// separate the string at the decimal separator
-			int sep = 0;
+			// Split the string into parts where the separators are
+			// Add decimal separator (before last part)
+			String[] parts = str.split(regex);
+			parts[parts.length-1] = '.' + parts[parts.length-1];
 			
-			int sep1 = str.lastIndexOf('.');
-			int sep2 = str.lastIndexOf(',');
+			// combine and convert
+			str = "";
 			
-			if(sep1 > sep2)
-				sep = sep1;
-			else
-				sep = sep2;
+			for(int i = 0 ; i < parts.length ; i++) {
+				str += parts[i];
+			}
 			
-			left = str.substring(0, sep);
-			right = str.substring(sep+1);
-			
-			// remove all digit grouping characters from the section left of the decimal separator
-			String regex = "(,|\\.)";
-			left = left.replaceAll(regex, "");
-			
-			// combine & convert
-			return( Double.parseDouble(left + '.' + right) );
+			return( Double.parseDouble(str) );
 		}
 	}
 	
