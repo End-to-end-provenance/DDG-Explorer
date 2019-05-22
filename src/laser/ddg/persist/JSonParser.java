@@ -33,6 +33,9 @@ public class JSonParser extends Parser {
 	
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
+	
+	// Time of the last procedure node encountered
+	private double lastProcElapsedTime = 0.0;
 
 	/**
 	 * Create a Json parser
@@ -211,11 +214,11 @@ public class JSonParser extends Parser {
 			
 			// convert elapsedTime to string before double
 			// to account for the use of ',' and '.' as the radix
-			double elapsedTime = 0.0;
+			double time = 0.0;
 			
 			try {
 				// '.' as the radix lets the string convert to double easily.
-				elapsedTime = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
+				time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
 			}
 			catch(NumberFormatException nfe) {
 				// For ',' as the radix. Convert to use '.' as the radix.
@@ -229,7 +232,13 @@ public class JSonParser extends Parser {
 				}
 				strTime += '.' + t[t.length-1];
 				
-				elapsedTime = Double.parseDouble(strTime);
+				time = Double.parseDouble(strTime);
+			}
+			
+			double elapsedTime = 0.0;
+			if (type.equals("Operation")) {
+				elapsedTime = time - lastProcElapsedTime;
+				lastProcElapsedTime = time;
 			}
 			
 			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
