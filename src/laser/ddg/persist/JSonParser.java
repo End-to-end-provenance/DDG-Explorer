@@ -212,29 +212,10 @@ public class JSonParser extends Parser {
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
 			
-			// convert elapsedTime to string before double
-			// to account for the use of ',' and '.' as the radix
-			double time = 0.0;
+			// parse time (',' or '.' can be used as a digit separator and/or digit grouping)
+			double time = parseTime(nodeDef.get(PREFIX+"elapsedTime").getAsString());
 			
-			try {
-				// '.' as the radix lets the string convert to double easily.
-				time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
-			}
-			catch(NumberFormatException nfe) {
-				// For ',' as the radix. Convert to use '.' as the radix.
-				String strTime = nodeDef.get(PREFIX+"elapsedTime").getAsString();
-				String[] t = strTime.split(",");
-				
-				// Last ',' is the radix. Convert that to '.' but remove the rest.
-				strTime = "";
-				for(int i = 0; i < t.length-1; i++) {
-					strTime += t[i];
-				}
-				strTime += '.' + t[t.length-1];
-				
-				time = Double.parseDouble(strTime);
-			}
-			
+			// get elapsedTime of node
 			double elapsedTime = 0.0;
 			if (type.equals("Operation")) {
 				elapsedTime = time - lastProcElapsedTime;
@@ -252,6 +233,48 @@ public class JSonParser extends Parser {
 			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
 		numPins = idNum;
+	}
+	
+	/**
+	 * Parses and returns the 'elapsedTime' string value as a double.
+	 * There will always be a decimal separator in the string.
+	 */
+	private double parseTime( String str ) {
+		
+		try {
+			// '.' as the decimal separator lets the string convert to double easily.
+			return( Double.parseDouble(str) );
+		}
+		catch(NumberFormatException nfe) {
+			
+			// This catches the cases where the number string is formatted such that there are:
+			// ',' or '.' used to group digits, and/or
+			// ',' or '.' is used as a decimal separator
+			
+			String left = "";	// left of the decimal separator
+			String right = "";	// right of the decimal separator
+			
+			// separate the string at the decimal separator
+			int sep = 0;
+			
+			int sep1 = str.lastIndexOf('.');
+			int sep2 = str.lastIndexOf(',');
+			
+			if(sep1 > sep2)
+				sep = sep1;
+			else
+				sep = sep2;
+			
+			left = str.substring(0, sep);
+			right = str.substring(sep+1);
+			
+			// remove all digit grouping characters from the section left of the decimal separator
+			String regex = "(,|\\.)";
+			left = left.replaceAll(regex, "");
+			
+			// combine & convert
+			return( Double.parseDouble(left + '.' + right) );
+		}
 	}
 	
 	/** 
