@@ -33,9 +33,6 @@ public class JSonParser extends Parser {
 	
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
-	
-	// Time of the last procedure node encountered
-	private double lastProcElapsedTime = 0.0;
 
 	/**
 	 * Create a Json parser
@@ -212,15 +209,8 @@ public class JSonParser extends Parser {
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
 			
-			// parse time (',' or '.' can be used as a digit separator and/or digit grouping)
-			double time = parseTime(nodeDef.get(PREFIX+"elapsedTime").getAsString());
-			
-			// get elapsedTime of node
-			double elapsedTime = 0.0;
-			if (type.equals("Operation")) {
-				elapsedTime = time - lastProcElapsedTime;
-				lastProcElapsedTime = time;
-			}
+			// parse elapsed time (',' or '.' can be used as a digit separator and/or digit grouping)
+			double elapsedTime = parseTime(nodeDef.get(PREFIX+"elapsedTime").getAsString());
 			
 			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
 			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
