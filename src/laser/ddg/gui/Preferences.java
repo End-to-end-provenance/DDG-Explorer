@@ -29,7 +29,6 @@ public class Preferences {
 			+ "prefs.txt");
 	private static Map<String, String> preferences = new ConcurrentHashMap<>();
 
-
 	/**
 	 * Loads user preferences from a file or sets to the default if there is no
 	 * preference file.
@@ -74,6 +73,10 @@ public class Preferences {
 	private void savePreferences() {
 		PrintWriter out = null;
 		try {
+			File ddgDir = new File(FileUtil.DDG_DIRECTORY);
+			if (!ddgDir.exists ()) {
+				ddgDir.mkdir();
+			}
 			out = new PrintWriter(new FileWriter(PREFERENCE_FILE));
 			out.println("# DDG Explorer preferences");
 			for (String prefVar : preferences.keySet()) {
