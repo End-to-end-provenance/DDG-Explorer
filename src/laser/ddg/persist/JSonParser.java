@@ -34,9 +34,6 @@ public class JSonParser extends Parser {
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
 
-	// Time of the last procedure node encountered
-	private double lastProcElapsedTime = 0.0;
-
 	/**
 	 * Create a Json parser
 	 * 
@@ -211,12 +208,9 @@ public class JSonParser extends Parser {
 			//System.out.println("Found proc node: " + id + " with type " + type);
 			
 			String name = nodeDef.get(PREFIX+"name").getAsString();
-			double time = Double.parseDouble(nodeDef.get(PREFIX+"elapsedTime").getAsString());
-			double elapsedTime = 0.0;
-			if (type.equals("Operation")) {
-				elapsedTime = time - lastProcElapsedTime;
-				lastProcElapsedTime = time;
-			}
+			
+			// parse elapsed time (',' or '.' can be used as a digit separator and/or digit grouping)
+			double elapsedTime = parseTime(nodeDef.get(PREFIX+"elapsedTime").getAsString());
 			
 			String script = nodeDef.get(PREFIX+"scriptNum").getAsString();
 			String startLine = nodeDef.get(PREFIX+"startLine").getAsString();
@@ -229,6 +223,40 @@ public class JSonParser extends Parser {
 			addProcNode(type, id, label, null, elapsedTime, script, startLine, startCol, endLine, endCol);
 		}
 		numPins = idNum;
+	}
+	
+	/**
+	 * Parses and returns the 'elapsedTime' string value as a double.
+	 * There will always be a decimal separator in the string.
+	 */
+	private double parseTime( String str ) {
+		
+		try {
+			// '.' as the decimal separator lets the string convert to double easily.
+			return( Double.parseDouble(str) );
+		}
+		catch(NumberFormatException nfe) {
+			
+			// This catches the cases where the number string is formatted such that there are:
+			// ',' or '.' used to group digits, and/or
+			// ',' or '.' is used as a decimal separator
+			
+			String regex = "(,|\\.)";	// regular expression for ',' and/or '.'
+			
+			// Split the string into parts where the separators are
+			// Add decimal separator (before last part)
+			String[] parts = str.split(regex);
+			parts[parts.length-1] = '.' + parts[parts.length-1];
+			
+			// combine and convert
+			str = "";
+			
+			for(int i = 0 ; i < parts.length ; i++) {
+				str += parts[i];
+			}
+			
+			return( Double.parseDouble(str) );
+		}
 	}
 	
 	/** 
