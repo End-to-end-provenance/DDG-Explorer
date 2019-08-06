@@ -273,10 +273,12 @@ public abstract class Parser {
 		if (ddgBuilder != null) {
 			ddgBuilder.addDataNode(nodeType,idNum,name,value,timestamp, location);
 		}
+		//System.out.println("ddgBuilder added");
 		if (builder != null) {
 			builder.addNode(nodeType, extractUID(nodeId), 
 					constructName(nodeType, name), value, timestamp, location, null);
 		}
+		//System.out.println("builder added");
 	}
 	
 
