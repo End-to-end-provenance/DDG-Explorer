@@ -93,6 +93,7 @@ public class PrefuseUtils {
 	public static final String URL = "URL";
 	public static final String DEVICE = "Device";
 	public static final String SNAPSHOT = "Snapshot";
+	public static final String STANDARD_OUTPUT = "StandardOutput";
 
 	public static final String LOCATION = "Location";
 	
@@ -571,6 +572,9 @@ public class PrefuseUtils {
 		return n.getString(TYPE).equals(EXCEPTION);
 	}
 	
+	public static boolean isStandardOutput(Node n) {
+		return n.getString(TYPE).equals(STANDARD_OUTPUT);
+	}
 
 
 	/**
@@ -603,6 +607,10 @@ public class PrefuseUtils {
 		}
 		
 		if (nodeType.equals(SNAPSHOT)) {
+			return true;
+		}
+		
+		if (nodeType.equals(STANDARD_OUTPUT)) {
 			return true;
 		}
 		

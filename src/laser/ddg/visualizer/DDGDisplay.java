@@ -491,6 +491,7 @@ public class DDGDisplay extends Display {
 				String nodeType = node.getString(PrefuseUtils.TYPE);
 				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (nodeType.equals(PrefuseUtils.DATA_NODE) || nodeType.equals(PrefuseUtils.EXCEPTION)
+						|| nodeType.equals(PrefuseUtils.STANDARD_OUTPUT)
 						|| nodeType.equals(PrefuseUtils.CHECKPOINT_FILE)
 						|| (nodeType.equals(PrefuseUtils.URL) && value.startsWith("->"))) {
 					String valueClause = "";
@@ -571,7 +572,7 @@ public class DDGDisplay extends Display {
 
 				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (value == null) {
-					JOptionPane.showMessageDialog(DDGDisplay.this, "There is no information about this file.");
+					JOptionPane.showMessageDialog(DDGDisplay.this, "There is no message available.");
 				} else {
 					JOptionPane.showMessageDialog(DDGDisplay.this, value);
 				}
@@ -628,8 +629,8 @@ public class DDGDisplay extends Display {
 								showElapsedTimeCommand/* , showLineNumberCommand */);
 					}
 
-					else if (PrefuseUtils.isException((NodeItem) item)) {
-						showPopup(e, showMessageCommand);
+					else if (PrefuseUtils.isException((NodeItem) item) || PrefuseUtils.isStandardOutput((NodeItem) item)) {
+						showPopup(e, showMessageCommand, showHowComputedCommand);
 					}
 
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {

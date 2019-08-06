@@ -84,6 +84,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 	public static final int DATA_COLOR = ColorLib.rgb(175, 184, 233);
 	public static final int DEVICE_COLOR = ColorLib.rgb(221, 223, 233);  // For graphics devices
 	public static final int FILE_COLOR = ColorLib.rgb(255, 204, 153);
+	public static final int STANDARD_OUTPUT_COLOR = ColorLib.rgb(255, 136, 5);
 	public static final int URL_COLOR = ColorLib.rgb(255, 204, 229);
 	public static final int NONLEAF_COLOR = ColorLib.rgb(175, 217, 123);
 	public static final int NONLEAF_COLOR_SELECTED_COLOR = ColorLib.rgb(190, 190, 190);
@@ -766,6 +767,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'Snapshot'"), DATA_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'StandardOutput'"), STANDARD_OUTPUT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Device'"), DEVICE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);
