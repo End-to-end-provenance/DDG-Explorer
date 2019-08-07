@@ -768,6 +768,7 @@ public class PrefuseGraphBuilder implements ProvenanceListener, ProvenanceDataVi
 		fill.add(ExpressionParser.predicate("Type = 'CheckpointFile'"), FILE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'File'"), FILE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'StandardOutput'"), STANDARD_OUTPUT_COLOR);
+		fill.add(ExpressionParser.predicate("Type = 'StandardOutputSnapshot'"), STANDARD_OUTPUT_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'URL'"), URL_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Device'"), DEVICE_COLOR);
 		fill.add(ExpressionParser.predicate("Type = 'Exception'"), EXCEPTION_COLOR);

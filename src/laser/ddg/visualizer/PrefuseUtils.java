@@ -94,6 +94,7 @@ public class PrefuseUtils {
 	public static final String DEVICE = "Device";
 	public static final String SNAPSHOT = "Snapshot";
 	public static final String STANDARD_OUTPUT = "StandardOutput";
+	public static final String STANDARD_OUTPUT_SNAPSHOT = "StandardOutputSnapshot";
 
 	public static final String LOCATION = "Location";
 	
@@ -477,7 +478,7 @@ public class PrefuseUtils {
 	 */
 	public static boolean isFile(VisualItem node) {
 		String nodeType = node.getString(TYPE);
-		return nodeType.equals(FILE) || nodeType.equals(SNAPSHOT);
+		return nodeType.equals(FILE) || nodeType.equals(SNAPSHOT) || nodeType.equals(STANDARD_OUTPUT_SNAPSHOT);
 	}
 
 	public static boolean isSnapshot(VisualItem node) {
@@ -573,7 +574,7 @@ public class PrefuseUtils {
 	}
 	
 	public static boolean isStandardOutput(Node n) {
-		return n.getString(TYPE).equals(STANDARD_OUTPUT);
+		return (n.getString(TYPE).equals(STANDARD_OUTPUT) || n.getString(TYPE).equals(STANDARD_OUTPUT_SNAPSHOT));
 	}
 
 
