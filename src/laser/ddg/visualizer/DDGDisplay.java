@@ -573,7 +573,8 @@ public class DDGDisplay extends Display {
 				String value = PrefuseUtils.getValue((NodeItem) node);
 				if (value == null) {
 					JOptionPane.showMessageDialog(DDGDisplay.this, "There is no message available.");
-				} else {
+				}
+				else {
 					JOptionPane.showMessageDialog(DDGDisplay.this, value);
 				}
 			}
@@ -629,8 +630,12 @@ public class DDGDisplay extends Display {
 								showElapsedTimeCommand/* , showLineNumberCommand */);
 					}
 
-					else if (PrefuseUtils.isException((NodeItem) item) || PrefuseUtils.isStandardOutput((NodeItem) item)) {
+					else if (PrefuseUtils.isException((NodeItem) item)) {
 						showPopup(e, showMessageCommand, showHowComputedCommand);
+					}
+					
+					else if (PrefuseUtils.isStandardOutput((NodeItem) item)) {
+						showPopup(e, showValueCommand, showHowComputedCommand);
 					}
 
 					else if (PrefuseUtils.isAnyDataNode((NodeItem) item)) {
