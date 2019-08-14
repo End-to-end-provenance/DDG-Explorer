@@ -48,6 +48,7 @@ public class RDDGBuilder extends DDGBuilder {
 		legend.add(new LegendEntry("Script", PrefuseGraphBuilder.SCRIPT_COLOR));
 		legend.add(new LegendEntry("Data", PrefuseGraphBuilder.DATA_COLOR));
 		legend.add(new LegendEntry("Error", PrefuseGraphBuilder.EXCEPTION_COLOR));
+		legend.add(new LegendEntry("Standard Output", PrefuseGraphBuilder.STANDARD_OUTPUT_COLOR));
 		legend.add(new LegendEntry("File", PrefuseGraphBuilder.FILE_COLOR));
 		legend.add(new LegendEntry("URL", PrefuseGraphBuilder.URL_COLOR));
 		legend.add(new LegendEntry("Graphics Device", PrefuseGraphBuilder.DEVICE_COLOR));
