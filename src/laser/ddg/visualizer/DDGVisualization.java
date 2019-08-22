@@ -151,6 +151,7 @@ public class DDGVisualization extends Visualization {
 			r = new LabelRenderer(PrefuseUtils.NAME);
 		}
 		r.setRoundedCorner(8, 8); // round the corners
+		r.setHorizontalTextAlignment (prefuse.Constants.LEFT);
 		// create a new default renderer factory
 		// return our name label renderer as the default for all non-EdgeItems
 		DefaultRendererFactory rendererFactory = new DefaultRendererFactory(
