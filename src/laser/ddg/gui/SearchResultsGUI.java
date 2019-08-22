@@ -14,6 +14,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 
+import laser.ddg.search.OperationSearchElement;
 import laser.ddg.search.SearchElement;
 import laser.ddg.workflow.gui.WorkflowPanel;
 
@@ -39,6 +40,10 @@ public class SearchResultsGUI extends JScrollPane {
 	 * @param resultList the list of nodes whose names appear in the search results
 	 */
 	public SearchResultsGUI(ArrayList<? extends SearchElement> resultList) {
+		this (resultList, false);
+	}
+	
+	public SearchResultsGUI (ArrayList<? extends SearchElement> resultList, boolean showTime) {
 
 		model = new DefaultListModel<>();
 		resultList.stream().forEach((entry) -> {
@@ -48,7 +53,7 @@ public class SearchResultsGUI extends JScrollPane {
 		final JList<SearchElement> searchList;
 		searchList = new JList<>(model);
 		searchList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		searchList.setCellRenderer(new NodeCellRenderer());
+		searchList.setCellRenderer(new NodeCellRenderer(showTime));
 		searchList.setVisibleRowCount(-1);
 
 		// update the focus in the DDG to focus on selected node from search
@@ -141,6 +146,12 @@ public class SearchResultsGUI extends JScrollPane {
 		// shade of
 		// bright
 		// orange
+		
+		private boolean showTime;
+		
+		public NodeCellRenderer (boolean showTime) {
+			this.showTime = showTime;
+		}
 
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -150,7 +161,12 @@ public class SearchResultsGUI extends JScrollPane {
 			rendererComponent.setIconTextGap(12);
 
 			SearchElement entry = (SearchElement) value;
-			rendererComponent.setText(entry.getName());
+			if (showTime && entry instanceof OperationSearchElement) {
+				rendererComponent.setText(((OperationSearchElement)entry).getTimeTaken() + "   " + entry.getName());
+			}
+			else {
+				rendererComponent.setText(entry.getName());
+			}
 
 			if (isSelected) {
 				rendererComponent.setBackground(HIGHLIGHT_COLOR);

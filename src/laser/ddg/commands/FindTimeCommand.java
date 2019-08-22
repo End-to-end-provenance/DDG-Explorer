@@ -41,7 +41,7 @@ public class FindTimeCommand implements ActionListener {
                 });
 
 		if (panel != null) {
-			panel.showSearchResults(nodeList);
+			panel.showSearchResultsWithTime(nodeList);
 		} else {
 			wfpanel.showSearchResults(nodeList);
 		}
