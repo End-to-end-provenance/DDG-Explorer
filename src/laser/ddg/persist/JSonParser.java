@@ -96,6 +96,7 @@ public class JSonParser extends Parser {
 				scrpt = attributeValue.getAsString();
 				attributes.set(Attributes.MAIN_SCRIPT_NAME, scrpt);
 			}
+			
 			else if(attributeName.equals(Attributes.JSON_EXECUTION_TIME))
 			{
 				// R puts : in the timestamp value, but we can't use that in a directory name on Windows.
@@ -130,15 +131,18 @@ public class JSonParser extends Parser {
 			}
 		}
 		
+		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
+		
+		// Add the main script
+		sourcedScriptInfo.add(new ScriptInfo (scrpt, timestamp));
+		
 		// parse source script information, if any
 		if( sourcedScripts == null )
 			return;
 		
-		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
-		
 		while( sourcedScripts.hasNext() && ssTimestamps != null && ssTimestamps.hasNext())
 		{
-			String filepath = scriptDir + "/" + sourcedScripts.next().getAsString() ;
+			String filepath = sourcedScripts.next().getAsString() ;
 			String timestamp = ssTimestamps.next().getAsString() ;
 			
 			sourcedScriptInfo.add( new ScriptInfo(filepath, timestamp) ) ;
