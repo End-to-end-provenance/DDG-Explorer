@@ -324,6 +324,16 @@ public class DDGPanel extends JPanel {
 		}
 	}
 
+	public void showSearchResultsWithTime(ArrayList<? extends SearchElement> resultList) {
+		if (searchList == null) {
+			searchList = new SearchResultsGUI(resultList, true);
+			splitPane.setLeftComponent(searchList);
+			validate();
+		} else {
+			searchList.updateSearchList(resultList);
+		}
+	}
+
 	public void showErrMsg(String str) {
 		errorLog.append(str);
 	}
