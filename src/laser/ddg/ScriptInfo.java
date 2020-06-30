@@ -25,13 +25,17 @@ public class ScriptInfo {
 	
 	// Name of the script with the directory removed
 	final private String name;
+	
+	// Path to the saved copy of the file
+	final private String pathToSaved;
 
 	/**
 	 * Create an object to remember information about the script that is executed
 	 * @param filepath absolute path to the file containing the script
 	 * @param timestamp last modified time of the script
+	 * @param provDir the provenance directory
 	 */
-	public ScriptInfo(String filepath, String timestamp) {
+	public ScriptInfo(String filepath, String timestamp, String provDir) {
 		assert timestamp != null;
 		
 		//System.out.println("Creating ScriptInfo for " + filepath + " " + timestamp);
@@ -42,14 +46,15 @@ public class ScriptInfo {
 		// about what directory separator the filepath uses
 		File file = new File(filepath);
 		name = file.getName();
+		pathToSaved = new File (provDir + File.separator + "scripts", name).toString();
 	}
 
 	/**
 	 * 
-	 * @return the absolute path to the script
+	 * @return the absolute path to the saved copy of the script
 	 */
 	public String getFilepath() {
-		return filepath;
+		return pathToSaved;
 	}
 
 	/**
