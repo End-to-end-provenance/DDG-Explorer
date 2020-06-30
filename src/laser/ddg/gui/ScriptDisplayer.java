@@ -57,6 +57,7 @@ public class ScriptDisplayer {
 					"There is no script available for " + builder.getProcessName());
 		}
 		File theFile = new File(fileName);
+
 		if (!theFile.exists()) {
 			throw new NoScriptFileException (
 					"There is no script available for " + fileName);

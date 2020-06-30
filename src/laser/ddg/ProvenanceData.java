@@ -780,6 +780,10 @@ public class ProvenanceData {
 		attributes.set(name, value);
 	}
 	
+	public String getProvDir () {
+		return attributes.get(Attributes.PROV_DIRECTORY);
+	}
+	
 	/**
 	 * @param the position of the script in the list
 	 * @return the full path to the script
@@ -895,7 +899,8 @@ public class ProvenanceData {
 			// Include the main script that was executed
 			String mainScriptName = attributes.get(Attributes.MAIN_SCRIPT_NAME);
 			String mainScriptTimestamp = attributes.get(Attributes.MAIN_SCRIPT_TIMESTAMP);
-			scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp));
+			String provDir = attributes.get(Attributes.PROV_DIRECTORY);
+			scripts.add(new ScriptInfo(mainScriptName, mainScriptTimestamp, provDir));
 			
 			File mainScript = new File(mainScriptName);
 			File scriptDir = mainScript.getParentFile();
@@ -915,7 +920,7 @@ public class ProvenanceData {
 			assert sourcedScriptNames.length == sourcedScriptTimestamps.length;
 			
 			for (int i = 0; i < sourcedScriptNames.length; i++) {
-				scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i]));
+				scripts.add(new ScriptInfo(scriptDir + File.separator + sourcedScriptNames[i], sourcedScriptTimestamps[i], provDir));
 			}
 		}
 		

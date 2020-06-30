@@ -79,6 +79,7 @@ public class JSonParser extends Parser {
 		String scriptDir = null ;
 		Iterator<JsonElement> sourcedScripts = null ;
 		Iterator<JsonElement> ssTimestamps = null ;
+		String provDir = "";
 		
 		// parsing the environment node
 		for (Entry <String, JsonElement> attribute : attributeSet) 
@@ -117,6 +118,11 @@ public class JSonParser extends Parser {
 			{
 				ssTimestamps = attributeValue.getAsJsonArray().iterator() ;
 			}
+			else if( attributeName.equals(Attributes.JSON_PROV_DIRECTORY))
+			{
+				provDir = attributeValue.getAsString();;
+				attributes.set(Attributes.PROV_DIRECTORY, provDir);
+			}
 			else 
 			{
 				try 
@@ -134,7 +140,7 @@ public class JSonParser extends Parser {
 		ArrayList<ScriptInfo> sourcedScriptInfo = new ArrayList<ScriptInfo>() ;
 		
 		// Add the main script
-		sourcedScriptInfo.add(new ScriptInfo (scrpt, timestamp));
+		sourcedScriptInfo.add(new ScriptInfo (scrpt, timestamp, provDir));
 		
 		// parse source script information, if any
 		if( sourcedScripts == null )
@@ -145,7 +151,7 @@ public class JSonParser extends Parser {
 			String filepath = sourcedScripts.next().getAsString() ;
 			String timestamp = ssTimestamps.next().getAsString() ;
 			
-			sourcedScriptInfo.add( new ScriptInfo(filepath, timestamp) ) ;
+			sourcedScriptInfo.add( new ScriptInfo(filepath, timestamp, provDir) ) ;
 		}
 		
 		attributes.setSourcedScriptInfo(sourcedScriptInfo) ;
