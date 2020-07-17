@@ -46,11 +46,11 @@ public class CommandOverviewCommand implements ActionListener {
 		helpBuffer.append("To move a node\n");
 		helpBuffer.append("   Drag the node\n\n");
 
-		helpBuffer.append("To scroll to a different portion of the DDG\n");
+		helpBuffer.append("To scroll to a different portion of the graph\n");
 		helpBuffer.append("   Drag the overview box OR\n");
 		helpBuffer.append("   Drag on the background\n\n");
 
-		helpBuffer.append("To re-center the DDG\n");
+		helpBuffer.append("To re-center the graph\n");
 		helpBuffer.append("   Click the Refocus button\n\n");
 
 		helpBuffer.append("To change the magnification\n");
