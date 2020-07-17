@@ -93,6 +93,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		LanguageConfigurator.addParser("R", "laser.ddg.r.RParser");
 		LanguageConfigurator.addLanguageBuilder("Little-JIL",
 				"laser.juliette.ddgbuilder.DDGTextBuilder");
+		LanguageConfigurator.addLanguageBuilder("Python", "laser.ddg.r.RDDGBuilder");
 
 		// DON'T DELETE THIS: Sample of how to load a query using reflection
 		// try {
@@ -296,7 +297,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		openFile.addActionListener(new LoadFileCommand());
 
 		// allow the user to compare two R scripts
-		JMenuItem compareR = new JMenuItem("Compare R Scripts");
+		JMenuItem compareR = new JMenuItem("Compare Scripts");
 		compareR.addActionListener(new CompareScriptsCommand());
 
 
@@ -328,7 +329,7 @@ public class DDGExplorer extends JFrame implements QueryListener {
 	 * @return JMenu DDG menu
 	 */
 	private JMenu createDDGMenu() {
-		final JMenu DDGMenu = new JMenu("DDG");
+		final JMenu DDGMenu = new JMenu("Provenance");
 		DDGMenu.setBackground(MENU_COLOR);
 
 		attributesItem = new JMenuItem("Show attributes");
@@ -336,12 +337,12 @@ public class DDGExplorer extends JFrame implements QueryListener {
 		attributesItem.setEnabled(false);
 		DDGMenu.add(attributesItem);
 
-		showScriptItem = new JMenu("Show R script...");
+		showScriptItem = new JMenu("Show script...");
 		showScriptItem.addMouseListener(new ShowScriptCommand());
 		showScriptItem.setEnabled(false);
 		DDGMenu.add(showScriptItem);
 		
-		exportDDGItem = new JMenuItem("Export DDG...");
+		exportDDGItem = new JMenuItem("Export graph...");
 		exportDDGItem.addActionListener(new ExportDDGCommand(this));
 		exportDDGItem.setEnabled(false);
 		DDGMenu.add(exportDDGItem);

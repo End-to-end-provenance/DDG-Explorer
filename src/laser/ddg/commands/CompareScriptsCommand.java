@@ -39,8 +39,8 @@ public class CompareScriptsCommand implements ActionListener {
 		} catch (Exception e) {
 			DDGExplorer ddgExplorer = DDGExplorer.getInstance();
 			JOptionPane.showMessageDialog(ddgExplorer,
-					"Unable to compare R scripts: " + e.getMessage(),
-					"Error comparing R scripts",
+					"Unable to compare scripts: " + e.getMessage(),
+					"Error comparing scripts",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
