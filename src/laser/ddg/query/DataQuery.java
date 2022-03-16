@@ -107,7 +107,8 @@ public abstract class DataQuery extends AbstractQuery {
 		// If graph contains no procedure nodes, display a message.  It might contain
 		// one or more data nodes.
 		if (allPinsToShow.isEmpty()) {
-			DDGExplorer.showErrMsg(getSingletonMessage("name", "value"));
+			DDGExplorer.showErrMsg(getSingletonMessage(rootNode.getName(), "value"));
+			return;
 		}
 		
 		// Cause the drawing to occur
