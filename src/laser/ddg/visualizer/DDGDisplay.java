@@ -124,10 +124,12 @@ public class DDGDisplay extends Display {
 
 		// Get the extension of the node's value
 		String value = PrefuseUtils.getValue(n);
-		String valueExt;
+		String valueExt = "";
 		if (value != null) {
 			int index = value.lastIndexOf(".");
-			valueExt = value.substring(index);
+			if (index != -1) {
+				valueExt = value.substring(index);
+			}
 			// only works for .csv or .txt files now
 			if (valueExt.equals(".csv") || valueExt.equals(".txt")) {
 				// make sure it has the correct slashes in the path
