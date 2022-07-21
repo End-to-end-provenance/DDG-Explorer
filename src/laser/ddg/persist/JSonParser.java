@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -30,6 +33,9 @@ public class JSonParser extends Parser {
 	
 	/** The prefix that is appended to the name of each node*/
 	private static String PREFIX = "rdt:" ;
+	
+    /* Use the locale's format for numbers so that doubles get parsed correctly. */
+	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.getDefault());
 	
 	private JsonElement jsonRoot;
 	private BufferedReader reader;
@@ -241,32 +247,41 @@ public class JSonParser extends Parser {
 	 */
 	private double parseTime( String str ) {
 		
+		double parsedTime;
 		try {
-			// '.' as the decimal separator lets the string convert to double easily.
-			return( Double.parseDouble(str) );
+			System.out.println("Using locale parser");
+			return NUMBER_FORMAT.parse(str).doubleValue();
+		} catch (ParseException e) {
+			return 0;
 		}
-		catch(NumberFormatException nfe) {
-			
-			// This catches the cases where the number string is formatted such that there are:
-			// ',' or '.' used to group digits, and/or
-			// ',' or '.' is used as a decimal separator
-			
-			String regex = "(,|\\.)";	// regular expression for ',' and/or '.'
-			
-			// Split the string into parts where the separators are
-			// Add decimal separator (before last part)
-			String[] parts = str.split(regex);
-			parts[parts.length-1] = '.' + parts[parts.length-1];
-			
-			// combine and convert
-			str = "";
-			
-			for(int i = 0 ; i < parts.length ; i++) {
-				str += parts[i];
-			}
-			
-			return( Double.parseDouble(str) );
-		}
+//
+//		
+//		try {
+//			// '.' as the decimal separator lets the string convert to double easily.
+//			return( Double.parseDouble(str) );
+//		}
+//		catch(NumberFormatException nfe) {
+//			
+//			// This catches the cases where the number string is formatted such that there are:
+//			// ',' or '.' used to group digits, and/or
+//			// ',' or '.' is used as a decimal separator
+//			
+//			String regex = "(,|\\.)";	// regular expression for ',' and/or '.'
+//			
+//			// Split the string into parts where the separators are
+//			// Add decimal separator (before last part)
+//			String[] parts = str.split(regex);
+//			parts[parts.length-1] = '.' + parts[parts.length-1];
+//			
+//			// combine and convert
+//			str = "";
+//			
+//			for(int i = 0 ; i < parts.length ; i++) {
+//				str += parts[i];
+//			}
+//			
+//			return( Double.parseDouble(str) );
+//		}
 	}
 	
 	/** 

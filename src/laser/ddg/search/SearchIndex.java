@@ -1,6 +1,9 @@
 package laser.ddg.search;
 
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 
 /**
@@ -18,6 +21,8 @@ public class SearchIndex {
 	private ArrayList<SearchElement> urlList = new ArrayList<>();
 	private ArrayList<OperationSearchElement> operationList = new ArrayList<>();
 	private ArrayList<SearchElement> allList = new ArrayList<>();
+	
+	private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance(Locale.getDefault());
 
 	/**
 	 * Adds a node to the appropriate search index based on the node's type.
@@ -32,7 +37,12 @@ public class SearchIndex {
 		SearchElement element;
 		
 		if (type.equals("Operation")) {
-			double parsedTime = Double.parseDouble(time);
+			double parsedTime;
+			try {
+				parsedTime = NUMBER_FORMAT.parse(time).doubleValue();
+			} catch (ParseException e) {
+				parsedTime = 0;
+			}
 			OperationSearchElement opElement = new OperationSearchElement (type, name, id, parsedTime);
 			operationList.add (opElement);
 			element = opElement;
