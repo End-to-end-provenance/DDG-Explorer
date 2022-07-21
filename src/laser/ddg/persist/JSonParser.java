@@ -254,34 +254,6 @@ public class JSonParser extends Parser {
 		} catch (ParseException e) {
 			return 0;
 		}
-//
-//		
-//		try {
-//			// '.' as the decimal separator lets the string convert to double easily.
-//			return( Double.parseDouble(str) );
-//		}
-//		catch(NumberFormatException nfe) {
-//			
-//			// This catches the cases where the number string is formatted such that there are:
-//			// ',' or '.' used to group digits, and/or
-//			// ',' or '.' is used as a decimal separator
-//			
-//			String regex = "(,|\\.)";	// regular expression for ',' and/or '.'
-//			
-//			// Split the string into parts where the separators are
-//			// Add decimal separator (before last part)
-//			String[] parts = str.split(regex);
-//			parts[parts.length-1] = '.' + parts[parts.length-1];
-//			
-//			// combine and convert
-//			str = "";
-//			
-//			for(int i = 0 ; i < parts.length ; i++) {
-//				str += parts[i];
-//			}
-//			
-//			return( Double.parseDouble(str) );
-//		}
 	}
 	
 	/** 
