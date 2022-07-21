@@ -249,7 +249,6 @@ public class JSonParser extends Parser {
 		
 		double parsedTime;
 		try {
-			System.out.println("Using locale parser");
 			return NUMBER_FORMAT.parse(str).doubleValue();
 		} catch (ParseException e) {
 			return 0;
